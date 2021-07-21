@@ -3,12 +3,12 @@
  *  the same time, put all but one to sleep
  */
 
-#include <linux/kernel.h>       /* We're doing kernel work */
-#include <linux/module.h>       /* Specifically, a module */
-#include <linux/proc_fs.h>      /* Necessary because we use proc fs */
-#include <linux/sched.h>        /* For putting processes to sleep and
+#include <linux/kernel.h>  /* We're doing kernel work */
+#include <linux/module.h>  /* Specifically, a module */
+#include <linux/proc_fs.h> /* Necessary because we use proc fs */
+#include <linux/sched.h>   /* For putting processes to sleep and
                                    waking them up */
-#include <linux/uaccess.h>      /* for get_user and put_user */
+#include <linux/uaccess.h> /* for get_user and put_user */
 
 /*
  * The module's file functions
@@ -30,10 +30,10 @@ static struct proc_dir_entry *Our_Proc_File;
  * function
  */
 static ssize_t module_output(struct file *file, /* see include/linux/fs.h   */
-                             char *buf, /* The buffer to put data to
-                                           (in the user segment)    */
+                             char *buf,         /* The buffer to put data to
+                                                   (in the user segment)    */
                              size_t len,        /* The length of the buffer */
-                             loff_t * offset)
+                             loff_t *offset)
 {
     static int finished = 0;
     int i;
@@ -57,17 +57,17 @@ static ssize_t module_output(struct file *file, /* see include/linux/fs.h   */
         put_user(message[i], buf + i);
 
     finished = 1;
-    return i;               /* Return the number of bytes "read" */
+    return i; /* Return the number of bytes "read" */
 }
 
 /*
  * This function receives input from the user when the user writes to the /proc
  * file.
  */
-static ssize_t module_input(struct file *file,  /* The file itself */
-                            const char *buf,    /* The buffer with input */
-                            size_t length,      /* The buffer's length */
-                            loff_t * offset)    /* offset to file - ignore */
+static ssize_t module_input(struct file *file, /* The file itself */
+                            const char *buf,   /* The buffer with input */
+                            size_t length,     /* The buffer's length */
+                            loff_t *offset)    /* offset to file - ignore */
 {
     int i;
 
@@ -144,20 +144,19 @@ static int module_open(struct inode *inode, struct file *file)
         /*
          * Emmanuel Papirakis:
          *
-         * This is a little update to work with 2.2.*.  Signals now are contained in
-         * two words (64 bits) and are stored in a structure that contains an array of
-         * two unsigned longs.  We now have to make 2 checks in our if.
+         * This is a little update to work with 2.2.*.  Signals now are
+         * contained in two words (64 bits) and are stored in a structure that
+         * contains an array of two unsigned longs.  We now have to make 2
+         * checks in our if.
          *
          * Ori Pomerantz:
          *
-         * Nobody promised me they'll never use more than 64 bits, or that this book
-         * won't be used for a version of Linux with a word size of 16 bits.  This code
-         * would work in any case.
+         * Nobody promised me they'll never use more than 64 bits, or that this
+         * book won't be used for a version of Linux with a word size of 16
+         * bits.  This code would work in any case.
          */
         for (i = 0; i < _NSIG_WORDS && !is_sig; i++)
-            is_sig =
-                current->pending.signal.sig[i] & ~current->
-                blocked.sig[i];
+            is_sig = current->pending.signal.sig[i] & ~current->blocked.sig[i];
 
         if (is_sig) {
             /*
@@ -183,7 +182,7 @@ static int module_open(struct inode *inode, struct file *file)
      * Open the file
      */
     Already_Open = 1;
-    return 0;               /* Allow the access */
+    return 0; /* Allow the access */
 }
 
 /*
@@ -207,7 +206,7 @@ int module_close(struct inode *inode, struct file *file)
 
     module_put(THIS_MODULE);
 
-    return 0;               /* success */
+    return 0; /* success */
 }
 
 /*
@@ -221,10 +220,10 @@ int module_close(struct inode *inode, struct file *file)
  * means we don't want to deal with something.
  */
 static struct proc_ops File_Ops_4_Our_Proc_File = {
-    .proc_read = module_output,  /* "read" from the file */
-    .proc_write = module_input,  /* "write" to the file */
-    .proc_open = module_open,    /* called when the /proc file is opened */
-    .proc_release = module_close,        /* called when it's closed */
+    .proc_read = module_output,   /* "read" from the file */
+    .proc_write = module_input,   /* "write" to the file */
+    .proc_open = module_open,     /* called when the /proc file is opened */
+    .proc_release = module_close, /* called when it's closed */
 };
 
 /*
@@ -237,15 +236,15 @@ static struct proc_ops File_Ops_4_Our_Proc_File = {
 
 int init_module()
 {
-    Our_Proc_File = proc_create(PROC_ENTRY_FILENAME, 0644, NULL, &File_Ops_4_Our_Proc_File);
-    if(Our_Proc_File == NULL)
-    {
+    Our_Proc_File =
+        proc_create(PROC_ENTRY_FILENAME, 0644, NULL, &File_Ops_4_Our_Proc_File);
+    if (Our_Proc_File == NULL) {
         remove_proc_entry(PROC_ENTRY_FILENAME, NULL);
         pr_debug("Error: Could not initialize /proc/%s\n", PROC_ENTRY_FILENAME);
         return -ENOMEM;
     }
     proc_set_size(Our_Proc_File, 80);
-    proc_set_user(Our_Proc_File,  GLOBAL_ROOT_UID, GLOBAL_ROOT_GID);
+    proc_set_user(Our_Proc_File, GLOBAL_ROOT_UID, GLOBAL_ROOT_GID);
 
     pr_info("/proc/test created\n");
 

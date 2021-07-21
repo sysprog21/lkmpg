@@ -2,20 +2,20 @@
  * wait for input */
 /* Copyright (C) 1998 by Ori Pomerantz */
 
-#include <stdio.h>    /* standard I/O */
-#include <fcntl.h>    /* for open */
-#include <unistd.h>   /* for read */
-#include <stdlib.h>   /* for exit */
-#include <errno.h>    /* for errno */
+#include <errno.h>  /* for errno */
+#include <fcntl.h>  /* for open */
+#include <stdio.h>  /* standard I/O */
+#include <stdlib.h> /* for exit */
+#include <unistd.h> /* for read */
 
-#define MAX_BYTES 1024*4
+#define MAX_BYTES 1024 * 4
 
 
 int main(int argc, char *argv[])
 {
-    int    fd;  /* The file descriptor for the file to read */
-    size_t bytes; /* The number of bytes read */
-    char   buffer[MAX_BYTES]; /* The buffer for the bytes */
+    int fd;                 /* The file descriptor for the file to read */
+    size_t bytes;           /* The number of bytes read */
+    char buffer[MAX_BYTES]; /* The buffer for the bytes */
 
 
     /* Usage */
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 
         /* Print the characters */
         if (bytes > 0) {
-            for(i=0; i<bytes; i++)
+            for (i = 0; i < bytes; i++)
                 putchar(buffer[i]);
         }
 

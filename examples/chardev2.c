@@ -2,18 +2,18 @@
  *  chardev2.c - Create an input/output character device
  */
 
-#include <linux/kernel.h>       /* We're doing kernel work */
-#include <linux/module.h>       /* Specifically, a module */
-#include <linux/fs.h>
-#include <linux/init.h>
+#include <asm/io.h>
+#include <asm/irq.h>
+#include <asm/uaccess.h>
+#include <linux/cdev.h>
 #include <linux/delay.h>
 #include <linux/device.h>
+#include <linux/fs.h>
+#include <linux/init.h>
 #include <linux/irq.h>
-#include <asm/uaccess.h>
-#include <asm/irq.h>
-#include <asm/io.h>
+#include <linux/kernel.h> /* We're doing kernel work */
+#include <linux/module.h> /* Specifically, a module */
 #include <linux/poll.h>
-#include <linux/cdev.h>
 
 #include "chardev.h"
 #define SUCCESS 0
@@ -38,7 +38,7 @@ static char Message[BUF_LEN];
  */
 static char *Message_Ptr;
 
-static int Major;               /* Major number assigned to our device driver */
+static int Major; /* Major number assigned to our device driver */
 static struct class *cls;
 
 /*
@@ -47,7 +47,7 @@ static struct class *cls;
 static int device_open(struct inode *inode, struct file *file)
 {
 #ifdef DEBUG
-        pr_info("device_open(%p)\n", file);
+    pr_info("device_open(%p)\n", file);
 #endif
 
     /*
@@ -85,10 +85,10 @@ static int device_release(struct inode *inode, struct file *file)
  * device file attempts to read from it.
  */
 static ssize_t device_read(struct file *file,   /* see include/linux/fs.h   */
-                           char __user * buffer,        /* buffer to be
-                                                         * filled with data */
+                           char __user *buffer, /* buffer to be
+                                                 * filled with data */
                            size_t length,       /* length of the buffer     */
-                           loff_t * offset)
+                           loff_t *offset)
 {
     /*
      * Number of bytes actually written to the buffer
@@ -110,18 +110,17 @@ static ssize_t device_read(struct file *file,   /* see include/linux/fs.h   */
      * Actually put the data into the buffer
      */
     while (length && *Message_Ptr) {
-
-    /*
-     * Because the buffer is in the user data segment,
-     * not the kernel data segment, assignment wouldn't
-     * work. Instead, we have to use put_user which
-     * copies data from the kernel data segment to the
-     * user data segment.
-     */
-     put_user(*(Message_Ptr++), buffer++);
-     length--;
-     bytes_read++;
-}
+        /*
+         * Because the buffer is in the user data segment,
+         * not the kernel data segment, assignment wouldn't
+         * work. Instead, we have to use put_user which
+         * copies data from the kernel data segment to the
+         * user data segment.
+         */
+        put_user(*(Message_Ptr++), buffer++);
+        length--;
+        bytes_read++;
+    }
 
 #ifdef DEBUG
     pr_info("Read %d bytes, %d left\n", bytes_read, length);
@@ -138,9 +137,10 @@ static ssize_t device_read(struct file *file,   /* see include/linux/fs.h   */
  * This function is called when somebody tries to
  * write into our device file.
  */
-static ssize_t
-device_write(struct file *file,
-             const char __user * buffer, size_t length, loff_t * offset)
+static ssize_t device_write(struct file *file,
+                            const char __user *buffer,
+                            size_t length,
+                            loff_t *offset)
 {
     int i;
 
@@ -169,8 +169,8 @@ device_write(struct file *file,
  * calling process), the ioctl call returns the output of this function.
  *
  */
-long device_ioctl(struct file *file,             /* ditto */
-                  unsigned int ioctl_num,        /* number and param for ioctl */
+long device_ioctl(struct file *file,      /* ditto */
+                  unsigned int ioctl_num, /* number and param for ioctl */
                   unsigned long ioctl_param)
 {
     int i;
@@ -187,30 +187,30 @@ long device_ioctl(struct file *file,             /* ditto */
          * to be the device's message.  Get the parameter given to
          * ioctl by the process.
          */
-        temp = (char *)ioctl_param;
+        temp = (char *) ioctl_param;
 
-         /*
-          * Find the length of the message
-          */
-         get_user(ch, temp);
-         for (i = 0; ch && i < BUF_LEN; i++, temp++)
-             get_user(ch, temp);
+        /*
+         * Find the length of the message
+         */
+        get_user(ch, temp);
+        for (i = 0; ch && i < BUF_LEN; i++, temp++)
+            get_user(ch, temp);
 
-         device_write(file, (char *)ioctl_param, i, 0);
-         break;
+        device_write(file, (char *) ioctl_param, i, 0);
+        break;
 
     case IOCTL_GET_MSG:
         /*
          * Give the current message to the calling process -
          * the parameter we got is a pointer, fill it.
          */
-        i = device_read(file, (char *)ioctl_param, 99, 0);
+        i = device_read(file, (char *) ioctl_param, 99, 0);
 
         /*
          * Put a zero at the end of the buffer, so it will be
          * properly terminated
          */
-        put_user('\0', (char *)ioctl_param + i);
+        put_user('\0', (char *) ioctl_param + i);
         break;
 
     case IOCTL_GET_NTH_BYTE:
@@ -235,11 +235,11 @@ long device_ioctl(struct file *file,             /* ditto */
  * init_module. NULL is for unimplemented functions.
  */
 struct file_operations Fops = {
-        .read = device_read,
-        .write = device_write,
-        .unlocked_ioctl = device_ioctl,
-        .open = device_open,
-        .release = device_release,      /* a.k.a. close */
+    .read = device_read,
+    .write = device_write,
+    .unlocked_ioctl = device_ioctl,
+    .open = device_open,
+    .release = device_release, /* a.k.a. close */
 };
 
 /*

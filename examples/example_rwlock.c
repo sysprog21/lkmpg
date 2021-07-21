@@ -1,6 +1,6 @@
+#include <linux/interrupt.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
-#include <linux/interrupt.h>
 
 DEFINE_RWLOCK(myrwlock);
 

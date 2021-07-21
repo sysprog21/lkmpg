@@ -3,12 +3,12 @@
  *  through X11, telnet, etc.  We do this by printing the string to the tty
  *  associated with the current task.
  */
+#include <linux/init.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
-#include <linux/init.h>
-#include <linux/sched.h>        /* For current */
-#include <linux/tty.h>          /* For the tty declarations */
-#include <linux/version.h>      /* For LINUX_VERSION_CODE */
+#include <linux/sched.h>   /* For current */
+#include <linux/tty.h>     /* For the tty declarations */
+#include <linux/version.h> /* For LINUX_VERSION_CODE */
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Peter Jay Salzman");
@@ -21,7 +21,7 @@ static void print_string(char *str)
     /*
      * tty struct went into signal struct in 2.6.6
      */
-#if ( LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,5) )
+#if (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 5))
     /*
      * The tty for the current task
      */
@@ -39,7 +39,6 @@ static void print_string(char *str)
      * (ie, if it's a daemon).  If so, there's nothing we can do.
      */
     if (my_tty != NULL) {
-
         /*
          * my_tty->driver is a struct which holds the tty's functions,
          * one of which (write) is used to write strings to the tty.
@@ -62,13 +61,13 @@ static void print_string(char *str)
          * is described in section 2 of
          * linux/Documentation/SubmittingPatches
          */
-        (ttyops->write) (my_tty,      /* The tty itself */
-#if ( LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,9) )
-                         0,   /* Don't take the string
-                                 from user space        */
+        (ttyops->write)(my_tty, /* The tty itself */
+#if (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 9))
+                        0, /* Don't take the string
+                              from user space        */
 #endif
-                         str, /* String                 */
-                         strlen(str));        /* Length */
+                        str,          /* String                 */
+                        strlen(str)); /* Length */
 
         /*
          * ttys were originally hardware devices, which (usually)
@@ -85,10 +84,10 @@ static void print_string(char *str)
          * and therefore a newline requirs both a LF and a CR.
          */
 
-#if ( LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,9) )
-        (ttyops->write) (my_tty, 0, "\015\012", 2);
+#if (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 9))
+        (ttyops->write)(my_tty, 0, "\015\012", 2);
 #else
-        (ttyops->write) (my_tty, "\015\012", 2);
+        (ttyops->write)(my_tty, "\015\012", 2);
 #endif
     }
 }

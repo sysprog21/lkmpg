@@ -9,25 +9,21 @@
  *  Press one button to turn on a LED and another to turn it off
  */
 
-#include <linux/module.h>
-#include <linux/kernel.h>
 #include <linux/gpio.h>
 #include <linux/interrupt.h>
+#include <linux/kernel.h>
+#include <linux/module.h>
 
-static int button_irqs[] = { -1, -1 };
+static int button_irqs[] = {-1, -1};
 
 /* Define GPIOs for LEDs.
    Change the numbers for the GPIO on your board. */
-static struct gpio leds[] = {
-        {  4, GPIOF_OUT_INIT_LOW, "LED 1" }
-};
+static struct gpio leds[] = {{4, GPIOF_OUT_INIT_LOW, "LED 1"}};
 
 /* Define GPIOs for BUTTONS
    Change the numbers for the GPIO on your board. */
-static struct gpio buttons[] = {
-        { 17, GPIOF_IN, "LED 1 ON BUTTON" },
-        { 18, GPIOF_IN, "LED 1 OFF BUTTON" }
-};
+static struct gpio buttons[] = {{17, GPIOF_IN, "LED 1 ON BUTTON"},
+                                {18, GPIOF_IN, "LED 1 OFF BUTTON"}};
 
 /*
  * interrupt function triggered when a button is pressed
@@ -36,10 +32,10 @@ static irqreturn_t button_isr(int irq, void *data)
 {
     /* first button */
     if (irq == button_irqs[0] && !gpio_get_value(leds[0].gpio))
-            gpio_set_value(leds[0].gpio, 1);
+        gpio_set_value(leds[0].gpio, 1);
     /* second button */
-    else if(irq == button_irqs[1] && gpio_get_value(leds[0].gpio))
-            gpio_set_value(leds[0].gpio, 0);
+    else if (irq == button_irqs[1] && gpio_get_value(leds[0].gpio))
+        gpio_set_value(leds[0].gpio, 0);
 
     return IRQ_HANDLED;
 }
@@ -66,8 +62,7 @@ int init_module()
         goto fail1;
     }
 
-    pr_info("Current button1 value: %d\n",
-            gpio_get_value(buttons[0].gpio));
+    pr_info("Current button1 value: %d\n", gpio_get_value(buttons[0].gpio));
 
     ret = gpio_to_irq(buttons[0].gpio);
 
@@ -78,8 +73,7 @@ int init_module()
 
     button_irqs[0] = ret;
 
-    pr_info("Successfully requested BUTTON1 IRQ # %d\n",
-            button_irqs[0]);
+    pr_info("Successfully requested BUTTON1 IRQ # %d\n", button_irqs[0]);
 
     ret = request_irq(button_irqs[0], button_isr,
                       IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
@@ -100,8 +94,7 @@ int init_module()
 
     button_irqs[1] = ret;
 
-    pr_info("Successfully requested BUTTON2 IRQ # %d\n",
-            button_irqs[1]);
+    pr_info("Successfully requested BUTTON2 IRQ # %d\n", button_irqs[1]);
 
     ret = request_irq(button_irqs[1], button_isr,
                       IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,

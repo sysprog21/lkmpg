@@ -1,7 +1,7 @@
-#include <linux/kernel.h>
-#include <linux/module.h>
 #include <linux/delay.h>
 #include <linux/interrupt.h>
+#include <linux/kernel.h>
+#include <linux/module.h>
 
 static void tasklet_fn(unsigned long data)
 {

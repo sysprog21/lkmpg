@@ -1,8 +1,8 @@
+#include <linux/init.h>
+#include <linux/interrupt.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
-#include <linux/init.h>
 #include <linux/spinlock.h>
-#include <linux/interrupt.h>
 
 DEFINE_SPINLOCK(sl_static);
 spinlock_t sl_dynamic;

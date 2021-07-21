@@ -1,6 +1,6 @@
+#include <linux/init.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
-#include <linux/init.h>
 #include <linux/mutex.h>
 
 DEFINE_MUTEX(mymutex);
@@ -20,8 +20,7 @@ static int example_mutex_init(void)
 
         mutex_unlock(&mymutex);
         pr_info("mutex is unlocked\n");
-    }
-    else
+    } else
         pr_info("Failed to lock\n");
 
     return 0;

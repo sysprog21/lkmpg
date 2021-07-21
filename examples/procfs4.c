@@ -4,12 +4,12 @@
  *
  */
 
-#include <linux/kernel.h>       /* We're doing kernel work */
-#include <linux/module.h>       /* Specifically, a module */
-#include <linux/proc_fs.h>      /* Necessary because we use proc fs */
-#include <linux/seq_file.h>     /* for seq_file */
+#include <linux/kernel.h>   /* We're doing kernel work */
+#include <linux/module.h>   /* Specifically, a module */
+#include <linux/proc_fs.h>  /* Necessary because we use proc fs */
+#include <linux/seq_file.h> /* for seq_file */
 
-#define PROC_NAME       "iter"
+#define PROC_NAME "iter"
 
 MODULE_AUTHOR("Philippe Reynes");
 MODULE_LICENSE("GPL");
@@ -26,11 +26,10 @@ static void *my_seq_start(struct seq_file *s, loff_t *pos)
     static unsigned long counter = 0;
 
     /* beginning a new sequence ? */
-    if ( *pos == 0 ) {
+    if (*pos == 0) {
         /* yes => return a non null value to begin the sequence */
         return &counter;
-    }
-    else {
+    } else {
         /* no => it's the end of the sequence, return end to stop reading */
         *pos = 0;
         return NULL;
@@ -44,7 +43,7 @@ static void *my_seq_start(struct seq_file *s, loff_t *pos)
  */
 static void *my_seq_next(struct seq_file *s, void *v, loff_t *pos)
 {
-    unsigned long *tmp_v = (unsigned long *)v;
+    unsigned long *tmp_v = (unsigned long *) v;
     (*tmp_v)++;
     (*pos)++;
     return NULL;
@@ -75,12 +74,10 @@ static int my_seq_show(struct seq_file *s, void *v)
  * This structure gather "function" to manage the sequence
  *
  */
-static struct seq_operations my_seq_ops = {
-        .start = my_seq_start,
-        .next  = my_seq_next,
-        .stop  = my_seq_stop,
-        .show  = my_seq_show
-};
+static struct seq_operations my_seq_ops = {.start = my_seq_start,
+                                           .next = my_seq_next,
+                                           .stop = my_seq_stop,
+                                           .show = my_seq_show};
 
 /**
  * This function is called when the /proc file is open.
@@ -95,12 +92,10 @@ static int my_open(struct inode *inode, struct file *file)
  * This structure gather "function" that manage the /proc file
  *
  */
-static struct proc_ops my_file_ops = {
-    .proc_open    = my_open,
-    .proc_read    = seq_read,
-    .proc_lseek  = seq_lseek,
-    .proc_release = seq_release
-};
+static struct proc_ops my_file_ops = {.proc_open = my_open,
+                                      .proc_read = seq_read,
+                                      .proc_lseek = seq_lseek,
+                                      .proc_release = seq_release};
 
 
 /**
@@ -112,8 +107,7 @@ int init_module(void)
     struct proc_dir_entry *entry;
 
     entry = proc_create(PROC_NAME, 0, NULL, &my_file_ops);
-    if(entry == NULL)
-    {
+    if (entry == NULL) {
         remove_proc_entry(PROC_NAME, NULL);
         pr_debug("Error: Could not initialize /proc/%s\n", PROC_NAME);
         return -ENOMEM;

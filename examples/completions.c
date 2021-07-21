@@ -1,15 +1,15 @@
+#include <linux/completion.h>
 #include <linux/init.h>
-#include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/kthread.h>
-#include <linux/completion.h>
+#include <linux/module.h>
 
 static struct {
     struct completion crank_comp;
     struct completion flywheel_comp;
 } machine;
 
-static int machine_crank_thread(void* arg)
+static int machine_crank_thread(void *arg)
 {
     pr_info("Turn the crank\n");
 
@@ -17,7 +17,7 @@ static int machine_crank_thread(void* arg)
     complete_and_exit(&machine.crank_comp, 0);
 }
 
-static int machine_flywheel_spinup_thread(void* arg)
+static int machine_flywheel_spinup_thread(void *arg)
 {
     wait_for_completion(&machine.crank_comp);
 
@@ -29,23 +29,20 @@ static int machine_flywheel_spinup_thread(void* arg)
 
 static int completions_init(void)
 {
-    struct task_struct* crank_thread;
-    struct task_struct* flywheel_thread;
+    struct task_struct *crank_thread;
+    struct task_struct *flywheel_thread;
 
     pr_info("completions example\n");
 
     init_completion(&machine.crank_comp);
     init_completion(&machine.flywheel_comp);
 
-    crank_thread =
-        kthread_create(machine_crank_thread,
-                       NULL, "KThread Crank");
+    crank_thread = kthread_create(machine_crank_thread, NULL, "KThread Crank");
     if (IS_ERR(crank_thread))
         goto ERROR_THREAD_1;
 
-    flywheel_thread =
-        kthread_create(machine_flywheel_spinup_thread,
-                       NULL, "KThread Flywheel");
+    flywheel_thread = kthread_create(machine_flywheel_spinup_thread, NULL,
+                                     "KThread Flywheel");
     if (IS_ERR(flywheel_thread))
         goto ERROR_THREAD_2;
 

@@ -1,17 +1,13 @@
+#include <linux/interrupt.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
-#include <linux/interrupt.h>
 
 #define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
-#define BYTE_TO_BINARY(byte)  \
-  (byte & 0x80 ? '1' : '0'), \
-  (byte & 0x40 ? '1' : '0'), \
-  (byte & 0x20 ? '1' : '0'), \
-  (byte & 0x10 ? '1' : '0'), \
-  (byte & 0x08 ? '1' : '0'), \
-  (byte & 0x04 ? '1' : '0'), \
-  (byte & 0x02 ? '1' : '0'), \
-  (byte & 0x01 ? '1' : '0')
+#define BYTE_TO_BINARY(byte)                                  \
+    (byte & 0x80 ? '1' : '0'), (byte & 0x40 ? '1' : '0'),     \
+        (byte & 0x20 ? '1' : '0'), (byte & 0x10 ? '1' : '0'), \
+        (byte & 0x08 ? '1' : '0'), (byte & 0x04 ? '1' : '0'), \
+        (byte & 0x02 ? '1' : '0'), (byte & 0x01 ? '1' : '0')
 
 static void atomic_add_subtract(void)
 {
@@ -28,29 +24,29 @@ static void atomic_add_subtract(void)
     /* add one */
     atomic_inc(&debbie);
 
-    pr_info("chris: %d, debbie: %d\n",
-            atomic_read(&chris), atomic_read(&debbie));
+    pr_info("chris: %d, debbie: %d\n", atomic_read(&chris),
+            atomic_read(&debbie));
 }
 
 static void atomic_bitwise(void)
 {
     unsigned long word = 0;
 
-    pr_info("Bits 0: "BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(word));
+    pr_info("Bits 0: " BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(word));
     set_bit(3, &word);
     set_bit(5, &word);
-    pr_info("Bits 1: "BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(word));
+    pr_info("Bits 1: " BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(word));
     clear_bit(5, &word);
-    pr_info("Bits 2: "BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(word));
+    pr_info("Bits 2: " BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(word));
     change_bit(3, &word);
 
-    pr_info("Bits 3: "BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(word));
+    pr_info("Bits 3: " BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(word));
     if (test_and_set_bit(3, &word))
         pr_info("wrong\n");
-    pr_info("Bits 4: "BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(word));
+    pr_info("Bits 4: " BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(word));
 
     word = 255;
-    pr_info("Bits 5: "BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(word));
+    pr_info("Bits 5: " BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(word));
 }
 
 static int example_atomic_init(void)

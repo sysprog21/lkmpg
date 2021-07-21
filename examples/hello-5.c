@@ -1,10 +1,10 @@
 /*
  *  hello-5.c - Demonstrates command line argument passing to a module.
  */
+#include <linux/init.h>
+#include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/moduleparam.h>
-#include <linux/kernel.h>
-#include <linux/init.h>
 #include <linux/stat.h>
 
 MODULE_LICENSE("GPL");
@@ -14,7 +14,7 @@ static short int myshort = 1;
 static int myint = 420;
 static long int mylong = 9999;
 static char *mystring = "blah";
-static int myintArray[2] = { -1, -1 };
+static int myintArray[2] = {-1, -1};
 static int arr_argc = 0;
 
 /*
@@ -54,7 +54,7 @@ static int __init hello_5_init(void)
     pr_info("mylong is a long integer: %ld\n", mylong);
     pr_info("mystring is a string: %s\n", mystring);
 
-    for (i = 0; i < (sizeof myintArray / sizeof (int)); i++)
+    for (i = 0; i < (sizeof myintArray / sizeof(int)); i++)
         pr_info("myintArray[%d] = %d\n", i, myintArray[i]);
 
     pr_info("got %d arguments for myintArray.\n", arr_argc);

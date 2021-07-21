@@ -4,12 +4,13 @@
 
 struct devicemodel_data {
     char *greeting;
-    int   number;
+    int number;
 };
 
 static int devicemodel_probe(struct platform_device *dev)
 {
-    struct devicemodel_data *pd = (struct devicemodel_data *)(dev->dev.platform_data);
+    struct devicemodel_data *pd =
+        (struct devicemodel_data *) (dev->dev.platform_data);
 
     pr_info("devicemodel probe\n");
     pr_info("devicemodel greeting: %s; %d\n", pd->greeting, pd->number);
@@ -46,24 +47,23 @@ static int devicemodel_resume(struct device *dev)
     return 0;
 }
 
-static const struct dev_pm_ops devicemodel_pm_ops =
-{
+static const struct dev_pm_ops devicemodel_pm_ops = {
     .suspend = devicemodel_suspend,
     .resume = devicemodel_resume,
     .poweroff = devicemodel_suspend,
     .freeze = devicemodel_suspend,
     .thaw = devicemodel_resume,
-    .restore = devicemodel_resume
-};
+    .restore = devicemodel_resume};
 
 static struct platform_driver devicemodel_driver = {
-    .driver     = {
-        .name   = "devicemodel_example",
-        .owner  = THIS_MODULE,
-        .pm     = &devicemodel_pm_ops,
-    },
-    .probe      = devicemodel_probe,
-    .remove     = devicemodel_remove,
+    .driver =
+        {
+            .name = "devicemodel_example",
+            .owner = THIS_MODULE,
+            .pm = &devicemodel_pm_ops,
+        },
+    .probe = devicemodel_probe,
+    .remove = devicemodel_remove,
 };
 
 static int devicemodel_init(void)

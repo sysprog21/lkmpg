@@ -1,9 +1,9 @@
 #include <crypto/internal/skcipher.h>
-#include <linux/module.h>
 #include <linux/crypto.h>
+#include <linux/module.h>
 
 #define SYMMETRIC_KEY_LENGTH 32
-#define CIPHER_BLOCK_SIZE    16
+#define CIPHER_BLOCK_SIZE 16
 
 struct tcrypt_result {
     struct completion completion;
@@ -12,17 +12,17 @@ struct tcrypt_result {
 
 struct skcipher_def {
     struct scatterlist sg;
-    struct crypto_skcipher * tfm;
-    struct skcipher_request * req;
+    struct crypto_skcipher *tfm;
+    struct skcipher_request *req;
     struct tcrypt_result result;
-    char * scratchpad;
-    char * ciphertext;
-    char * ivdata;
+    char *scratchpad;
+    char *ciphertext;
+    char *ivdata;
 };
 
 static struct skcipher_def sk;
 
-static void test_skcipher_finish(struct skcipher_def * sk)
+static void test_skcipher_finish(struct skcipher_def *sk)
 {
     if (sk->tfm)
         crypto_free_skcipher(sk->tfm);
@@ -36,24 +36,23 @@ static void test_skcipher_finish(struct skcipher_def * sk)
         kfree(sk->ciphertext);
 }
 
-static int test_skcipher_result(struct skcipher_def * sk, int rc)
+static int test_skcipher_result(struct skcipher_def *sk, int rc)
 {
     switch (rc) {
     case 0:
         break;
     case -EINPROGRESS || -EBUSY:
-        rc = wait_for_completion_interruptible(
-            &sk->result.completion);
+        rc = wait_for_completion_interruptible(&sk->result.completion);
         if (!rc && !sk->result.err) {
             reinit_completion(&sk->result.completion);
             break;
         }
-        pr_info("skcipher encrypt returned with %d result %d\n",
-            rc, sk->result.err);
+        pr_info("skcipher encrypt returned with %d result %d\n", rc,
+                sk->result.err);
         break;
     default:
-        pr_info("skcipher encrypt returned with %d result %d\n",
-            rc, sk->result.err);
+        pr_info("skcipher encrypt returned with %d result %d\n", rc,
+                sk->result.err);
         break;
     }
 
@@ -90,8 +89,9 @@ static void test_skcipher_callback(struct crypto_async_request *req, int error)
     */
 }
 
-static int test_skcipher_encrypt(char * plaintext, char * password,
-                                 struct skcipher_def * sk)
+static int test_skcipher_encrypt(char *plaintext,
+                                 char *password,
+                                 struct skcipher_def *sk)
 {
     int ret = -EFAULT;
     unsigned char key[SYMMETRIC_KEY_LENGTH];
@@ -114,14 +114,13 @@ static int test_skcipher_encrypt(char * plaintext, char * password,
     }
 
     skcipher_request_set_callback(sk->req, CRYPTO_TFM_REQ_MAY_BACKLOG,
-                                  test_skcipher_callback,
-                                  &sk->result);
+                                  test_skcipher_callback, &sk->result);
 
     /* clear the key */
-    memset((void*)key,'\0',SYMMETRIC_KEY_LENGTH);
+    memset((void *) key, '\0', SYMMETRIC_KEY_LENGTH);
 
     /* Use the world's favourite password */
-    sprintf((char*)key,"%s",password);
+    sprintf((char *) key, "%s", password);
 
     /* AES 256 with given symmetric key */
     if (crypto_skcipher_setkey(sk->tfm, key, SYMMETRIC_KEY_LENGTH)) {
@@ -150,11 +149,11 @@ static int test_skcipher_encrypt(char * plaintext, char * password,
             goto out;
         }
     }
-    sprintf((char*)sk->scratchpad,"%s",plaintext);
+    sprintf((char *) sk->scratchpad, "%s", plaintext);
 
     sg_init_one(&sk->sg, sk->scratchpad, CIPHER_BLOCK_SIZE);
-    skcipher_request_set_crypt(sk->req, &sk->sg, &sk->sg,
-                               CIPHER_BLOCK_SIZE, sk->ivdata);
+    skcipher_request_set_crypt(sk->req, &sk->sg, &sk->sg, CIPHER_BLOCK_SIZE,
+                               sk->ivdata);
     init_completion(&sk->result.completion);
 
     /* encrypt data */
@@ -172,7 +171,7 @@ out:
 int cryptoapi_init(void)
 {
     /* The world's favourite password */
-    char * password = "password123";
+    char *password = "password123";
 
     sk.tfm = NULL;
     sk.req = NULL;

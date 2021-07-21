@@ -1,8 +1,8 @@
-#include <linux/ioctl.h>
-#include <linux/init.h>
-#include <linux/module.h>
-#include <linux/fs.h>
 #include <linux/cdev.h>
+#include <linux/fs.h>
+#include <linux/init.h>
+#include <linux/ioctl.h>
+#include <linux/module.h>
 #include <linux/slab.h>
 #include <linux/uaccess.h>
 
@@ -14,10 +14,10 @@ struct ioctl_arg {
 /* Documentation/ioctl/ioctl-number.txt */
 #define IOC_MAGIC '\x66'
 
-#define IOCTL_VALSET      _IOW(IOC_MAGIC, 0, struct ioctl_arg)
-#define IOCTL_VALGET      _IOR(IOC_MAGIC, 1, struct ioctl_arg)
-#define IOCTL_VALGET_NUM  _IOR(IOC_MAGIC, 2, int)
-#define IOCTL_VALSET_NUM  _IOW(IOC_MAGIC, 3, int)
+#define IOCTL_VALSET _IOW(IOC_MAGIC, 0, struct ioctl_arg)
+#define IOCTL_VALGET _IOR(IOC_MAGIC, 1, struct ioctl_arg)
+#define IOCTL_VALGET_NUM _IOR(IOC_MAGIC, 2, int)
+#define IOCTL_VALSET_NUM _IOW(IOC_MAGIC, 3, int)
 
 #define IOCTL_VAL_MAXNR 3
 #define DRIVER_NAME "ioctltest"
@@ -32,8 +32,11 @@ struct test_ioctl_data {
     rwlock_t lock;
 };
 
-static long test_ioctl_ioctl(struct file* filp, unsigned int cmd, unsigned long arg) {
-    struct test_ioctl_data* ioctl_data = filp->private_data;
+static long test_ioctl_ioctl(struct file *filp,
+                             unsigned int cmd,
+                             unsigned long arg)
+{
+    struct test_ioctl_data *ioctl_data = filp->private_data;
     int retval = 0;
     unsigned char val;
     struct ioctl_arg data;
@@ -52,7 +55,7 @@ static long test_ioctl_ioctl(struct file* filp, unsigned int cmd, unsigned long 
          goto done;
         }
         */
-        if (copy_from_user(&data, (int __user*)arg, sizeof(data))) {
+        if (copy_from_user(&data, (int __user *) arg, sizeof(data))) {
             retval = -EFAULT;
             goto done;
         }
@@ -75,7 +78,7 @@ static long test_ioctl_ioctl(struct file* filp, unsigned int cmd, unsigned long 
         read_unlock(&ioctl_data->lock);
         data.val = val;
 
-        if (copy_to_user((int __user*)arg, &data, sizeof(data))) {
+        if (copy_to_user((int __user *) arg, &data, sizeof(data))) {
             retval = -EFAULT;
             goto done;
         }
@@ -83,7 +86,7 @@ static long test_ioctl_ioctl(struct file* filp, unsigned int cmd, unsigned long 
         break;
 
     case IOCTL_VALGET_NUM:
-        retval = __put_user(ioctl_num, (int __user*)arg);
+        retval = __put_user(ioctl_num, (int __user *) arg);
         break;
 
     case IOCTL_VALSET_NUM:
@@ -102,8 +105,12 @@ done:
     return retval;
 }
 
-ssize_t test_ioctl_read(struct file* filp, char __user* buf, size_t count, loff_t* f_pos) {
-    struct test_ioctl_data* ioctl_data = filp->private_data;
+ssize_t test_ioctl_read(struct file *filp,
+                        char __user *buf,
+                        size_t count,
+                        loff_t *f_pos)
+{
+    struct test_ioctl_data *ioctl_data = filp->private_data;
     unsigned char val;
     int retval;
     int i = 0;
@@ -111,7 +118,7 @@ ssize_t test_ioctl_read(struct file* filp, char __user* buf, size_t count, loff_
     val = ioctl_data->val;
     read_unlock(&ioctl_data->lock);
 
-    for (; i < count ; i++) {
+    for (; i < count; i++) {
         if (copy_to_user(&buf[i], &val, 1)) {
             retval = -EFAULT;
             goto out;
@@ -123,7 +130,8 @@ out:
     return retval;
 }
 
-static int test_ioctl_close(struct inode* inode, struct file* filp) {
+static int test_ioctl_close(struct inode *inode, struct file *filp)
+{
     pr_alert("%s call.\n", __func__);
 
     if (filp->private_data) {
@@ -134,8 +142,9 @@ static int test_ioctl_close(struct inode* inode, struct file* filp) {
     return 0;
 }
 
-static int test_ioctl_open(struct inode* inode, struct file* filp) {
-    struct test_ioctl_data* ioctl_data;
+static int test_ioctl_open(struct inode *inode, struct file *filp)
+{
+    struct test_ioctl_data *ioctl_data;
     pr_alert("%s call.\n", __func__);
     ioctl_data = kmalloc(sizeof(struct test_ioctl_data), GFP_KERNEL);
 
@@ -157,7 +166,8 @@ struct file_operations fops = {
     .unlocked_ioctl = test_ioctl_ioctl,
 };
 
-static int ioctl_init(void) {
+static int ioctl_init(void)
+{
     dev_t dev = MKDEV(test_ioctl_major, 0);
     int alloc_ret = 0;
     int cdev_ret = 0;
@@ -175,7 +185,8 @@ static int ioctl_init(void) {
         goto error;
     }
 
-    pr_alert("%s driver(major: %d) installed.\n", DRIVER_NAME, test_ioctl_major);
+    pr_alert("%s driver(major: %d) installed.\n", DRIVER_NAME,
+             test_ioctl_major);
     return 0;
 error:
 
@@ -190,7 +201,8 @@ error:
     return -1;
 }
 
-static void ioctl_exit(void) {
+static void ioctl_exit(void)
+{
     dev_t dev = MKDEV(test_ioctl_major, 0);
     cdev_del(&test_ioctl_cdev);
     unregister_chrdev_region(dev, num_of_dev);

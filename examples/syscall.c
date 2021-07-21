@@ -10,13 +10,13 @@
  *  https://bbs.archlinux.org/viewtopic.php?id=139406
  */
 
-#include <linux/module.h>
-#include <linux/kernel.h>
-#include <linux/syscalls.h>
-#include <linux/delay.h>
 #include <asm/paravirt.h>
-#include <linux/moduleparam.h>  /* which will have params */
-#include <linux/unistd.h>       /* The list of system calls */
+#include <linux/delay.h>
+#include <linux/kernel.h>
+#include <linux/module.h>
+#include <linux/moduleparam.h> /* which will have params */
+#include <linux/syscalls.h>
+#include <linux/unistd.h> /* The list of system calls */
 
 /*
  * For the current (process) structure, we need
@@ -48,7 +48,7 @@ module_param(uid, int, 0644);
  * Another reason for this is that we can't get sys_open.
  * It's a static variable, so it is not exported.
  */
-asmlinkage int (*original_call) (const char *, int, int);
+asmlinkage int (*original_call)(const char *, int, int);
 
 /*
  * The function we'll replace sys_open (the function
@@ -93,7 +93,7 @@ static unsigned long **aquire_sys_call_table(void)
     unsigned long **sct;
 
     while (offset < ULLONG_MAX) {
-        sct = (unsigned long **)offset;
+        sct = (unsigned long **) offset;
 
         if (sct[__NR_close] == (unsigned long *) ksys_close)
             return sct;
@@ -106,7 +106,7 @@ static unsigned long **aquire_sys_call_table(void)
 
 static int __init syscall_start(void)
 {
-    if(!(sys_call_table = aquire_sys_call_table()))
+    if (!(sys_call_table = aquire_sys_call_table()))
         return -1;
 
     original_cr0 = read_cr0();
@@ -114,10 +114,10 @@ static int __init syscall_start(void)
     write_cr0(original_cr0 & ~0x00010000);
 
     /* keep track of the original open function */
-    original_call = (void*)sys_call_table[__NR_open];
+    original_call = (void *) sys_call_table[__NR_open];
 
     /* use our open function instead */
-    sys_call_table[__NR_open] = (unsigned long *)our_sys_open;
+    sys_call_table[__NR_open] = (unsigned long *) our_sys_open;
 
     write_cr0(original_cr0);
 
@@ -128,14 +128,14 @@ static int __init syscall_start(void)
 
 static void __exit syscall_end(void)
 {
-    if(!sys_call_table) {
+    if (!sys_call_table) {
         return;
     }
 
     /*
      * Return the system call back to normal
      */
-    if (sys_call_table[__NR_open] != (unsigned long *)our_sys_open) {
+    if (sys_call_table[__NR_open] != (unsigned long *) our_sys_open) {
         pr_alert("Somebody else also played with the ");
         pr_alert("open system call\n");
         pr_alert("The system may be left in ");
@@ -143,7 +143,7 @@ static void __exit syscall_end(void)
     }
 
     write_cr0(original_cr0 & ~0x00010000);
-    sys_call_table[__NR_open] = (unsigned long *)original_call;
+    sys_call_table[__NR_open] = (unsigned long *) original_call;
     write_cr0(original_cr0);
 
     msleep(2000);

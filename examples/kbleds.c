@@ -2,13 +2,13 @@
  *  kbleds.c - Blink keyboard leds until the module is unloaded.
  */
 
-#include <linux/module.h>
+#include <linux/console_struct.h> /* For vc_cons */
 #include <linux/init.h>
-#include <linux/vt_kern.h>      /* for fg_console */
-#include <linux/tty.h>          /* For fg_console, MAX_NR_CONSOLES */
-#include <linux/kd.h>           /* For KDSETLED */
+#include <linux/kd.h> /* For KDSETLED */
+#include <linux/module.h>
+#include <linux/tty.h> /* For fg_console, MAX_NR_CONSOLES */
 #include <linux/vt.h>
-#include <linux/console_struct.h>       /* For vc_cons */
+#include <linux/vt_kern.h> /* for fg_console */
 
 MODULE_DESCRIPTION("Example module illustrating the use of Keyboard LEDs.");
 MODULE_AUTHOR("Daniele Paolo Scarpazza");
@@ -18,9 +18,9 @@ struct timer_list my_timer;
 struct tty_driver *my_driver;
 char kbledstatus = 0;
 
-#define BLINK_DELAY   HZ/5
-#define ALL_LEDS_ON   0x07
-#define RESTORE_LEDS  0xFF
+#define BLINK_DELAY HZ / 5
+#define ALL_LEDS_ON 0x07
+#define RESTORE_LEDS 0xFF
 
 /*
  * Function my_timer_func blinks the keyboard LEDs periodically by invoking
@@ -39,15 +39,15 @@ char kbledstatus = 0;
 
 static void my_timer_func(unsigned long ptr)
 {
-    unsigned long *pstatus = (unsigned long *)ptr;
-    struct tty_struct* t = vc_cons[fg_console].d->port.tty;
+    unsigned long *pstatus = (unsigned long *) ptr;
+    struct tty_struct *t = vc_cons[fg_console].d->port.tty;
 
     if (*pstatus == ALL_LEDS_ON)
         *pstatus = RESTORE_LEDS;
     else
         *pstatus = ALL_LEDS_ON;
 
-    (my_driver->ops->ioctl) (t, KDSETLED, *pstatus);
+    (my_driver->ops->ioctl)(t, KDSETLED, *pstatus);
 
     my_timer.expires = jiffies + BLINK_DELAY;
     add_timer(&my_timer);
@@ -62,9 +62,8 @@ static int __init kbleds_init(void)
     for (i = 0; i < MAX_NR_CONSOLES; i++) {
         if (!vc_cons[i].d)
             break;
-        pr_info("poet_atkm: console[%i/%i] #%i, tty %lx\n", i,
-                MAX_NR_CONSOLES, vc_cons[i].d->vc_num,
-                (unsigned long)vc_cons[i].d->port.tty);
+        pr_info("poet_atkm: console[%i/%i] #%i, tty %lx\n", i, MAX_NR_CONSOLES,
+                vc_cons[i].d->vc_num, (unsigned long) vc_cons[i].d->port.tty);
     }
     pr_info("kbleds: finished scanning consoles\n");
 
@@ -74,7 +73,8 @@ static int __init kbleds_init(void)
     /*
      * Set up the LED blink timer the first time
      */
-    timer_setup(&my_timer, (void*)&my_timer_func, (unsigned long)&kbledstatus);
+    timer_setup(&my_timer, (void *) &my_timer_func,
+                (unsigned long) &kbledstatus);
     my_timer.expires = jiffies + BLINK_DELAY;
     add_timer(&my_timer);
 
@@ -85,8 +85,8 @@ static void __exit kbleds_cleanup(void)
 {
     pr_info("kbleds: unloading...\n");
     del_timer(&my_timer);
-    (my_driver->ops->ioctl) (vc_cons[fg_console].d->port.tty,
-                             KDSETLED, RESTORE_LEDS);
+    (my_driver->ops->ioctl)(vc_cons[fg_console].d->port.tty, KDSETLED,
+                            RESTORE_LEDS);
 }
 
 module_init(kbleds_init);

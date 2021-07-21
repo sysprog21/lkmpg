@@ -1,13 +1,13 @@
-#include <linux/module.h>
 #include <linux/init.h>
+#include <linux/module.h>
 #include <linux/workqueue.h>
 
-static struct workqueue_struct *queue=NULL;
+static struct workqueue_struct *queue = NULL;
 static struct work_struct work;
 
 static void work_handler(struct work_struct *data)
 {
-    pr_info ("work handler function.\n");
+    pr_info("work handler function.\n");
 }
 
 int init_module()
