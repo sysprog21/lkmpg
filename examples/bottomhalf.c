@@ -1,8 +1,7 @@
 /*
  * bottomhalf.c - Top and bottom half interrupt handling
  *
- *  Copyright (C) 2017 by Bob Mottram
- *  Based upon the Rpi example by Stefan Wendler (devnull@kaltpost.de)
+ *  Based upon the RPi example by Stefan Wendler (devnull@kaltpost.de)
  *  from:
  *    https://github.com/wendlers/rpi-kmod-samples
  *
@@ -154,5 +153,4 @@ void cleanup_module()
 }
 
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Bob Mottram");
 MODULE_DESCRIPTION("Interrupt with top and bottom half");

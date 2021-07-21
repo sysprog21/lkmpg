@@ -399,12 +399,15 @@ REGPARM 4KSTACKS gcc-3.3' should be '2.6.5-1.358 686 REGPARM 4KSTACKS gcc-3.3'
 In other words, your kernel refuses to accept your module because version strings (more precisely, version magics) do not match. Incidentally, version magics are stored in the module object in the form of a static string, starting with vermagic:. Version data are inserted in your module when it is linked against the \textbf{init/vermagic.o} file. To inspect version magics and other strings stored in a given module, issue the modinfo module.ko command:
 
 \begin{verbatim}
-# sudo modinfo hello-4.ko
-license:        GPL
-author:         Bob Mottram <bob@freedombone.net>
+# modinfo hello-4.ko
 description:    A sample driver
-vermagic:       5.6.7-1.358 amd64 REGPARM 4KSTACKS gcc-4.9.2
+author:         LKMPG
+license:        GPL
+srcversion:     B2AA7FBFCC2C39AED665382
 depends:
+retpoline:      Y
+name:           hello_4
+vermagic:       5.4.0-70-generic SMP mod_unload modversions
 \end{verbatim}
 
 To overcome this problem we could resort to the \textbf{--force-vermagic} option, but this solution is potentially unsafe, and unquestionably inacceptable in production modules. Consequently, we want to compile our module in an environment which was identical to the one in which our precompiled kernel was built. How to do this, is the subject of the remainder of this chapter.

@@ -12,7 +12,6 @@
 #include <linux/console_struct.h> /* For vc_cons */
 
 MODULE_DESCRIPTION("Example module illustrating the use of Keyboard LEDs.");
-MODULE_AUTHOR("Daniele Paolo Scarpazza");
 MODULE_LICENSE("GPL");
 
 struct timer_list my_timer;

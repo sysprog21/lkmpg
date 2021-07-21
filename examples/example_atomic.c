@@ -67,6 +67,5 @@ static void example_atomic_exit(void)
 module_init(example_atomic_init);
 module_exit(example_atomic_exit);
 
-MODULE_AUTHOR("Bob Mottram");
 MODULE_DESCRIPTION("Atomic operations example");
 MODULE_LICENSE("GPL");

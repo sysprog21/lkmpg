@@ -30,6 +30,5 @@ static void example_tasklet_exit(void)
 module_init(example_tasklet_init);
 module_exit(example_tasklet_exit);
 
-MODULE_AUTHOR("Bob Mottram");
 MODULE_DESCRIPTION("Tasklet example");
 MODULE_LICENSE("GPL");

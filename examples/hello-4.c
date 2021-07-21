@@ -6,7 +6,7 @@
 #include <linux/module.h> /* Needed by all modules */
 
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Bob Mottram");
+MODULE_AUTHOR("LKMPG");
 MODULE_DESCRIPTION("A sample driver");
 MODULE_SUPPORTED_DEVICE("testdevice");
 

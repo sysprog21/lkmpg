@@ -55,6 +55,5 @@ void cryptosha256_exit(void) {}
 module_init(cryptosha256_init);
 module_exit(cryptosha256_exit);
 
-MODULE_AUTHOR("Bob Mottram");
 MODULE_DESCRIPTION("sha256 hash test");
 MODULE_LICENSE("GPL");

@@ -34,6 +34,5 @@ static void example_mutex_exit(void)
 module_init(example_mutex_init);
 module_exit(example_mutex_exit);
 
-MODULE_AUTHOR("Bob Mottram");
 MODULE_DESCRIPTION("Mutex example");
 MODULE_LICENSE("GPL");

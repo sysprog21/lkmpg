@@ -58,6 +58,5 @@ static void example_spinlock_exit(void)
 module_init(example_spinlock_init);
 module_exit(example_spinlock_exit);
 
-MODULE_AUTHOR("Bob Mottram");
 MODULE_DESCRIPTION("Spinlock example");
 MODULE_LICENSE("GPL");

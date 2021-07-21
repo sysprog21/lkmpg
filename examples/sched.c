@@ -25,5 +25,4 @@ void cleanup_module()
 }
 
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Bob Mottram");
 MODULE_DESCRIPTION("Workqueue example");

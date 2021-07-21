@@ -191,6 +191,5 @@ void cryptoapi_exit(void)
 module_init(cryptoapi_init);
 module_exit(cryptoapi_exit);
 
-MODULE_AUTHOR("Bob Mottram");
 MODULE_DESCRIPTION("Symmetric key encryption example");
 MODULE_LICENSE("GPL");

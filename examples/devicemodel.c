@@ -89,7 +89,6 @@ static void devicemodel_exit(void)
 }
 
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Bob Mottram");
 MODULE_DESCRIPTION("Linux Device Model example");
 
 module_init(devicemodel_init);

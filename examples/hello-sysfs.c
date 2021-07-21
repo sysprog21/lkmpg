@@ -10,7 +10,6 @@
 #include <linux/sysfs.h>
 
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Bob Mottram");
 
 static struct kobject *mymodule;
 

@@ -69,6 +69,5 @@ void completions_exit(void)
 module_init(completions_init);
 module_exit(completions_exit);
 
-MODULE_AUTHOR("Bob Mottram");
 MODULE_DESCRIPTION("Completions example");
 MODULE_LICENSE("GPL");

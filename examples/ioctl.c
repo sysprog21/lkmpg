@@ -213,5 +213,4 @@ module_init(ioctl_init);
 module_exit(ioctl_exit);
 
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Wang Chen Shu");
 MODULE_DESCRIPTION("This is test_ioctl module");

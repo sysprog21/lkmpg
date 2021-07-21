@@ -16,7 +16,6 @@
 
 #define PROC_NAME "iter"
 
-MODULE_AUTHOR("Philippe Reynes");
 MODULE_LICENSE("GPL");
 
 /**

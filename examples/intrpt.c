@@ -140,5 +140,4 @@ void cleanup_module()
 }
 
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Bob Mottram");
 MODULE_DESCRIPTION("Handle some GPIO interrupts");

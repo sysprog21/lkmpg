@@ -1,6 +1,5 @@
 /* cat_noblock.c - open a file and display its contents, but exit rather than
  * wait for input */
-/* Copyright (C) 1998 by Ori Pomerantz */
 
 #include <errno.h>  /* for errno */
 #include <fcntl.h>  /* for open */

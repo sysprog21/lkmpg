@@ -11,7 +11,6 @@
 #include <linux/version.h> /* For LINUX_VERSION_CODE */
 
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Peter Jay Salzman");
 
 static void print_string(char *str)
 {
