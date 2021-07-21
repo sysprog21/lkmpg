@@ -6,9 +6,8 @@
 #include <linux/init.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
-#include <linux/sched.h>   /* For current */
-#include <linux/tty.h>     /* For the tty declarations */
-#include <linux/version.h> /* For LINUX_VERSION_CODE */
+#include <linux/sched.h> /* For current */
+#include <linux/tty.h>   /* For the tty declarations */
 
 MODULE_LICENSE("GPL");
 
@@ -18,19 +17,9 @@ static void print_string(char *str)
     const struct tty_operations *ttyops;
 
     /*
-     * tty struct went into signal struct in 2.6.6
-     */
-#if (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 5))
-    /*
-     * The tty for the current task
-     */
-    my_tty = current->tty;
-#else
-    /*
      * The tty for the current task, for 2.6.6+ kernels
      */
     my_tty = get_current_tty();
-#endif
     ttyops = my_tty->driver->ops;
 
     /*
@@ -46,12 +35,9 @@ static void print_string(char *str)
          *
          * The function's 1st parameter is the tty to write to,
          * because the same function would normally be used for all
-         * tty's of a certain type.  The 2nd parameter controls
-         * whether the function receives a string from kernel
-         * memory (false, 0) or from user memory (true, non zero).
-         * BTW: this param has been removed in Kernels > 2.6.9
-         * The (2nd) 3rd parameter is a pointer to a string.
-         * The (3rd) 4th parameter is the length of the string.
+         * tty's of a certain type.
+         * The 2nd parameter is a pointer to a string.
+         * The 3rd parameter is the length of the string.
          *
          * As you will see below, sometimes it's necessary to use
          * preprocessor stuff to create code that works for different
@@ -60,11 +46,7 @@ static void print_string(char *str)
          * is described in section 2 of
          * linux/Documentation/SubmittingPatches
          */
-        (ttyops->write)(my_tty, /* The tty itself */
-#if (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 9))
-                        0, /* Don't take the string
-                              from user space        */
-#endif
+        (ttyops->write)(my_tty,       /* The tty itself */
                         str,          /* String                 */
                         strlen(str)); /* Length */
 
@@ -82,12 +64,7 @@ static void print_string(char *str)
          * MS Windows, the ASCII standard was strictly adhered to,
          * and therefore a newline requirs both a LF and a CR.
          */
-
-#if (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 9))
-        (ttyops->write)(my_tty, 0, "\015\012", 2);
-#else
         (ttyops->write)(my_tty, "\015\012", 2);
-#endif
     }
 }
 
