@@ -7,6 +7,11 @@
 #include <linux/proc_fs.h>
 #include <linux/sched.h>
 #include <linux/uaccess.h>
+#include <linux/version.h>
+
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 6, 0)
+#define HAVE_PROC_OPS
+#endif
 
 #define PROCFS_MAX_SIZE 2048
 #define PROCFS_ENTRY_FILENAME "buffer2k"
@@ -57,12 +62,21 @@ int procfs_close(struct inode *inode, struct file *file)
     return 0;
 }
 
+#ifdef HAVE_PROC_OPS
 static struct proc_ops File_Ops_4_Our_Proc_File = {
     .proc_read = procfs_read,
     .proc_write = procfs_write,
     .proc_open = procfs_open,
     .proc_release = procfs_close,
 };
+#else
+static const struct file_operations File_Ops_4_Our_Proc_File = {
+    .read = procfs_read,
+    .write = procfs_write,
+    .open = procfs_open,
+    .release = procfs_close,
+};
+#endif
 
 int init_module()
 {

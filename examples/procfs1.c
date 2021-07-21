@@ -6,6 +6,11 @@
 #include <linux/module.h>
 #include <linux/proc_fs.h>
 #include <linux/uaccess.h>
+#include <linux/version.h>
+
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 6, 0)
+#define HAVE_PROC_OPS
+#endif
 
 #define procfs_name "helloworld"
 
@@ -26,9 +31,15 @@ ssize_t procfile_read(struct file *filePointer,
     return ret;
 }
 
+#ifdef HAVE_PROC_OPS
 static const struct proc_ops proc_file_fops = {
     .proc_read = procfile_read,
 };
+#else
+static const struct file_operations proc_file_fops = {
+    .read = procfile_read,
+};
+#endif
 
 int init_module()
 {

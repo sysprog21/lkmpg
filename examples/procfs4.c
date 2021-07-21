@@ -8,6 +8,11 @@
 #include <linux/module.h>   /* Specifically, a module */
 #include <linux/proc_fs.h>  /* Necessary because we use proc fs */
 #include <linux/seq_file.h> /* for seq_file */
+#include <linux/version.h>
+
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 6, 0)
+#define HAVE_PROC_OPS
+#endif
 
 #define PROC_NAME "iter"
 
@@ -92,11 +97,21 @@ static int my_open(struct inode *inode, struct file *file)
  * This structure gather "function" that manage the /proc file
  *
  */
-static struct proc_ops my_file_ops = {.proc_open = my_open,
-                                      .proc_read = seq_read,
-                                      .proc_lseek = seq_lseek,
-                                      .proc_release = seq_release};
-
+#ifdef HAVE_PROC_OPS
+static const struct proc_ops my_file_ops = {
+    .proc_open = my_open,
+    .proc_read = seq_read,
+    .proc_lseek = seq_lseek,
+    .proc_release = seq_release,
+};
+#else
+static const struct file_operations my_file_ops = {
+    .open = my_open,
+    .read = seq_read,
+    .llseek = seq_lseek,
+    .release = seq_release,
+};
+#endif
 
 /**
  * This function is called when the module is loaded

@@ -9,6 +9,11 @@
 #include <linux/sched.h>   /* For putting processes to sleep and
                                    waking them up */
 #include <linux/uaccess.h> /* for get_user and put_user */
+#include <linux/version.h>
+
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 6, 0)
+#define HAVE_PROC_OPS
+#endif
 
 /*
  * The module's file functions
@@ -219,12 +224,21 @@ int module_close(struct inode *inode, struct file *file)
  * the functions called when somebody tries to do something to our file. NULL
  * means we don't want to deal with something.
  */
-static struct proc_ops File_Ops_4_Our_Proc_File = {
+#ifdef HAVE_PROC_OPS
+static const struct proc_ops File_Ops_4_Our_Proc_File = {
     .proc_read = module_output,   /* "read" from the file */
     .proc_write = module_input,   /* "write" to the file */
     .proc_open = module_open,     /* called when the /proc file is opened */
     .proc_release = module_close, /* called when it's closed */
 };
+#else
+static const struct file_operations File_Ops_4_Our_Proc_File = {
+    .read = module_output,
+    .write = module_input,
+    .open = module_open,
+    .release = module_close,
+};
+#endif
 
 /*
  * Module initialization and cleanup

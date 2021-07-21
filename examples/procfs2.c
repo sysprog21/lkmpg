@@ -7,6 +7,11 @@
 #include <linux/module.h>  /* Specifically, a module */
 #include <linux/proc_fs.h> /* Necessary because we use the proc fs */
 #include <linux/uaccess.h> /* for copy_from_user */
+#include <linux/version.h>
+
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 6, 0)
+#define HAVE_PROC_OPS
+#endif
 
 #define PROCFS_MAX_SIZE 1024
 #define PROCFS_NAME "buffer1k"
@@ -68,10 +73,17 @@ static ssize_t procfile_write(struct file *file,
     return procfs_buffer_size;
 }
 
+#ifdef HAVE_PROC_OPS
 static const struct proc_ops proc_file_fops = {
     .proc_read = procfile_read,
     .proc_write = procfile_write,
 };
+#else
+static const struct file_operations proc_file_fops = {
+    .read = procfile_read,
+    .write = procfile_write,
+};
+#endif
 
 /**
  *This function is called when the module is loaded

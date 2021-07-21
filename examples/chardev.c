@@ -3,9 +3,6 @@
  *  you've read from the dev file
  */
 
-#include <asm/io.h>
-#include <asm/irq.h>
-#include <asm/uaccess.h>
 #include <linux/cdev.h>
 #include <linux/delay.h>
 #include <linux/device.h>
