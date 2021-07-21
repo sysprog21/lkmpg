@@ -1,0 +1,13 @@
+*.o
+*.ko
+*cmd
+*.swp
+*.symvers
+
+# LaTeX
+_minted-lkmpg
+*.aux
+*.log
+*.out
+lkmpg.pdf
+*.toc

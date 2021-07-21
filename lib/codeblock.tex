@@ -1,0 +1,34 @@
+\newminted[code]{c}{frame=single,
+  framesep=2mm,
+  baselinestretch=1,
+  fontsize=\footnotesize,
+  breaklines,
+  breakafter=d,
+  linenos
+}
+
+\usemintedstyle{vs}
+
+\NewDocumentCommand{\samplec}{oom}{%
+  \IfNoValueTF{#1}%
+  {%
+    \inputminted[frame=single, framesep=2mm, baselinestretch=1, fontsize=\footnotesize, breaklines, breakafter=d, linenos]{c}{#3}%
+  }%
+  {%
+    \IfNoValueTF{#2}%
+    {%
+      \inputminted[frame=single, framesep=2mm, baselinestretch=1, fontsize=\footnotesize, breaklines, breakafter=d, firstline=#1, linenos]{c}{#3}%
+    }%
+    {%
+      \inputminted[frame=single, framesep=2mm, baselinestretch=1, fontsize=\footnotesize, breaklines, breakafter=d, firstline=#1, lastline=#2, linenos]{c}{#3}%
+    }%
+  }%
+}
+
+\newminted[codebash]{bash}{frame=single,
+  framesep=2mm,
+  baselinestretch=1.2,
+  breaklines,
+  breakafter=d,
+  linenos
+}
