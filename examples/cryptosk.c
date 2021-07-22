@@ -170,7 +170,7 @@ out:
 
 int cryptoapi_init(void)
 {
-    /* The world's favourite password */
+    /* The world's favorite password */
     char *password = "password123";
 
     sk.tfm = NULL;
