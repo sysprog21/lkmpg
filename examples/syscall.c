@@ -10,7 +10,6 @@
  *  https://bbs.archlinux.org/viewtopic.php?id=139406
  */
 
-#include <asm/paravirt.h>
 #include <linux/delay.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
