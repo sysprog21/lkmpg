@@ -43,9 +43,7 @@ static struct class *cls;
  */
 static int device_open(struct inode *inode, struct file *file)
 {
-#ifdef DEBUG
     pr_info("device_open(%p)\n", file);
-#endif
 
     /*
      * We don't want to talk to two processes at the same time
@@ -64,9 +62,7 @@ static int device_open(struct inode *inode, struct file *file)
 
 static int device_release(struct inode *inode, struct file *file)
 {
-#ifdef DEBUG
     pr_info("device_release(%p,%p)\n", inode, file);
-#endif
 
     /*
      * We're now ready for our next caller
@@ -92,9 +88,7 @@ static ssize_t device_read(struct file *file,   /* see include/linux/fs.h   */
      */
     int bytes_read = 0;
 
-#ifdef DEBUG
-    pr_info("device_read(%p,%p,%d)\n", file, buffer, length);
-#endif
+    pr_info("device_read(%p,%p,%ld)\n", file, buffer, length);
 
     /*
      * If we're at the end of the message, return 0
@@ -119,9 +113,7 @@ static ssize_t device_read(struct file *file,   /* see include/linux/fs.h   */
         bytes_read++;
     }
 
-#ifdef DEBUG
-    pr_info("Read %d bytes, %d left\n", bytes_read, length);
-#endif
+    pr_info("Read %d bytes, %ld left\n", bytes_read, length);
 
     /*
      * Read functions are supposed to return the number
@@ -141,9 +133,7 @@ static ssize_t device_write(struct file *file,
 {
     int i;
 
-#ifdef DEBUG
-    pr_info("device_write(%p,%s,%d)", file, buffer, length);
-#endif
+    pr_info("device_write(%p,%s,%ld)", file, buffer, length);
 
     for (i = 0; i < length && i < BUF_LEN; i++)
         get_user(Message[i], buffer + i);
