@@ -1,8 +1,7 @@
 /*
  *  intrpt.c - Handling GPIO with interrupts
  *
- *  Copyright (C) 2017 by Bob Mottram
- *  Based upon the Rpi example by Stefan Wendler (devnull@kaltpost.de)
+ *  Based upon the RPi example by Stefan Wendler (devnull@kaltpost.de)
  *  from:
  *    https://github.com/wendlers/rpi-kmod-samples
  *
