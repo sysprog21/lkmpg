@@ -1,5 +1,5 @@
 /*
- *  chardev2.h - the header file with the ioctl definitions.
+ *  chardev.h - the header file with the ioctl definitions.
  *
  *  The declarations here have to be in a header file, because
  *  they need to be known both to the kernel module

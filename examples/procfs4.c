@@ -1,6 +1,6 @@
-/**
+/*
  *  procfs4.c -  create a "file" in /proc
- *      This program uses the seq_file library to manage the /proc file.
+ *  This program uses the seq_file library to manage the /proc file.
  *
  */
 

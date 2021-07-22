@@ -1,6 +1,7 @@
-/* cat_noblock.c - open a file and display its contents, but exit rather than
- * wait for input */
-
+/*
+ *  cat_noblock.c - open a file and display its contents, but exit rather than
+ *  wait for input.
+ */
 #include <errno.h>  /* for errno */
 #include <fcntl.h>  /* for open */
 #include <stdio.h>  /* standard I/O */
@@ -8,7 +9,6 @@
 #include <unistd.h> /* for read */
 
 #define MAX_BYTES 1024 * 4
-
 
 int main(int argc, char *argv[])
 {

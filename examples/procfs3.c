@@ -1,6 +1,6 @@
 /*
-    procfs3.c
-*/
+ *  procfs3.c
+ */
 
 #include <linux/kernel.h>
 #include <linux/module.h>

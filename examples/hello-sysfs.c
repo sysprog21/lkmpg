@@ -1,7 +1,6 @@
 /*
- * hello-sysfs.c sysfs example
+ *  hello-sysfs.c sysfs example
  */
-
 #include <linux/fs.h>
 #include <linux/init.h>
 #include <linux/kobject.h>

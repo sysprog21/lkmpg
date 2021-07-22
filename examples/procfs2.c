@@ -1,6 +1,5 @@
-/**
+/*
  *  procfs2.c -  create a "file" in /proc
- *
  */
 
 #include <linux/kernel.h>  /* We're doing kernel work */

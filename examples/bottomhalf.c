@@ -1,8 +1,8 @@
 /*
  * bottomhalf.c - Top and bottom half interrupt handling
  *
- *  Based upon the RPi example by Stefan Wendler (devnull@kaltpost.de)
- *  from:
+ * Based upon the RPi example by Stefan Wendler (devnull@kaltpost.de)
+ * from:
  *    https://github.com/wendlers/rpi-kmod-samples
  *
  *  Press one button to turn on a LED and another to turn it off

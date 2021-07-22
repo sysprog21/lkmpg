@@ -1,6 +1,6 @@
 /*
- procfs1.c
-*/
+ *  procfs1.c
+ */
 
 #include <linux/kernel.h>
 #include <linux/module.h>
