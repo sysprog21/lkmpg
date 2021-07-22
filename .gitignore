@@ -1,8 +1,12 @@
+# Linux kernel build system
 *.o
 *.ko
 *cmd
 *.swp
 *.symvers
+*.mod
+*.mod.c
+modules.order
 
 # LaTeX
 _minted-lkmpg
