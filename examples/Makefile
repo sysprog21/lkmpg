@@ -31,8 +31,8 @@ obj-m += bottomhalf.o
 obj-m += ioctl.o
 
 all:
-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+	$(MAKE) -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
 
 clean:
-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
-	rm -f other/ioctl other/cat_noblock *.plist
+	$(MAKE) -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
+	$(RM) other/cat_noblock *.plist
