@@ -142,21 +142,24 @@ Rest assured, after you get over the initial hurdle of doing it for the first ti
 \end{enumerate}
 
 \section{Headers}
-\label{sec:org087541e}
-Before you can build anything you'll need to install the header files for your kernel. On Arch Linux:
-\begin{codebash}
-sudo pacman -S linux-libre-headers
-\end{codebash}
+\label{sec:headers}
+Before you can build anything you'll need to install the header files for your kernel.
 
-On Debian:
+On Ubuntu/Debian:
 \begin{codebash}
 sudo apt-get update
 apt-cache search linux-headers-`uname -r`
 \end{codebash}
 
-This will tell you what kernel header files are available. Then for example:
+On Arch Linux:
 \begin{codebash}
-sudo apt-get install kmod linux-headers-5.6.7-1-amd64
+sudo pacman -S linux-libre-headers
+\end{codebash}
+
+This will tell you what kernel header files are available.
+Then for example:
+\begin{codebash}
+sudo apt-get install kmod linux-headers-5.4.0-80-generic
 \end{codebash}
 
 \section{Examples}
