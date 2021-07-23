@@ -804,7 +804,6 @@ BE CAREFUL: when a sequence is finished, another one starts. That means that at 
     \node (branch2) [decision, below of=next, yshift=-1cm] {return is NULL?};
     \node (stop) [startstop, below of=branch2, yshift=-1cm] {stop() treatment};
 
-
     \draw [->] (start) -- (branch1);
     \draw [->] (branch1) -- node[anchor=east] {} (emptynode);
     \draw [->] (branch1) -- node[left=2em, anchor=south] {No} (next);
@@ -814,6 +813,7 @@ BE CAREFUL: when a sequence is finished, another one starts. That means that at 
     \draw [->] (stop.west) to [out=135, in=-135] node [left] {} (start.west);
   \end{tikzpicture}
 \end{center}
+
 Seq\_file provides basic functions for proc\_ops, as seq\_read, seq\_lseek, and some others. But nothing to write in the /proc file. Of course, you can still use the same way as in the previous example.
 
 \samplec{examples/procfs4.c}
