@@ -138,6 +138,7 @@ Rest assured, after you get over the initial hurdle of doing it for the first ti
         Modules can not print to the screen like \verb|printf()| can, but they can log information and warnings, which ends up being printed on your screen, but only on a console.
         If you insmod a module from an xterm, the information and warnings will be logged, but only to your systemd journal.
         You will not see it unless you look through your \verb|journalctl|.
+        See \ref{sec:helloworld} for details.
         To have immediate access to this information, do all your work from the console.
 \end{enumerate}
 
@@ -163,18 +164,20 @@ sudo apt-get install kmod linux-headers-5.4.0-80-generic
 \end{codebash}
 
 \section{Examples}
-\label{sec:org34848a0}
+\label{sec:examples}
 All the examples from this document are available within the \emph{examples} subdirectory.
 
 If there are any compile errors then you might have a more recent kernel version or need to install the corresponding kernel header files.
 
 \section{Hello World}
-\label{sec:org7bd7fa4}
+\label{sec:helloworld}
 \subsection{The Simplest Module}
 \label{sec:org2d3e245}
-Most people learning programming start out with some sort of "\emph{hello world}" example. I don't know what happens to people who break with this tradition, but I think it's safer not to find out. We'll start with a series of hello world programs that demonstrate the different aspects of the basics of writing a kernel module.
+Most people learning programming start out with some sort of "\emph{hello world}" example.
+I don't know what happens to people who break with this tradition, but I think it is safer not to find out.
+We will start with a series of hello world programs that demonstrate the different aspects of the basics of writing a kernel module.
 
-Here's the simplest module possible.
+Here is the simplest module possible.
 
 Make a test directory:
 \begin{codebash}
@@ -182,11 +185,11 @@ mkdir -p ~/develop/kernel/hello-1
 cd ~/develop/kernel/hello-1
 \end{codebash}
 
-Paste this into you favourite editor and save it as \textbf{hello-1.c}:
+Paste this into you favorite editor and save it as \textbf{hello-1.c}:
 
 \samplec{examples/hello-1.c}
 
-Now you'll need a Makefile. If you copy and paste this change the indentation to use tabs, not spaces.
+Now you will need a Makefile. If you copy and paste this, change the indentation to use \textit{tabs}, not spaces.
 
 \begin{code}
 obj-m += hello-1.o
@@ -203,7 +206,8 @@ And finally just:
 make
 \end{codebash}
 
-If all goes smoothly you should then find that you have a compiled \textbf{hello-1.ko} module. You can find info on it with the command:
+If all goes smoothly you should then find that you have a compiled \textbf{hello-1.ko} module.
+You can find info on it with the command:
 \begin{codebash}
 sudo modinfo hello-1.ko
 \end{codebash}
@@ -213,7 +217,8 @@ At this point the command:
 sudo lsmod | grep hello
 \end{codebash}
 
-should return nothing. You can try loading your shiny new module with:
+should return nothing.
+You can try loading your shiny new module with:
 \begin{codebash}
 sudo insmod hello-1.ko
 \end{codebash}
@@ -228,38 +233,56 @@ you should now see your loaded module. It can be removed again with:
 sudo rmmod hello_1
 \end{codebash}
 
-Notice that the dash was replaced by an underscore. To see what just happened in the logs:
+Notice that the dash was replaced by an underscore.
+To see what just happened in the logs:
 \begin{codebash}
 journalctl --since "1 hour ago" | grep kernel
 \end{codebash}
 
-You now know the basics of creating, compiling, installing and removing modules. Now for more of a description of how this module works.
+You now know the basics of creating, compiling, installing and removing modules.
+Now for more of a description of how this module works.
 
-Kernel modules must have at least two functions: a "start" (initialization) function called \textbf{init\_module()} which is called when the module is insmoded into the kernel, and an "end" (cleanup) function called \textbf{cleanup\_module()} which is called just before it is rmmoded. Actually, things have changed starting with kernel 2.3.13. You can now use whatever name you like for the
-start and end functions of a module, and you'll learn how to do this in Section 2.3. In fact, the new method is the preferred method. However, many people still use init\_module() and cleanup\_module() for their start and end functions.
+Kernel modules must have at least two functions: a "start" (initialization) function called \textbf{init\_module()} which is called when the module is insmoded into the kernel, and an "end" (cleanup) function called \textbf{cleanup\_module()} which is called just before it is removed from the kernel.
+Actually, things have changed starting with kernel 2.3.13.
+% TODO: adjust the section anchor
+You can now use whatever name you like for the start and end functions of a module, and you will learn how to do this in Section 2.3.
+In fact, the new method is the preferred method.
+However, many people still use \verb|init_module()| and \verb|cleanup_module()| for their start and end functions.
 
-Typically, init\_module() either registers a handler for something with the kernel, or it replaces one of the kernel functions with its own code (usually code to do something and then call the original function). The cleanup\_module() function is supposed to undo whatever init\_module() did, so the module can be unloaded safely.
+Typically, init\_module() either registers a handler for something with the kernel, or it replaces one of the kernel functions with its own code (usually code to do something and then call the original function).
+The \verb|cleanup_module()| function is supposed to undo whatever \verb|init_module()| did, so the module can be unloaded safely.
 
-Lastly, every kernel module needs to include linux/module.h. We needed to include \textbf{linux/kernel.h} only for the macro expansion for the pr\_alert() log level, which you'll learn about in Section 2.1.1.
+Lastly, every kernel module needs to include \verb|linux/module.h|.
+% TODO: adjust the section anchor
+We needed to include \textbf{linux/kernel.h} only for the macro expansion for the pr\_alert() log level, which you'll learn about in Section 2.1.1.
 
 \begin{enumerate}
-\item A point about coding style
-\label{sec:org9d307ce}
-Another thing which may not be immediately obvious to anyone getting started with kernel programming is that indentation within your code should be using \textbf{tabs} and \textbf{not spaces}. It's one of the coding conventions of the kernel. You may not like it, but you'll need to get used to it if you ever submit a patch upstream.
-\item Introducing print macros
-\label{sec:org9225536}
+  \item A point about coding style.
+        Another thing which may not be immediately obvious to anyone getting started with kernel programming is that indentation within your code should be using \textbf{tabs} and \textbf{not spaces}.
+        It is one of the coding conventions of the kernel.
+        You may not like it, but you'll need to get used to it if you ever submit a patch upstream.
 
-In the beginning there was \textbf{printk}, usually followed by a priority such as KERN\_INFO or KERN\_DEBUG. More recently this can also be expressed in abbreviated form using a set of print macros, such as \textbf{pr\_info} and \textbf{pr\_debug}. This just saves some mindless keyboard bashing and looks a bit neater. They can be found within \textbf{linux/printk.h}. Take time to read through the available priority macros.
+  \item Introducing print macros.
+        In the beginning there was \textbf{printk}, usually followed by a priority such as \verb|KERN_INFO| or \verb|KERN_DEBUG|.
+        More recently this can also be expressed in abbreviated form using a set of print macros, such as \textbf{pr\_info} and \textbf{pr\_debug}.
+        This just saves some mindless keyboard bashing and looks a bit neater.
+        They can be found within \textbf{linux/printk.h}.
+        Take time to read through the available priority macros.
 
-\item About Compiling
-\label{sec:org505204e}
+  \item About Compiling.
+        Kernel modules need to be compiled a bit differently from regular userspace apps.
+        Former kernel versions required us to care much about these settings, which are usually stored in Makefiles.
+        Although hierarchically organized, many redundant settings accumulated in sublevel Makefiles and made them large and rather difficult to maintain.
+        Fortunately, there is a new way of doing these things, called kbuild, and the build process for external loadable modules is now fully integrated into the standard kernel build mechanism.
+        To learn more on how to compile modules which are not part of the official kernel (such as all the examples you will find in this guide), see file \verb|Documentation/kbuild/modules.rst|.
 
-Kernel modules need to be compiled a bit differently from regular userspace apps. Former kernel versions required us to care much about these settings, which are usually stored in Makefiles. Although hierarchically organized, many redundant settings accumulated in sublevel Makefiles and made them large and rather difficult to maintain. Fortunately, there is a new way of doing these things, called kbuild, and the build process for external loadable modules is now fully integrated into the standard kernel build mechanism. To learn more on how to compile modules which are not part of the official kernel (such as all the examples you'll find in this guide), see file \textbf{linux/Documentation/kbuild/modules.txt}.
-
-Additional details about Makefiles for kernel modules are available in \textbf{linux/Documentation/kbuild/makefiles.txt}. Be sure to read this and the related files before starting to hack Makefiles. It'll probably save you lots of work.
+Additional details about Makefiles for kernel modules are available in \verb|Documentation/kbuild/makefiles.rst|. Be sure to read this and the related files before starting to hack Makefiles. It will probably save you lots of work.
 
 \begin{quote}
-Here's another exercise for the reader. See that comment above the return statement in init\_module()? Change the return value to something negative, recompile and load the module again. What happens?
+Here is another exercise for the reader.
+See that comment above the return statement in \verb|init_module()|?
+Change the return value to something negative, recompile and load the module again.
+What happens?
 \end{quote}
 \end{enumerate}
 
