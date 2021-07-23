@@ -123,17 +123,17 @@ Getting your first "hello world" program to compile and load correctly can somet
 Rest assured, after you get over the initial hurdle of doing it for the first time, it will be smooth sailing thereafter.
 
 \begin{enumerate}
-  \item Modversioning
+  \item Modversioning.
         A module compiled for one kernel will not load if you boot a different kernel unless you enable \verb|CONFIG_MODVERSIONS| in the kernel.
         We will not go into module versioning until later in this guide.
         Until we cover modversions, the examples in the guide may not work if you are running a kernel with modversioning turned on.
-        However, most stock Linux distro kernels come with it turned on.
+        However, most stock Linux distribution kernels come with it turned on.
         If you are having trouble loading the modules because of versioning errors, compile a kernel with modversioning turned off.
 
-  \item Using X
+  \item Using X Window System.
         It is highly recommended that you extract, compile and load all the examples this guide discusses.
         It is also highly recommended you do this from a console.
-        You should not be working on this stuff in X.
+        You should not be working on this stuff in X Window System.
 
         Modules can not print to the screen like \verb|printf()| can, but they can log information and warnings, which ends up being printed on your screen, but only on a console.
         If you insmod a module from an xterm, the information and warnings will be logged, but only to your systemd journal.
@@ -400,7 +400,7 @@ This is the complete makefile for all the examples we've seen so far. The first 
 
 \subsection{Building modules for a precompiled kernel}
 \label{sec:org12fb7db}
-Obviously, we strongly suggest you to recompile your kernel, so that you can enable a number of useful debugging features, such as forced module unloading (\textbf{MODULE\_FORCE\_UNLOAD}): when this option is enabled, you can force the kernel to unload a module even when it believes it is unsafe, via a \textbf{sudo rmmod -f module} command. This option can save you a lot of time and a number of reboots during the development of a module. If you don't want to recompile your kernel then you should consider running the examples within a test distro on a virtual machine. If you mess anything up then you can easily reboot or restore the VM.
+Obviously, we strongly suggest you to recompile your kernel, so that you can enable a number of useful debugging features, such as forced module unloading (\textbf{MODULE\_FORCE\_UNLOAD}): when this option is enabled, you can force the kernel to unload a module even when it believes it is unsafe, via a \textbf{sudo rmmod -f module} command. This option can save you a lot of time and a number of reboots during the development of a module. If you don't want to recompile your kernel then you should consider running the examples within a test distribution on a virtual machine. If you mess anything up then you can easily reboot or restore the VM.
 
 There are a number of cases in which you may want to load your module into a precompiled running kernel, such as the ones shipped with common Linux distributions, or a kernel you have compiled in the past. In certain circumstances you could require to compile and insert a module into a running kernel which you are not allowed to recompile, or on a machine that you prefer not to reboot. If you can't think of a case that will force you to use modules for a precompiled kernel you might want to skip this and treat the rest of this chapter as a big footnote.
 
