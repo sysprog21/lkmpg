@@ -32,40 +32,56 @@
 \tableofcontents
 
 \section{Introduction}
-\label{sec:org5e296ce}
-The Linux Kernel Module Programming Guide is a free book; you may reproduce and/or modify it under the terms of the Open Software License, version 3.0.
+\label{sec:introduction}
+The Linux Kernel Module Programming Guide is a free book; you may reproduce and/or modify it under the terms of the \href{https://opensource.org/licenses/OSL-3.0}{Open Software License}, version 3.0.
 
 This book is distributed in the hope it will be useful, but without any warranty, without even the implied warranty of merchantability or fitness for a particular purpose.
 
-The author encourages wide distribution of this book for personal or commercial use, provided the above copyright notice remains intact and the method adheres to the provisions of the Open Software License. In summary, you may copy and distribute this book free of charge or for a profit. No explicit permission is required from the author for reproduction of this book in any medium, physical or electronic.
+The author encourages wide distribution of this book for personal or commercial use, provided the above copyright notice remains intact and the method adheres to the provisions of the \href{https://opensource.org/licenses/OSL-3.0}{Open Software License}.
+In summary, you may copy and distribute this book free of charge or for a profit. No explicit permission is required from the author for reproduction of this book in any medium, physical or electronic.
 
-Derivative works and translations of this document must be placed under the Open Software License, and the original copyright notice must remain intact. If you have contributed new material to this book, you must make the material and source code available for your revisions. Please make revisions and updates available directly to the document maintainer, Peter Jay Salzman <p@dirac.org>. This will allow for the merging of updates and provide consistent revisions to the Linux community.
+Derivative works and translations of this document must be placed under the Open Software License, and the original copyright notice must remain intact.
+If you have contributed new material to this book, you must make the material and source code available for your revisions.
+Please make revisions and updates available directly to the document maintainer, Peter Jay Salzman <p@dirac.org>.
+This will allow for the merging of updates and provide consistent revisions to the Linux community.
 
-If you publish or distribute this book commercially, donations, royalties, and/or printed copies are greatly appreciated by the author and the \href{http://www.tldp.org}{Linux Documentation Project} (LDP). Contributing in this way shows your support for free software and the LDP. If you have questions or comments, please contact the address above.
+If you publish or distribute this book commercially, donations, royalties, and/or printed copies are greatly appreciated by the author and the \href{http://www.tldp.org}{Linux Documentation Project} (LDP).
+Contributing in this way shows your support for free software and the LDP. If you have questions or comments, please contact the address above.
 
 \subsection{Authorship}
 \label{sec:authorship}
 
-The Linux Kernel Module Programming Guide was originally written for the 2.2 kernels by Ori Pomerantz. Eventually, Ori no longer had time to maintain the document. After all, the Linux kernel is a fast moving target. Peter Jay Salzman took over maintenance and updated it for the 2.4 kernels. Eventually, Peter no longer had time to follow developments with the 2.6 kernel, so Michael Burian became a co-maintainer to update the document for the 2.6 kernels.  Bob Mottram updated the examples for 3.8+ kernels.  Jim Huang upgraded to recent kernel versions (v5.x) and revise LaTeX scripts.
+The Linux Kernel Module Programming Guide was originally written for the 2.2 kernels by Ori Pomerantz.
+Eventually, Ori no longer had time to maintain the document.
+After all, the Linux kernel is a fast moving target. Peter Jay Salzman took over maintenance and updated it for the 2.4 kernels.
+Eventually, Peter no longer had time to follow developments with the 2.6 kernel, so Michael Burian became a co-maintainer to update the document for the 2.6 kernels.
+Bob Mottram updated the examples for 3.8+ kernels.
+Jim Huang upgraded to recent kernel versions (v5.x) and revise LaTeX scripts.
 
 \subsection{Acknowledgements}
-\label{sec:org1eb7eb2}
+\label{sec:acknowledgements}
 
 The following people have contributed corrections or good suggestions: Ignacio Martin, David Porter, Daniele Paolo Scarpazza, Dimo Velev, Francois Audeon, Horst Schirmeier, and Roman Lakeev.
 
 \subsection{What Is A Kernel Module?}
-\label{sec:orgba78dc6}
+\label{sec:kernelmod}
 
-So, you want to write a kernel module. You know C, you've written a few normal programs to run as processes, and now you want to get to where the real action is, to where a single wild pointer can wipe out your file system and a core dump means a reboot.
+So, you want to write a kernel module.
+You know C, you have written a few normal programs to run as processes, and now you want to get to where the real action is, to where a single wild pointer can wipe out your file system and a core dump means a reboot.
 
-What exactly is a kernel module? Modules are pieces of code that can be loaded and unloaded into the kernel upon demand. They extend the functionality of the kernel without the need to reboot the system. For example, one type of module is the device driver, which allows the kernel to access hardware connected to the system. Without modules, we would have to build monolithic kernels and add new functionality directly into the kernel image. Besides having larger kernels, this has the disadvantage of requiring us to rebuild and reboot the kernel every time we want new functionality.
+What exactly is a kernel module?
+Modules are pieces of code that can be loaded and unloaded into the kernel upon demand.
+They extend the functionality of the kernel without the need to reboot the system.
+For example, one type of module is the device driver, which allows the kernel to access hardware connected to the system.
+Without modules, we would have to build monolithic kernels and add new functionality directly into the kernel image.
+Besides having larger kernels, this has the disadvantage of requiring us to rebuild and reboot the kernel every time we want new functionality.
 
 \subsection{Kernel module package}
-\label{sec:org5a75cce}
+\label{sec:packages}
 
-Linux distros provide the commands \emph{modprobe}, \emph{insmod} and \emph{depmod} within a package.
+Linux distributions provide the commands \emph{modprobe}, \emph{insmod} and \emph{depmod} within a package.
 
-On Debian:
+On Ubuntu/Debian:
 \begin{codebash}
 sudo apt-get install build-essential kmod
 \end{codebash}
@@ -76,7 +92,7 @@ sudo pacman -S gcc kmod
 \end{codebash}
 
 \subsection{What Modules are in my Kernel?}
-\label{sec:org4182f02}
+\label{sec:modutils}
 
 To discover what modules are already loaded within your current kernel use the command \textbf{lsmod}.
 \begin{codebash}
@@ -88,30 +104,41 @@ Modules are stored within the file /proc/modules, so you can also see them with:
 sudo cat /proc/modules
 \end{codebash}
 
-This can be a long list, and you might prefer to search for something particular. To search for the \emph{fat} module:
+This can be a long list, and you might prefer to search for something particular.
+To search for the \emph{fat} module:
 \begin{codebash}
 sudo lsmod | grep fat
 \end{codebash}
 
 \subsection{Do I need to download and compile the kernel?}
-\label{sec:org2aa5773}
-For the purposes of following this guide you don't necessarily need to do that. However, it would be wise to run the examples within a test distro running on a virtual machine in order to avoid any possibility of messing up your system.
+\label{sec:buildkernel}
+For the purposes of following this guide you don't necessarily need to do that.
+However, it would be wise to run the examples within a test distribution running on a virtual machine in order to avoid any possibility of messing up your system.
+
 \subsection{Before We Begin}
-\label{sec:orgc99b1da}
-Before we delve into code, there are a few issues we need to cover. Everyone's system is different and everyone has their own groove. Getting your first "hello world" program to compile and load correctly can sometimes be a trick. Rest assured, after you get over the initial hurdle of doing it for the first time, it will be smooth sailing thereafter.
+\label{sec:preparation}
+Before we delve into code, there are a few issues we need to cover.
+Everyone's system is different and everyone has their own groove.
+Getting your first "hello world" program to compile and load correctly can sometimes be a trick.
+Rest assured, after you get over the initial hurdle of doing it for the first time, it will be smooth sailing thereafter.
 
 \begin{enumerate}
-\item Modversioning
-\label{sec:orgbc94263}
+  \item Modversioning
+        A module compiled for one kernel will not load if you boot a different kernel unless you enable \verb|CONFIG_MODVERSIONS| in the kernel.
+        We will not go into module versioning until later in this guide.
+        Until we cover modversions, the examples in the guide may not work if you are running a kernel with modversioning turned on.
+        However, most stock Linux distro kernels come with it turned on.
+        If you are having trouble loading the modules because of versioning errors, compile a kernel with modversioning turned off.
 
-A module compiled for one kernel won't load if you boot a different kernel unless you enable CONFIG\_MODVERSIONS in the kernel. We won't go into module versioning until later in this guide. Until we cover modversions, the examples in the guide may not work if you're running a kernel with modversioning turned on. However, most stock Linux distro kernels come with it turned on. If you're having trouble loading the modules because of versioning errors, compile a kernel with modversioning turned off.
+  \item Using X
+        It is highly recommended that you extract, compile and load all the examples this guide discusses.
+        It is also highly recommended you do this from a console.
+        You should not be working on this stuff in X.
 
-\item Using X
-\label{sec:org26b16fb}
-
-It is highly recommended that you extract, compile and load all the examples this guide discusses. It's also highly recommended you do this from a console. You should not be working on this stuff in X.
-
-Modules can't print to the screen like printf() can, but they can log information and warnings, which ends up being printed on your screen, but only on a console. If you insmod a module from an xterm, the information and warnings will be logged, but only to your systemd journal. You won't see it unless you look through your journalctl. To have immediate access to this information, do all your work from the console.
+        Modules can not print to the screen like \verb|printf()| can, but they can log information and warnings, which ends up being printed on your screen, but only on a console.
+        If you insmod a module from an xterm, the information and warnings will be logged, but only to your systemd journal.
+        You will not see it unless you look through your \verb|journalctl|.
+        To have immediate access to this information, do all your work from the console.
 \end{enumerate}
 
 \section{Headers}
