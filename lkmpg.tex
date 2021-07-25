@@ -297,8 +297,10 @@ What happens?
 \end{enumerate}
 
 \subsection{Hello and Goodbye}
-\label{sec:org04e51ed}
-In early kernel versions you had to use the \textbf{init\_module} and \textbf{cleanup\_module} functions, as in the first hello world example, but these days you can name those anything you want by using the \textbf{module\_init} and \textbf{module\_exit} macros. These macros are defined in \textbf{linux/init.h}. The only requirement is that your init and cleanup functions must be defined before calling the those macros, otherwise you'll get compilation errors. Here's an example of this technique:
+\label{hello_n_goodbye}
+In early kernel versions you had to use the \textbf{init\_module} and \textbf{cleanup\_module} functions, as in the first hello world example, but these days you can name those anything you want by using the \textbf{module\_init} and \textbf{module\_exit} macros.
+These macros are defined in \textbf{linux/init.h}. The only requirement is that your init and cleanup functions must be defined before calling the those macros, otherwise you'll get compilation errors.
+Here is an example of this technique:
 
 \samplec{examples/hello-2.c}
 
@@ -309,56 +311,74 @@ obj-m += hello-1.o
 obj-m += hello-2.o
 
 all:
-    make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
 
 clean:
-    make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
+	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
 \end{code}
 
-Now have a look at linux/drivers/char/Makefile for a real world example. As you can see, some things get hardwired into the kernel (obj-y) but where are all those obj-m gone? Those familiar with shell scripts will easily be able to spot them. For those not, the obj-\$(CONFIG\_FOO) entries you see everywhere expand into obj-y or obj-m, depending on whether the CONFIG\_FOO variable has been set to y or m. While we are at it, those were exactly the kind of variables that you have set in the linux/.config file, the last time when you said make menuconfig or something like that.
+Now have a look at \verb|linux/drivers/char/Makefile| for a real world example.
+As you can see, some things get hardwired into the kernel (\verb|obj-y|) but where are all those \verb|obj-m| gone?
+Those familiar with shell scripts will easily be able to spot them.
+For those not, the \verb|obj-$(CONFIG_FOO)| entries you see everywhere expand into \verb|obj-y| or \verb|obj-m|, depending on whether the \verb|CONFIG_FOO| variable has been set to y or m.
+While we are at it, those were exactly the kind of variables that you have set in the \verb|linux/.confi|g file, the last time when you said make menuconfig or something like that.
 
 \subsection{The \_\_init and \_\_exit Macros}
-\label{sec:orge3a2995}
-This demonstrates a feature of kernel 2.2 and later. Notice the change in the definitions of the init and cleanup functions. The \textbf{\_\_init} macro causes the init function to be discarded and its memory freed once the init function finishes for built-in drivers, but not loadable modules. If you think about when the init function is invoked, this makes perfect sense.
+\label{init_n_exit}
+This demonstrates a feature of kernel 2.2 and later.
+Notice the change in the definitions of the init and cleanup functions.
+The \textbf{\_\_init} macro causes the init function to be discarded and its memory freed once the init function finishes for built-in drivers, but not loadable modules.
+If you think about when the init function is invoked, this makes perfect sense.
 
 There is also an \textbf{\_\_initdata} which works similarly to \textbf{\_\_init} but for init variables rather than functions.
 
-The \textbf{\_\_exit} macro causes the omission of the function when the module is built into the kernel, and like \_\_init, has no effect for loadable modules. Again, if you consider when the cleanup function runs, this makes complete sense; built-in drivers don't need a cleanup function, while loadable modules do.
+The \textbf{\_\_exit} macro causes the omission of the function when the module is built into the kernel, and like \_\_init, has no effect for loadable modules.
+Again, if you consider when the cleanup function runs, this makes complete sense; built-in drivers do not need a cleanup function, while loadable modules do.
 
-These macros are defined in \textbf{linux/init.h} and serve to free up kernel memory. When you boot your kernel and see something like Freeing unused kernel memory: 236k freed, this is precisely what the kernel is freeing.
+These macros are defined in \textbf{linux/init.h} and serve to free up kernel memory.
+When you boot your kernel and see something like Freeing unused kernel memory: 236k freed, this is precisely what the kernel is freeing.
 
 \samplec{examples/hello-3.c}
 
 \subsection{Licensing and Module Documentation}
-\label{sec:org749d6a1}
-Honestly, who loads or even cares about proprietary modules? If you do then you might have seen something like this:
+\label{modlicense}
+Honestly, who loads or even cares about proprietary modules?
+If you do then you might have seen something like this:
 \begin{verbatim}
 # insmod xxxxxx.ko
-Warning: loading xxxxxx.ko will taint the kernel: no license
-  See http://www.tux.org/lkml/#export-tainted for information about tainted modules
-Module xxxxxx loaded, with warnings
+loading out-of-tree module taints kernel.
+module license 'unspecified' taints kernel.
 \end{verbatim}
 
-You can use a few macros to indicate the license for your module. Some examples are "GPL", "GPL v2", "GPL and additional rights", "Dual BSD/GPL", "Dual MIT/GPL", "Dual MPL/GPL" and "Proprietary". They're defined within \textbf{linux/module.h}.
+You can use a few macros to indicate the license for your module.
+Some examples are "GPL", "GPL v2", "GPL and additional rights", "Dual BSD/GPL", "Dual MIT/GPL", "Dual MPL/GPL" and "Proprietary".
+They are defined within \textbf{linux/module.h}.
 
-To reference what license you're using a macro is available called \textbf{MODULE\_LICENSE}. This and a few other macros describing the module are illustrated in the below example.
+To reference what license you're using a macro is available called \textbf{MODULE\_LICENSE}.
+This and a few other macros describing the module are illustrated in the below example.
 
 \samplec{examples/hello-4.c}
 
 \subsection{Passing Command Line Arguments to a Module}
-\label{sec:org76db4be}
+\label{modparam}
 Modules can take command line arguments, but not with the argc/argv you might be used to.
 
-To allow arguments to be passed to your module, declare the variables that will take the values of the command line arguments as global and then use the module\_param() macro, (defined in linux/moduleparam.h) to set the mechanism up. At runtime, insmod will fill the variables with any command line arguments that are given, like ./insmod mymodule.ko myvariable=5. The variable declarations and macros should be placed at the beginning of the module for clarity. The example code should clear up my admittedly lousy explanation.
+To allow arguments to be passed to your module, declare the variables that will take the values of the command line arguments as global and then use the module\_param() macro, (defined in linux/moduleparam.h) to set the mechanism up.
+At runtime, insmod will fill the variables with any command line arguments that are given, like ./insmod mymodule.ko myvariable=5.
+The variable declarations and macros should be placed at the beginning of the module for clarity.
+The example code should clear up my admittedly lousy explanation.
 
-The module\_param() macro takes 3 arguments: the name of the variable, its type and permissions for the corresponding file in sysfs. Integer types can be signed as usual or unsigned. If you'd like to use arrays of integers or strings see module\_param\_array() and module\_param\_string().
+The module\_param() macro takes 3 arguments: the name of the variable, its type and permissions for the corresponding file in sysfs.
+Integer types can be signed as usual or unsigned. If you'd like to use arrays of integers or strings see \verb|module_param_array()| and \verb|module_param_string()|.
 
 \begin{code}
 int myint = 3;
 module_param(myint, int, 0);
 \end{code}
 
-Arrays are supported too, but things are a bit different now than they were in the olden days. To keep track of the number of parameters you need to pass a pointer to a count variable as third parameter. At your option, you could also ignore the count and pass NULL instead. We show both possibilities here:
+Arrays are supported too, but things are a bit different now than they were in the olden days.
+To keep track of the number of parameters you need to pass a pointer to a count variable as third parameter. 
+At your option, you could also ignore the count and pass NULL instead. We show both possibilities here:
 
 \begin{code}
 int myintarray[2];
@@ -369,9 +389,12 @@ int count;
 module_param_array(myshortarray, short, &count, 0); /* put count into "count" variable */
 \end{code}
 
-A good use for this is to have the module variable's default values set, like an port or IO address. If the variables contain the default values, then perform autodetection (explained elsewhere). Otherwise, keep the current value. This will be made clear later on.
+A good use for this is to have the module variable's default values set, like an port or IO address.
+If the variables contain the default values, then perform autodetection (explained elsewhere). Otherwise, keep the current value.
+This will be made clear later on.
 
-Lastly, there's a macro function, \textbf{MODULE\_PARM\_DESC()}, that is used to document arguments that the module can take. It takes two parameters: a variable name and a free form string describing that variable.
+Lastly, there's a macro function, \textbf{MODULE\_PARM\_DESC()}, that is used to document arguments that the module can take.
+It takes two parameters: a variable name and a free form string describing that variable.
 
 \samplec{examples/hello-5.c}
 
@@ -402,10 +425,10 @@ hello-5.o: invalid argument syntax for mylong: 'h'
 \end{code}
 
 \subsection{Modules Spanning Multiple Files}
-\label{sec:orge7cc767}
+\label{modfiles}
 Sometimes it makes sense to divide a kernel module between several source files.
 
-Here's an example of such a kernel module.
+Here is an example of such a kernel module.
 \samplec{examples/start.c}
 
 The next file:
@@ -423,19 +446,26 @@ obj-m += startstop.o
 startstop-objs := start.o stop.o
 
 all:
-    make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
 
 clean:
-    make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
+	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
 \end{code}
 
-This is the complete makefile for all the examples we've seen so far. The first five lines are nothing special, but for the last example we'll need two lines. First we invent an object name for our combined module, second we tell make what object files are part of that module.
+This is the complete makefile for all the examples we have seen so far.
+The first five lines are nothing special, but for the last example we will need two lines.
+First we invent an object name for our combined module, second we tell make what object files are part of that module.
 
 \subsection{Building modules for a precompiled kernel}
-\label{sec:org12fb7db}
-Obviously, we strongly suggest you to recompile your kernel, so that you can enable a number of useful debugging features, such as forced module unloading (\textbf{MODULE\_FORCE\_UNLOAD}): when this option is enabled, you can force the kernel to unload a module even when it believes it is unsafe, via a \textbf{sudo rmmod -f module} command. This option can save you a lot of time and a number of reboots during the development of a module. If you don't want to recompile your kernel then you should consider running the examples within a test distribution on a virtual machine. If you mess anything up then you can easily reboot or restore the VM.
+\label{precompiled}
+Obviously, we strongly suggest you to recompile your kernel, so that you can enable a number of useful debugging features, such as forced module unloading (\textbf{MODULE\_FORCE\_UNLOAD}): when this option is enabled, you can force the kernel to unload a module even when it believes it is unsafe, via a \textbf{sudo rmmod -f module} command.
+This option can save you a lot of time and a number of reboots during the development of a module.
+If you do not want to recompile your kernel then you should consider running the examples within a test distribution on a virtual machine.
+If you mess anything up then you can easily reboot or restore the virtual machine (VM).
 
-There are a number of cases in which you may want to load your module into a precompiled running kernel, such as the ones shipped with common Linux distributions, or a kernel you have compiled in the past. In certain circumstances you could require to compile and insert a module into a running kernel which you are not allowed to recompile, or on a machine that you prefer not to reboot. If you can't think of a case that will force you to use modules for a precompiled kernel you might want to skip this and treat the rest of this chapter as a big footnote.
+There are a number of cases in which you may want to load your module into a precompiled running kernel, such as the ones shipped with common Linux distributions, or a kernel you have compiled in the past.
+In certain circumstances you could require to compile and insert a module into a running kernel which you are not allowed to recompile, or on a machine that you prefer not to reboot.
+If you can't think of a case that will force you to use modules for a precompiled kernel you might want to skip this and treat the rest of this chapter as a big footnote.
 
 Now, if you just install a kernel source tree, use it to compile your kernel module and you try to insert your module into the kernel, in most cases you would obtain an error as follows:
 
@@ -450,7 +480,10 @@ Jun  4 22:07:54 localhost kernel: poet_atkm: version magic '2.6.5-1.358custom 68
 REGPARM 4KSTACKS gcc-3.3' should be '2.6.5-1.358 686 REGPARM 4KSTACKS gcc-3.3'
 \end{verbatim}
 
-In other words, your kernel refuses to accept your module because version strings (more precisely, version magics) do not match. Incidentally, version magics are stored in the module object in the form of a static string, starting with vermagic:. Version data are inserted in your module when it is linked against the \textbf{init/vermagic.o} file. To inspect version magics and other strings stored in a given module, issue the modinfo module.ko command:
+In other words, your kernel refuses to accept your module because version strings (more precisely, version magics) do not match.
+Incidentally, version magics are stored in the module object in the form of a static string, starting with vermagic:.
+Version data are inserted in your module when it is linked against the \textbf{init/vermagic.o} file.
+To inspect version magics and other strings stored in a given module, issue the modinfo module.ko command:
 
 \begin{verbatim}
 # modinfo hello-4.ko
@@ -464,20 +497,31 @@ name:           hello_4
 vermagic:       5.4.0-70-generic SMP mod_unload modversions
 \end{verbatim}
 
-To overcome this problem we could resort to the \textbf{--force-vermagic} option, but this solution is potentially unsafe, and unquestionably inacceptable in production modules. Consequently, we want to compile our module in an environment which was identical to the one in which our precompiled kernel was built. How to do this, is the subject of the remainder of this chapter.
+To overcome this problem we could resort to the \textbf{--force-vermagic} option, but this solution is potentially unsafe, and unquestionably inacceptable in production modules.
+Consequently, we want to compile our module in an environment which was identical to the one in which our precompiled kernel was built.
+How to do this, is the subject of the remainder of this chapter.
 
-First of all, make sure that a kernel source tree is available, having exactly the same version as your current kernel. Then, find the configuration file which was used to compile your precompiled kernel. Usually, this is available in your current \emph{boot directory, under a name like config-2.6.x. You may just want to copy it to your kernel source tree: *cp /boot/config-`uname -r` /usr/src/linux-`uname -r`}.config*.
+First of all, make sure that a kernel source tree is available, having exactly the same version as your current kernel.
+Then, find the configuration file which was used to compile your precompiled kernel.
+Usually, this is available in your current \emph{boot} directory, under a name like config-2.6.x.
+You may just want to copy it to your kernel source tree: \verb|cp /boot/config-`uname -r` .config|.
 
-Let's focus again on the previous error message: a closer look at the version magic strings suggests that, even with two configuration files which are exactly the same, a slight difference in the version magic could be possible, and it is sufficient to prevent insertion of the module into the kernel. That slight difference, namely the custom string which appears in the module's version magic and not in the kernel's one, is due to a modification with respect to the original, in the makefile that some distribution include. Then, examine your \textbf{/usr/src/linux/Makefile}, and make sure that the specified version information matches exactly the one used for your current kernel. For example, you makefile could start as follows:
+Let's focus again on the previous error message: a closer look at the version magic strings suggests that, even with two configuration files which are exactly the same, a slight difference in the version magic could be possible, and it is sufficient to prevent insertion of the module into the kernel.
+That slight difference, namely the custom string which appears in the module's version magic and not in the kernel's one, is due to a modification with respect to the original, in the makefile that some distribution include.
+Then, examine your \textbf{/usr/src/linux/Makefile}, and make sure that the specified version information matches exactly the one used for your current kernel. For example, you makefile could start as follows:
 
 \begin{verbatim}
-VERSION = 4
-PATCHLEVEL = 7
-SUBLEVEL = 4
-EXTRAVERSION = -1.358custom
+VERSION = 5
+PATCHLEVEL = 14
+SUBLEVEL = 0
+EXTRAVERSION = -rc2
 \end{verbatim}
 
-In this case, you need to restore the value of symbol \textbf{EXTRAVERSION} to -1.358. We suggest to keep a backup copy of the makefile used to compile your kernel available in \textbf{/lib/modules/5.6.7-1.358/build}. A simple \textbf{cp /lib/modules/`uname-r`/build/Makefile /usr/src/linux-`uname -r`} should suffice. Additionally, if you already started a kernel build with the previous (wrong) Makefile, you should also rerun make, or directly modify symbol UTS\_RELEASE in file \textbf{/usr/src/linux-5.6.7/include/linux/version.h} according to contents of file \textbf{/lib/modules/5.6.7/build/include/linux/version.h}, or overwrite the latter with the first.
+In this case, you need to restore the value of symbol \textbf{EXTRAVERSION} to \textbf{-rc2}.
+We suggest to keep a backup copy of the makefile used to compile your kernel available in \textbf{/lib/modules/5.14.0-rc2/build}.
+A simple \textbf{cp /lib/modules/`uname-r`/build/Makefile /usr/src/linux-`uname -r`} should suffice.
+% TODO: out-of-date information
+Additionally, if you already started a kernel build with the previous (wrong) Makefile, you should also rerun make, or directly modify symbol UTS\_RELEASE in file \textbf{/usr/src/linux-5.14.0/include/linux/version.h} according to contents of file \textbf{/lib/modules/5.14.0/build/include/linux/version.h}, or overwrite the latter with the first.
 
 Now, please run make to update configuration and version headers and objects:
 
@@ -495,7 +539,8 @@ HOSTCC  scripts/kallsyms
 CC      scripts/empty.o
 \end{verbatim}
 
-If you do not desire to actually compile the kernel, you can interrupt the build process (CTRL-C) just after the SPLIT line, because at that time, the files you need will be are ready. Now you can turn back to the directory of your module and compile it: It will be built exactly according your current kernel settings, and it will load into it without any errors.
+If you do not desire to actually compile the kernel, you can interrupt the build process (CTRL-C) just after the SPLIT line, because at that time, the files you need will be are ready.
+Now you can turn back to the directory of your module and compile it: It will be built exactly according your current kernel settings, and it will load into it without any errors.
 
 \section{Preliminaries}
 \label{sec:org8c45a1a}
