@@ -400,7 +400,7 @@ It takes two parameters: a variable name and a free form string describing that 
 
 I would recommend playing around with this code:
 \begin{code}
-# sudo insmod hello-5.ko mystring="bebop" myintArray=-1
+# insmod hello-5.ko mystring="bebop" myintArray=-1
 myshort is a short integer: 1
 myint is an integer: 20
 mylong is a long integer: 9999
@@ -410,7 +410,7 @@ myintArray is -1 and 420
 # rmmod hello-5
 Goodbye, world 5
 
-# sudo insmod hello-5.ko mystring="supercalifragilisticexpialidocious" myintArray=-1,-1
+# insmod hello-5.ko mystring="supercalifragilisticexpialidocious" myintArray=-1,-1
 myshort is a short integer: 1
 myint is an integer: 20
 mylong is a long integer: 9999
@@ -420,7 +420,7 @@ myintArray is -1 and -1
 # rmmod hello-5
 Goodbye, world 5
 
-# sudo insmod hello-5.ko mylong=hello
+# insmod hello-5.ko mylong=hello
 hello-5.o: invalid argument syntax for mylong: 'h'
 \end{code}
 
