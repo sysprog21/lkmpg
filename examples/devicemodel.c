@@ -56,7 +56,8 @@ static const struct dev_pm_ops devicemodel_pm_ops = {
     .poweroff = devicemodel_suspend,
     .freeze = devicemodel_suspend,
     .thaw = devicemodel_resume,
-    .restore = devicemodel_resume};
+    .restore = devicemodel_resume,
+};
 
 static struct platform_driver devicemodel_driver = {
     .driver =
