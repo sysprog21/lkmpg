@@ -3,7 +3,16 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{graphicx}
+
+% fancyhdr settings
 \usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\rightmark}
+\rhead{\thepage}
+\cfoot{The Linux Kernel Module Programming Guide}
+\renewcommand{\headrulewidth}{2pt}
+\renewcommand{\footrulewidth}{1pt}
 
 % tikz settings
 \usepackage{tikz}
@@ -39,6 +48,7 @@
 \begin{document}
 
 \maketitle
+
 \tableofcontents
 
 \section{Introduction}
