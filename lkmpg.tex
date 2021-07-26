@@ -345,7 +345,7 @@ When you boot your kernel and see something like Freeing unused kernel memory: 2
 Honestly, who loads or even cares about proprietary modules?
 If you do then you might have seen something like this:
 \begin{verbatim}
-# insmod xxxxxx.ko
+$ sudo insmod xxxxxx.ko
 loading out-of-tree module taints kernel.
 module license 'unspecified' taints kernel.
 \end{verbatim}
@@ -400,27 +400,27 @@ It takes two parameters: a variable name and a free form string describing that 
 
 I would recommend playing around with this code:
 \begin{code}
-# sudo insmod hello-5.ko mystring="bebop" myintArray=-1
+$ sudo insmod hello-5.ko mystring="bebop" myintArray=-1
 myshort is a short integer: 1
 myint is an integer: 20
 mylong is a long integer: 9999
 mystring is a string: bebop
 myintArray is -1 and 420
 
-# rmmod hello-5
+$ sudo rmmod hello-5
 Goodbye, world 5
 
-# sudo insmod hello-5.ko mystring="supercalifragilisticexpialidocious" myintArray=-1,-1
+$ sudo insmod hello-5.ko mystring="supercalifragilisticexpialidocious" myintArray=-1,-1
 myshort is a short integer: 1
 myint is an integer: 20
 mylong is a long integer: 9999
 mystring is a string: supercalifragilisticexpialidocious
 myintArray is -1 and -1
 
-# rmmod hello-5
+$ sudo rmmod hello-5
 Goodbye, world 5
 
-# sudo insmod hello-5.ko mylong=hello
+$ sudo insmod hello-5.ko mylong=hello
 hello-5.o: invalid argument syntax for mylong: 'h'
 \end{code}
 
@@ -486,7 +486,7 @@ Version data are inserted in your module when it is linked against the \textbf{i
 To inspect version magics and other strings stored in a given module, issue the modinfo module.ko command:
 
 \begin{verbatim}
-# modinfo hello-4.ko
+$ modinfo hello-4.ko
 description:    A sample driver
 author:         LKMPG
 license:        GPL
@@ -526,7 +526,7 @@ Additionally, if you already started a kernel build with the previous (wrong) Ma
 Now, please run make to update configuration and version headers and objects:
 
 \begin{verbatim}
-# make
+$ make
 CHK     include/linux/version.h
 UPD     include/linux/version.h
 SYMLINK include/asm -> include/asm-i386
@@ -611,7 +611,7 @@ One class of module is the device driver, which provides functionality for hardw
 Let's look at some device files. Here are device files which represent the first three partitions on the primary master IDE hard drive:
 
 \begin{verbatim}
-# ls -l /dev/hda[1-3]
+$ ls -l /dev/hda[1-3]
 brw-rw----  1 root  disk  3, 1 Jul  5  2000 /dev/hda1
 brw-rw----  1 root  disk  3, 2 Jul  5  2000 /dev/hda2
 brw-rw----  1 root  disk  3, 3 Jul  5  2000 /dev/hda3
@@ -639,7 +639,7 @@ I would like to make a few last points which are implicit from the above discuss
 By the way, when I say \emph{"hardware"}, I mean something a bit more abstract than a PCI card that you can hold in your hand. Look at these two device files:
 
 \begin{verbatim}
-% ls -l /dev/sda /dev/sdb
+$ ls -l /dev/sda /dev/sdb
 brw-rw---- 1 root disk 8,  0 Jan  3 09:02 /dev/sda
 brw-rw---- 1 root disk 8, 16 Jan  3 09:02 /dev/sdb
 \end{verbatim}
@@ -795,7 +795,7 @@ The \textbf{/proc/helloworld} is created when the module is loaded with the func
 Each time, everytime the file \textbf{/proc/helloworld} is read, the function \textbf{procfile\_read} is called. Two parameters of this function are very important: the buffer (the first parameter) and the offset (the third one). The content of the buffer will be returned to the application which read it (for example the cat command). The offset is the current position in the file. If the return value of the function isn't null, then this function is called again. So be careful with this function, if it never returns zero, the read function is called endlessly.
 
 \begin{verbatim}
-# cat /proc/helloworld
+$ cat /proc/helloworld
 HelloWorld!
 \end{verbatim}
 
@@ -993,10 +993,10 @@ In that case, we want to return with \textbf{-EINTR} immediately. This is import
 There is one more point to remember. Some times processes don't want to sleep, they want either to get what they want immediately, or to be told it cannot be done. Such processes use the \textbf{O\_NONBLOCK} flag when opening the file. The kernel is supposed to respond by returning with the error code \textbf{-EAGAIN} from operations which would otherwise block, such as opening the file in this example. The program cat\_noblock, available in the source directory for this chapter, can be used to open a file with \textbf{O\_NONBLOCK}.
 
 \begin{verbatim}
-# insmod sleep.ko
-# cat_noblock /proc/sleep
+$ sudo insmod sleep.ko
+$ cat_noblock /proc/sleep
 Last input:
-# tail -f /proc/sleep &
+$ tail -f /proc/sleep &
 Last input:
 Last input:
 Last input:
@@ -1006,13 +1006,13 @@ Last input:
 Last input:
 tail: /proc/sleep: file truncated
 [1] 6540
-# cat_noblock /proc/sleep
+$ cat_noblock /proc/sleep
 Open would block
-# kill %1
+$ kill %1
 [1]+  Terminated              tail -f /proc/sleep
-# cat_noblock /proc/sleep
+$ cat_noblock /proc/sleep
 Last input:
-#
+$
 \end{verbatim}
 
 \samplec{examples/sleep.c}
