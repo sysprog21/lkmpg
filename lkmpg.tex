@@ -3,11 +3,12 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{graphicx}
+\usepackage{tocloft}
 
 % fancyhdr settings
 \usepackage{fancyhdr}
-\pagestyle{fancy}
 \fancyhf{}
+\pagestyle{fancy}
 \lhead{\rightmark}
 \rhead{\thepage}
 \cfoot{The Linux Kernel Module Programming Guide}
@@ -49,7 +50,13 @@
 
 \maketitle
 
+\pagenumbering{roman}
 \tableofcontents
+\clearpage
+
+%\pagestyle{fancy}
+\pagenumbering{arabic}
+\setcounter{page}{1}
 
 \section{Introduction}
 \label{sec:introduction}
