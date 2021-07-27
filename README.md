@@ -7,7 +7,7 @@ The original guide may be found at http://www.tldp.org/LDP/lkmpg/
 
 ## License
 
-The Linux Kernel Module Programming Guide is a free book; you may reproduce and/or modify it under the terms of the Open Software License.
+The Linux Kernel Module Programming Guide is a free book; you may reproduce and/or modify it under the terms of the [Open Software License](https://opensource.org/licenses/OSL-3.0).
 Use of this work is governed by a copyleft license that can be found in the `LICENSE` file.
 
 The complementary sample code is licensed under GNU GPL version 2, as same as Linux kernel.
