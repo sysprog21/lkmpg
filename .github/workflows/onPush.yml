@@ -26,7 +26,7 @@ jobs:
         run: mkdir output
 
       - name: pandoc is converting lkmpg.tex to lkmpg.pdf
-        uses: docker://pandoc/latex:2.14.1
+        uses: docker://pandoc/ubuntu-latex:2.14.1
         with:
           args: "-o ./output/lkmpg.pdf lkmpg.tex" 
       
