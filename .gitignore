@@ -15,3 +15,6 @@ _minted-lkmpg
 *.out
 lkmpg.pdf
 *.toc
+
+# Pandoc
+lkmpg.html
