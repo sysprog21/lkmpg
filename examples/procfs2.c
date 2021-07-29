@@ -42,12 +42,19 @@ ssize_t procfile_read(struct file *filePointer,
                       size_t buffer_length,
                       loff_t *offset)
 {
-    int ret = 0;
-    if (strlen(buffer) == 0) {
-        pr_info("procfile read %s\n", filePointer->f_path.dentry->d_name.name);
-        ret = copy_to_user(buffer, "HelloWorld!\n", sizeof("HelloWorld!\n"));
-        ret = sizeof("HelloWorld!\n");
+    char s[13] = "HelloWorld!\n";
+    int len = sizeof(s);
+    ssize_t ret = len;
+
+    if (*offset >= len || copy_to_user(buffer, s, len)) {
+	    pr_info("copy_to_user failed\n");
+	    ret = 0;
     }
+    else {
+        pr_info("procfile read %s\n", filePointer->f_path.dentry->d_name.name);
+        *offset += len;
+    }
+
     return ret;
 }
 
