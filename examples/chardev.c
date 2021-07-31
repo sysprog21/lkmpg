@@ -86,7 +86,7 @@ void cleanup_module(void)
 
 /*
  * Called when a process tries to open the device file, like
- * "cat /dev/mycharfile"
+ * "sudo cat /dev/chardev"
  */
 static int device_open(struct inode *inode, struct file *file)
 {
