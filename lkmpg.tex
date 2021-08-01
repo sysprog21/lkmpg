@@ -1098,18 +1098,32 @@ sudo rmmod hello_sysfs
 \end{codebash}
 
 \section{Talking To Device Files}
-\label{sec:org4566b36}
-Device files are supposed to represent physical devices. Most physical devices are used for output as well as input, so there has to be some mechanism for device drivers in the kernel to get the output to send to the device from processes. This is done by opening the device file for output and writing to it, just like writing to a file. In the following example, this is implemented by device\_write.
+\label{sec:device_files}
+Device files are supposed to represent physical devices.
+Most physical devices are used for output as well as input, so there has to be some mechanism for device drivers in the kernel to get the output to send to the device from processes.
+This is done by opening the device file for output and writing to it, just like writing to a file.
+In the following example, this is implemented by device\_write.
 
-This is not always enough. Imagine you had a serial port connected to a modem (even if you have an internal modem, it is still implemented from the CPU's perspective as a serial port connected to a modem, so you don't have to tax your imagination too hard). The natural thing to do would be to use the device file to write things to the modem (either modem commands or data to be sent through the phone line) and read things from the modem (either responses for commands or the data received through the phone line). However, this leaves open the question of what to do when you need to talk to the serial port itself, for example to send the rate at which data is sent and received.
+This is not always enough.
+Imagine you had a serial port connected to a modem (even if you have an internal modem, it is still implemented from the CPU's perspective as a serial port connected to a modem, so you don't have to tax your imagination too hard).
+The natural thing to do would be to use the device file to write things to the modem (either modem commands or data to be sent through the phone line) and read things from the modem (either responses for commands or the data received through the phone line).
+However, this leaves open the question of what to do when you need to talk to the serial port itself, for example to send the rate at which data is sent and received.
 
-The answer in Unix is to use a special function called \textbf{ioctl} (short for Input Output ConTroL). Every device can have its own ioctl commands, which can be read ioctl's (to send information from a process to the kernel), write ioctl's (to return information to a process), both or neither. Notice here the roles of read and write are reversed again, so in ioctl's read is to send information to the kernel and write is to receive information from the kernel.
+The answer in Unix is to use a special function called \textbf{ioctl} (short for Input Output ConTroL).
+Every device can have its own ioctl commands, which can be read ioctl's (to send information from a process to the kernel), write ioctl's (to return information to a process), both or neither.
+Notice here the roles of read and write are reversed again, so in ioctl's read is to send information to the kernel and write is to receive information from the kernel.
 
-The ioctl function is called with three parameters: the file descriptor of the appropriate device file, the ioctl number, and a parameter, which is of type long so you can use a cast to use it to pass anything. You won't be able to pass a structure this way, but you will be able to pass a pointer to the structure.
+The ioctl function is called with three parameters: the file descriptor of the appropriate device file, the ioctl number, and a parameter, which is of type long so you can use a cast to use it to pass anything.
+You will not be able to pass a structure this way, but you will be able to pass a pointer to the structure.
 
-The ioctl number encodes the major device number, the type of the ioctl, the command, and the type of the parameter. This ioctl number is usually created by a macro call (\_IO, \_IOR, \_IOW or \_IOWR --- depending on the type) in a header file. This header file should then be included both by the programs which will use ioctl (so they can generate the appropriate ioctl's) and by the kernel module (so it can understand it). In the example below, the header file is chardev.h and the program which uses it is ioctl.c.
+The ioctl number encodes the major device number, the type of the ioctl, the command, and the type of the parameter.
+This ioctl number is usually created by a macro call (\_IO, \_IOR, \_IOW or \_IOWR --- depending on the type) in a header file.
+This header file should then be included both by the programs which will use ioctl (so they can generate the appropriate ioctl's) and by the kernel module (so it can understand it).
+In the example below, the header file is chardev.h and the program which uses it is ioctl.c.
 
-If you want to use ioctls in your own kernel modules, it is best to receive an official ioctl assignment, so if you accidentally get somebody else's ioctls, or if they get yours, you'll know something is wrong. For more information, consult the kernel source tree at Documentation/ioctl-number.txt.
+If you want to use ioctls in your own kernel modules, it is best to receive an official ioctl assignment, so if you accidentally get somebody else's ioctls, or if they get yours, you'll know something is wrong.
+% FIXME: use the right entry about ioctl assignment
+For more information, consult the kernel source tree at Documentation/ioctl-number.txt.
 
 \samplec{examples/chardev2.c}
 
@@ -1118,7 +1132,7 @@ If you want to use ioctls in your own kernel modules, it is best to receive an o
 \samplec{examples/ioctl.c}
 
 \section{System Calls}
-\label{sec:orga925e22}
+\label{sec:syscall}
 So far, the only thing we've done was to use well defined kernel mechanisms to register \textbf{/proc} files and device handlers. This is fine if you want to do something the kernel programmers thought you'd want, such as write a device driver. But what if you want to do something unusual, to change the behavior of the system in some way? Then, you're mostly on your own.
 
 If you're not being sensible and using a virtual machine then this is where kernel programming can become hazardous. While writing the example below, I killed the \textbf{open()} system call. This meant I couldn't open any files, I couldn't run any programs, and I couldn't shutdown the system. I had to restart the virtual machine. No important files got anihilated, but if I was doing this on some live mission critical system then that could have been a possible outcome. To ensure you don't lose any files, even within a test environment, please run \textbf{sync} right before you do the \textbf{insmod} and the \textbf{rmmod}.
