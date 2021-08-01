@@ -728,14 +728,14 @@ Sometimes two device files with the same major but different minor number can ac
 So just be aware that the word ``hardware'' in our discussion can mean something very abstract.
 
 \section{Character Device drivers}
-\label{sec:orgd3ad4b9}
+\label{sec:chardev}
 \subsection{The file\_operations Structure}
-\label{sec:org3950990}
-The file\_operations structure is defined in \textbf{/usr/include/linux/fs.h}, and holds pointers to functions defined by the driver that perform various operations on the device.
+\label{sec:file_operations}
+The \verb|file_operations| structure is defined in \textbf{/usr/include/linux/fs.h}, and holds pointers to functions defined by the driver that perform various operations on the device.
 Each field of the structure corresponds to the address of some function defined by the driver to handle a requested operation.
 
 For example, every character driver needs to define a function that reads from the device.
-The file\_operations structure holds the address of the module's function that performs that operation.
+The \verb|file_operations| structure holds the address of the module's function that performs that operation.
 Here is what the definition looks like for kernel 5.4:
 
 \begin{code}
@@ -770,9 +770,6 @@ struct file_operations {
     long (*fallocate)(struct file *file, int mode, loff_t offset,
         loff_t len);
     void (*show_fdinfo)(struct seq_file *m, struct file *f);
-#ifndef CONFIG_MMU
-  unsigned (*mmap_capabilities)(struct file *);
-#endif
   ssize_t (*copy_file_range)(struct file *, loff_t, struct file *,
       loff_t, size_t, unsigned int);
   loff_t (*remap_file_range)(struct file *file_in, loff_t pos_in,
@@ -783,8 +780,8 @@ struct file_operations {
 \end{code}
 
 Some operations are not implemented by a driver.
-For example, a driver that handles a video card won't need to read from a directory structure.
-The corresponding entries in the file\_operations structure should be set to NULL.
+For example, a driver that handles a video card will not need to read from a directory structure.
+The corresponding entries in the \verb|file_operations| structure should be set to NULL.
 
 There is a gcc extension that makes assigning to this structure more convenient.
 You will see it in modern drivers, and may catch you by surprise.
@@ -814,7 +811,7 @@ struct file_operations fops = {
 
 The meaning is clear, and you should be aware that any member of the structure which you do not explicitly assign will be initialized to NULL by gcc.
 
-An instance of struct file\_operations containing pointers to functions that are used to implement read, write, open, \ldots{} syscalls is commonly named fops.
+An instance of struct \verb|file_operations| containing pointers to functions that are used to implement read, write, open, \ldots{} syscalls is commonly named fops.
 
 \subsection{The file structure}
 \label{sec:file_struct}
@@ -847,9 +844,9 @@ You do this by using the \verb|register_chrdev| function, defined by linux/fs.h.
 int register_chrdev(unsigned int major, const char *name, struct file_operations *fops);
 \end{code}
 
-where unsigned int major is the major number you want to request, \emph{const char *name} is the name of the device as it'll appear in \textbf{/proc/devices} and \emph{struct file\_operations *fops} is a pointer to the file\_operations table for your driver.
+where unsigned int major is the major number you want to request, \emph{const char *name} is the name of the device as it will appear in \textbf{/proc/devices} and \emph{struct file\_operations *fops} is a pointer to the \verb|file_operations| table for your driver.
 A negative return value means the registration failed. Note that we didn't pass the minor number to register\_chrdev.
-That's because the kernel doesn't care about the minor number; only our driver uses it.
+That is because the kernel doesn't care about the minor number; only our driver uses it.
 
 Now the question is, how do you get a major number without hijacking one that's already in use?
 % FIXME: use the correct entry of Documentation
