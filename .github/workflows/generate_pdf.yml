@@ -1,0 +1,23 @@
+name: build-deploy-assets
+
+on:
+  push:
+    branches: [ master ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: texlive/texlive
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        run: make all
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: lkmpg.pdf
+          tag_name: "latest"
+          prerelease: true
