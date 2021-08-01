@@ -15,3 +15,15 @@ _minted-lkmpg
 *.out
 lkmpg.pdf
 *.toc
+
+# make4ht
+*.html
+*.svg 
+*.tmp
+*.css 
+*.4ct 
+*.4tc 
+*.dvi 
+*.lg 
+*.idv
+*.xref
