@@ -40,7 +40,11 @@
 \begin{document}
 
 \maketitle
+\ifdefined\HCode
+% turn off TOC
+\else
 \tableofcontents
+\fi
 
 \section{Introduction}
 \label{sec:introduction}
