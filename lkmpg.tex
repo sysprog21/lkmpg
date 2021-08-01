@@ -899,13 +899,9 @@ A new system call may be added, but usually the old ones will behave exactly lik
 This is necessary for backward compatibility -- a new kernel version is not supposed to break regular processes.
 In most cases, the device files will also remain the same. On the other hand, the internal interfaces within the kernel can and do change between versions.
 
-The Linux kernel versions are divided between the stable versions (n.\$<\(even number\)>\$.m) and the development versions (n.\$<\(odd number\)>\$.m).
-The development versions include all the cool new ideas, including those which will be considered a mistake, or reimplemented, in the next version.
-As a result, you can not trust the interface to remain the same in those versions (which is why I don't bother to support them in this book, it's too much work and it would become dated too quickly).
-In the stable versions, on the other hand, we can expect the interface to remain the same regardless of the bug fix version (the m number).
-
 There are differences between different kernel versions, and if you want to support multiple kernel versions, you will find yourself having to code conditional compilation directives.
-The way to do this to compare the macro LINUX\_VERSION\_CODE to the macro KERNEL\_VERSION. In version a.b.c of the kernel, the value of this macro would be \(2^{16}a+2^{8}b+c\).
+The way to do this to compare the macro \verb|LINUX_VERSION_CODE| to the macro \verb|KERNEL_VERSION|.
+In version a.b.c of the kernel, the value of this macro would be \(2^{16}a+2^{8}b+c\).
 
 While previous versions of this guide showed how you can write backward compatible code with such constructs in great detail, we decided to break with this tradition for the better.
 People interested in doing such might now use a LKMPG with a version matching to their kernel.
