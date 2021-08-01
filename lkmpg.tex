@@ -1133,27 +1133,73 @@ For more information, consult the kernel source tree at Documentation/ioctl-numb
 
 \section{System Calls}
 \label{sec:syscall}
-So far, the only thing we've done was to use well defined kernel mechanisms to register \textbf{/proc} files and device handlers. This is fine if you want to do something the kernel programmers thought you'd want, such as write a device driver. But what if you want to do something unusual, to change the behavior of the system in some way? Then, you're mostly on your own.
+So far, the only thing we've done was to use well defined kernel mechanisms to register \textbf{/proc} files and device handlers.
+This is fine if you want to do something the kernel programmers thought you'd want, such as write a device driver.
+But what if you want to do something unusual, to change the behavior of the system in some way?
+Then, you are mostly on your own.
 
-If you're not being sensible and using a virtual machine then this is where kernel programming can become hazardous. While writing the example below, I killed the \textbf{open()} system call. This meant I couldn't open any files, I couldn't run any programs, and I couldn't shutdown the system. I had to restart the virtual machine. No important files got anihilated, but if I was doing this on some live mission critical system then that could have been a possible outcome. To ensure you don't lose any files, even within a test environment, please run \textbf{sync} right before you do the \textbf{insmod} and the \textbf{rmmod}.
+If you are not being sensible and using a virtual machine then this is where kernel programming can become hazardous.
+While writing the example below, I killed the \textbf{open()} system call.
+This meant I could not open any files, I could not run any programs, and I could not shutdown the system.
+I had to restart the virtual machine.
+No important files got anihilated, but if I was doing this on some live mission critical system then that could have been a possible outcome.
+To ensure you do not lose any files, even within a test environment, please run \textbf{sync} right before you do the \textbf{insmod} and the \textbf{rmmod}.
 
-Forget about \textbf{/proc} files, forget about device files. They're just minor details. Minutiae in the vast expanse of the universe. The real process to kernel communication mechanism, the one used by all processes, is \emph{system calls}. When a process requests a service from the kernel (such as opening a file, forking to a new process, or requesting more memory), this is the mechanism used. If you want to change the behaviour of the kernel in interesting ways, this is the place to do it. By the way, if you want to see which system calls a program uses, run \textbf{strace <arguments>}.
+Forget about \textbf{/proc} files, forget about device files.
+They are just minor details.
+Minutiae in the vast expanse of the universe.
+The real process to kernel communication mechanism, the one used by all processes, is \emph{system calls}.
+When a process requests a service from the kernel (such as opening a file, forking to a new process, or requesting more memory), this is the mechanism used.
+If you want to change the behaviour of the kernel in interesting ways, this is the place to do it.
+By the way, if you want to see which system calls a program uses, run \verb|strace <arguments>|.
 
-In general, a process is not supposed to be able to access the kernel. It can't access kernel memory and it can't call kernel functions. The hardware of the CPU enforces this (that's the reason why it's called `protected mode' or 'page protection').
+In general, a process is not supposed to be able to access the kernel.
+It can not access kernel memory and it can't call kernel functions.
+The hardware of the CPU enforces this (that is the reason why it is called ``protected mode'' or ``page protection'').
 
-System calls are an exception to this general rule. What happens is that the process fills the registers with the appropriate values and then calls a special instruction which jumps to a previously defined location in the kernel (of course, that location is readable by user processes, it is not writable by them). Under Intel CPUs, this is done by means of interrupt 0x80. The hardware knows that once you jump to this location, you are no longer running in restricted user mode, but as the operating system kernel --- and therefore you're allowed to do whatever you want.
+System calls are an exception to this general rule.
+What happens is that the process fills the registers with the appropriate values and then calls a special instruction which jumps to a previously defined location in the kernel (of course, that location is readable by user processes, it is not writable by them).
+Under Intel CPUs, this is done by means of interrupt 0x80. The hardware knows that once you jump to this location, you are no longer running in restricted user mode, but as the operating system kernel --- and therefore you're allowed to do whatever you want.
 
-The location in the kernel a process can jump to is called system\_call. The procedure at that location checks the system call number, which tells the kernel what service the process requested. Then, it looks at the table of system calls (sys\_call\_table) to see the address of the kernel function to call. Then it calls the function, and after it returns, does a few system checks and then return back to the process (or to a different process, if the process time ran out). If you want to read this code, it's at the source file arch/\$<\(architecture\)>\$/kernel/entry.S, after the line ENTRY(system\_call).
+% FIXME: recent kernel changes the system call entries
+The location in the kernel a process can jump to is called \verb|system_call|.
+The procedure at that location checks the system call number, which tells the kernel what service the process requested.
+Then, it looks at the table of system calls (\verb|sys_call_table|) to see the address of the kernel function to call.
+Then it calls the function, and after it returns, does a few system checks and then return back to the process (or to a different process, if the process time ran out).
+If you want to read this code, it is at the source file \verb|arch/$(architecture)/kernel/entry.S|, after the line \verb|ENTRY(system_call)|.
 
-So, if we want to change the way a certain system call works, what we need to do is to write our own function to implement it (usually by adding a bit of our own code, and then calling the original function) and then change the pointer at sys\_call\_table to point to our function. Because we might be removed later and we don't want to leave the system in an unstable state, it's important for cleanup\_module to restore the table to its original state.
+So, if we want to change the way a certain system call works, what we need to do is to write our own function to implement it (usually by adding a bit of our own code, and then calling the original function) and then change the pointer at sys\_call\_table to point to our function.
+Because we might be removed later and we don't want to leave the system in an unstable state, it's important for cleanup\_module to restore the table to its original state.
 
-The source code here is an example of such a kernel module. We want to "spy" on a certain user, and to \textbf{pr\_info()} a message whenever that user opens a file. Towards this end, we replace the system call to open a file with our own function, called \textbf{our\_sys\_open}. This function checks the uid (user's id) of the current process, and if it's equal to the uid we spy on, it calls pr\_info() to display the name of the file to be opened. Then, either way, it calls the original open() function with the same parameters, to actually open the file.
+The source code here is an example of such a kernel module.
+We want to ``spy'' on a certain user, and to \textbf{pr\_info()} a message whenever that user opens a file.
+Towards this end, we replace the system call to open a file with our own function, called \textbf{our\_sys\_open}.
+This function checks the uid (user's id) of the current process, and if it is equal to the uid we spy on, it calls pr\_info() to display the name of the file to be opened.
+Then, either way, it calls the original open() function with the same parameters, to actually open the file.
 
-The \textbf{init\_module} function replaces the appropriate location in \textbf{sys\_call\_table} and keeps the original pointer in a variable. The cleanup\_module function uses that variable to restore everything back to normal. This approach is dangerous, because of the possibility of two kernel modules changing the same system call. Imagine we have two kernel modules, A and B. A's open system call will be A\_open and B's will be B\_open. Now, when A is inserted into the kernel, the system call is replaced with A\_open, which will call the original sys\_open when it's done. Next, B is inserted into the kernel, which replaces the system call with B\_open, which will call what it thinks is the original system call, A\_open, when it's done.
+The \textbf{init\_module} function replaces the appropriate location in \textbf{sys\_call\_table} and keeps the original pointer in a variable.
+The cleanup\_module function uses that variable to restore everything back to normal.
+This approach is dangerous, because of the possibility of two kernel modules changing the same system call.
+Imagine we have two kernel modules, A and B. A's open system call will be A\_open and B's will be B\_open.
+Now, when A is inserted into the kernel, the system call is replaced with A\_open, which will call the original sys\_open when it is done.
+Next, B is inserted into the kernel, which replaces the system call with B\_open, which will call what it thinks is the original system call, A\_open, when it's done.
 
-Now, if B is removed first, everything will be well --- it will simply restore the system call to A\_open, which calls the original. However, if A is removed and then B is removed, the system will crash. A's removal will restore the system call to the original, sys\_open, cutting B out of the loop. Then, when B is removed, it will restore the system call to what it thinks is the original, \textbf{A\_open}, which is no longer in memory. At first glance, it appears we could solve this particular problem by checking if the system call is equal to our open function and if so not changing it at all (so that B won't change the system call when it's removed), but that will cause an even worse problem. When A is removed, it sees that the system call was changed to \textbf{B\_open} so that it is no longer pointing to \textbf{A\_open}, so it won't restore it to \textbf{sys\_open} before it is removed from memory. Unfortunately, \textbf{B\_open} will still try to call \textbf{A\_open} which is no longer there, so that even without removing B the system would crash.
+Now, if B is removed first, everything will be well --- it will simply restore the system call to A\_open, which calls the original.
+However, if A is removed and then B is removed, the system will crash.
+A's removal will restore the system call to the original, sys\_open, cutting B out of the loop.
+Then, when B is removed, it will restore the system call to what it thinks is the original, \textbf{A\_open}, which is no longer in memory.
+At first glance, it appears we could solve this particular problem by checking if the system call is equal to our open function and if so not changing it at all (so that B won't change the system call when it is removed), but that will cause an even worse problem.
+When A is removed, it sees that the system call was changed to \textbf{B\_open} so that it is no longer pointing to \textbf{A\_open}, so it will not restore it to \textbf{sys\_open} before it is removed from memory.
+Unfortunately, \textbf{B\_open} will still try to call \textbf{A\_open} which is no longer there, so that even without removing B the system would crash.
 
-Note that all the related problems make syscall stealing unfeasiable for production use. In order to keep people from doing potential harmful things \textbf{sys\_call\_table} is no longer exported. This means, if you want to do something more than a mere dry run of this example, you will have to patch your current kernel in order to have sys\_call\_table exported. In the example directory you will find a README and the patch. As you can imagine, such modifications are not to be taken lightly. Do not try this on valueable systems (ie systems that you do not own - or cannot restore easily). You'll need to get the complete sourcecode of this guide as a tarball in order to get the patch and the README. Depending on your kernel version, you might even need to hand apply the patch. Still here? Well, so is this chapter. If Wyle E. Coyote was a kernel hacker, this would be the first thing he'd try. ;)
+Note that all the related problems make syscall stealing unfeasiable for production use.
+In order to keep people from doing potential harmful things \textbf{sys\_call\_table} is no longer exported.
+This means, if you want to do something more than a mere dry run of this example, you will have to patch your current kernel in order to have \verb|sys_call_table| exported.
+In the example directory you will find a README and the patch.
+As you can imagine, such modifications are not to be taken lightly.
+Do not try this on valueable systems (ie systems that you do not own - or cannot restore easily).
+You will need to get the complete sourcecode of this guide as a tarball in order to get the patch and the README.
+Depending on your kernel version, you might even need to hand apply the patch.
 
 \samplec{examples/syscall.c}
 
