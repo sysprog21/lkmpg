@@ -3,7 +3,8 @@
 This project keeps the Linux Kernel Module Programming Guide reasonably up to date, with [working examples](examples/) for recent 5.x kernel versions.
 The guide has been around since 2001 and most copies of it on the web only describe old 2.6.x kernels.
 
-The original guide may be found at http://www.tldp.org/LDP/lkmpg/
+The book can be freely accessed via https://sysprog21.github.io/lkmpg/
+The original guide may be found at [Linux Documentation Project](http://www.tldp.org/LDP/lkmpg/).
 
 ## License
 
