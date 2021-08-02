@@ -1540,7 +1540,7 @@ file is opened and then the module is removed, there’s no way to avoid the
                                                                   
 consequences.
 </p><!-- l. 927 --><p class='indent'>   Here a simple example showing how to use a <span class='ecbx-1000'>/proc </span>file. This is the HelloWorld
-for the <span class='ecbx-1000'>/proc </span>filesystem. There are three parts: create the file <span class='ecbi-1000'>proc </span><span class='ecbx-1000'>helloworld</span>
+for the <span class='ecbx-1000'>/proc </span>filesystem. There are three parts: create the file <span class='ecbx-1000'>/proc/helloworld</span>
 in the function init_module, return a value (and a buffer) when the file
 <span class='ecbx-1000'>/proc/helloworld </span>is read in the callback function <span class='ecbx-1000'>procfile_read</span>, and delete the
 file <span class='ecbx-1000'>/proc/helloworld </span>in the function cleanup_module.
