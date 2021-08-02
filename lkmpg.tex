@@ -933,7 +933,7 @@ The return value is a \textbf{struct proc\_dir\_entry} , and it will be used to 
 A null return value means that the creation has failed.
 
 Each time, everytime the file \textbf{/proc/helloworld} is read, the function \textbf{procfile\_read} is called.
-Two parameters of this function are very important: the buffer (the first parameter) and the offset (the third one).
+Two parameters of this function are very important: the buffer (the second parameter) and the offset (the fourth one).
 The content of the buffer will be returned to the application which read it (for example the cat command).
 The offset is the current position in the file.
 If the return value of the function is not null, then this function is called again.
