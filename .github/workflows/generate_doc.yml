@@ -9,22 +9,29 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: texlive/texlive
+    container: twtug/lkmpg
 
     steps:
       - uses: actions/checkout@v2
       - name: Build
-        run: make all
+        run: |
+          make all
+          make html
+          tar zcvf lkmpg-html.tar.gz ./html
       - name: Delete old release asset
         uses: mknejp/delete-release-assets@v1
         with:
           token: ${{ github.token }}
           fail-if-no-assets: false
           tag: latest
-          assets: lkmpg.pdf
+          assets: |
+            lkmpg.pdf
+            lkmpg-html.tar.gz
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: lkmpg.pdf
+          files: |
+            lkmpg.pdf
+            lkmpg-html.tar.gz
           tag_name: "latest"
           prerelease: true
