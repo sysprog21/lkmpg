@@ -926,7 +926,7 @@ Because we don't get called when the file is opened or closed, there's nowhere f
 
 Here a simple example showing how to use a \textbf{/proc} file.
 This is the HelloWorld for the \textbf{/proc} filesystem.
-There are three parts: create the file \textbf{\emph{proc} helloworld} in the function init\_module, return a value (and a buffer) when the file \textbf{/proc/helloworld} is read in the callback function \textbf{procfile\_read}, and delete the file \textbf{/proc/helloworld} in the function cleanup\_module.
+There are three parts: create the file \textbf{/proc/helloworld} in the function init\_module, return a value (and a buffer) when the file \textbf{/proc/helloworld} is read in the callback function \textbf{procfile\_read}, and delete the file \textbf{/proc/helloworld} in the function cleanup\_module.
 
 The \textbf{/proc/helloworld} is created when the module is loaded with the function \textbf{proc\_create}.
 The return value is a \textbf{struct proc\_dir\_entry} , and it will be used to configure the file \textbf{/proc/helloworld} (for example, the owner of this file).
