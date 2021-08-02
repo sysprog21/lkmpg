@@ -770,12 +770,12 @@ struct file_operations {
     long (*fallocate)(struct file *file, int mode, loff_t offset,
         loff_t len);
     void (*show_fdinfo)(struct seq_file *m, struct file *f);
-  ssize_t (*copy_file_range)(struct file *, loff_t, struct file *,
-      loff_t, size_t, unsigned int);
-  loff_t (*remap_file_range)(struct file *file_in, loff_t pos_in,
-           struct file *file_out, loff_t pos_out,
-           loff_t len, unsigned int remap_flags);
-  int (*fadvise)(struct file *, loff_t, loff_t, int);
+    ssize_t (*copy_file_range)(struct file *, loff_t, struct file *,
+        loff_t, size_t, unsigned int);
+    loff_t (*remap_file_range)(struct file *file_in, loff_t pos_in,
+             struct file *file_out, loff_t pos_out,
+             loff_t len, unsigned int remap_flags);
+    int (*fadvise)(struct file *, loff_t, loff_t, int);
 } __randomize_layout;
 \end{code}
 
@@ -812,6 +812,8 @@ struct file_operations fops = {
 The meaning is clear, and you should be aware that any member of the structure which you do not explicitly assign will be initialized to NULL by gcc.
 
 An instance of struct \verb|file_operations| containing pointers to functions that are used to implement read, write, open, \ldots{} syscalls is commonly named fops.
+
+In Linux v5.6+, this structure has been instead by \ref{sec:proc_ops} in the \textbf{/proc} file system.
 
 \subsection{The file structure}
 \label{sec:file_struct}
@@ -948,6 +950,13 @@ HelloWorld!
 \end{verbatim}
 
 \samplec{examples/procfs1.c}
+
+\subsection{The proc\_ops Structure}
+\label{sec:proc_ops}
+The \verb|proc_ops| structure is defined in \textbf{/usr/include/linux/proc\_fs.h} in Linux v5.6+.
+In old kernel, it used \verb|file_operations| for custom hooks in \textbf{/proc} file system, but it contains some members that are unnecessary in VFS, and every time VFS expands \verb|file_operations| set, \textbf{/proc} code comes bloated.
+On the other hand, not only the space, but also some operations were saved by this structure to improve its performance.
+For example, the file which never disappears in \textbf{/proc} can set the \textbf{proc\_flag} as \textbf{PROC\_ENTRY\_PERMANENT} to save 2 atomic ops, 1 allocation, 1 free in per open/read/close sequence.
 
 \subsection{Read and Write a /proc File}
 \label{sec:read_write_procfs}
