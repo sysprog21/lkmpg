@@ -1550,7 +1550,7 @@ to configure the file <span class='ecbx-1000'>/proc/helloworld </span>(for examp
 return value means that the creation has failed.
 </p><!-- l. 935 --><p class='indent'>   Each time, everytime the file <span class='ecbx-1000'>/proc/helloworld </span>is read, the function
 <span class='ecbx-1000'>procfile_read </span>is called. Two parameters of this function are very important: the
-buffer (the first parameter) and the offset (the third one). The content of the
+buffer (the second parameter) and the offset (the fourth one). The content of the
 buffer will be returned to the application which read it (for example the
 cat command). The offset is the current position in the file. If the return
 value of the function is not null, then this function is called again. So be
