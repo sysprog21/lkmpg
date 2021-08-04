@@ -408,20 +408,24 @@ I would recommend playing around with this code:
 \begin{code}
 $ sudo insmod hello-5.ko mystring="bebop" myintArray=-1
 myshort is a short integer: 1
-myint is an integer: 20
+myint is an integer: 420
 mylong is a long integer: 9999
 mystring is a string: bebop
-myintArray is -1 and 420
+myintArray[0] = -1
+myintArray[1] = 420
+got 1 arguments for myintArray.
 
 $ sudo rmmod hello-5
 Goodbye, world 5
 
 $ sudo insmod hello-5.ko mystring="supercalifragilisticexpialidocious" myintArray=-1,-1
 myshort is a short integer: 1
-myint is an integer: 20
+myint is an integer: 420
 mylong is a long integer: 9999
 mystring is a string: supercalifragilisticexpialidocious
-myintArray is -1 and -1
+myintArray[0] = -1
+myintArray[1] = -1
+got 2 arguments for myintArray.
 
 $ sudo rmmod hello-5
 Goodbye, world 5
