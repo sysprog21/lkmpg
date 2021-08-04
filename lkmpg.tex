@@ -966,7 +966,7 @@ The only memory segment accessible to a process is its own, so when writing regu
 When you write a kernel module, normally you want to access the kernel memory segment, which is handled automatically by the system.
 However, when the content of a memory buffer needs to be passed between the currently running process and the kernel, the kernel function receives a pointer to the memory buffer which is in the process segment.
 The put\_user and get\_user macros allow you to access that memory.
-These functions handle only one caracter, you can handle several caracters with copy\_to\_user and copy\_from\_user.
+These functions handle only one character, you can handle several characters with copy\_to\_user and copy\_from\_user.
 As the buffer (in read or write function) is in kernel space, for write function you need to import data because it comes from user space, but not for the read function because data is already in kernel space.
 
 \samplec{examples/procfs2.c}
@@ -1008,7 +1008,7 @@ The \verb|seq_file| API starts a sequence when a user read the /proc file.
 
 A sequence begins with the call of the function start().
 If the return is a non NULL value, the function next() is called.
-This function is an iterator, the goal is to go thought all the data.
+This function is an iterator, the goal is to go through all the data.
 Each time next() is called, the function show() is also called.
 It writes data values in the buffer read by the user.
 The function next() is called until it returns NULL.
