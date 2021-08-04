@@ -853,7 +853,7 @@ That is a bad way of doing things because you will never be sure if the number y
 The answer is that you can ask the kernel to assign you a dynamic major number.
 
 If you pass a major number of 0 to \verb|register_chrdev|, the return value will be the dynamically allocated major number.
-The downside is that you ca not make a device file in advance, since you don't know what the major number will be.
+The downside is that you can not make a device file in advance, since you don't know what the major number will be.
 There are a couple of ways to do this.
 First, the driver itself can print the newly assigned number and we can make the device file by hand.
 Second, the newly registered device will have an entry in \textbf{/proc/devices}, and we can either make the device file by hand or write a shell script to read the file in and make the device file.
