@@ -17,7 +17,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>August 2, 2021</span></div>
+<div class='date'><span class='ecrm-1200'>August 4, 2021</span></div>
                                                                   
 
                                                                   
@@ -1254,12 +1254,12 @@ because you will never be sure if the number you picked will be assigned later.
 The answer is that you can ask the kernel to assign you a dynamic major
 number.
 </p><!-- l. 855 --><p class='indent'>   If you pass a major number of 0 to <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>register_chrdev</span></span></span>, the return value will be the
-dynamically allocated major number. The downside is that you ca not make a device
-file in advance, since you don’t know what the major number will be. There are a
-couple of ways to do this. First, the driver itself can print the newly assigned number
-and we can make the device file by hand. Second, the newly registered device will
-have an entry in <span class='ecbx-1000'>/proc/devices</span>, and we can either make the device file by hand or
-write a shell script to read the file in and make the device file. The third method is
+dynamically allocated major number. The downside is that you can not make a
+device file in advance, since you don’t know what the major number will be. There
+are a couple of ways to do this. First, the driver itself can print the newly assigned
+number and we can make the device file by hand. Second, the newly registered device
+will have an entry in <span class='ecbx-1000'>/proc/devices</span>, and we can either make the device file by hand
+or write a shell script to read the file in and make the device file. The third method is
 we can have our driver make the the device file using the <span class='ecbx-1000'>device_create</span>
 function after a successful registration and <span class='ecbx-1000'>device_destroy </span>during the call to
 cleanup_module.
