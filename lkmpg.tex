@@ -1238,7 +1238,7 @@ There is one more point to remember. Some times processes don't want to sleep, t
 
 \begin{verbatim}
 $ sudo insmod sleep.ko
-$ cat_noblock /proc/sleep
+$ cat_nonblock /proc/sleep
 Last input:
 $ tail -f /proc/sleep &
 Last input:
@@ -1250,18 +1250,18 @@ Last input:
 Last input:
 tail: /proc/sleep: file truncated
 [1] 6540
-$ cat_noblock /proc/sleep
+$ cat_nonblock /proc/sleep
 Open would block
 $ kill %1
 [1]+  Terminated              tail -f /proc/sleep
-$ cat_noblock /proc/sleep
+$ cat_nonblock /proc/sleep
 Last input:
 $
 \end{verbatim}
 
 \samplec{examples/sleep.c}
 
-\samplec{examples/other/cat_noblock.c}
+\samplec{examples/other/cat_nonblock.c}
 
 \subsection{Completions}
 \label{sec:orgd9f9de4}

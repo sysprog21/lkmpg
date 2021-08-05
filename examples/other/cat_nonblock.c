@@ -1,5 +1,5 @@
 /*
- *  cat_noblock.c - open a file and display its contents, but exit rather than
+ *  cat_nonblock.c - open a file and display its contents, but exit rather than
  *  wait for input.
  */
 #include <errno.h>  /* for errno */
@@ -16,7 +16,6 @@ int main(int argc, char *argv[])
     size_t bytes;           /* The number of bytes read */
     char buffer[MAX_BYTES]; /* The buffer for the bytes */
 
-
     /* Usage */
     if (argc != 2) {
         printf("Usage: %s <filename>\n", argv[0]);
@@ -29,17 +28,12 @@ int main(int argc, char *argv[])
 
     /* If open failed */
     if (fd == -1) {
-        if (errno = EAGAIN)
-            puts("Open would block");
-        else
-            puts("Open failed");
+        puts(errno == EAGAIN ? "Open would block" : "Open failed");
         exit(-1);
     }
 
     /* Read the file and output its contents */
     do {
-        int i;
-
         /* Read characters from the file */
         bytes = read(fd, buffer, MAX_BYTES);
 
@@ -54,11 +48,12 @@ int main(int argc, char *argv[])
 
         /* Print the characters */
         if (bytes > 0) {
-            for (i = 0; i < bytes; i++)
+            for (int i = 0; i < bytes; i++)
                 putchar(buffer[i]);
         }
 
         /* While there are no errors and the file isn't over */
     } while (bytes > 0);
+
     return 0;
 }
