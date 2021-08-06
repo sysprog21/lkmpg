@@ -27,8 +27,8 @@ ssize_t procfile_read(struct file *filePointer,
     ssize_t ret = len;
 
     if (*offset >= len || copy_to_user(buffer, s, len)) {
-	    pr_info("copy_to_user failed\n");
-	    ret = 0;
+        pr_info("copy_to_user failed\n");
+        ret = 0;
     }
     else {
         pr_info("procfile read %s\n", filePointer->f_path.dentry->d_name.name);

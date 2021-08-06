@@ -30,14 +30,10 @@ Now we could build document with following commands:
 # download project
 $ git clone https://github.com/sysprog21/lkmpg.git && cd lkmpg
 
-# compile pdf
-$ make all
-
-# converting to html
-$ make html
-
-# clean cache files
-$ make clean
+# run commands
+$ make all              # compile pdf document
+$ make html             # convert to HTML
+$ make clean            # delete generated files
 ```
 
 ### Compile with Docker
@@ -56,15 +52,10 @@ $ git clone https://github.com/sysprog21/lkmpg.git && cd lkmpg
 $ docker pull twtug/lkmpg
 $ docker run --rm -it -v $(pwd):/workdir twtug/lkmpg
 
-# run commands to compile documents
-# compile pdf
-$ make all
-
-# converting to html
-$ make html
-
-# clean cache files
-$ make clean
+# run commands
+$ make all              # compile pdf document
+$ make html             # convert to HTML
+$ make clean            # delete generated files
 ```
 
 ## License
