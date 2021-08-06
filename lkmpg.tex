@@ -739,33 +739,35 @@ So just be aware that the word ``hardware'' in our discussion can mean something
 
 \section{Character Device drivers}
 \label{sec:chardev}
-\subsection{The proc\_ops Structure}
-\label{sec:proc_ops}
-The \verb|proc_ops| structure is defined in \textbf{/usr/include/linux/fs.h}, and holds pointers to functions defined by the driver that perform various operations on the device.
+\subsection{The file\_operations Structure}
+\label{sec:file_operations}
+The \verb|file_operations| structure is defined in \textbf{/usr/include/linux/fs.h}, and holds pointers to functions defined by the driver that perform various operations on the device.
 Each field of the structure corresponds to the address of some function defined by the driver to handle a requested operation.
 
 For example, every character driver needs to define a function that reads from the device.
-The \verb|proc_ops| structure holds the address of the module's function that performs that operation.
-Here is what the definition looks like for kernel 3.0:
+The \verb|file_operations| structure holds the address of the module's function that performs that operation.
+Here is what the definition looks like for kernel 5.4:
 
 \begin{code}
-struct proc_ops {
+struct file_operations {
     struct module *owner;
     loff_t (*llseek) (struct file *, loff_t, int);
     ssize_t (*read) (struct file *, char __user *, size_t, loff_t *);
     ssize_t (*write) (struct file *, const char __user *, size_t, loff_t *);
-    ssize_t (*aio_read) (struct kiocb *, const struct iovec *, unsigned long, loff_t);
-    ssize_t (*aio_write) (struct kiocb *, const struct iovec *, unsigned long, loff_t);
+    ssize_t (*read_iter) (struct kiocb *, struct iov_iter *);
+    ssize_t (*write_iter) (struct kiocb *, struct iov_iter *);
+    int (*iopoll)(struct kiocb *kiocb, bool spin);
     int (*iterate) (struct file *, struct dir_context *);
-    unsigned int (*poll) (struct file *, struct poll_table_struct *);
+    int (*iterate_shared) (struct file *, struct dir_context *);
+    __poll_t (*poll) (struct file *, struct poll_table_struct *);
     long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long);
     long (*compat_ioctl) (struct file *, unsigned int, unsigned long);
     int (*mmap) (struct file *, struct vm_area_struct *);
+    unsigned long mmap_supported_flags;
     int (*open) (struct inode *, struct file *);
     int (*flush) (struct file *, fl_owner_t id);
     int (*release) (struct inode *, struct file *);
     int (*fsync) (struct file *, loff_t, loff_t, int datasync);
-    int (*aio_fsync) (struct kiocb *, int datasync);
     int (*fasync) (int, struct file *, int);
     int (*lock) (struct file *, int, struct file_lock *);
     ssize_t (*sendpage) (struct file *, struct page *, int, size_t, loff_t *, int);
@@ -774,27 +776,33 @@ struct proc_ops {
     int (*flock) (struct file *, int, struct file_lock *);
     ssize_t (*splice_write)(struct pipe_inode_info *, struct file *, loff_t *, size_t, unsigned int);
     ssize_t (*splice_read)(struct file *, loff_t *, struct pipe_inode_info *, size_t, unsigned int);
-    int (*setlease)(struct file *, long, struct file_lock **);
+    int (*setlease)(struct file *, long, struct file_lock **, void **);
     long (*fallocate)(struct file *file, int mode, loff_t offset,
-	      loff_t len);
-    int (*show_fdinfo)(struct seq_file *m, struct file *f);
-};
+        loff_t len);
+    void (*show_fdinfo)(struct seq_file *m, struct file *f);
+    ssize_t (*copy_file_range)(struct file *, loff_t, struct file *,
+        loff_t, size_t, unsigned int);
+    loff_t (*remap_file_range)(struct file *file_in, loff_t pos_in,
+             struct file *file_out, loff_t pos_out,
+             loff_t len, unsigned int remap_flags);
+    int (*fadvise)(struct file *, loff_t, loff_t, int);
+} __randomize_layout;
 \end{code}
 
 Some operations are not implemented by a driver.
 For example, a driver that handles a video card will not need to read from a directory structure.
-The corresponding entries in the \verb|proc_ops| structure should be set to NULL.
+The corresponding entries in the \verb|file_operations| structure should be set to NULL.
 
 There is a gcc extension that makes assigning to this structure more convenient.
 You will see it in modern drivers, and may catch you by surprise.
 This is what the new way of assigning to the structure looks like:
 
 \begin{code}
-struct proc_ops fops = {
-	proc_read: device_read,
-	proc_write: device_write,
-	proc_open: device_open,
-	proc_release: device_release
+struct file_operations fops = {
+	read: device_read,
+	write: device_write,
+	open: device_open,
+	release: device_release
 };
 \end{code}
 
@@ -803,17 +811,19 @@ You should use this syntax in case someone wants to port your driver.
 It will help with compatibility:
 
 \begin{code}
-struct proc_ops fops = {
-	.proc_read = device_read,
-	.proc_write = device_write,
-	.proc_open = device_open,
-	.proc_release = device_release
+struct file_operations fops = {
+	.read = device_read,
+	.write = device_write,
+	.open = device_open,
+	.release = device_release
 };
 \end{code}
 
 The meaning is clear, and you should be aware that any member of the structure which you do not explicitly assign will be initialized to NULL by gcc.
 
-An instance of struct proc\_ops containing pointers to functions that are used to implement read, write, open, \ldots{} syscalls is commonly named fops.
+An instance of struct \verb|file_operations| containing pointers to functions that are used to implement read, write, open, \ldots{} syscalls is commonly named fops.
+
+Sin Linux v5.6, the \verb|proc_ops| structure was introduced to replace the use of the \verb|file_operations| structure when registering proc handlers.
 
 \subsection{The file structure}
 \label{sec:file_struct}
@@ -843,10 +853,10 @@ This is synonymous with assigning it a major number during the module's initiali
 You do this by using the \verb|register_chrdev| function, defined by linux/fs.h.
 
 \begin{code}
-int register_chrdev(unsigned int major, const char *name, struct proc_ops *fops);
+int register_chrdev(unsigned int major, const char *name, struct file_operations *fops);
 \end{code}
 
-where unsigned int major is the major number you want to request, \emph{const char *name} is the name of the device as it will appear in \textbf{/proc/devices} and \emph{struct proc\_ops *fops} is a pointer to the proc\_ops table for your driver.
+where unsigned int major is the major number you want to request, \emph{const char *name} is the name of the device as it will appear in \textbf{/proc/devices} and \emph{struct file\_operations *fops} is a pointer to the \verb|file_operations| table for your driver.
 A negative return value means the registration failed. Note that we didn't pass the minor number to register\_chrdev.
 That is because the kernel doesn't care about the minor number; only our driver uses it.
 
@@ -950,6 +960,13 @@ HelloWorld!
 \end{verbatim}
 
 \samplec{examples/procfs1.c}
+
+\subsection{The proc\_ops Structure}
+\label{sec:proc_ops}
+The \verb|proc_ops| structure is defined in \textbf{/usr/include/linux/proc\_fs.h} in Linux v5.6+.
+In older kernels, it used \verb|file_operations| for custom hooks in \textbf{/proc} file system, but it contains some members that are unnecessary in VFS, and every time VFS expands \verb|file_operations| set, \textbf{/proc} code comes bloated.
+On the other hand, not only the space, but also some operations were saved by this structure to improve its performance.
+For example, the file which never disappears in \textbf{/proc} can set the \textbf{proc\_flag} as \textbf{PROC\_ENTRY\_PERMANENT} to save 2 atomic ops, 1 allocation, 1 free in per open/read/close sequence.
 
 \subsection{Read and Write a /proc File}
 \label{sec:read_write_procfs}
