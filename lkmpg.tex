@@ -813,7 +813,7 @@ The meaning is clear, and you should be aware that any member of the structure w
 
 An instance of struct \verb|file_operations| containing pointers to functions that are used to implement read, write, open, \ldots{} syscalls is commonly named fops.
 
-In Linux v5.6+, this structure has been instead by \ref{sec:proc_ops} in the \textbf{/proc} file system.
+Sin Linux v5.6, the \verb|proc_ops| structure was introduced to replace the use of the \verb|file_operations| structure when registering proc handlers.
 
 \subsection{The file structure}
 \label{sec:file_struct}
@@ -954,7 +954,7 @@ HelloWorld!
 \subsection{The proc\_ops Structure}
 \label{sec:proc_ops}
 The \verb|proc_ops| structure is defined in \textbf{/usr/include/linux/proc\_fs.h} in Linux v5.6+.
-In old kernel, it used \verb|file_operations| for custom hooks in \textbf{/proc} file system, but it contains some members that are unnecessary in VFS, and every time VFS expands \verb|file_operations| set, \textbf{/proc} code comes bloated.
+In older kernels, it used \verb|file_operations| for custom hooks in \textbf{/proc} file system, but it contains some members that are unnecessary in VFS, and every time VFS expands \verb|file_operations| set, \textbf{/proc} code comes bloated.
 On the other hand, not only the space, but also some operations were saved by this structure to improve its performance.
 For example, the file which never disappears in \textbf{/proc} can set the \textbf{proc\_flag} as \textbf{PROC\_ENTRY\_PERMANENT} to save 2 atomic ops, 1 allocation, 1 free in per open/read/close sequence.
 
