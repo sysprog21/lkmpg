@@ -40,8 +40,7 @@ static struct file_operations chardev_fops = {
     .release = device_release,
 };
 
-/* This function is called when the module is loaded. */
-int init_module(void)
+static int __init chardev_init(void)
 {
     major = register_chrdev(0, DEVICE_NAME, &chardev_fops);
 
@@ -60,8 +59,7 @@ int init_module(void)
     return SUCCESS;
 }
 
-/* This function is called when the module is unloaded. */
-void cleanup_module(void)
+static void __exit chardev_exit(void)
 {
     device_destroy(cls, MKDEV(major, 0));
     class_destroy(cls);
@@ -144,5 +142,8 @@ static ssize_t device_write(struct file *filp,
     pr_alert("Sorry, this operation is not supported.\n");
     return -EINVAL;
 }
+
+module_init(chardev_init);
+module_exit(chardev_exit);
 
 MODULE_LICENSE("GPL");
