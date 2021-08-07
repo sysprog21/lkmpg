@@ -240,15 +240,8 @@ static const struct file_operations File_Ops_4_Our_Proc_File = {
 };
 #endif
 
-/*
- * Module initialization and cleanup
- */
-
-/*
- * Initialize the module - register the proc file
- */
-
-int init_module()
+/* Initialize the module - register the proc file */
+static int __init sleep_init(void)
 {
     Our_Proc_File =
         proc_create(PROC_ENTRY_FILENAME, 0644, NULL, &File_Ops_4_Our_Proc_File);
@@ -265,16 +258,18 @@ int init_module()
     return 0;
 }
 
-/*
- * Cleanup - unregister our file from /proc.  This could get dangerous if
+/* Cleanup - unregister our file from /proc.  This could get dangerous if
  * there are still processes waiting in WaitQ, because they are inside our
  * open function, which will get unloaded. I'll explain how to avoid removal
  * of a kernel module in such a case in chapter 10.
  */
-void cleanup_module()
+static void __exit sleep_exit(void)
 {
     remove_proc_entry(PROC_ENTRY_FILENAME, NULL);
     pr_debug("/proc/%s removed\n", PROC_ENTRY_FILENAME);
 }
+
+module_init(sleep_init);
+module_exit(sleep_exit);
 
 MODULE_LICENSE("GPL");

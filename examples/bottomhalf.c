@@ -22,8 +22,10 @@ static struct gpio leds[] = {{4, GPIOF_OUT_INIT_LOW, "LED 1"}};
 
 /* Define GPIOs for BUTTONS
    Change the numbers for the GPIO on your board. */
-static struct gpio buttons[] = {{17, GPIOF_IN, "LED 1 ON BUTTON"},
-                                {18, GPIOF_IN, "LED 1 OFF BUTTON"}};
+static struct gpio buttons[] = {
+    {17, GPIOF_IN, "LED 1 ON BUTTON"},
+    {18, GPIOF_IN, "LED 1 OFF BUTTON"},
+};
 
 /* Tasklet containing some non-trivial amount of processing */
 static void bottomhalf_tasklet_fn(unsigned long data)
@@ -53,7 +55,7 @@ static irqreturn_t button_isr(int irq, void *data)
     return IRQ_HANDLED;
 }
 
-int init_module()
+static int __init bottomhalf_init(void)
 {
     int ret = 0;
 
@@ -133,7 +135,7 @@ fail1:
     return ret;
 }
 
-void cleanup_module()
+static void __exit bottomhalf_exit(void)
 {
     int i;
 
@@ -151,6 +153,9 @@ void cleanup_module()
     gpio_free_array(leds, ARRAY_SIZE(leds));
     gpio_free_array(buttons, ARRAY_SIZE(buttons));
 }
+
+module_init(bottomhalf_init);
+module_exit(bottomhalf_exit);
 
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("Interrupt with top and bottom half");

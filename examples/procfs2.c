@@ -90,11 +90,7 @@ static const struct file_operations proc_file_fops = {
 };
 #endif
 
-/**
- *This function is called when the module is loaded
- *
- */
-int init_module()
+static int __init procfs2_init(void)
 {
     Our_Proc_File = proc_create(PROCFS_NAME, 0644, NULL, &proc_file_fops);
     if (NULL == Our_Proc_File) {
@@ -107,14 +103,13 @@ int init_module()
     return 0;
 }
 
-/**
- *This function is called when the module is unloaded
- *
- */
-void cleanup_module()
+static void __exit procfs2_exit(void)
 {
     proc_remove(Our_Proc_File);
     pr_info("/proc/%s removed\n", PROCFS_NAME);
 }
+
+module_init(procfs2_init);
+module_exit(procfs2_exit);
 
 MODULE_LICENSE("GPL");

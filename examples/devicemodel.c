@@ -92,8 +92,8 @@ static void devicemodel_exit(void)
     platform_driver_unregister(&devicemodel_driver);
 }
 
-MODULE_LICENSE("GPL");
-MODULE_DESCRIPTION("Linux Device Model example");
-
 module_init(devicemodel_init);
 module_exit(devicemodel_exit);
+
+MODULE_LICENSE("GPL");
+MODULE_DESCRIPTION("Linux Device Model example");

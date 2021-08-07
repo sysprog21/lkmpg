@@ -15,8 +15,6 @@
 
 #define PROC_NAME "iter"
 
-MODULE_LICENSE("GPL");
-
 /* This function is called at the beginning of a sequence.
  * ie, when:
  *   - the /proc file is read (first time)
@@ -93,8 +91,7 @@ static const struct file_operations my_file_ops = {
 };
 #endif
 
-/* This function is called when the module is loaded. */
-int init_module(void)
+static int __init procfs4_init(void)
 {
     struct proc_dir_entry *entry;
 
@@ -108,9 +105,13 @@ int init_module(void)
     return 0;
 }
 
-/* This function is called when the module is unloaded. */
-void cleanup_module(void)
+static void __exit procfs4_exit(void)
 {
     remove_proc_entry(PROC_NAME, NULL);
     pr_debug("/proc/%s removed\n", PROC_NAME);
 }
+
+module_init(procfs4_init);
+module_exit(procfs4_exit);
+
+MODULE_LICENSE("GPL");

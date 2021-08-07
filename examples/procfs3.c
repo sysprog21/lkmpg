@@ -78,7 +78,7 @@ static const struct file_operations File_Ops_4_Our_Proc_File = {
 };
 #endif
 
-int init_module()
+static int __init procfs3_init(void)
 {
     Our_Proc_File = proc_create(PROCFS_ENTRY_FILENAME, 0644, NULL,
                                 &File_Ops_4_Our_Proc_File);
@@ -94,10 +94,14 @@ int init_module()
     pr_debug("/proc/%s created\n", PROCFS_ENTRY_FILENAME);
     return 0;
 }
-void cleanup_module()
+
+static void __exit procfs3_exit(void)
 {
     remove_proc_entry(PROCFS_ENTRY_FILENAME, NULL);
     pr_debug("/proc/%s removed\n", PROCFS_ENTRY_FILENAME);
 }
+
+module_init(procfs3_init);
+module_exit(procfs3_exit);
 
 MODULE_LICENSE("GPL");
