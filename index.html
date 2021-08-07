@@ -3668,14 +3668,14 @@ common situations without adding a lot of complexity.
 </p>
    <h3 class='sectionHead' id='avoiding-collisions-and-deadlocks'><span class='titlemark'>0.12   </span> <a id='x1-450000.12'></a>Avoiding Collisions and Deadlocks</h3>
 <!-- l. 1322 --><p class='noindent'>If processes running on different CPUs or in different threads try to access the same
-memory then it’s possible that strange things can happen or your system can lock
-up. To avoid this various types of mutual exclusion kernel functions are available.
+memory, then it is possible that strange things can happen or your system can lock
+up. To avoid this, various types of mutual exclusion kernel functions are available.
 These indicate if a section of code is "locked" or "unlocked" so that simultaneous
-attempts to run it can’t happen.
+attempts to run it can not happen.
 </p>
    <h4 class='subsectionHead' id='mutex'><span class='titlemark'>0.12.1   </span> <a id='x1-460000.12.1'></a>Mutex</h4>
-<!-- l. 1325 --><p class='noindent'>You can use kernel mutexes (mutual exclusions) in much the same manner that you
-might deploy them in userland. This may be all that’s needed to avoid collisions in
+<!-- l. 1327 --><p class='noindent'>You can use kernel mutexes (mutual exclusions) in much the same manner that you
+might deploy them in userland. This may be all that is needed to avoid collisions in
 most cases.
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -3720,19 +3720,19 @@ most cases.
 <a id='x1-46078r39'></a><span class='ecrm-0500'>39</span> 
 <a id='x1-46080r40'></a><span class='ecrm-0500'>40</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2014'><span class='ectt-0800'>"Mutex example"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-46082r41'></a><span class='ecrm-0500'>41</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2015'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1329 --><p class='noindent'>
+<!-- l. 1332 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='spinlocks'><span class='titlemark'>0.12.2   </span> <a id='x1-470000.12.2'></a>Spinlocks</h4>
-<!-- l. 1331 --><p class='noindent'>As the name suggests, spinlocks lock up the CPU that the code is running on,
+<!-- l. 1334 --><p class='noindent'>As the name suggests, spinlocks lock up the CPU that the code is running on,
 taking 100% of its resources. Because of this you should only use the spinlock
 mechanism around code which is likely to take no more than a few milliseconds to
-run and so won’t noticably slow anything down from the user’s point of
+run and so will not noticably slow anything down from the user’s point of
 view.
                                                                   
 
                                                                   
-</p><!-- l. 1333 --><p class='indent'>   The example here is <span class='ecti-1000'>"irq safe" </span>in that if interrupts happen during the lock then
-they won’t be forgotten and will activate when the unlock happens, using the <span class='ecti-1000'>flags</span>
+</p><!-- l. 1337 --><p class='indent'>   The example here is <span class='ecti-1000'>"irq safe" </span>in that if interrupts happen during the lock then
+they will not be forgotten and will activate when the unlock happens, using the <span class='ecti-1000'>flags</span>
 variable to retain their state.
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -3801,15 +3801,15 @@ variable to retain their state.
 <a id='x1-47126r63'></a><span class='ecrm-0500'>63</span> 
 <a id='x1-47128r64'></a><span class='ecrm-0500'>64</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2072'><span class='ectt-0800'>"Spinlock example"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-47130r65'></a><span class='ecrm-0500'>65</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2073'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1337 --><p class='noindent'>
+<!-- l. 1341 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='read-and-write-locks'><span class='titlemark'>0.12.3   </span> <a id='x1-480000.12.3'></a>Read and write locks</h4>
-<!-- l. 1339 --><p class='noindent'>Read and write locks are specialised kinds of spinlocks so that you can exclusively
+<!-- l. 1343 --><p class='noindent'>Read and write locks are specialised kinds of spinlocks so that you can exclusively
 read from something or write to something. Like the earlier spinlocks example the
 one below shows an "irq safe" situation in which if other functions were triggered
-from irqs which might also read and write to whatever you are concerned
-with then they wouldn’t disrupt the logic. As before it’s a good idea to keep
-anything done within the lock as short as possible so that it doesn’t hang up
+from irqs which might also read and write to whatever you are concerned with
+then they would not disrupt the logic. As before it is a good idea to keep
+anything done within the lock as short as possible so that it does not hang up
 the system and cause users to start revolting against the tyranny of your
 module.
 </p><!-- l. 1 --><p class='indent'>
@@ -3869,17 +3869,17 @@ module.
 <a id='x1-48106r53'></a><span class='ecrm-0500'>53</span> 
 <a id='x1-48108r54'></a><span class='ecrm-0500'>54</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2120'><span class='ectt-0800'>"Read/Write locks example"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-48110r55'></a><span class='ecrm-0500'>55</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2121'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1343 --><p class='indent'>   Of course if you know for sure that there are no functions triggered by irqs
+<!-- l. 1349 --><p class='indent'>   Of course, if you know for sure that there are no functions triggered by irqs
 which could possibly interfere with your logic then you can use the simpler
 <span class='ecti-1000'>read_lock(&amp;myrwlock) </span>and <span class='ecti-1000'>read_unlock(&amp;myrwlock) </span>or the corresponding write
 functions.
 </p>
    <h4 class='subsectionHead' id='atomic-operations'><span class='titlemark'>0.12.4   </span> <a id='x1-490000.12.4'></a>Atomic operations</h4>
-<!-- l. 1346 --><p class='noindent'>If you’re doing simple arithmetic: adding, subtracting or bitwise operations then
-there’s another way in the multi-CPU and multi-hyperthreaded world to stop other
+<!-- l. 1352 --><p class='noindent'>If you are doing simple arithmetic: adding, subtracting or bitwise operations then
+there is another way in the multi-CPU and multi-hyperthreaded world to stop other
 parts of the system from messing with your mojo. By using atomic operations you
 can be confident that your addition, subtraction or bit flip did actually happen
-and wasn’t overwritten by some other shenanigans. An example is shown
+and was not overwritten by some other shenanigans. An example is shown
 below.
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -3960,21 +3960,21 @@ below.
                                                                   
 
                                                                   
-<!-- l. 1350 --><p class='noindent'>
+<!-- l. 1358 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='replacing-print-macros'><span class='titlemark'>0.13   </span> <a id='x1-500000.13'></a>Replacing Print Macros</h3>
-<!-- l. 1352 --><p class='noindent'>
+<!-- l. 1360 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='replacement'><span class='titlemark'>0.13.1   </span> <a id='x1-510000.13.1'></a>Replacement</h4>
-<!-- l. 1354 --><p class='noindent'>In Section 1.2.1.2, I said that X and kernel module programming don’t mix. That’s
+<!-- l. 1362 --><p class='noindent'>In Section 1.2.1.2, I said that X and kernel module programming don’t mix. That’s
 true for developing kernel modules, but in actual use, you want to be able
 to send messages to whichever tty the command to load the module came
 from.
-</p><!-- l. 1356 --><p class='indent'>   "tty" is an abbreviation of <span class='ecti-1000'>teletype</span>: originally a combination keyboard-printer
+</p><!-- l. 1364 --><p class='indent'>   "tty" is an abbreviation of <span class='ecti-1000'>teletype</span>: originally a combination keyboard-printer
 used to communicate with a Unix system, and today an abstraction for the text
 stream used for a Unix program, whether it’s a physical terminal, an xterm on an X
 display, a network connection used with ssh, etc.
-</p><!-- l. 1358 --><p class='indent'>   The way this is done is by using current, a pointer to the currently running task,
+</p><!-- l. 1366 --><p class='indent'>   The way this is done is by using current, a pointer to the currently running task,
 to get the current task’s tty structure. Then, we look inside that tty structure to find
 a pointer to a string write function, which we use to write a string to the
 tty.
@@ -4063,16 +4063,16 @@ tty.
 <a id='x1-51162r81'></a><span class='ecrm-0500'>81</span> 
 <a id='x1-51164r82'></a><span class='ecrm-0500'>82</span><span class='ectt-0800'>module_init(print_string_init);</span> 
 <a id='x1-51166r83'></a><span class='ecrm-0500'>83</span><span class='ectt-0800'>module_exit(print_string_exit);</span></pre>
-<!-- l. 1362 --><p class='noindent'>
+<!-- l. 1370 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='flashing-keyboard-leds'><span class='titlemark'>0.13.2   </span> <a id='x1-520000.13.2'></a>Flashing keyboard LEDs</h4>
-<!-- l. 1364 --><p class='noindent'>In certain conditions, you may desire a simpler and more direct way to communicate
+<!-- l. 1372 --><p class='noindent'>In certain conditions, you may desire a simpler and more direct way to communicate
 to the external world. Flashing keyboard LEDs can be such a solution: It is an
 immediate way to attract attention or to display a status condition. Keyboard LEDs
 are present on every hardware, they are always visible, they do not need any setup,
 and their use is rather simple and non-intrusive, compared to writing to a tty or a
 file.
-</p><!-- l. 1366 --><p class='indent'>   The following source code illustrates a minimal kernel module which, when
+</p><!-- l. 1374 --><p class='indent'>   The following source code illustrates a minimal kernel module which, when
 loaded, starts blinking the keyboard LEDs until it is unloaded.
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -4169,7 +4169,7 @@ loaded, starts blinking the keyboard LEDs until it is unloaded.
 <a id='x1-52182r91'></a><span class='ecrm-0500'>91</span> 
 <a id='x1-52184r92'></a><span class='ecrm-0500'>92</span><span class='ectt-0800'>module_init(kbleds_init);</span> 
 <a id='x1-52186r93'></a><span class='ecrm-0500'>93</span><span class='ectt-0800'>module_exit(kbleds_cleanup);</span></pre>
-<!-- l. 1370 --><p class='indent'>   If none of the examples in this chapter fit your debugging needs there might yet
+<!-- l. 1378 --><p class='indent'>   If none of the examples in this chapter fit your debugging needs there might yet
 be some other tricks to try. Ever wondered what CONFIG_LL_DEBUG in
 make menuconfig is good for? If you activate that you get low level access
 to the serial port. While this might not sound very powerful by itself, you
@@ -4182,22 +4182,22 @@ over a serial line. If you find yourself porting the kernel to some new and
 former unsupported architecture this is usually amongst the first things that
 should be implemented. Logging over a netconsole might also be worth a
 try.
-</p><!-- l. 1372 --><p class='indent'>   While you have seen lots of stuff that can be used to aid debugging here, there are
+</p><!-- l. 1380 --><p class='indent'>   While you have seen lots of stuff that can be used to aid debugging here, there are
 some things to be aware of. Debugging is almost always intrusive. Adding debug code
 can change the situation enough to make the bug seem to dissappear. Thus you
 should try to keep debug code to a minimum and make sure it does not show up in
 production code.
-</p><!-- l. 1374 --><p class='noindent'>
+</p><!-- l. 1382 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='scheduling-tasks'><span class='titlemark'>0.14   </span> <a id='x1-530000.14'></a>Scheduling Tasks</h3>
-<!-- l. 1376 --><p class='noindent'>There are two main ways of running tasks: tasklets and work queues. Tasklets are a
+<!-- l. 1384 --><p class='noindent'>There are two main ways of running tasks: tasklets and work queues. Tasklets are a
 quick and easy way of scheduling a single function to be run, for example when
 triggered from an interrupt, whereas work queues are more complicated but also
 better suited to running multiple things in a sequence.
-</p><!-- l. 1378 --><p class='noindent'>
+</p><!-- l. 1386 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='tasklets'><span class='titlemark'>0.14.1   </span> <a id='x1-540000.14.1'></a>Tasklets</h4>
-<!-- l. 1380 --><p class='noindent'>Here’s an example tasklet module. The <span class='ecti-1000'>tasklet_fn </span>function runs for a few seconds
+<!-- l. 1388 --><p class='noindent'>Here’s an example tasklet module. The <span class='ecti-1000'>tasklet_fn </span>function runs for a few seconds
 and in the mean time execution of the <span class='ecti-1000'>example_tasklet_init </span>function continues to
 the exit point.
 </p><!-- l. 1 --><p class='indent'>
@@ -4239,7 +4239,7 @@ the exit point.
 <a id='x1-54070r35'></a><span class='ecrm-0500'>35</span> 
 <a id='x1-54072r36'></a><span class='ecrm-0500'>36</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2377'><span class='ectt-0800'>"Tasklet example"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-54074r37'></a><span class='ecrm-0500'>37</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2378'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1384 --><p class='indent'>   So with this example loaded <span class='ecti-1000'>dmesg </span>should show:
+<!-- l. 1392 --><p class='indent'>   So with this example loaded <span class='ecti-1000'>dmesg </span>should show:
                                                                   
 
                                                                   
@@ -4250,11 +4250,11 @@ Example tasklet starts
 Example tasklet init continues...
 Example tasklet ends
 </pre>
-<!-- l. 1391 --><p class='nopar'>
-</p><!-- l. 1393 --><p class='noindent'>
+<!-- l. 1399 --><p class='nopar'>
+</p><!-- l. 1401 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='work-queues'><span class='titlemark'>0.14.2   </span> <a id='x1-550000.14.2'></a>Work queues</h4>
-<!-- l. 1395 --><p class='noindent'>To add a task to the scheduler we can use a workqueue. The kernel then uses the
+<!-- l. 1403 --><p class='noindent'>To add a task to the scheduler we can use a workqueue. The kernel then uses the
 Completely Fair Scheduler (CFS) to execute work within the queue.
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -4289,18 +4289,18 @@ Completely Fair Scheduler (CFS) to execute work within the queue.
 <a id='x1-55058r29'></a><span class='ecrm-0500'>29</span> 
 <a id='x1-55060r30'></a><span class='ecrm-0500'>30</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2402'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-55062r31'></a><span class='ecrm-0500'>31</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2403'><span class='ectt-0800'>"Workqueue example"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1399 --><p class='noindent'>
+<!-- l. 1407 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='interrupt-handlers'><span class='titlemark'>0.15   </span> <a id='x1-560000.15'></a>Interrupt Handlers</h3>
-<!-- l. 1401 --><p class='noindent'>
+<!-- l. 1409 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='interrupt-handlers1'><span class='titlemark'>0.15.1   </span> <a id='x1-570000.15.1'></a>Interrupt Handlers</h4>
-<!-- l. 1403 --><p class='noindent'>Except for the last chapter, everything we did in the kernel so far we’ve done as a
+<!-- l. 1411 --><p class='noindent'>Except for the last chapter, everything we did in the kernel so far we’ve done as a
 response to a process asking for it, either by dealing with a special file, sending an
 ioctl(), or issuing a system call. But the job of the kernel isn’t just to respond to
 process requests. Another job, which is every bit as important, is to speak to the
 hardware connected to the machine.
-</p><!-- l. 1405 --><p class='indent'>   There are two types of interaction between the CPU and the rest of the
+</p><!-- l. 1413 --><p class='indent'>   There are two types of interaction between the CPU and the rest of the
 computer’s hardware. The first type is when the CPU gives orders to the hardware,
 the other is when the hardware needs to tell the CPU something. The second, called
 interrupts, is much harder to implement because it has to be dealt with when
@@ -4310,14 +4310,14 @@ lost.
                                                                   
 
                                                                   
-</p><!-- l. 1407 --><p class='indent'>   Under Linux, hardware interrupts are called IRQ’s (Interrupt ReQuests). There
+</p><!-- l. 1415 --><p class='indent'>   Under Linux, hardware interrupts are called IRQ’s (Interrupt ReQuests). There
 are two types of IRQ’s, short and long. A short IRQ is one which is expected to take
 a very short period of time, during which the rest of the machine will be blocked and
 no other interrupts will be handled. A long IRQ is one which can take longer, and
 during which other interrupts may occur (but not interrupts from the same
 device). If at all possible, it’s better to declare an interrupt handler to be
 long.
-</p><!-- l. 1409 --><p class='indent'>   When the CPU receives an interrupt, it stops whatever it’s doing (unless it’s
+</p><!-- l. 1417 --><p class='indent'>   When the CPU receives an interrupt, it stops whatever it’s doing (unless it’s
 processing a more important interrupt, in which case it will deal with this one
 only when the more important one is done), saves certain parameters on
 the stack and calls the interrupt handler. This means that certain things
@@ -4329,9 +4329,9 @@ the new information at a later time (this is called the "bottom half") and
 return. The kernel is then guaranteed to call the bottom half as soon as
 possible – and when it does, everything allowed in kernel modules will be
 allowed.
-</p><!-- l. 1411 --><p class='indent'>   The way to implement this is to call <span class='ecbx-1000'>request_irq() </span>to get your interrupt handler
+</p><!-- l. 1419 --><p class='indent'>   The way to implement this is to call <span class='ecbx-1000'>request_irq() </span>to get your interrupt handler
 called when the relevant IRQ is received.
-</p><!-- l. 1413 --><p class='indent'>   In practice IRQ handling can be a bit more complex. Hardware is often
+</p><!-- l. 1421 --><p class='indent'>   In practice IRQ handling can be a bit more complex. Hardware is often
 designed in a way that chains two interrupt controllers, so that all the IRQs
 from interrupt controller B are cascaded to a certain IRQ from interrupt
 controller A. Of course that requires that the kernel finds out which IRQ it
@@ -4345,7 +4345,7 @@ another truckload of problems. It’s not enough to know if a certain IRQs
 has happend, it’s also important for what CPU(s) it was for. People still
 interested in more details, might want to do a web search for "APIC" now
 ;)
-</p><!-- l. 1415 --><p class='indent'>   This function receives the IRQ number, the name of the function, flags, a name
+</p><!-- l. 1423 --><p class='indent'>   This function receives the IRQ number, the name of the function, flags, a name
 for /proc/interrupts and a parameter to pass to the interrupt handler. Usually
 there is a certain number of IRQs available. How many IRQs there are is
 hardware-dependent. The flags can include SA_SHIRQ to indicate you’re willing to
@@ -4356,16 +4356,16 @@ or if you’re both willing to share.
                                                                   
 
                                                                   
-</p><!-- l. 1417 --><p class='noindent'>
+</p><!-- l. 1425 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='detecting-button-presses'><span class='titlemark'>0.15.2   </span> <a id='x1-580000.15.2'></a>Detecting button presses</h4>
-<!-- l. 1419 --><p class='noindent'>Many popular single board computers, such as Raspberry Pis or Beagleboards, have
+<!-- l. 1427 --><p class='noindent'>Many popular single board computers, such as Raspberry Pis or Beagleboards, have
 a bunch of GPIO pins. Attaching buttons to those and then having a button press do
 something is a classic case in which you might need to use interrupts so that instead
 of having the CPU waste time and battery power polling for a change in input state
 it’s better for the input to trigger the CPU to then run a particular handling
 function.
-</p><!-- l. 1421 --><p class='indent'>   Here’s an example where buttons are connected to GPIO numbers 17 and 18 and
+</p><!-- l. 1429 --><p class='indent'>   Here’s an example where buttons are connected to GPIO numbers 17 and 18 and
 an LED is connected to GPIO 4. You can change those numbers to whatever is
 appropriate for your board.
 </p><!-- l. 1 --><p class='indent'>
@@ -4512,14 +4512,14 @@ appropriate for your board.
 <a id='x1-58280r140'></a><span class='ecrm-0500'>140</span> 
 <a id='x1-58282r141'></a><span class='ecrm-0500'>141</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2506'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-58284r142'></a><span class='ecrm-0500'>142</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2507'><span class='ectt-0800'>"Handle some GPIO interrupts"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1425 --><p class='noindent'>
+<!-- l. 1433 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='bottom-half'><span class='titlemark'>0.15.3   </span> <a id='x1-590000.15.3'></a>Bottom Half</h4>
-<!-- l. 1427 --><p class='noindent'>Suppose you want to do a bunch of stuff inside of an interrupt routine. A common
+<!-- l. 1435 --><p class='noindent'>Suppose you want to do a bunch of stuff inside of an interrupt routine. A common
 way to do that without rendering the interrupt unavailable for a significant duration
 is to combine it with a tasklet. This pushes the bulk of the work off into the
 scheduler.
-</p><!-- l. 1429 --><p class='indent'>   The example below modifies the previous example to also run an additional task
+</p><!-- l. 1437 --><p class='indent'>   The example below modifies the previous example to also run an additional task
 when an interrupt is triggered.
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -4679,10 +4679,10 @@ when an interrupt is triggered.
 <a id='x1-59308r154'></a><span class='ecrm-0500'>154</span> 
 <a id='x1-59310r155'></a><span class='ecrm-0500'>155</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2624'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-59312r156'></a><span class='ecrm-0500'>156</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2625'><span class='ectt-0800'>"Interrupt with top and bottom half"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1433 --><p class='noindent'>
+<!-- l. 1441 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='crypto'><span class='titlemark'>0.16   </span> <a id='x1-600000.16'></a>Crypto</h3>
-<!-- l. 1435 --><p class='noindent'>At the dawn of the internet everybody trusted everybody completely…but that didn’t
+<!-- l. 1443 --><p class='noindent'>At the dawn of the internet everybody trusted everybody completely…but that didn’t
 work out so well. When this guide was originally written it was a more innocent era
 in which almost nobody actually gave a damn about crypto - least of all kernel
 developers. That’s certainly no longer the case now. To handle crypto stuff the kernel
@@ -4691,10 +4691,10 @@ favourite hash functions.
                                                                   
 
                                                                   
-</p><!-- l. 1437 --><p class='noindent'>
+</p><!-- l. 1445 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='hash-functions'><span class='titlemark'>0.16.1   </span> <a id='x1-610000.16.1'></a>Hash functions</h4>
-<!-- l. 1440 --><p class='noindent'>Calculating and checking the hashes of things is a common operation. Here is a
+<!-- l. 1448 --><p class='noindent'>Calculating and checking the hashes of things is a common operation. Here is a
 demonstration of how to calculate a sha256 hash within a kernel module.
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -4760,21 +4760,21 @@ demonstration of how to calculate a sha256 hash within a kernel module.
 <a id='x1-61120r60'></a><span class='ecrm-0500'>60</span> 
 <a id='x1-61122r61'></a><span class='ecrm-0500'>61</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2675'><span class='ectt-0800'>"sha256 hash test"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-61124r62'></a><span class='ecrm-0500'>62</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2676'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1444 --><p class='indent'>   Make and install the module:
+<!-- l. 1452 --><p class='indent'>   Make and install the module:
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb67'><a id='x1-61129r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>make</span> 
 <a id='x1-61131r2'></a><span class='ecrm-0500'>2</span><span class='ectt-1000'>sudo insmod cryptosha256.ko</span> 
 <a id='x1-61133r3'></a><span class='ecrm-0500'>3</span><span class='ectt-1000'>dmesg</span></pre>
-<!-- l. 1452 --><p class='indent'>   And you should see that the hash was calculated for the test string.
-</p><!-- l. 1454 --><p class='indent'>   Finally, remove the test module:
+<!-- l. 1460 --><p class='indent'>   And you should see that the hash was calculated for the test string.
+</p><!-- l. 1462 --><p class='indent'>   Finally, remove the test module:
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb68'><a id='x1-61136r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>sudo rmmod cryptosha256</span></pre>
-<!-- l. 1460 --><p class='noindent'>
+<!-- l. 1468 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='symmetric-key-encryption'><span class='titlemark'>0.16.2   </span> <a id='x1-620000.16.2'></a>Symmetric key encryption</h4>
-<!-- l. 1462 --><p class='noindent'>Here is an example of symmetrically encrypting a string using the AES algorithm
+<!-- l. 1470 --><p class='noindent'>Here is an example of symmetrically encrypting a string using the AES algorithm
 and a password.
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -4976,10 +4976,10 @@ and a password.
 <a id='x1-62392r196'></a><span class='ecrm-0500'>196</span> 
 <a id='x1-62394r197'></a><span class='ecrm-0500'>197</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2823'><span class='ectt-0800'>"Symmetric key encryption example"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-62396r198'></a><span class='ecrm-0500'>198</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2824'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1466 --><p class='noindent'>
+<!-- l. 1474 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='standardising-the-interfaces-the-device-model'><span class='titlemark'>0.17   </span> <a id='x1-630000.17'></a>Standardising the interfaces: The Device Model</h3>
-<!-- l. 1468 --><p class='noindent'>Up to this point we’ve seen all kinds of modules doing all kinds of things, but there
+<!-- l. 1476 --><p class='noindent'>Up to this point we’ve seen all kinds of modules doing all kinds of things, but there
 was no consistency in their interfaces with the rest of the kernel. To impose some
 consistency such that there is at minimum a standardised way to start, suspend and
 resume a device a device model was added. An example is show below, and you can
@@ -5089,19 +5089,19 @@ functions.
                                                                   
 
                                                                   
-<!-- l. 1472 --><p class='noindent'>
+<!-- l. 1480 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='optimizations'><span class='titlemark'>0.18   </span> <a id='x1-640000.18'></a>Optimizations</h3>
-<!-- l. 1474 --><p class='noindent'>
+<!-- l. 1482 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='likely-and-unlikely-conditions'><span class='titlemark'>0.18.1   </span> <a id='x1-650000.18.1'></a>Likely and Unlikely conditions</h4>
-<!-- l. 1476 --><p class='noindent'>Sometimes you might want your code to run as quickly as possible, especially if
+<!-- l. 1484 --><p class='noindent'>Sometimes you might want your code to run as quickly as possible, especially if
 it’s handling an interrupt or doing something which might cause noticible
 latency. If your code contains boolean conditions and if you know that the
 conditions are almost always likely to evaluate as either <span class='ecti-1000'>true </span>or <span class='ecti-1000'>false</span>, then
 you can allow the compiler to optimise for this using the <span class='ecti-1000'>likely </span>and <span class='ecti-1000'>unlikely</span>
 macros.
-</p><!-- l. 1478 --><p class='indent'>   For example, when allocating memory you’re almost always expecting this to
+</p><!-- l. 1486 --><p class='indent'>   For example, when allocating memory you’re almost always expecting this to
 succeed.
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -5111,64 +5111,64 @@ succeed.
 <a id='x1-65014r4'></a><span class='ecrm-0500'>4</span><span class='ectt-0800'>  bio = NULL;</span> 
 <a id='x1-65016r5'></a><span class='ecrm-0500'>5</span><span class='ectt-0800'>  </span><span id='textcolor2902'><span class='ectt-0800'>goto</span></span><span class='ectt-0800'> out;</span> 
 <a id='x1-65018r6'></a><span class='ecrm-0500'>6</span><span class='ectt-0800'>}</span></pre>
-<!-- l. 1489 --><p class='indent'>   When the <span class='ecti-1000'>unlikely </span>macro is used the compiler alters its machine instruction
+<!-- l. 1497 --><p class='indent'>   When the <span class='ecti-1000'>unlikely </span>macro is used the compiler alters its machine instruction
 output so that it continues along the false branch and only jumps if the condition is
 true. That avoids flushing the processor pipeline. The opposite happens if you use the
 <span class='ecti-1000'>likely </span>macro.
 </p>
    <h3 class='sectionHead' id='common-pitfalls'><span class='titlemark'>0.19   </span> <a id='x1-660000.19'></a>Common Pitfalls</h3>
-<!-- l. 1492 --><p class='noindent'>Before I send you on your way to go out into the world and write kernel modules,
+<!-- l. 1500 --><p class='noindent'>Before I send you on your way to go out into the world and write kernel modules,
 there are a few things I need to warn you about. If I fail to warn you and something
 bad happens, please report the problem to me for a full refund of the amount I was
 paid for your copy of the book.
-</p><!-- l. 1494 --><p class='noindent'>
+</p><!-- l. 1502 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='using-standard-libraries'><span class='titlemark'>0.19.1   </span> <a id='x1-670000.19.1'></a>Using standard libraries</h4>
-<!-- l. 1496 --><p class='noindent'>You can’t do that. In a kernel module you can only use kernel functions, which are
+<!-- l. 1504 --><p class='noindent'>You can’t do that. In a kernel module you can only use kernel functions, which are
 the functions you can see in /proc/kallsyms.
-</p><!-- l. 1498 --><p class='noindent'>
+</p><!-- l. 1506 --><p class='noindent'>
 </p>
                                                                   
 
                                                                   
    <h4 class='subsectionHead' id='disabling-interrupts'><span class='titlemark'>0.19.2   </span> <a id='x1-680000.19.2'></a>Disabling interrupts</h4>
-<!-- l. 1500 --><p class='noindent'>You might need to do this for a short time and that is OK, but if you don’t
+<!-- l. 1508 --><p class='noindent'>You might need to do this for a short time and that is OK, but if you don’t
 enable them afterwards, your system will be stuck and you’ll have to power it
 off.
-</p><!-- l. 1502 --><p class='noindent'>
+</p><!-- l. 1510 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='sticking-your-head-inside-a-large-carnivore'><span class='titlemark'>0.19.3   </span> <a id='x1-690000.19.3'></a>Sticking your head inside a large carnivore</h4>
-<!-- l. 1504 --><p class='noindent'>I probably don’t have to warn you about this, but I figured I will anyway, just in
+<!-- l. 1512 --><p class='noindent'>I probably don’t have to warn you about this, but I figured I will anyway, just in
 case.
-</p><!-- l. 1506 --><p class='noindent'>
+</p><!-- l. 1514 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='where-to-go-from-here'><span class='titlemark'>0.20   </span> <a id='x1-700000.20'></a>Where To Go From Here?</h3>
-<!-- l. 1508 --><p class='noindent'>I could easily have squeezed a few more chapters into this book. I could have added a
+<!-- l. 1516 --><p class='noindent'>I could easily have squeezed a few more chapters into this book. I could have added a
 chapter about creating new file systems, or about adding new protocol stacks (as if
 there’s a need for that – you’d have to dig underground to find a protocol stack
 not supported by Linux). I could have added explanations of the kernel
 mechanisms we haven’t touched upon, such as bootstrapping or the disk
 interface.
-</p><!-- l. 1510 --><p class='indent'>   However, I chose not to. My purpose in writing this book was to provide initiation
+</p><!-- l. 1518 --><p class='indent'>   However, I chose not to. My purpose in writing this book was to provide initiation
 into the mysteries of kernel module programming and to teach the common
 techniques for that purpose. For people seriously interested in kernel programming, I
 recommend <a href='https://kernelnewbies.org'>kernelnewbies.org</a> and the <span class='ecti-1000'>Documentation </span>subdirectory within the kernel
 source code which isn’t always easy to understand but can be a starting point for
 further investigation. Also, as Linus said, the best way to learn the kernel is to read
 the source code yourself.
-</p><!-- l. 1512 --><p class='indent'>   If you’re interested in more examples of short kernel modules then searching on
+</p><!-- l. 1520 --><p class='indent'>   If you’re interested in more examples of short kernel modules then searching on
 sites such as Github and Gitlab is a good way to start, although there is a lot of
 duplication of older LKMPG examples which may not compile with newer kernel
 versions. You will also be able to find examples of the use of kernel modules to attack
 or compromise systems or exfiltrate data and those can be useful for thinking about
 how to defend systems and learning about existing security mechanisms within the
 kernel.
-</p><!-- l. 1514 --><p class='indent'>   I hope I have helped you in your quest to become a better programmer, or at
+</p><!-- l. 1522 --><p class='indent'>   I hope I have helped you in your quest to become a better programmer, or at
 least to have fun through technology. And, if you do write useful kernel modules, I
 hope you publish them under the GPL, so I can use them too.
-</p><!-- l. 1516 --><p class='indent'>   If you’d like to contribute to this guide or notice anything glaringly wrong, please
+</p><!-- l. 1524 --><p class='indent'>   If you’d like to contribute to this guide or notice anything glaringly wrong, please
 create an issue at <a class='url' href='https://github.com/sysprog21/lkmpg'><span class='ectt-1000'>https://github.com/sysprog21/lkmpg</span></a>.
-</p><!-- l. 1518 --><p class='indent'>   Happy hacking.
+</p><!-- l. 1526 --><p class='indent'>   Happy hacking.
 </p>
     
 </body> 
