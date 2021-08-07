@@ -1483,13 +1483,17 @@ The example below modifies the previous example to also run an additional task w
 \samplec{examples/bottomhalf.c}
 
 \section{Crypto}
-\label{sec:orge418bf3}
-At the dawn of the internet everybody trusted everybody completely\ldots{}but that didn't work out so well. When this guide was originally written it was a more innocent era in which almost nobody actually gave a damn about crypto - least of all kernel developers. That's certainly no longer the case now. To handle crypto stuff the kernel has its own API enabling common methods of encryption, decryption and your favourite hash functions.
+\label{sec:crypto}
+At the dawn of the internet everybody trusted everybody completely\ldots{}but that did not work out so well.
+When this guide was originally written it was a more innocent era in which almost nobody actually gave a damn about crypto - least of all kernel developers.
+That is certainly no longer the case now.
+To handle crypto stuff the kernel has its own API enabling common methods of encryption, decryption and your favourite hash functions.
 
 \subsection{Hash functions}
-\label{sec:org4c7f10c}
+\label{sec:hashfunc}
 
-Calculating and checking the hashes of things is a common operation. Here is a demonstration of how to calculate a sha256 hash within a kernel module.
+Calculating and checking the hashes of things is a common operation.
+Here is a demonstration of how to calculate a sha256 hash within a kernel module.
 
 \samplec{examples/cryptosha256.c}
 
