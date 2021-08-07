@@ -1420,34 +1420,63 @@ The kernel then uses the Completely Fair Scheduler (CFS) to execute work within 
 \samplec{examples/sched.c}
 
 \section{Interrupt Handlers}
-\label{sec:orge36fc8c}
+\label{sec:interrupt_handler}
 \subsection{Interrupt Handlers}
-\label{sec:org5ec1409}
-Except for the last chapter, everything we did in the kernel so far we've done as a response to a process asking for it, either by dealing with a special file, sending an ioctl(), or issuing a system call. But the job of the kernel isn't just to respond to process requests. Another job, which is every bit as important, is to speak to the hardware connected to the machine.
+\label{sec:irq}
+Except for the last chapter, everything we did in the kernel so far we have done as a response to a process asking for it, either by dealing with a special file, sending an \verb|ioctl()|, or issuing a system call.
+But the job of the kernel is not just to respond to process requests.
+Another job, which is every bit as important, is to speak to the hardware connected to the machine.
 
-There are two types of interaction between the CPU and the rest of the computer's hardware. The first type is when the CPU gives orders to the hardware, the other is when the hardware needs to tell the CPU something. The second, called interrupts, is much harder to implement because it has to be dealt with when convenient for the hardware, not the CPU. Hardware devices typically have a very small amount of RAM, and if you don't read their information when available, it is lost.
+There are two types of interaction between the CPU and the rest of the computer's hardware.
+The first type is when the CPU gives orders to the hardware, the other is when the hardware needs to tell the CPU something.
+The second, called interrupts, is much harder to implement because it has to be dealt with when convenient for the hardware, not the CPU.
+Hardware devices typically have a very small amount of RAM, and if you do not read their information when available, it is lost.
 
-Under Linux, hardware interrupts are called IRQ's (Interrupt ReQuests). There are two types of IRQ's, short and long. A short IRQ is one which is expected to take a very short period of time, during which the rest of the machine will be blocked and no other interrupts will be handled. A long IRQ is one which can take longer, and during which other interrupts may occur (but not interrupts from the same device). If at all possible, it's better to declare an interrupt handler to be long.
+Under Linux, hardware interrupts are called IRQ's (Interrupt ReQuests).
+There are two types of IRQ's, short and long.
+A short IRQ is one which is expected to take a very short period of time, during which the rest of the machine will be blocked and no other interrupts will be handled.
+A long IRQ is one which can take longer, and during which other interrupts may occur (but not interrupts from the same device).
+If at all possible, it is better to declare an interrupt handler to be long.
 
-When the CPU receives an interrupt, it stops whatever it's doing (unless it's processing a more important interrupt, in which case it will deal with this one only when the more important one is done), saves certain parameters on the stack and calls the interrupt handler. This means that certain things are not allowed in the interrupt handler itself, because the system is in an unknown state. The solution to this problem is for the interrupt handler to do what needs to be done immediately, usually read something from the hardware or send something to the hardware, and then schedule the handling of the new information at a later time (this is called the "bottom half") and return. The kernel is then guaranteed to call the bottom half as soon as possible -- and when it does, everything allowed in kernel modules will be allowed.
+When the CPU receives an interrupt, it stops whatever it is doing (unless it is processing a more important interrupt, in which case it will deal with this one only when the more important one is done),
+saves certain parameters on the stack and calls the interrupt handler.
+This means that certain things are not allowed in the interrupt handler itself, because the system is in an unknown state.
+The solution to this problem is for the interrupt handler to do what needs to be done immediately, usually read something from the hardware or send something to the hardware, and then schedule the handling of the new information at a later time (this is called the "bottom half") and return.
+The kernel is then guaranteed to call the bottom half as soon as possible -- and when it does, everything allowed in kernel modules will be allowed.
 
 The way to implement this is to call \textbf{request\_irq()} to get your interrupt handler called when the relevant IRQ is received.
 
-In practice IRQ handling can be a bit more complex. Hardware is often designed in a way that chains two interrupt controllers, so that all the IRQs from interrupt controller B are cascaded to a certain IRQ from interrupt controller A. Of course that requires that the kernel finds out which IRQ it really was afterwards and that adds overhead. Other architectures offer some special, very low overhead, so called "fast IRQ" or FIQs. To take advantage of them requires handlers to be written in assembler, so they do not really fit into the kernel. They can be made to work similar to the others, but after that procedure, they're no longer any faster than "common" IRQs. SMP enabled kernels running on systems with more than one processor need to solve another truckload of problems. It's not enough to know if a certain IRQs has happend, it's also important for what CPU(s) it was for. People still interested in more details, might want to do a web search for "APIC" now ;)
+In practice IRQ handling can be a bit more complex.
+Hardware is often designed in a way that chains two interrupt controllers, so that all the IRQs from interrupt controller B are cascaded to a certain IRQ from interrupt controller A.
+Of course, that requires that the kernel finds out which IRQ it really was afterwards and that adds overhead. Other architectures offer some special, very low overhead, so called "fast IRQ" or FIQs.
+To take advantage of them requires handlers to be written in assembler, so they do not really fit into the kernel.
+They can be made to work similar to the others, but after that procedure, they are no longer any faster than "common" IRQs.
+SMP enabled kernels running on systems with more than one processor need to solve another truckload of problems.
+It is not enough to know if a certain IRQs has happend, it's also important for what CPU(s) it was for.
+People still interested in more details, might want to refer to "APIC" now.
 
-This function receives the IRQ number, the name of the function, flags, a name for /proc/interrupts and a parameter to pass to the interrupt handler. Usually there is a certain number of IRQs available. How many IRQs there are is hardware-dependent. The flags can include SA\_SHIRQ to indicate you're willing to share the IRQ with other interrupt handlers (usually because a number of hardware devices sit on the same IRQ) and SA\_INTERRUPT to indicate this is a fast interrupt. This function will only succeed if there isn't already a handler on this IRQ, or if you're both willing to share.
+This function receives the IRQ number, the name of the function, flags, a name for \verb|/proc/interrupts| and a parameter to pass to the interrupt handler.
+Usually there is a certain number of IRQs available.
+How many IRQs there are is hardware-dependent.
+The flags can include \verb|SA_SHIRQ| to indicate you are willing to share the IRQ with other interrupt handlers (usually because a number of hardware devices sit on the same IRQ) and \verb|SA_INTERRUPT| to indicate this is a fast interrupt.
+This function will only succeed if there is not already a handler on this IRQ, or if you are both willing to share.
 
 \subsection{Detecting button presses}
-\label{sec:org683a7aa}
-Many popular single board computers, such as Raspberry Pis or Beagleboards, have a bunch of GPIO pins. Attaching buttons to those and then having a button press do something is a classic case in which you might need to use interrupts so that instead of having the CPU waste time and battery power polling for a change in input state it's better for the input to trigger the CPU to then run a particular handling function.
+\label{sec:detect_button}
+Many popular single board computers, such as Raspberry Pi or Beagleboards, have a bunch of GPIO pins.
+Attaching buttons to those and then having a button press do something is a classic case in which you might need to use interrupts,
+so that instead of having the CPU waste time and battery power polling for a change in input state it is better for the input to trigger the CPU to then run a particular handling function.
 
-Here's an example where buttons are connected to GPIO numbers 17 and 18 and an LED is connected to GPIO 4. You can change those numbers to whatever is appropriate for your board.
+Here is an example where buttons are connected to GPIO numbers 17 and 18 and an LED is connected to GPIO 4.
+You can change those numbers to whatever is appropriate for your board.
 
 \samplec{examples/intrpt.c}
 
 \subsection{Bottom Half}
-\label{sec:orgf9f72ae}
-Suppose you want to do a bunch of stuff inside of an interrupt routine. A common way to do that without rendering the interrupt unavailable for a significant duration is to combine it with a tasklet. This pushes the bulk of the work off into the scheduler.
+\label{sec:bottom_half}
+Suppose you want to do a bunch of stuff inside of an interrupt routine.
+A common way to do that without rendering the interrupt unavailable for a significant duration is to combine it with a tasklet.
+This pushes the bulk of the work off into the scheduler.
 
 The example below modifies the previous example to also run an additional task when an interrupt is triggered.
 
