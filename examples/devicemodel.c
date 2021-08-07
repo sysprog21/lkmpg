@@ -18,7 +18,7 @@ static int devicemodel_probe(struct platform_device *dev)
     pr_info("devicemodel probe\n");
     pr_info("devicemodel greeting: %s; %d\n", pd->greeting, pd->number);
 
-    /* Your device initialisation code */
+    /* Your device initialization code */
 
     return 0;
 }
