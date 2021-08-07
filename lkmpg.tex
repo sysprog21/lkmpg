@@ -1528,23 +1528,28 @@ An example is show below, and you can use this as a template to add your own sus
 \samplec{examples/devicemodel.c}
 
 \section{Optimizations}
-\label{sec:org906f9cc}
+\label{sec:optimization}
 \subsection{Likely and Unlikely conditions}
-\label{sec:org63658ee}
-Sometimes you might want your code to run as quickly as possible, especially if it's handling an interrupt or doing something which might cause noticible latency. If your code contains boolean conditions and if you know that the conditions are almost always likely to evaluate as either \emph{true} or \emph{false}, then you can allow the compiler to optimise for this using the \emph{likely} and \emph{unlikely} macros.
+\label{sec:likely_unlikely}
+Sometimes you might want your code to run as quickly as possible, especially if it is handling an interrupt or doing something which might cause noticible latency.
+If your code contains boolean conditions and if you know that the conditions are almost always likely to evaluate as either \emph{true} or \emph{false},
+then you can allow the compiler to optimize for this using the \emph{likely} and \emph{unlikely} macros.
 
-For example, when allocating memory you're almost always expecting this to succeed.
+For example, when allocating memory you are almost always expecting this to succeed.
 
 \begin{code}
 bvl = bvec_alloc(gfp_mask, nr_iovecs, &idx);
 if (unlikely(!bvl)) {
-  mempool_free(bio, bio_pool);
-  bio = NULL;
-  goto out;
+    mempool_free(bio, bio_pool);
+    bio = NULL;
+    goto out;
 }
 \end{code}
 
-When the \emph{unlikely} macro is used the compiler alters its machine instruction output so that it continues along the false branch and only jumps if the condition is true. That avoids flushing the processor pipeline. The opposite happens if you use the \emph{likely} macro.
+When the \emph{unlikely} macro is used, the compiler alters its machine instruction output, so that it continues along the false branch and only jumps if the condition is true.
+That avoids flushing the processor pipeline.
+The opposite happens if you use the \emph{likely} macro.
+
 \section{Common Pitfalls}
 \label{sec:org0e8d92a}
 Before I send you on your way to go out into the world and write kernel modules, there are a few things I need to warn you about. If I fail to warn you and something bad happens, please report the problem to me for a full refund of the amount I was paid for your copy of the book.
