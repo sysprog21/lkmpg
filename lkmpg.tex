@@ -1339,7 +1339,7 @@ The example here is \emph{"irq safe"} in that if interrupts happen during the lo
 \samplec{examples/example_spinlock.c}
 
 \subsection{Read and write locks}
-\label{sec:org136e336}
+\label{sec:rwlock}
 Read and write locks are specialised kinds of spinlocks so that you can exclusively read from something or write to something.
 Like the earlier spinlocks example the one below shows an "irq safe" situation in which if other functions were triggered from irqs which might also read and write to whatever you are concerned with then they would not disrupt the logic.
 As before it is a good idea to keep anything done within the lock as short as possible so that it does not hang up the system and cause users to start revolting against the tyranny of your module.
@@ -1355,29 +1355,41 @@ An example is shown below.
 
 \samplec{examples/example_atomic.c}
 
+% FIXME: we should rewrite this section
 \section{Replacing Print Macros}
-\label{sec:org2f44fc3}
+\label{sec:print_macros}
 \subsection{Replacement}
-\label{sec:orgb4ba543}
-In Section 1.2.1.2, I said that X and kernel module programming don't mix. That's true for developing kernel modules, but in actual use, you want to be able to send messages to whichever tty the command to load the module came from.
+% FIXME: cross-reference
+In Section 1.2.1.2, I said that X and kernel module programming do not mix.
+That is true for developing kernel modules, but in actual use, you want to be able to send messages to whichever tty the command to load the module came from.
 
-"tty" is an abbreviation of \emph{teletype}: originally a combination keyboard-printer used to communicate with a Unix system, and today an abstraction for the text stream used for a Unix program, whether it's a physical terminal, an xterm on an X display, a network connection used with ssh, etc.
+"tty" is an abbreviation of \emph{teletype}: originally a combination keyboard-printer used to communicate with a Unix system, and today an abstraction for the text stream used for a Unix program, whether it is a physical terminal, an xterm on an X display, a network connection used with ssh, etc.
 
-The way this is done is by using current, a pointer to the currently running task, to get the current task's tty structure. Then, we look inside that tty structure to find a pointer to a string write function, which we use to write a string to the tty.
+The way this is done is by using current, a pointer to the currently running task, to get the current task's tty structure.
+Then, we look inside that tty structure to find a pointer to a string write function, which we use to write a string to the tty.
 
 \samplec{examples/print_string.c}
 
 \subsection{Flashing keyboard LEDs}
-\label{sec:orgf1c93f1}
-In certain conditions, you may desire a simpler and more direct way to communicate to the external world. Flashing keyboard LEDs can be such a solution: It is an immediate way to attract attention or to display a status condition. Keyboard LEDs are present on every hardware, they are always visible, they do not need any setup, and their use is rather simple and non-intrusive, compared to writing to a tty or a file.
+\label{sec:flash_kb_led}
+In certain conditions, you may desire a simpler and more direct way to communicate to the external world.
+Flashing keyboard LEDs can be such a solution: It is an immediate way to attract attention or to display a status condition.
+Keyboard LEDs are present on every hardware, they are always visible, they do not need any setup, and their use is rather simple and non-intrusive, compared to writing to a tty or a file.
 
 The following source code illustrates a minimal kernel module which, when loaded, starts blinking the keyboard LEDs until it is unloaded.
 
 \samplec{examples/kbleds.c}
 
-If none of the examples in this chapter fit your debugging needs there might yet be some other tricks to try. Ever wondered what CONFIG\_LL\_DEBUG in make menuconfig is good for? If you activate that you get low level access to the serial port. While this might not sound very powerful by itself, you can patch \textbf{kernel/printk.c} or any other essential syscall to use printascii, thus makeing it possible to trace virtually everything what your code does over a serial line. If you find yourself porting the kernel to some new and former unsupported architecture this is usually amongst the first things that should be implemented. Logging over a netconsole might also be worth a try.
+If none of the examples in this chapter fit your debugging needs there might yet be some other tricks to try.
+Ever wondered what \verb|CONFIG_LL_DEBUG| in make menuconfig is good for?
+If you activate that you get low level access to the serial port.
+While this might not sound very powerful by itself, you can patch \textbf{kernel/printk.c} or any other essential syscall to print ASCII characters, thus makeing it possible to trace virtually everything what your code does over a serial line.
+If you find yourself porting the kernel to some new and former unsupported architecture, this is usually amongst the first things that should be implemented.
+Logging over a netconsole might also be worth a try.
 
-While you have seen lots of stuff that can be used to aid debugging here, there are some things to be aware of. Debugging is almost always intrusive. Adding debug code can change the situation enough to make the bug seem to dissappear. Thus you should try to keep debug code to a minimum and make sure it does not show up in production code.
+While you have seen lots of stuff that can be used to aid debugging here, there are some things to be aware of. Debugging is almost always intrusive.
+Adding debug code can change the situation enough to make the bug seem to dissappear.
+Thus you should try to keep debug code to a minimum and make sure it does not show up in production code.
 
 \section{Scheduling Tasks}
 \label{sec:orgb1eb02f}
