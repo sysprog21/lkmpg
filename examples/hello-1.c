@@ -8,9 +8,7 @@ int init_module(void)
 {
     pr_info("Hello world 1.\n");
 
-    /*
-     * A non 0 return means init_module failed; module can't be loaded.
-     */
+    /* A non 0 return means init_module failed; module can't be loaded. */
     return 0;
 }
 

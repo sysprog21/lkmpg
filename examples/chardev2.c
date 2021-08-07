@@ -8,7 +8,7 @@
 #include <linux/fs.h>
 #include <linux/init.h>
 #include <linux/irq.h>
-#include <linux/kernel.h> /* We're doing kernel work */
+#include <linux/kernel.h> /* We are doing kernel work */
 #include <linux/module.h> /* Specifically, a module */
 #include <linux/poll.h>
 
@@ -229,20 +229,13 @@ struct file_operations Fops = {
     .release = device_release, /* a.k.a. close */
 };
 
-/*
- * Initialize the module - Register the character device
- */
-int init_module()
+/* Initialize the module - Register the character device */
+static int __init chardev2_init(void)
 {
-    int ret_val;
-    /*
-     * Register the character device (atleast try)
-     */
-    ret_val = register_chrdev(MAJOR_NUM, DEVICE_NAME, &Fops);
+    /* Register the character device (atleast try) */
+    int ret_val = register_chrdev(MAJOR_NUM, DEVICE_NAME, &Fops);
 
-    /*
-     * Negative values signify an error
-     */
+    /* Negative values signify an error */
     if (ret_val < 0) {
         pr_alert("%s failed with %d\n",
                  "Sorry, registering the character device ", ret_val);
@@ -259,18 +252,17 @@ int init_module()
     return 0;
 }
 
-/*
- * Cleanup - unregister the appropriate file from /proc
- */
-void cleanup_module()
+/* Cleanup - unregister the appropriate file from /proc */
+static void __exit chardev2_exit(void)
 {
     device_destroy(cls, MKDEV(Major, 0));
     class_destroy(cls);
 
-    /*
-     * Unregister the device
-     */
+    /* Unregister the device */
     unregister_chrdev(Major, DEVICE_NAME);
 }
+
+module_init(chardev2_init);
+module_exit(chardev2_exit);
 
 MODULE_LICENSE("GPL");

@@ -57,7 +57,7 @@ In summary, you may copy and distribute this book free of charge or for a profit
 
 Derivative works and translations of this document must be placed under the Open Software License, and the original copyright notice must remain intact.
 If you have contributed new material to this book, you must make the material and source code available for your revisions.
-Please make revisions and updates available directly to the document maintainer, Peter Jay Salzman <p@dirac.org>.
+Please make revisions and updates available directly to the document maintainer, Jim Huang <jserv@ccns.ncku.edu.tw>.
 This will allow for the merging of updates and provide consistent revisions to the Linux community.
 
 If you publish or distribute this book commercially, donations, royalties, and/or printed copies are greatly appreciated by the author and the \href{http://www.tldp.org}{Linux Documentation Project} (LDP).
@@ -739,33 +739,35 @@ So just be aware that the word ``hardware'' in our discussion can mean something
 
 \section{Character Device drivers}
 \label{sec:chardev}
-\subsection{The proc\_ops Structure}
-\label{sec:proc_ops}
-The \verb|proc_ops| structure is defined in \textbf{/usr/include/linux/fs.h}, and holds pointers to functions defined by the driver that perform various operations on the device.
+\subsection{The file\_operations Structure}
+\label{sec:file_operations}
+The \verb|file_operations| structure is defined in \textbf{/usr/include/linux/fs.h}, and holds pointers to functions defined by the driver that perform various operations on the device.
 Each field of the structure corresponds to the address of some function defined by the driver to handle a requested operation.
 
 For example, every character driver needs to define a function that reads from the device.
-The \verb|proc_ops| structure holds the address of the module's function that performs that operation.
-Here is what the definition looks like for kernel 3.0:
+The \verb|file_operations| structure holds the address of the module's function that performs that operation.
+Here is what the definition looks like for kernel 5.4:
 
 \begin{code}
-struct proc_ops {
+struct file_operations {
     struct module *owner;
     loff_t (*llseek) (struct file *, loff_t, int);
     ssize_t (*read) (struct file *, char __user *, size_t, loff_t *);
     ssize_t (*write) (struct file *, const char __user *, size_t, loff_t *);
-    ssize_t (*aio_read) (struct kiocb *, const struct iovec *, unsigned long, loff_t);
-    ssize_t (*aio_write) (struct kiocb *, const struct iovec *, unsigned long, loff_t);
+    ssize_t (*read_iter) (struct kiocb *, struct iov_iter *);
+    ssize_t (*write_iter) (struct kiocb *, struct iov_iter *);
+    int (*iopoll)(struct kiocb *kiocb, bool spin);
     int (*iterate) (struct file *, struct dir_context *);
-    unsigned int (*poll) (struct file *, struct poll_table_struct *);
+    int (*iterate_shared) (struct file *, struct dir_context *);
+    __poll_t (*poll) (struct file *, struct poll_table_struct *);
     long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long);
     long (*compat_ioctl) (struct file *, unsigned int, unsigned long);
     int (*mmap) (struct file *, struct vm_area_struct *);
+    unsigned long mmap_supported_flags;
     int (*open) (struct inode *, struct file *);
     int (*flush) (struct file *, fl_owner_t id);
     int (*release) (struct inode *, struct file *);
     int (*fsync) (struct file *, loff_t, loff_t, int datasync);
-    int (*aio_fsync) (struct kiocb *, int datasync);
     int (*fasync) (int, struct file *, int);
     int (*lock) (struct file *, int, struct file_lock *);
     ssize_t (*sendpage) (struct file *, struct page *, int, size_t, loff_t *, int);
@@ -774,27 +776,33 @@ struct proc_ops {
     int (*flock) (struct file *, int, struct file_lock *);
     ssize_t (*splice_write)(struct pipe_inode_info *, struct file *, loff_t *, size_t, unsigned int);
     ssize_t (*splice_read)(struct file *, loff_t *, struct pipe_inode_info *, size_t, unsigned int);
-    int (*setlease)(struct file *, long, struct file_lock **);
+    int (*setlease)(struct file *, long, struct file_lock **, void **);
     long (*fallocate)(struct file *file, int mode, loff_t offset,
-	      loff_t len);
-    int (*show_fdinfo)(struct seq_file *m, struct file *f);
-};
+        loff_t len);
+    void (*show_fdinfo)(struct seq_file *m, struct file *f);
+    ssize_t (*copy_file_range)(struct file *, loff_t, struct file *,
+        loff_t, size_t, unsigned int);
+    loff_t (*remap_file_range)(struct file *file_in, loff_t pos_in,
+             struct file *file_out, loff_t pos_out,
+             loff_t len, unsigned int remap_flags);
+    int (*fadvise)(struct file *, loff_t, loff_t, int);
+} __randomize_layout;
 \end{code}
 
 Some operations are not implemented by a driver.
 For example, a driver that handles a video card will not need to read from a directory structure.
-The corresponding entries in the \verb|proc_ops| structure should be set to NULL.
+The corresponding entries in the \verb|file_operations| structure should be set to NULL.
 
 There is a gcc extension that makes assigning to this structure more convenient.
 You will see it in modern drivers, and may catch you by surprise.
 This is what the new way of assigning to the structure looks like:
 
 \begin{code}
-struct proc_ops fops = {
-	proc_read: device_read,
-	proc_write: device_write,
-	proc_open: device_open,
-	proc_release: device_release
+struct file_operations fops = {
+	read: device_read,
+	write: device_write,
+	open: device_open,
+	release: device_release
 };
 \end{code}
 
@@ -803,17 +811,19 @@ You should use this syntax in case someone wants to port your driver.
 It will help with compatibility:
 
 \begin{code}
-struct proc_ops fops = {
-	.proc_read = device_read,
-	.proc_write = device_write,
-	.proc_open = device_open,
-	.proc_release = device_release
+struct file_operations fops = {
+	.read = device_read,
+	.write = device_write,
+	.open = device_open,
+	.release = device_release
 };
 \end{code}
 
 The meaning is clear, and you should be aware that any member of the structure which you do not explicitly assign will be initialized to NULL by gcc.
 
-An instance of struct proc\_ops containing pointers to functions that are used to implement read, write, open, \ldots{} syscalls is commonly named fops.
+An instance of struct \verb|file_operations| containing pointers to functions that are used to implement read, write, open, \ldots{} syscalls is commonly named fops.
+
+Sin Linux v5.6, the \verb|proc_ops| structure was introduced to replace the use of the \verb|file_operations| structure when registering proc handlers.
 
 \subsection{The file structure}
 \label{sec:file_struct}
@@ -843,10 +853,10 @@ This is synonymous with assigning it a major number during the module's initiali
 You do this by using the \verb|register_chrdev| function, defined by linux/fs.h.
 
 \begin{code}
-int register_chrdev(unsigned int major, const char *name, struct proc_ops *fops);
+int register_chrdev(unsigned int major, const char *name, struct file_operations *fops);
 \end{code}
 
-where unsigned int major is the major number you want to request, \emph{const char *name} is the name of the device as it will appear in \textbf{/proc/devices} and \emph{struct proc\_ops *fops} is a pointer to the proc\_ops table for your driver.
+where unsigned int major is the major number you want to request, \emph{const char *name} is the name of the device as it will appear in \textbf{/proc/devices} and \emph{struct file\_operations *fops} is a pointer to the \verb|file_operations| table for your driver.
 A negative return value means the registration failed. Note that we didn't pass the minor number to register\_chrdev.
 That is because the kernel doesn't care about the minor number; only our driver uses it.
 
@@ -950,6 +960,13 @@ HelloWorld!
 \end{verbatim}
 
 \samplec{examples/procfs1.c}
+
+\subsection{The proc\_ops Structure}
+\label{sec:proc_ops}
+The \verb|proc_ops| structure is defined in \textbf{/usr/include/linux/proc\_fs.h} in Linux v5.6+.
+In older kernels, it used \verb|file_operations| for custom hooks in \textbf{/proc} file system, but it contains some members that are unnecessary in VFS, and every time VFS expands \verb|file_operations| set, \textbf{/proc} code comes bloated.
+On the other hand, not only the space, but also some operations were saved by this structure to improve its performance.
+For example, the file which never disappears in \textbf{/proc} can set the \textbf{proc\_flag} as \textbf{PROC\_ENTRY\_PERMANENT} to save 2 atomic ops, 1 allocation, 1 free in per open/read/close sequence.
 
 \subsection{Read and Write a /proc File}
 \label{sec:read_write_procfs}
@@ -1209,32 +1226,53 @@ Depending on your kernel version, you might even need to hand apply the patch.
 \samplec{examples/syscall.c}
 
 \section{Blocking Processes and threads}
-\label{sec:org864c195}
+\label{sec:blocking_process_thread}
 \subsection{Sleep}
-\label{sec:org4869971}
-What do you do when somebody asks you for something you can't do right away? If you're a human being and you're bothered by a human being, the only thing you can say is: "\emph{Not right now, I'm busy. Go away!}". But if you're a kernel module and you're bothered by a process, you have another possibility. You can put the process to sleep until you can service it. After all, processes are being put to sleep by the kernel and woken up all the time (that's the way multiple processes appear to run on the same time on a single CPU).
+\label{sec:sleep}
+What do you do when somebody asks you for something you can not do right away?
+If you are a human being and you are bothered by a human being, the only thing you can say is: "\emph{Not right now, I'm busy. Go away!}".
+But if you are a kernel module and you are bothered by a process, you have another possibility.
+You can put the process to sleep until you can service it.
+After all, processes are being put to sleep by the kernel and woken up all the time (that is the way multiple processes appear to run on the same time on a single CPU).
 
-This kernel module is an example of this. The file (called \textbf{/proc/sleep}) can only be opened by a single process at a time. If the file is already open, the kernel module calls wait\_event\_interruptible. The easiest way to keep a file open is to open it with:
+This kernel module is an example of this.
+The file (called \textbf{/proc/sleep}) can only be opened by a single process at a time.
+If the file is already open, the kernel module calls \verb|wait_event_interruptible|.
+The easiest way to keep a file open is to open it with:
 
 \begin{codebash}
 tail -f
 \end{codebash}
 
-This function changes the status of the task (a task is the kernel data structure which holds information about a process and the system call it's in, if any) to \textbf{TASK\_INTERRUPTIBLE}, which means that the task will not run until it is woken up somehow, and adds it to WaitQ, the queue of tasks waiting to access the file. Then, the function calls the scheduler to context switch to a different process, one which has some use for the CPU.
+This function changes the status of the task (a task is the kernel data structure which holds information about a process and the system call it is in,
+if any) to \textbf{TASK\_INTERRUPTIBLE}, which means that the task will not run until it is woken up somehow, and adds it to WaitQ, the queue of tasks waiting to access the file.
+Then, the function calls the scheduler to context switch to a different process, one which has some use for the CPU.
 
-When a process is done with the file, it closes it, and module\_close is called. That function wakes up all the processes in the queue (there's no mechanism to only wake up one of them). It then returns and the process which just closed the file can continue to run. In time, the scheduler decides that that process has had enough and gives control of the CPU to another process. Eventually, one of the processes which was in the queue will be given control of the CPU by the scheduler. It starts at the point right after the call to \textbf{module\_interruptible\_sleep\_on}.
+When a process is done with the file, it closes it, and \verb|module_close| is called.
+That function wakes up all the processes in the queue (there's no mechanism to only wake up one of them).
+It then returns and the process which just closed the file can continue to run.
+In time, the scheduler decides that that process has had enough and gives control of the CPU to another process.
+Eventually, one of the processes which was in the queue will be given control of the CPU by the scheduler.
+It starts at the point right after the call to \verb|module_interruptible_sleep_on|.
 
-This means that the process is still in kernel mode - as far as the process is concerned, it issued the open system call and the system call hasn't returned yet. The process doesn't know somebody else used the CPU for most of the time between the moment it issued the call and the moment it returned.
+This means that the process is still in kernel mode - as far as the process is concerned, it issued the open system call and the system call has not returned yet.
+The process does not know somebody else used the CPU for most of the time between the moment it issued the call and the moment it returned.
 
-It can then proceed to set a global variable to tell all the other processes that the file is still open and go on with its life. When the other processes get a piece of the CPU, they'll see that global variable and go back to sleep.
+It can then proceed to set a global variable to tell all the other processes that the file is still open and go on with its life.
+When the other processes get a piece of the CPU, they'll see that global variable and go back to sleep.
 
-So we'll use tail -f to keep the file open in the background, while trying to access it with another process (again in the background, so that we need not switch to a different vt). As soon as the first background process is killed with kill \%1 , the second is woken up, is able to access the file and finally terminates.
+So we will use \verb|tail -f| to keep the file open in the background, while trying to access it with another process (again in the background, so that we need not switch to a different vt).
+As soon as the first background process is killed with kill \%1 , the second is woken up, is able to access the file and finally terminates.
 
-To make our life more interesting, \textbf{module\_close} doesn't have a monopoly on waking up the processes which wait to access the file. A signal, such as \emph{Ctrl +c} (\textbf{SIGINT}) can also wake up a process. This is because we used \textbf{module\_interruptible\_sleep\_on}. We could have used \textbf{module\_sleep\_on} instead, but that would have resulted in extremely angry users whose \emph{Ctrl+c}'s are ignored.
+To make our life more interesting, \textbf{module\_close} does not have a monopoly on waking up the processes which wait to access the file.
+A signal, such as \emph{Ctrl +c} (\textbf{SIGINT}) can also wake up a process. This is because we used \textbf{module\_interruptible\_sleep\_on}.
+We could have used \textbf{module\_sleep\_on} instead, but that would have resulted in extremely angry users whose \emph{Ctrl+c}'s are ignored.
 
 In that case, we want to return with \textbf{-EINTR} immediately. This is important so users can, for example, kill the process before it receives the file.
 
-There is one more point to remember. Some times processes don't want to sleep, they want either to get what they want immediately, or to be told it cannot be done. Such processes use the \textbf{O\_NONBLOCK} flag when opening the file. The kernel is supposed to respond by returning with the error code \textbf{-EAGAIN} from operations which would otherwise block, such as opening the file in this example. The program cat\_noblock, available in the source directory for this chapter, can be used to open a file with \textbf{O\_NONBLOCK}.
+There is one more point to remember. Some times processes don't want to sleep, they want either to get what they want immediately, or to be told it cannot be done.
+Such processes use the \verb|O_NONBLOCK| flag when opening the file.
+The kernel is supposed to respond by returning with the error code \textbf{-EAGAIN} from operations which would otherwise block, such as opening the file in this example. The program \verb|cat_nonblock|, available in the \textit{examples/other} directory for this chapter, can be used to open a file with \verb|O_NONBLOCK|.
 
 \begin{verbatim}
 $ sudo insmod sleep.ko
@@ -1264,80 +1302,104 @@ $
 \samplec{examples/other/cat_nonblock.c}
 
 \subsection{Completions}
-\label{sec:orgd9f9de4}
-Sometimes one thing should happen before another within a module having multiple threads. Rather than using \textbf{/proc/sleep} commands the kernel has another way to do this which allows timeouts or interrupts to also happen.
+\label{sec:completion}
+Sometimes one thing should happen before another within a module having multiple threads.
+Rather than using \verb|/bin/sleep| commands, the kernel has another way to do this which allows timeouts or interrupts to also happen.
 
 In the following example two threads are started, but one needs to start before another.
 
 \samplec{examples/completions.c}
 
-The \emph{machine} structure stores the completion states for the two threads. At the exit point of each thread the respective completion state is updated, and \emph{wait\_for\_completion} is used by the flywheel thread to ensure that it doesn't begin prematurely.
+The \emph{machine} structure stores the completion states for the two threads.
+At the exit point of each thread the respective completion state is updated, and \verb|{wait_for_completion| is used by the flywheel thread to ensure that it does not begin prematurely.
 
 So even though \emph{flywheel\_thread} is started first you should notice if you load this module and run \emph{dmesg} that turning the crank always happens first because the flywheel thread waits for it to complete.
 
-There are other variations upon the \emph{wait\_for\_completion} function, which include timeouts or being interrupted, but this basic mechanism is enough for many common situations without adding a lot of complexity.
+There are other variations upon the \verb|wait_for_completion| function, which include timeouts or being interrupted, but this basic mechanism is enough for many common situations without adding a lot of complexity.
 
 \section{Avoiding Collisions and Deadlocks}
-\label{sec:org17fc2e9}
-If processes running on different CPUs or in different threads try to access the same memory then it's possible that strange things can happen or your system can lock up. To avoid this various types of mutual exclusion kernel functions are available. These indicate if a section of code is "locked" or "unlocked" so that simultaneous attempts to run it can't happen.
+\label{sec:synchronization}
+If processes running on different CPUs or in different threads try to access the same memory, then it is possible that strange things can happen or your system can lock up.
+To avoid this, various types of mutual exclusion kernel functions are available.
+These indicate if a section of code is "locked" or "unlocked" so that simultaneous attempts to run it can not happen.
 \subsection{Mutex}
-\label{sec:org04a65a4}
-You can use kernel mutexes (mutual exclusions) in much the same manner that you might deploy them in userland. This may be all that's needed to avoid collisions in most cases.
+\label{sec:mutex}
+You can use kernel mutexes (mutual exclusions) in much the same manner that you might deploy them in userland.
+This may be all that is needed to avoid collisions in most cases.
 
 \samplec{examples/example_mutex.c}
 
 \subsection{Spinlocks}
-\label{sec:orgba9012b}
-As the name suggests, spinlocks lock up the CPU that the code is running on, taking 100\% of its resources. Because of this you should only use the spinlock mechanism around code which is likely to take no more than a few milliseconds to run and so won't noticably slow anything down from the user's point of view.
+\label{sec:spinlock}
+As the name suggests, spinlocks lock up the CPU that the code is running on, taking 100\% of its resources.
+Because of this you should only use the spinlock mechanism around code which is likely to take no more than a few milliseconds to run and so will not noticably slow anything down from the user's point of view.
 
-The example here is \emph{"irq safe"} in that if interrupts happen during the lock then they won't be forgotten and will activate when the unlock happens, using the \emph{flags} variable to retain their state.
+The example here is \emph{"irq safe"} in that if interrupts happen during the lock then they will not be forgotten and will activate when the unlock happens, using the \emph{flags} variable to retain their state.
 
 \samplec{examples/example_spinlock.c}
 
 \subsection{Read and write locks}
-\label{sec:org136e336}
-Read and write locks are specialised kinds of spinlocks so that you can exclusively read from something or write to something. Like the earlier spinlocks example the one below shows an "irq safe" situation in which if other functions were triggered from irqs which might also read and write to whatever you are concerned with then they wouldn't disrupt the logic. As before it's a good idea to keep anything done within the lock as short as possible so that it doesn't hang up the system and cause users to start revolting against the tyranny of your module.
+\label{sec:rwlock}
+Read and write locks are specialised kinds of spinlocks so that you can exclusively read from something or write to something.
+Like the earlier spinlocks example the one below shows an "irq safe" situation in which if other functions were triggered from irqs which might also read and write to whatever you are concerned with then they would not disrupt the logic.
+As before it is a good idea to keep anything done within the lock as short as possible so that it does not hang up the system and cause users to start revolting against the tyranny of your module.
 
 \samplec{examples/example_rwlock.c}
 
-Of course if you know for sure that there are no functions triggered by irqs which could possibly interfere with your logic then you can use the simpler  \emph{read\_lock(\&myrwlock)} and \emph{read\_unlock(\&myrwlock)} or the corresponding write functions.
+Of course, if you know for sure that there are no functions triggered by irqs which could possibly interfere with your logic then you can use the simpler  \emph{read\_lock(\&myrwlock)} and \emph{read\_unlock(\&myrwlock)} or the corresponding write functions.
 \subsection{Atomic operations}
-\label{sec:org65b297c}
-If you're doing simple arithmetic: adding, subtracting or bitwise operations then there's another way in the multi-CPU and multi-hyperthreaded world to stop other parts of the system from messing with your mojo. By using atomic operations you can be confident that your addition, subtraction or bit flip did actually happen and wasn't overwritten by some other shenanigans. An example is shown below.
+\label{sec:atomics}
+If you are doing simple arithmetic: adding, subtracting or bitwise operations then there is another way in the multi-CPU and multi-hyperthreaded world to stop other parts of the system from messing with your mojo.
+By using atomic operations you can be confident that your addition, subtraction or bit flip did actually happen and was not overwritten by some other shenanigans.
+An example is shown below.
 
 \samplec{examples/example_atomic.c}
 
+% FIXME: we should rewrite this section
 \section{Replacing Print Macros}
-\label{sec:org2f44fc3}
+\label{sec:print_macros}
 \subsection{Replacement}
-\label{sec:orgb4ba543}
-In Section 1.2.1.2, I said that X and kernel module programming don't mix. That's true for developing kernel modules, but in actual use, you want to be able to send messages to whichever tty the command to load the module came from.
+% FIXME: cross-reference
+In Section 1.2.1.2, I said that X and kernel module programming do not mix.
+That is true for developing kernel modules, but in actual use, you want to be able to send messages to whichever tty the command to load the module came from.
 
-"tty" is an abbreviation of \emph{teletype}: originally a combination keyboard-printer used to communicate with a Unix system, and today an abstraction for the text stream used for a Unix program, whether it's a physical terminal, an xterm on an X display, a network connection used with ssh, etc.
+"tty" is an abbreviation of \emph{teletype}: originally a combination keyboard-printer used to communicate with a Unix system, and today an abstraction for the text stream used for a Unix program, whether it is a physical terminal, an xterm on an X display, a network connection used with ssh, etc.
 
-The way this is done is by using current, a pointer to the currently running task, to get the current task's tty structure. Then, we look inside that tty structure to find a pointer to a string write function, which we use to write a string to the tty.
+The way this is done is by using current, a pointer to the currently running task, to get the current task's tty structure.
+Then, we look inside that tty structure to find a pointer to a string write function, which we use to write a string to the tty.
 
 \samplec{examples/print_string.c}
 
 \subsection{Flashing keyboard LEDs}
-\label{sec:orgf1c93f1}
-In certain conditions, you may desire a simpler and more direct way to communicate to the external world. Flashing keyboard LEDs can be such a solution: It is an immediate way to attract attention or to display a status condition. Keyboard LEDs are present on every hardware, they are always visible, they do not need any setup, and their use is rather simple and non-intrusive, compared to writing to a tty or a file.
+\label{sec:flash_kb_led}
+In certain conditions, you may desire a simpler and more direct way to communicate to the external world.
+Flashing keyboard LEDs can be such a solution: It is an immediate way to attract attention or to display a status condition.
+Keyboard LEDs are present on every hardware, they are always visible, they do not need any setup, and their use is rather simple and non-intrusive, compared to writing to a tty or a file.
 
 The following source code illustrates a minimal kernel module which, when loaded, starts blinking the keyboard LEDs until it is unloaded.
 
 \samplec{examples/kbleds.c}
 
-If none of the examples in this chapter fit your debugging needs there might yet be some other tricks to try. Ever wondered what CONFIG\_LL\_DEBUG in make menuconfig is good for? If you activate that you get low level access to the serial port. While this might not sound very powerful by itself, you can patch \textbf{kernel/printk.c} or any other essential syscall to use printascii, thus makeing it possible to trace virtually everything what your code does over a serial line. If you find yourself porting the kernel to some new and former unsupported architecture this is usually amongst the first things that should be implemented. Logging over a netconsole might also be worth a try.
+If none of the examples in this chapter fit your debugging needs there might yet be some other tricks to try.
+Ever wondered what \verb|CONFIG_LL_DEBUG| in make menuconfig is good for?
+If you activate that you get low level access to the serial port.
+While this might not sound very powerful by itself, you can patch \textbf{kernel/printk.c} or any other essential syscall to print ASCII characters, thus makeing it possible to trace virtually everything what your code does over a serial line.
+If you find yourself porting the kernel to some new and former unsupported architecture, this is usually amongst the first things that should be implemented.
+Logging over a netconsole might also be worth a try.
 
-While you have seen lots of stuff that can be used to aid debugging here, there are some things to be aware of. Debugging is almost always intrusive. Adding debug code can change the situation enough to make the bug seem to dissappear. Thus you should try to keep debug code to a minimum and make sure it does not show up in production code.
+While you have seen lots of stuff that can be used to aid debugging here, there are some things to be aware of. Debugging is almost always intrusive.
+Adding debug code can change the situation enough to make the bug seem to dissappear.
+Thus you should try to keep debug code to a minimum and make sure it does not show up in production code.
 
 \section{Scheduling Tasks}
-\label{sec:orgb1eb02f}
-There are two main ways of running tasks: tasklets and work queues. Tasklets are a quick and easy way of scheduling a single function to be run, for example when triggered from an interrupt, whereas work queues are more complicated but also better suited to running multiple things in a sequence.
+\label{sec:scheduling_tasks}
+There are two main ways of running tasks: tasklets and work queues.
+Tasklets are a quick and easy way of scheduling a single function to be run, for example when triggered from an interrupt, whereas work queues are more complicated but also better suited to running multiple things in a sequence.
 
 \subsection{Tasklets}
-\label{sec:org5b372fb}
-Here's an example tasklet module. The \emph{tasklet\_fn} function runs for a few seconds and in the mean time execution of the \emph{example\_tasklet\_init} function continues to the exit point.
+\label{sec:tasklet}
+Here is an example tasklet module.
+The \verb|tasklet_fn| function runs for a few seconds and in the mean time execution of the \verb|example_tasklet_init| function continues to the exit point.
 
 \samplec{examples/example_tasklet.c}
 
@@ -1351,53 +1413,87 @@ Example tasklet ends
 \end{verbatim}
 
 \subsection{Work queues}
-\label{sec:orgb4f6fbb}
-To add a task to the scheduler we can use a workqueue. The kernel then uses the Completely Fair Scheduler (CFS) to execute work within the queue.
+\label{sec:workqueue}
+To add a task to the scheduler we can use a workqueue.
+The kernel then uses the Completely Fair Scheduler (CFS) to execute work within the queue.
 
 \samplec{examples/sched.c}
 
 \section{Interrupt Handlers}
-\label{sec:orge36fc8c}
+\label{sec:interrupt_handler}
 \subsection{Interrupt Handlers}
-\label{sec:org5ec1409}
-Except for the last chapter, everything we did in the kernel so far we've done as a response to a process asking for it, either by dealing with a special file, sending an ioctl(), or issuing a system call. But the job of the kernel isn't just to respond to process requests. Another job, which is every bit as important, is to speak to the hardware connected to the machine.
+\label{sec:irq}
+Except for the last chapter, everything we did in the kernel so far we have done as a response to a process asking for it, either by dealing with a special file, sending an \verb|ioctl()|, or issuing a system call.
+But the job of the kernel is not just to respond to process requests.
+Another job, which is every bit as important, is to speak to the hardware connected to the machine.
 
-There are two types of interaction between the CPU and the rest of the computer's hardware. The first type is when the CPU gives orders to the hardware, the other is when the hardware needs to tell the CPU something. The second, called interrupts, is much harder to implement because it has to be dealt with when convenient for the hardware, not the CPU. Hardware devices typically have a very small amount of RAM, and if you don't read their information when available, it is lost.
+There are two types of interaction between the CPU and the rest of the computer's hardware.
+The first type is when the CPU gives orders to the hardware, the other is when the hardware needs to tell the CPU something.
+The second, called interrupts, is much harder to implement because it has to be dealt with when convenient for the hardware, not the CPU.
+Hardware devices typically have a very small amount of RAM, and if you do not read their information when available, it is lost.
 
-Under Linux, hardware interrupts are called IRQ's (Interrupt ReQuests). There are two types of IRQ's, short and long. A short IRQ is one which is expected to take a very short period of time, during which the rest of the machine will be blocked and no other interrupts will be handled. A long IRQ is one which can take longer, and during which other interrupts may occur (but not interrupts from the same device). If at all possible, it's better to declare an interrupt handler to be long.
+Under Linux, hardware interrupts are called IRQ's (Interrupt ReQuests).
+There are two types of IRQ's, short and long.
+A short IRQ is one which is expected to take a very short period of time, during which the rest of the machine will be blocked and no other interrupts will be handled.
+A long IRQ is one which can take longer, and during which other interrupts may occur (but not interrupts from the same device).
+If at all possible, it is better to declare an interrupt handler to be long.
 
-When the CPU receives an interrupt, it stops whatever it's doing (unless it's processing a more important interrupt, in which case it will deal with this one only when the more important one is done), saves certain parameters on the stack and calls the interrupt handler. This means that certain things are not allowed in the interrupt handler itself, because the system is in an unknown state. The solution to this problem is for the interrupt handler to do what needs to be done immediately, usually read something from the hardware or send something to the hardware, and then schedule the handling of the new information at a later time (this is called the "bottom half") and return. The kernel is then guaranteed to call the bottom half as soon as possible -- and when it does, everything allowed in kernel modules will be allowed.
+When the CPU receives an interrupt, it stops whatever it is doing (unless it is processing a more important interrupt, in which case it will deal with this one only when the more important one is done),
+saves certain parameters on the stack and calls the interrupt handler.
+This means that certain things are not allowed in the interrupt handler itself, because the system is in an unknown state.
+The solution to this problem is for the interrupt handler to do what needs to be done immediately, usually read something from the hardware or send something to the hardware, and then schedule the handling of the new information at a later time (this is called the "bottom half") and return.
+The kernel is then guaranteed to call the bottom half as soon as possible -- and when it does, everything allowed in kernel modules will be allowed.
 
 The way to implement this is to call \textbf{request\_irq()} to get your interrupt handler called when the relevant IRQ is received.
 
-In practice IRQ handling can be a bit more complex. Hardware is often designed in a way that chains two interrupt controllers, so that all the IRQs from interrupt controller B are cascaded to a certain IRQ from interrupt controller A. Of course that requires that the kernel finds out which IRQ it really was afterwards and that adds overhead. Other architectures offer some special, very low overhead, so called "fast IRQ" or FIQs. To take advantage of them requires handlers to be written in assembler, so they do not really fit into the kernel. They can be made to work similar to the others, but after that procedure, they're no longer any faster than "common" IRQs. SMP enabled kernels running on systems with more than one processor need to solve another truckload of problems. It's not enough to know if a certain IRQs has happend, it's also important for what CPU(s) it was for. People still interested in more details, might want to do a web search for "APIC" now ;)
+In practice IRQ handling can be a bit more complex.
+Hardware is often designed in a way that chains two interrupt controllers, so that all the IRQs from interrupt controller B are cascaded to a certain IRQ from interrupt controller A.
+Of course, that requires that the kernel finds out which IRQ it really was afterwards and that adds overhead. Other architectures offer some special, very low overhead, so called "fast IRQ" or FIQs.
+To take advantage of them requires handlers to be written in assembler, so they do not really fit into the kernel.
+They can be made to work similar to the others, but after that procedure, they are no longer any faster than "common" IRQs.
+SMP enabled kernels running on systems with more than one processor need to solve another truckload of problems.
+It is not enough to know if a certain IRQs has happend, it's also important for what CPU(s) it was for.
+People still interested in more details, might want to refer to "APIC" now.
 
-This function receives the IRQ number, the name of the function, flags, a name for /proc/interrupts and a parameter to pass to the interrupt handler. Usually there is a certain number of IRQs available. How many IRQs there are is hardware-dependent. The flags can include SA\_SHIRQ to indicate you're willing to share the IRQ with other interrupt handlers (usually because a number of hardware devices sit on the same IRQ) and SA\_INTERRUPT to indicate this is a fast interrupt. This function will only succeed if there isn't already a handler on this IRQ, or if you're both willing to share.
+This function receives the IRQ number, the name of the function, flags, a name for \verb|/proc/interrupts| and a parameter to pass to the interrupt handler.
+Usually there is a certain number of IRQs available.
+How many IRQs there are is hardware-dependent.
+The flags can include \verb|SA_SHIRQ| to indicate you are willing to share the IRQ with other interrupt handlers (usually because a number of hardware devices sit on the same IRQ) and \verb|SA_INTERRUPT| to indicate this is a fast interrupt.
+This function will only succeed if there is not already a handler on this IRQ, or if you are both willing to share.
 
 \subsection{Detecting button presses}
-\label{sec:org683a7aa}
-Many popular single board computers, such as Raspberry Pis or Beagleboards, have a bunch of GPIO pins. Attaching buttons to those and then having a button press do something is a classic case in which you might need to use interrupts so that instead of having the CPU waste time and battery power polling for a change in input state it's better for the input to trigger the CPU to then run a particular handling function.
+\label{sec:detect_button}
+Many popular single board computers, such as Raspberry Pi or Beagleboards, have a bunch of GPIO pins.
+Attaching buttons to those and then having a button press do something is a classic case in which you might need to use interrupts,
+so that instead of having the CPU waste time and battery power polling for a change in input state it is better for the input to trigger the CPU to then run a particular handling function.
 
-Here's an example where buttons are connected to GPIO numbers 17 and 18 and an LED is connected to GPIO 4. You can change those numbers to whatever is appropriate for your board.
+Here is an example where buttons are connected to GPIO numbers 17 and 18 and an LED is connected to GPIO 4.
+You can change those numbers to whatever is appropriate for your board.
 
 \samplec{examples/intrpt.c}
 
 \subsection{Bottom Half}
-\label{sec:orgf9f72ae}
-Suppose you want to do a bunch of stuff inside of an interrupt routine. A common way to do that without rendering the interrupt unavailable for a significant duration is to combine it with a tasklet. This pushes the bulk of the work off into the scheduler.
+\label{sec:bottom_half}
+Suppose you want to do a bunch of stuff inside of an interrupt routine.
+A common way to do that without rendering the interrupt unavailable for a significant duration is to combine it with a tasklet.
+This pushes the bulk of the work off into the scheduler.
 
 The example below modifies the previous example to also run an additional task when an interrupt is triggered.
 
 \samplec{examples/bottomhalf.c}
 
 \section{Crypto}
-\label{sec:orge418bf3}
-At the dawn of the internet everybody trusted everybody completely\ldots{}but that didn't work out so well. When this guide was originally written it was a more innocent era in which almost nobody actually gave a damn about crypto - least of all kernel developers. That's certainly no longer the case now. To handle crypto stuff the kernel has its own API enabling common methods of encryption, decryption and your favourite hash functions.
+\label{sec:crypto}
+At the dawn of the internet everybody trusted everybody completely\ldots{}but that did not work out so well.
+When this guide was originally written it was a more innocent era in which almost nobody actually gave a damn about crypto - least of all kernel developers.
+That is certainly no longer the case now.
+To handle crypto stuff the kernel has its own API enabling common methods of encryption, decryption and your favourite hash functions.
 
 \subsection{Hash functions}
-\label{sec:org4c7f10c}
+\label{sec:hashfunc}
 
-Calculating and checking the hashes of things is a common operation. Here is a demonstration of how to calculate a sha256 hash within a kernel module.
+Calculating and checking the hashes of things is a common operation.
+Here is a demonstration of how to calculate a sha256 hash within a kernel module.
 
 \samplec{examples/cryptosha256.c}
 
@@ -1423,57 +1519,61 @@ Here is an example of symmetrically encrypting a string using the AES algorithm 
 
 \samplec{examples/cryptosk.c}
 
-\section{Standardising the interfaces: The Device Model}
-\label{sec:org5e14930}
-Up to this point we've seen all kinds of modules doing all kinds of things, but there was no consistency in their interfaces with the rest of the kernel. To impose some consistency such that there is at minimum a standardised way to start, suspend and resume a device a device model was added. An example is show below, and you can use this as a template to add your own suspend, resume or other interface functions.
+\section{Standardizing the interfaces: The Device Model}
+\label{sec:device_model}
+Up to this point we have seen all kinds of modules doing all kinds of things, but there was no consistency in their interfaces with the rest of the kernel.
+To impose some consistency such that there is at minimum a standardized way to start, suspend and resume a device a device model was added.
+An example is show below, and you can use this as a template to add your own suspend, resume or other interface functions.
 
 \samplec{examples/devicemodel.c}
 
 \section{Optimizations}
-\label{sec:org906f9cc}
+\label{sec:optimization}
 \subsection{Likely and Unlikely conditions}
-\label{sec:org63658ee}
-Sometimes you might want your code to run as quickly as possible, especially if it's handling an interrupt or doing something which might cause noticible latency. If your code contains boolean conditions and if you know that the conditions are almost always likely to evaluate as either \emph{true} or \emph{false}, then you can allow the compiler to optimise for this using the \emph{likely} and \emph{unlikely} macros.
+\label{sec:likely_unlikely}
+Sometimes you might want your code to run as quickly as possible, especially if it is handling an interrupt or doing something which might cause noticible latency.
+If your code contains boolean conditions and if you know that the conditions are almost always likely to evaluate as either \emph{true} or \emph{false},
+then you can allow the compiler to optimize for this using the \emph{likely} and \emph{unlikely} macros.
 
-For example, when allocating memory you're almost always expecting this to succeed.
+For example, when allocating memory you are almost always expecting this to succeed.
 
 \begin{code}
 bvl = bvec_alloc(gfp_mask, nr_iovecs, &idx);
 if (unlikely(!bvl)) {
-  mempool_free(bio, bio_pool);
-  bio = NULL;
-  goto out;
+    mempool_free(bio, bio_pool);
+    bio = NULL;
+    goto out;
 }
 \end{code}
 
-When the \emph{unlikely} macro is used the compiler alters its machine instruction output so that it continues along the false branch and only jumps if the condition is true. That avoids flushing the processor pipeline. The opposite happens if you use the \emph{likely} macro.
+When the \emph{unlikely} macro is used, the compiler alters its machine instruction output, so that it continues along the false branch and only jumps if the condition is true.
+That avoids flushing the processor pipeline.
+The opposite happens if you use the \emph{likely} macro.
+
 \section{Common Pitfalls}
-\label{sec:org0e8d92a}
-Before I send you on your way to go out into the world and write kernel modules, there are a few things I need to warn you about. If I fail to warn you and something bad happens, please report the problem to me for a full refund of the amount I was paid for your copy of the book.
+\label{sec:opitfall}
 
 \subsection{Using standard libraries}
-\label{sec:orgba512d5}
-You can't do that. In a kernel module you can only use kernel functions, which are the functions you can see in /proc/kallsyms.
+\label{sec:using_stdlib}
+You can not do that.
+In a kernel module you can only use kernel functions, which are the functions you can see in \verb|/proc/kallsyms|.
 
 \subsection{Disabling interrupts}
-\label{sec:org377e4a8}
-You might need to do this for a short time and that is OK, but if you don't enable them afterwards, your system will be stuck and you'll have to power it off.
-
-\subsection{Sticking your head inside a large carnivore}
-\label{sec:orgc0f5914}
-I probably don't have to warn you about this, but I figured I will anyway, just in case.
+\label{sec:disabling_interrupts}
+You might need to do this for a short time and that is OK, but if you do not enable them afterwards, your system will be stuck and you will have to power it off.
 
 \section{Where To Go From Here?}
-\label{sec:org0a4192c}
-I could easily have squeezed a few more chapters into this book. I could have added a chapter about creating new file systems, or about adding new protocol stacks (as if there's a need for that -- you'd have to dig underground to find a protocol stack not supported by Linux). I could have added explanations of the kernel mechanisms we haven't touched upon, such as bootstrapping or the disk interface.
+\label{sec:where_to_go}
+For people seriously interested in kernel programming, I recommend \href{https://kernelnewbies.org}{kernelnewbies.org} and the \emph{Documentation} subdirectory within the kernel source code which is bot always easy to understand but can be a starting point for further investigation.
+Also, as Linus Torvalds said, the best way to learn the kernel is to read the source code yourself.
 
-However, I chose not to. My purpose in writing this book was to provide initiation into the mysteries of kernel module programming and to teach the common techniques for that purpose. For people seriously interested in kernel programming, I recommend \href{https://kernelnewbies.org}{kernelnewbies.org} and the \emph{Documentation} subdirectory within the kernel source code which isn't always easy to understand but can be a starting point for further investigation. Also, as Linus said, the best way to learn the kernel is to read the source code yourself.
+If you are interested in more examples of short kernel modules then searching on sites such as Github and Gitlab is a good way to start, although there is a lot of duplication of older LKMPG examples which may not compile with newer kernel versions.
+You will also be able to find examples of the use of kernel modules to attack or compromise systems or exfiltrate data and those can be useful for thinking about how to defend systems and learning about existing security mechanisms within the kernel.
 
-If you're interested in more examples of short kernel modules then searching on sites such as Github and Gitlab is a good way to start, although there is a lot of duplication of older LKMPG examples which may not compile with newer kernel versions. You will also be able to find examples of the use of kernel modules to attack or compromise systems or exfiltrate data and those can be useful for thinking about how to defend systems and learning about existing security mechanisms within the kernel.
+I hope I have helped you in your quest to become a better programmer, or at least to have fun through technology.
+And, if you do write useful kernel modules, I hope you publish them under the GPL, so I can use them too.
 
-I hope I have helped you in your quest to become a better programmer, or at least to have fun through technology. And, if you do write useful kernel modules, I hope you publish them under the GPL, so I can use them too.
+If you would like to contribute to this guide or notice anything glaringly wrong, please create an issue at \url{https://github.com/sysprog21/lkmpg}.
 
-If you'd like to contribute to this guide or notice anything glaringly wrong, please create an issue at \url{https://github.com/sysprog21/lkmpg}.
-
-Happy hacking.
+Happy hacking!
 \end{document}

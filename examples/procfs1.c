@@ -47,7 +47,7 @@ static const struct file_operations proc_file_fops = {
 };
 #endif
 
-int init_module()
+static int __init procfs1_init(void)
 {
     Our_Proc_File = proc_create(procfs_name, 0644, NULL, &proc_file_fops);
     if (NULL == Our_Proc_File) {
@@ -60,10 +60,13 @@ int init_module()
     return 0;
 }
 
-void cleanup_module()
+static void __exit procfs1_exit(void)
 {
     proc_remove(Our_Proc_File);
     pr_info("/proc/%s removed\n", procfs_name);
 }
+
+module_init(procfs1_init);
+module_exit(procfs1_exit);
 
 MODULE_LICENSE("GPL");

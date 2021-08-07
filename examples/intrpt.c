@@ -39,7 +39,7 @@ static irqreturn_t button_isr(int irq, void *data)
     return IRQ_HANDLED;
 }
 
-int init_module()
+static int __init intrpt_init(void)
 {
     int ret = 0;
 
@@ -119,7 +119,7 @@ fail1:
     return ret;
 }
 
-void cleanup_module()
+static void __exit intrpt_exit(void)
 {
     int i;
 
@@ -137,6 +137,9 @@ void cleanup_module()
     gpio_free_array(leds, ARRAY_SIZE(leds));
     gpio_free_array(buttons, ARRAY_SIZE(buttons));
 }
+
+module_init(intrpt_init);
+module_exit(intrpt_exit);
 
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("Handle some GPIO interrupts");
