@@ -1,5 +1,5 @@
 /*
- *  example_rwlock.c
+ * example_rwlock.c
  */
 #include <linux/interrupt.h>
 #include <linux/kernel.h>

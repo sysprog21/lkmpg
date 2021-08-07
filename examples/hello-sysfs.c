@@ -1,5 +1,5 @@
 /*
- *  hello-sysfs.c sysfs example
+ * hello-sysfs.c sysfs example
  */
 #include <linux/fs.h>
 #include <linux/init.h>
@@ -7,8 +7,6 @@
 #include <linux/module.h>
 #include <linux/string.h>
 #include <linux/sysfs.h>
-
-MODULE_LICENSE("GPL");
 
 static struct kobject *mymodule;
 
@@ -63,3 +61,5 @@ static void __exit mymodule_exit(void)
 
 module_init(mymodule_init);
 module_exit(mymodule_exit);
+
+MODULE_LICENSE("GPL");

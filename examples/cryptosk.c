@@ -1,5 +1,5 @@
 /*
- *  cryptosk.c
+ * cryptosk.c
  */
 #include <crypto/internal/skcipher.h>
 #include <linux/crypto.h>
@@ -67,7 +67,6 @@ static int test_skcipher_result(struct skcipher_def *sk, int rc)
 static void test_skcipher_callback(struct crypto_async_request *req, int error)
 {
     struct tcrypt_result *result = req->data;
-    /* int ret; */
 
     if (error == -EINPROGRESS)
         return;
@@ -77,7 +76,7 @@ static void test_skcipher_callback(struct crypto_async_request *req, int error)
     pr_info("Encryption finished successfully\n");
 
     /* decrypt data */
-    /*
+#if 0
     memset((void*)sk.scratchpad, '-', CIPHER_BLOCK_SIZE);
     ret = crypto_skcipher_decrypt(sk.req);
     ret = test_skcipher_result(&sk, ret);
@@ -89,7 +88,7 @@ static void test_skcipher_callback(struct crypto_async_request *req, int error)
 
     pr_info("Decryption request successful\n");
     pr_info("Decrypted: %s\n", sk.scratchpad);
-    */
+#endif
 }
 
 static int test_skcipher_encrypt(char *plaintext,

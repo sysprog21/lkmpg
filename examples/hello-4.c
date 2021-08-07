@@ -1,5 +1,5 @@
 /*
- *  hello-4.c - Demonstrates module documentation.
+ * hello-4.c - Demonstrates module documentation.
  */
 #include <linux/init.h>   /* Needed for the macros */
 #include <linux/kernel.h> /* Needed for KERN_INFO */

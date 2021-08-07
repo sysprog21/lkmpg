@@ -1,5 +1,5 @@
 /*
- *  ioctl.c
+ * ioctl.c
  */
 #include <linux/cdev.h>
 #include <linux/fs.h>
@@ -47,17 +47,6 @@ static long test_ioctl_ioctl(struct file *filp,
 
     switch (cmd) {
     case IOCTL_VALSET:
-
-        /*
-        if (!capable(CAP_SYS_ADMIN)) {
-         retval = -EPERM;
-         goto done;
-        }
-        if (!access_ok(VERIFY_READ, (void __user *)arg, _IOC_SIZE(cmd))) {
-         retval = -EFAULT;
-         goto done;
-        }
-        */
         if (copy_from_user(&data, (int __user *) arg, sizeof(data))) {
             retval = -EFAULT;
             goto done;
@@ -70,12 +59,6 @@ static long test_ioctl_ioctl(struct file *filp,
         break;
 
     case IOCTL_VALGET:
-        /*
-        if (!access_ok(VERIFY_WRITE, (void __user *)arg, _IOC_SIZE(cmd))) {
-                                     retval = -EFAULT;
-                                     goto done;
-                             }
-        */
         read_lock(&ioctl_data->lock);
         val = ioctl_data->val;
         read_unlock(&ioctl_data->lock);
@@ -93,10 +76,6 @@ static long test_ioctl_ioctl(struct file *filp,
         break;
 
     case IOCTL_VALSET_NUM:
-        /*
-        if (!capable(CAP_SYS_ADMIN))
-         return -EPERM;
-        */
         ioctl_num = arg;
         break;
 

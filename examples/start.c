@@ -1,8 +1,8 @@
 /*
- *  start.c - Illustration of multi filed modules
+ * start.c - Illustration of multi filed modules
  */
 
-#include <linux/kernel.h> /* We're doing kernel work */
+#include <linux/kernel.h> /* We are doing kernel work */
 #include <linux/module.h> /* Specifically, a module */
 
 int init_module(void)

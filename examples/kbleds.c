@@ -1,5 +1,5 @@
 /*
- *  kbleds.c - Blink keyboard leds until the module is unloaded.
+ * kbleds.c - Blink keyboard leds until the module is unloaded.
  */
 
 #include <linux/init.h>
@@ -12,7 +12,6 @@
 #include <linux/console_struct.h> /* For vc_cons */
 
 MODULE_DESCRIPTION("Example module illustrating the use of Keyboard LEDs.");
-MODULE_LICENSE("GPL");
 
 struct timer_list my_timer;
 struct tty_driver *my_driver;
@@ -22,19 +21,16 @@ char kbledstatus = 0;
 #define ALL_LEDS_ON 0x07
 #define RESTORE_LEDS 0xFF
 
-/*
- * Function my_timer_func blinks the keyboard LEDs periodically by invoking
+/* Function my_timer_func blinks the keyboard LEDs periodically by invoking
  * command KDSETLED of ioctl() on the keyboard driver. To learn more on virtual
  * terminal ioctl operations, please see file:
- *     /usr/src/linux/drivers/char/vt_ioctl.c, function vt_ioctl().
+ *   drivers/char/vt_ioctl.c, function vt_ioctl().
  *
  * The argument to KDSETLED is alternatively set to 7 (thus causing the led
  * mode to be set to LED_SHOW_IOCTL, and all the leds are lit) and to 0xFF
  * (any value above 7 switches back the led mode to LED_SHOW_FLAGS, thus
  * the LEDs reflect the actual keyboard status).  To learn more on this,
- * please see file:
- *     /usr/src/linux/drivers/char/keyboard.c, function setledstate().
- *
+ * please see file: drivers/char/keyboard.c, function setledstate().
  */
 
 static void my_timer_func(unsigned long ptr)
@@ -70,9 +66,7 @@ static int __init kbleds_init(void)
     my_driver = vc_cons[fg_console].d->port.tty->driver;
     pr_info("kbleds: tty driver magic %x\n", my_driver->magic);
 
-    /*
-     * Set up the LED blink timer the first time
-     */
+    /* Set up the LED blink timer the first time. */
     timer_setup(&my_timer, (void *) &my_timer_func,
                 (unsigned long) &kbledstatus);
     my_timer.expires = jiffies + BLINK_DELAY;
@@ -91,3 +85,5 @@ static void __exit kbleds_cleanup(void)
 
 module_init(kbleds_init);
 module_exit(kbleds_cleanup);
+
+MODULE_LICENSE("GPL");

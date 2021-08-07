@@ -1,5 +1,5 @@
 /*
- *  example_mutex.c
+ * example_mutex.c
  */
 #include <linux/init.h>
 #include <linux/kernel.h>

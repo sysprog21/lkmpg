@@ -1,5 +1,5 @@
 /*
- *  cryptosha256.c
+ * cryptosha256.c
  */
 #include <crypto/internal/hash.h>
 #include <linux/module.h>

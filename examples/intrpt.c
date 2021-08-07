@@ -1,11 +1,11 @@
 /*
- *  intrpt.c - Handling GPIO with interrupts
+ * intrpt.c - Handling GPIO with interrupts
  *
- *  Based upon the RPi example by Stefan Wendler (devnull@kaltpost.de)
- *  from:
- *    https://github.com/wendlers/rpi-kmod-samples
+ * Based upon the RPi example by Stefan Wendler (devnull@kaltpost.de)
+ * from:
+ *   https://github.com/wendlers/rpi-kmod-samples
  *
- *  Press one button to turn on a LED and another to turn it off
+ * Press one button to turn on a LED and another to turn it off.
  */
 
 #include <linux/gpio.h>
@@ -16,17 +16,17 @@
 static int button_irqs[] = {-1, -1};
 
 /* Define GPIOs for LEDs.
-   Change the numbers for the GPIO on your board. */
+ * TODO: Change the numbers for the GPIO on your board.
+ */
 static struct gpio leds[] = {{4, GPIOF_OUT_INIT_LOW, "LED 1"}};
 
 /* Define GPIOs for BUTTONS
-   Change the numbers for the GPIO on your board. */
+ * TODO: Change the numbers for the GPIO on your board.
+ */
 static struct gpio buttons[] = {{17, GPIOF_IN, "LED 1 ON BUTTON"},
                                 {18, GPIOF_IN, "LED 1 OFF BUTTON"}};
 
-/*
- * interrupt function triggered when a button is pressed
- */
+/* interrupt function triggered when a button is pressed. */
 static irqreturn_t button_isr(int irq, void *data)
 {
     /* first button */

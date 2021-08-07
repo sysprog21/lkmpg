@@ -1,5 +1,5 @@
 /*
- *  completions.c
+ * completions.c
  */
 #include <linux/completion.h>
 #include <linux/init.h>

@@ -1,5 +1,5 @@
 /*
- *  chardev2.c - Create an input/output character device
+ * chardev2.c - Create an input/output character device
  */
 
 #include <linux/cdev.h>
@@ -17,44 +17,34 @@
 #define DEVICE_NAME "char_dev"
 #define BUF_LEN 80
 
-/*
- * Is the device open right now? Used to prevent
- * concurent access into the same device
+/* Is the device open right now? Used to prevent concurent access into
+ * the same device
  */
 static int Device_Open = 0;
 
-/*
- * The message the device will give when asked
- */
+/* The message the device will give when asked */
 static char Message[BUF_LEN];
 
-/*
- * How far did the process reading the message get?
- * Useful if the message is larger than the size of the
- * buffer we get to fill in device_read.
+/* How far did the process reading the message get? Useful if the message
+ * is larger than the size of the buffer we get to fill in device_read.
  */
 static char *Message_Ptr;
 
-static int Major; /* Major number assigned to our device driver */
+/* Major number assigned to our device driver */
+static int Major;
 static struct class *cls;
 
-/*
- * This is called whenever a process attempts to open the device file
- */
+/* This is called whenever a process attempts to open the device file */
 static int device_open(struct inode *inode, struct file *file)
 {
     pr_info("device_open(%p)\n", file);
 
-    /*
-     * We don't want to talk to two processes at the same time
-     */
+    /* We don't want to talk to two processes at the same time. */
     if (Device_Open)
         return -EBUSY;
 
     Device_Open++;
-    /*
-     * Initialize the message
-     */
+    /* Initialize the message */
     Message_Ptr = Message;
     try_module_get(THIS_MODULE);
     return SUCCESS;
@@ -64,49 +54,36 @@ static int device_release(struct inode *inode, struct file *file)
 {
     pr_info("device_release(%p,%p)\n", inode, file);
 
-    /*
-     * We're now ready for our next caller
-     */
+    /* We're now ready for our next caller */
     Device_Open--;
 
     module_put(THIS_MODULE);
     return SUCCESS;
 }
 
-/*
- * This function is called whenever a process which has already opened the
+/* This function is called whenever a process which has already opened the
  * device file attempts to read from it.
  */
 static ssize_t device_read(struct file *file,   /* see include/linux/fs.h   */
-                           char __user *buffer, /* buffer to be
-                                                 * filled with data */
+                           char __user *buffer, /* buffer to be filled  */
                            size_t length,       /* length of the buffer     */
                            loff_t *offset)
 {
-    /*
-     * Number of bytes actually written to the buffer
-     */
+    /* Number of bytes actually written to the buffer */
     int bytes_read = 0;
 
     pr_info("device_read(%p,%p,%ld)\n", file, buffer, length);
 
-    /*
-     * If we're at the end of the message, return 0
-     * (which signifies end of file)
-     */
+    /* If at the end of message, return 0 (which signifies end of file). */
     if (*Message_Ptr == 0)
         return 0;
 
-    /*
-     * Actually put the data into the buffer
-     */
+    /* Actually put the data into the buffer */
     while (length && *Message_Ptr) {
-        /*
-         * Because the buffer is in the user data segment,
-         * not the kernel data segment, assignment wouldn't
-         * work. Instead, we have to use put_user which
-         * copies data from the kernel data segment to the
-         * user data segment.
+        /* Because the buffer is in the user data segment, not the kernel
+	 * data segment, assignment would not work. Instead, we have to
+	 * use put_user which copies data from the kernel data segment to
+	 * the user data segment.
          */
         put_user(*(Message_Ptr++), buffer++);
         length--;
@@ -115,17 +92,13 @@ static ssize_t device_read(struct file *file,   /* see include/linux/fs.h   */
 
     pr_info("Read %d bytes, %ld left\n", bytes_read, length);
 
-    /*
-     * Read functions are supposed to return the number
-     * of bytes actually inserted into the buffer
+    /* Read functions are supposed to return the number of bytes actually
+     * inserted into the buffer.
      */
     return bytes_read;
 }
 
-/*
- * This function is called when somebody tries to
- * write into our device file.
- */
+/* called when somebody tries to write into our device file. */
 static ssize_t device_write(struct file *file,
                             const char __user *buffer,
                             size_t length,
@@ -140,21 +113,17 @@ static ssize_t device_write(struct file *file,
 
     Message_Ptr = Message;
 
-    /*
-     * Again, return the number of input characters used
-     */
+    /* Again, return the number of input characters used. */
     return i;
 }
 
-/*
- * This function is called whenever a process tries to do an ioctl on our
+/* This function is called whenever a process tries to do an ioctl on our
  * device file. We get two extra parameters (additional to the inode and file
  * structures, which all device functions get): the number of the ioctl called
  * and the parameter given to the ioctl function.
  *
  * If the ioctl is write or read/write (meaning output is returned to the
  * calling process), the ioctl call returns the output of this function.
- *
  */
 long device_ioctl(struct file *file,      /* ditto */
                   unsigned int ioctl_num, /* number and param for ioctl */
@@ -164,21 +133,16 @@ long device_ioctl(struct file *file,      /* ditto */
     char *temp;
     char ch;
 
-    /*
-     * Switch according to the ioctl called
-     */
+    /* Switch according to the ioctl called */
     switch (ioctl_num) {
     case IOCTL_SET_MSG:
-        /*
-         * Receive a pointer to a message (in user space) and set that
-         * to be the device's message.  Get the parameter given to
-         * ioctl by the process.
+        /* Receive a pointer to a message (in user space) and set that to
+	 * be the device's message.  Get the parameter given to ioctl by
+	 * the process.
          */
         temp = (char *) ioctl_param;
 
-        /*
-         * Find the length of the message
-         */
+        /* Find the length of the message */
         get_user(ch, temp);
         for (i = 0; ch && i < BUF_LEN; i++, temp++)
             get_user(ch, temp);
@@ -187,23 +151,20 @@ long device_ioctl(struct file *file,      /* ditto */
         break;
 
     case IOCTL_GET_MSG:
-        /*
-         * Give the current message to the calling process -
-         * the parameter we got is a pointer, fill it.
+        /* Give the current message to the calling process - the parameter
+	 * we got is a pointer, fill it.
          */
         i = device_read(file, (char *) ioctl_param, 99, 0);
 
-        /*
-         * Put a zero at the end of the buffer, so it will be
-         * properly terminated
+        /* Put a zero at the end of the buffer, so it will be properly
+	 * terminated.
          */
         put_user('\0', (char *) ioctl_param + i);
         break;
 
     case IOCTL_GET_NTH_BYTE:
-        /*
-         * This ioctl is both input (ioctl_param) and
-         * output (the return value of this function)
+        /* This ioctl is both input (ioctl_param) and output (the return
+	 * value of this function).
          */
         return Message[ioctl_param];
         break;
@@ -214,12 +175,10 @@ long device_ioctl(struct file *file,      /* ditto */
 
 /* Module Declarations */
 
-/*
- * This structure will hold the functions to be called
- * when a process does something to the device we
- * created. Since a pointer to this structure is kept in
- * the devices table, it can't be local to
- * init_module. NULL is for unimplemented functions.
+/* This structure will hold the functions to be called when a process does
+ * something to the device we created. Since a pointer to this structure
+ * is kept in the devices table, it can't be local to init_module. NULL is
+ * for unimplemented functions.
  */
 struct file_operations Fops = {
     .read = device_read,

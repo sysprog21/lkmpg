@@ -1,5 +1,5 @@
 /*
- *  hello-1.c - The simplest kernel module.
+ * hello-1.c - The simplest kernel module.
  */
 #include <linux/kernel.h> /* Needed for KERN_INFO */
 #include <linux/module.h> /* Needed by all modules */

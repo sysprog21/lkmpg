@@ -1,5 +1,5 @@
 /*
- *  procfs2.c -  create a "file" in /proc
+ * procfs2.c -  create a "file" in /proc
  */
 
 #include <linux/kernel.h>  /* We're doing kernel work */
@@ -15,28 +15,16 @@
 #define PROCFS_MAX_SIZE 1024
 #define PROCFS_NAME "buffer1k"
 
-/**
- * This structure hold information about the /proc file
- *
- */
+/* This structure hold information about the /proc file */
 static struct proc_dir_entry *Our_Proc_File;
 
-/**
- * The buffer used to store character for this module
- *
- */
+/* The buffer used to store character for this module */
 static char procfs_buffer[PROCFS_MAX_SIZE];
 
-/**
- * The size of the buffer
- *
- */
+/* The size of the buffer */
 static unsigned long procfs_buffer_size = 0;
 
-/**
- * This function is called then the /proc file is read
- *
- */
+/* This function is called then the /proc file is read */
 ssize_t procfile_read(struct file *filePointer,
                       char *buffer,
                       size_t buffer_length,
@@ -57,11 +45,7 @@ ssize_t procfile_read(struct file *filePointer,
     return ret;
 }
 
-
-/**
- * This function is called with the /proc file is written
- *
- */
+/* This function is called with the /proc file is written. */
 static ssize_t procfile_write(struct file *file,
                               const char *buff,
                               size_t len,

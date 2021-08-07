@@ -1,5 +1,5 @@
 /*
- *  example_spinlock.c
+ * example_spinlock.c
  */
 #include <linux/init.h>
 #include <linux/interrupt.h>
@@ -17,10 +17,9 @@ static void example_spinlock_static(void)
     spin_lock_irqsave(&sl_static, flags);
     pr_info("Locked static spinlock\n");
 
-    /* Do something or other safely.
-       Because this uses 100% CPU time this
-       code should take no more than a few
-       milliseconds to run */
+    /* Do something or other safely. Because this uses 100% CPU time, this
+     * code should take no more than a few milliseconds to run.
+     */
 
     spin_unlock_irqrestore(&sl_static, flags);
     pr_info("Unlocked static spinlock\n");
@@ -34,10 +33,9 @@ static void example_spinlock_dynamic(void)
     spin_lock_irqsave(&sl_dynamic, flags);
     pr_info("Locked dynamic spinlock\n");
 
-    /* Do something or other safely.
-       Because this uses 100% CPU time this
-       code should take no more than a few
-       milliseconds to run */
+    /* Do something or other safely. Because this uses 100% CPU time, this
+     * code should take no more than a few milliseconds to run.
+     */
 
     spin_unlock_irqrestore(&sl_dynamic, flags);
     pr_info("Unlocked dynamic spinlock\n");

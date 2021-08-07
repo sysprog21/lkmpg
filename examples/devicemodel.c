@@ -1,5 +1,5 @@
 /*
- *  devicemodel.c
+ * devicemodel.c
  */
 #include <linux/kernel.h>
 #include <linux/module.h>
