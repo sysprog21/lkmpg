@@ -28,16 +28,16 @@ static void print_string(char *str)
          * kernel's memory segment.
          *
          * The function's 1st parameter is the tty to write to, because the
-	 * same function would normally be used for all tty's of a certain
-	 * type.
+         * same function would normally be used for all tty's of a certain
+         * type.
          * The 2nd parameter is a pointer to a string.
          * The 3rd parameter is the length of the string.
          *
          * As you will see below, sometimes it's necessary to use
          * preprocessor stuff to create code that works for different
          * kernel versions. The (naive) approach we've taken here does not
-	 * scale well. The right way to deal with this is described in
-	 * section 2 of
+         * scale well. The right way to deal with this is described in
+         * section 2 of
          * linux/Documentation/SubmittingPatches
          */
         (ttyops->write)(my_tty,       /* The tty itself */
@@ -45,16 +45,16 @@ static void print_string(char *str)
                         strlen(str)); /* Length */
 
         /* ttys were originally hardware devices, which (usually) strictly
-	 * followed the ASCII standard. In ASCII, to move to a new line you
-	 * need two characters, a carriage return and a line feed. On Unix,
-	 * the ASCII line feed is used for both purposes - so we can not
-	 * just use \n, because it would not have a carriage return and the
-	 * next line will start at the column right after the line feed.
+         * followed the ASCII standard. In ASCII, to move to a new line you
+         * need two characters, a carriage return and a line feed. On Unix,
+         * the ASCII line feed is used for both purposes - so we can not
+         * just use \n, because it would not have a carriage return and the
+         * next line will start at the column right after the line feed.
          *
          * This is why text files are different between Unix and MS Windows.
-	 * In CP/M and derivatives, like MS-DOS and MS Windows, the ASCII
-	 * standard was strictly adhered to, and therefore a newline requirs
-	 * both a LF and a CR.
+         * In CP/M and derivatives, like MS-DOS and MS Windows, the ASCII
+         * standard was strictly adhered to, and therefore a newline requirs
+         * both a LF and a CR.
          */
         (ttyops->write)(my_tty, "\015\012", 2);
     }

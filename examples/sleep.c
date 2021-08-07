@@ -81,7 +81,7 @@ int Already_Open = 0;
 
 /* Queue of processes who want our file */
 DECLARE_WAIT_QUEUE_HEAD(WaitQ);
- 
+
 /* Called when the /proc file is opened */
 static int module_open(struct inode *inode, struct file *file)
 {
@@ -104,7 +104,7 @@ static int module_open(struct inode *inode, struct file *file)
         int i, is_sig = 0;
 
         /* This function puts the current process, including any system
-	 * calls, such as us, to sleep.  Execution will be resumed right
+         * calls, such as us, to sleep.  Execution will be resumed right
          * after the function call, either because somebody called
          * wake_up(&WaitQ) (only module_close does that, when the file
          * is closed) or when a signal, such as Ctrl-C, is sent
@@ -121,11 +121,11 @@ static int module_open(struct inode *inode, struct file *file)
 
         if (is_sig) {
             /* It is important to put module_put(THIS_MODULE) here, because
-	     * for processes where the open is interrupted there will never
-	     * be a corresponding close. If we do not decrement the usage
-	     * count here, we will be left with a positive usage count
-	     * which we will have no way to bring down to zero, giving us
-	     * an immortal module, which can only be killed by rebooting
+             * for processes where the open is interrupted there will never
+             * be a corresponding close. If we do not decrement the usage
+             * count here, we will be left with a positive usage count
+             * which we will have no way to bring down to zero, giving us
+             * an immortal module, which can only be killed by rebooting
              * the machine.
              */
             module_put(THIS_MODULE);
