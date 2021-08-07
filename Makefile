@@ -1,7 +1,10 @@
-all: lkmpg.tex
-	rm -rf _minted-main
-	pdflatex -shell-escap lkmpg.tex
-	bibtex main >/dev/null || echo
+PROJ = lkmpg
+all: $(PROJ).pdf
+
+$(PROJ).pdf: lkmpg.tex
+	rm -rf _minted-$(PROJ)
+	pdflatex -shell-escap $<
+	bibtex $(PROJ) >/dev/null || echo
 	pdflatex -shell-escape $< 2>/dev/null >/dev/null
 
 html: lkmpg.tex html.cfg
