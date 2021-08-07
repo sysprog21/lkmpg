@@ -2310,9 +2310,9 @@ source tree at Documentation/ioctl-number.txt.
 <a id='x1-39162r81'></a><span class='ecrm-0500'>81</span><span class='ectt-0800'>    </span><span id='textcolor1029'><span class='ectt-0800'>/* Actually put the data into the buffer */</span></span> 
 <a id='x1-39164r82'></a><span class='ecrm-0500'>82</span><span class='ectt-0800'>    </span><span id='textcolor1030'><span class='ectt-0800'>while</span></span><span class='ectt-0800'> (length &amp;&amp; *Message_Ptr) {</span> 
 <a id='x1-39166r83'></a><span class='ecrm-0500'>83</span><span class='ectt-0800'>        </span><span id='textcolor1031'><span class='ectt-0800'>/* Because the buffer is in the user data segment, not the kernel</span></span> 
-<a id='x1-39168r84'></a><span class='ecrm-0500'>84</span><span id='textcolor1032'>              <span class='ectt-0800'> * data segment, assignment would not work. Instead, we have to</span></span> 
-<a id='x1-39170r85'></a><span class='ecrm-0500'>85</span><span id='textcolor1033'>              <span class='ectt-0800'> * use put_user which copies data from the kernel data segment to</span></span> 
-<a id='x1-39172r86'></a><span class='ecrm-0500'>86</span><span id='textcolor1034'>              <span class='ectt-0800'> * the user data segment.</span></span> 
+<a id='x1-39168r84'></a><span class='ecrm-0500'>84</span><span id='textcolor1032'><span class='ectt-0800'>         * data segment, assignment would not work. Instead, we have to</span></span> 
+<a id='x1-39170r85'></a><span class='ecrm-0500'>85</span><span id='textcolor1033'><span class='ectt-0800'>         * use put_user which copies data from the kernel data segment to</span></span> 
+<a id='x1-39172r86'></a><span class='ecrm-0500'>86</span><span id='textcolor1034'><span class='ectt-0800'>         * the user data segment.</span></span> 
 <a id='x1-39174r87'></a><span class='ecrm-0500'>87</span><span id='textcolor1035'><span class='ectt-0800'>         */</span></span> 
 <a id='x1-39176r88'></a><span class='ecrm-0500'>88</span><span class='ectt-0800'>        put_user(*(Message_Ptr++), buffer++);</span> 
 <a id='x1-39178r89'></a><span class='ecrm-0500'>89</span><span class='ectt-0800'>        length--;</span> 
@@ -2366,8 +2366,8 @@ source tree at Documentation/ioctl-number.txt.
 <a id='x1-39274r137'></a><span class='ecrm-0500'>137</span><span class='ectt-0800'>    </span><span id='textcolor1075'><span class='ectt-0800'>switch</span></span><span class='ectt-0800'> (ioctl_num) {</span> 
 <a id='x1-39276r138'></a><span class='ecrm-0500'>138</span><span class='ectt-0800'>    </span><span id='textcolor1076'><span class='ectt-0800'>case</span></span><span class='ectt-0800'> IOCTL_SET_MSG:</span> 
 <a id='x1-39278r139'></a><span class='ecrm-0500'>139</span><span class='ectt-0800'>        </span><span id='textcolor1077'><span class='ectt-0800'>/* Receive a pointer to a message (in user space) and set that to</span></span> 
-<a id='x1-39280r140'></a><span class='ecrm-0500'>140</span><span id='textcolor1078'>              <span class='ectt-0800'> * be the device</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s message.  Get the parameter given to ioctl by</span></span> 
-<a id='x1-39282r141'></a><span class='ecrm-0500'>141</span><span id='textcolor1079'>              <span class='ectt-0800'> * the process.</span></span> 
+<a id='x1-39280r140'></a><span class='ecrm-0500'>140</span><span id='textcolor1078'><span class='ectt-0800'>         * be the device</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s message.  Get the parameter given to ioctl by</span></span> 
+<a id='x1-39282r141'></a><span class='ecrm-0500'>141</span><span id='textcolor1079'><span class='ectt-0800'>         * the process.</span></span> 
 <a id='x1-39284r142'></a><span class='ecrm-0500'>142</span><span id='textcolor1080'><span class='ectt-0800'>         */</span></span> 
 <a id='x1-39286r143'></a><span class='ecrm-0500'>143</span><span class='ectt-0800'>        temp = (</span><span id='textcolor1081'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *) ioctl_param;</span> 
 <a id='x1-39288r144'></a><span class='ecrm-0500'>144</span> 
@@ -2381,19 +2381,19 @@ source tree at Documentation/ioctl-number.txt.
 <a id='x1-39304r152'></a><span class='ecrm-0500'>152</span> 
 <a id='x1-39306r153'></a><span class='ecrm-0500'>153</span><span class='ectt-0800'>    </span><span id='textcolor1086'><span class='ectt-0800'>case</span></span><span class='ectt-0800'> IOCTL_GET_MSG:</span> 
 <a id='x1-39308r154'></a><span class='ecrm-0500'>154</span><span class='ectt-0800'>        </span><span id='textcolor1087'><span class='ectt-0800'>/* Give the current message to the calling process - the parameter</span></span> 
-<a id='x1-39310r155'></a><span class='ecrm-0500'>155</span><span id='textcolor1088'>              <span class='ectt-0800'> * we got is a pointer, fill it.</span></span> 
+<a id='x1-39310r155'></a><span class='ecrm-0500'>155</span><span id='textcolor1088'><span class='ectt-0800'>         * we got is a pointer, fill it.</span></span> 
 <a id='x1-39312r156'></a><span class='ecrm-0500'>156</span><span id='textcolor1089'><span class='ectt-0800'>         */</span></span> 
 <a id='x1-39314r157'></a><span class='ecrm-0500'>157</span><span class='ectt-0800'>        i = device_read(file, (</span><span id='textcolor1090'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *) ioctl_param, 99, 0);</span> 
 <a id='x1-39316r158'></a><span class='ecrm-0500'>158</span> 
 <a id='x1-39318r159'></a><span class='ecrm-0500'>159</span><span class='ectt-0800'>        </span><span id='textcolor1091'><span class='ectt-0800'>/* Put a zero at the end of the buffer, so it will be properly</span></span> 
-<a id='x1-39320r160'></a><span class='ecrm-0500'>160</span><span id='textcolor1092'>              <span class='ectt-0800'> * terminated.</span></span> 
+<a id='x1-39320r160'></a><span class='ecrm-0500'>160</span><span id='textcolor1092'><span class='ectt-0800'>         * terminated.</span></span> 
 <a id='x1-39322r161'></a><span class='ecrm-0500'>161</span><span id='textcolor1093'><span class='ectt-0800'>         */</span></span> 
 <a id='x1-39324r162'></a><span class='ecrm-0500'>162</span><span class='ectt-0800'>        put_user(</span><span id='textcolor1094'><span class='tctt-0800'>'</span><span class='ectt-0800'>\0</span><span class='tctt-0800'>'</span></span><span class='ectt-0800'>, (</span><span id='textcolor1095'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *) ioctl_param + i);</span> 
 <a id='x1-39326r163'></a><span class='ecrm-0500'>163</span><span class='ectt-0800'>        </span><span id='textcolor1096'><span class='ectt-0800'>break</span></span><span class='ectt-0800'>;</span> 
 <a id='x1-39328r164'></a><span class='ecrm-0500'>164</span> 
 <a id='x1-39330r165'></a><span class='ecrm-0500'>165</span><span class='ectt-0800'>    </span><span id='textcolor1097'><span class='ectt-0800'>case</span></span><span class='ectt-0800'> IOCTL_GET_NTH_BYTE:</span> 
 <a id='x1-39332r166'></a><span class='ecrm-0500'>166</span><span class='ectt-0800'>        </span><span id='textcolor1098'><span class='ectt-0800'>/* This ioctl is both input (ioctl_param) and output (the return</span></span> 
-<a id='x1-39334r167'></a><span class='ecrm-0500'>167</span><span id='textcolor1099'>              <span class='ectt-0800'> * value of this function).</span></span> 
+<a id='x1-39334r167'></a><span class='ecrm-0500'>167</span><span id='textcolor1099'><span class='ectt-0800'>         * value of this function).</span></span> 
 <a id='x1-39336r168'></a><span class='ecrm-0500'>168</span><span id='textcolor1100'><span class='ectt-0800'>         */</span></span> 
 <a id='x1-39338r169'></a><span class='ecrm-0500'>169</span><span class='ectt-0800'>        </span><span id='textcolor1101'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> Message[ioctl_param];</span> 
 <a id='x1-39340r170'></a><span class='ecrm-0500'>170</span><span class='ectt-0800'>        </span><span id='textcolor1102'><span class='ectt-0800'>break</span></span><span class='ectt-0800'>;</span> 
@@ -3151,7 +3151,7 @@ $
 <a id='x1-42211r104'></a><span class='ecrm-0500'>104</span><span class='ectt-0800'>        </span><span id='textcolor1553'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> i, is_sig = 0;</span> 
 <a id='x1-42213r105'></a><span class='ecrm-0500'>105</span> 
 <a id='x1-42215r106'></a><span class='ecrm-0500'>106</span><span class='ectt-0800'>        </span><span id='textcolor1554'><span class='ectt-0800'>/* This function puts the current process, including any system</span></span> 
-<a id='x1-42217r107'></a><span class='ecrm-0500'>107</span><span id='textcolor1555'>              <span class='ectt-0800'> * calls, such as us, to sleep.  Execution will be resumed right</span></span> 
+<a id='x1-42217r107'></a><span class='ecrm-0500'>107</span><span id='textcolor1555'><span class='ectt-0800'>         * calls, such as us, to sleep.  Execution will be resumed right</span></span> 
 <a id='x1-42219r108'></a><span class='ecrm-0500'>108</span><span id='textcolor1556'><span class='ectt-0800'>         * after the function call, either because somebody called</span></span> 
 <a id='x1-42221r109'></a><span class='ecrm-0500'>109</span><span id='textcolor1557'><span class='ectt-0800'>         * wake_up(&amp;WaitQ) (only module_close does that, when the file</span></span> 
 <a id='x1-42223r110'></a><span class='ecrm-0500'>110</span><span id='textcolor1558'><span class='ectt-0800'>         * is closed) or when a signal, such as Ctrl-C, is sent</span></span> 
@@ -3168,11 +3168,11 @@ $
 <a id='x1-42245r121'></a><span class='ecrm-0500'>121</span> 
 <a id='x1-42247r122'></a><span class='ecrm-0500'>122</span><span class='ectt-0800'>        </span><span id='textcolor1566'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (is_sig) {</span> 
 <a id='x1-42249r123'></a><span class='ecrm-0500'>123</span><span class='ectt-0800'>            </span><span id='textcolor1567'><span class='ectt-0800'>/* It is important to put module_put(THIS_MODULE) here, because</span></span> 
-<a id='x1-42251r124'></a><span class='ecrm-0500'>124</span><span id='textcolor1568'>              <span class='ectt-0800'>     * for processes where the open is interrupted there will never</span></span> 
-<a id='x1-42253r125'></a><span class='ecrm-0500'>125</span><span id='textcolor1569'>              <span class='ectt-0800'>     * be a corresponding close. If we do not decrement the usage</span></span> 
-<a id='x1-42255r126'></a><span class='ecrm-0500'>126</span><span id='textcolor1570'>              <span class='ectt-0800'>     * count here, we will be left with a positive usage count</span></span> 
-<a id='x1-42257r127'></a><span class='ecrm-0500'>127</span><span id='textcolor1571'>              <span class='ectt-0800'>     * which we will have no way to bring down to zero, giving us</span></span> 
-<a id='x1-42259r128'></a><span class='ecrm-0500'>128</span><span id='textcolor1572'>              <span class='ectt-0800'>     * an immortal module, which can only be killed by rebooting</span></span> 
+<a id='x1-42251r124'></a><span class='ecrm-0500'>124</span><span id='textcolor1568'><span class='ectt-0800'>             * for processes where the open is interrupted there will never</span></span> 
+<a id='x1-42253r125'></a><span class='ecrm-0500'>125</span><span id='textcolor1569'><span class='ectt-0800'>             * be a corresponding close. If we do not decrement the usage</span></span> 
+<a id='x1-42255r126'></a><span class='ecrm-0500'>126</span><span id='textcolor1570'><span class='ectt-0800'>             * count here, we will be left with a positive usage count</span></span> 
+<a id='x1-42257r127'></a><span class='ecrm-0500'>127</span><span id='textcolor1571'><span class='ectt-0800'>             * which we will have no way to bring down to zero, giving us</span></span> 
+<a id='x1-42259r128'></a><span class='ecrm-0500'>128</span><span id='textcolor1572'><span class='ectt-0800'>             * an immortal module, which can only be killed by rebooting</span></span> 
 <a id='x1-42261r129'></a><span class='ecrm-0500'>129</span><span id='textcolor1573'><span class='ectt-0800'>             * the machine.</span></span> 
 <a id='x1-42263r130'></a><span class='ecrm-0500'>130</span><span id='textcolor1574'><span class='ectt-0800'>             */</span></span> 
 <a id='x1-42265r131'></a><span class='ecrm-0500'>131</span><span class='ectt-0800'>            module_put(THIS_MODULE);</span> 
@@ -3769,16 +3769,16 @@ tty.
 <a id='x1-50056r28'></a><span class='ecrm-0500'>28</span><span id='textcolor1970'><span class='ectt-0800'>         * kernel</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s memory segment.</span></span> 
 <a id='x1-50058r29'></a><span class='ecrm-0500'>29</span><span id='textcolor1971'><span class='ectt-0800'>         *</span></span> 
 <a id='x1-50060r30'></a><span class='ecrm-0500'>30</span><span id='textcolor1972'><span class='ectt-0800'>         * The function</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s 1st parameter is the tty to write to, because the</span></span> 
-<a id='x1-50062r31'></a><span class='ecrm-0500'>31</span><span id='textcolor1973'>              <span class='ectt-0800'> * same function would normally be used for all tty</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s of a certain</span></span> 
-<a id='x1-50064r32'></a><span class='ecrm-0500'>32</span><span id='textcolor1974'>              <span class='ectt-0800'> * type.</span></span> 
+<a id='x1-50062r31'></a><span class='ecrm-0500'>31</span><span id='textcolor1973'><span class='ectt-0800'>         * same function would normally be used for all tty</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s of a certain</span></span> 
+<a id='x1-50064r32'></a><span class='ecrm-0500'>32</span><span id='textcolor1974'><span class='ectt-0800'>         * type.</span></span> 
 <a id='x1-50066r33'></a><span class='ecrm-0500'>33</span><span id='textcolor1975'><span class='ectt-0800'>         * The 2nd parameter is a pointer to a string.</span></span> 
 <a id='x1-50068r34'></a><span class='ecrm-0500'>34</span><span id='textcolor1976'><span class='ectt-0800'>         * The 3rd parameter is the length of the string.</span></span> 
 <a id='x1-50070r35'></a><span class='ecrm-0500'>35</span><span id='textcolor1977'><span class='ectt-0800'>         *</span></span> 
 <a id='x1-50072r36'></a><span class='ecrm-0500'>36</span><span id='textcolor1978'><span class='ectt-0800'>         * As you will see below, sometimes it</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s necessary to use</span></span> 
 <a id='x1-50074r37'></a><span class='ecrm-0500'>37</span><span id='textcolor1979'><span class='ectt-0800'>         * preprocessor stuff to create code that works for different</span></span> 
 <a id='x1-50076r38'></a><span class='ecrm-0500'>38</span><span id='textcolor1980'><span class='ectt-0800'>         * kernel versions. The (naive) approach we</span><span class='tctt-0800'>'</span><span class='ectt-0800'>ve taken here does not</span></span> 
-<a id='x1-50078r39'></a><span class='ecrm-0500'>39</span><span id='textcolor1981'>              <span class='ectt-0800'> * scale well. The right way to deal with this is described in</span></span> 
-<a id='x1-50080r40'></a><span class='ecrm-0500'>40</span><span id='textcolor1982'>              <span class='ectt-0800'> * section 2 of</span></span> 
+<a id='x1-50078r39'></a><span class='ecrm-0500'>39</span><span id='textcolor1981'><span class='ectt-0800'>         * scale well. The right way to deal with this is described in</span></span> 
+<a id='x1-50080r40'></a><span class='ecrm-0500'>40</span><span id='textcolor1982'><span class='ectt-0800'>         * section 2 of</span></span> 
 <a id='x1-50082r41'></a><span class='ecrm-0500'>41</span><span id='textcolor1983'><span class='ectt-0800'>         * linux/Documentation/SubmittingPatches</span></span> 
 <a id='x1-50084r42'></a><span class='ecrm-0500'>42</span><span id='textcolor1984'><span class='ectt-0800'>         */</span></span> 
 <a id='x1-50086r43'></a><span class='ecrm-0500'>43</span><span class='ectt-0800'>        (ttyops-&gt;write)(my_tty,       </span><span id='textcolor1985'><span class='ectt-0800'>/* The tty itself */</span></span> 
@@ -3786,16 +3786,16 @@ tty.
 <a id='x1-50090r45'></a><span class='ecrm-0500'>45</span><span class='ectt-0800'>                        strlen(str)); </span><span id='textcolor1987'><span class='ectt-0800'>/* Length */</span></span> 
 <a id='x1-50092r46'></a><span class='ecrm-0500'>46</span> 
 <a id='x1-50094r47'></a><span class='ecrm-0500'>47</span><span class='ectt-0800'>        </span><span id='textcolor1988'><span class='ectt-0800'>/* ttys were originally hardware devices, which (usually) strictly</span></span> 
-<a id='x1-50096r48'></a><span class='ecrm-0500'>48</span><span id='textcolor1989'>              <span class='ectt-0800'> * followed the ASCII standard. In ASCII, to move to a new line you</span></span> 
-<a id='x1-50098r49'></a><span class='ecrm-0500'>49</span><span id='textcolor1990'>              <span class='ectt-0800'> * need two characters, a carriage return and a line feed. On Unix,</span></span> 
-<a id='x1-50100r50'></a><span class='ecrm-0500'>50</span><span id='textcolor1991'>              <span class='ectt-0800'> * the ASCII line feed is used for both purposes - so we can not</span></span> 
-<a id='x1-50102r51'></a><span class='ecrm-0500'>51</span><span id='textcolor1992'>              <span class='ectt-0800'> * just use \n, because it would not have a carriage return and the</span></span> 
-<a id='x1-50104r52'></a><span class='ecrm-0500'>52</span><span id='textcolor1993'>              <span class='ectt-0800'> * next line will start at the column right after the line feed.</span></span> 
+<a id='x1-50096r48'></a><span class='ecrm-0500'>48</span><span id='textcolor1989'><span class='ectt-0800'>         * followed the ASCII standard. In ASCII, to move to a new line you</span></span> 
+<a id='x1-50098r49'></a><span class='ecrm-0500'>49</span><span id='textcolor1990'><span class='ectt-0800'>         * need two characters, a carriage return and a line feed. On Unix,</span></span> 
+<a id='x1-50100r50'></a><span class='ecrm-0500'>50</span><span id='textcolor1991'><span class='ectt-0800'>         * the ASCII line feed is used for both purposes - so we can not</span></span> 
+<a id='x1-50102r51'></a><span class='ecrm-0500'>51</span><span id='textcolor1992'><span class='ectt-0800'>         * just use \n, because it would not have a carriage return and the</span></span> 
+<a id='x1-50104r52'></a><span class='ecrm-0500'>52</span><span id='textcolor1993'><span class='ectt-0800'>         * next line will start at the column right after the line feed.</span></span> 
 <a id='x1-50106r53'></a><span class='ecrm-0500'>53</span><span id='textcolor1994'><span class='ectt-0800'>         *</span></span> 
 <a id='x1-50108r54'></a><span class='ecrm-0500'>54</span><span id='textcolor1995'><span class='ectt-0800'>         * This is why text files are different between Unix and MS Windows.</span></span> 
-<a id='x1-50110r55'></a><span class='ecrm-0500'>55</span><span id='textcolor1996'>              <span class='ectt-0800'> * In CP/M and derivatives, like MS-DOS and MS Windows, the ASCII</span></span> 
-<a id='x1-50112r56'></a><span class='ecrm-0500'>56</span><span id='textcolor1997'>              <span class='ectt-0800'> * standard was strictly adhered to, and therefore a newline requirs</span></span> 
-<a id='x1-50114r57'></a><span class='ecrm-0500'>57</span><span id='textcolor1998'>              <span class='ectt-0800'> * both a LF and a CR.</span></span> 
+<a id='x1-50110r55'></a><span class='ecrm-0500'>55</span><span id='textcolor1996'><span class='ectt-0800'>         * In CP/M and derivatives, like MS-DOS and MS Windows, the ASCII</span></span> 
+<a id='x1-50112r56'></a><span class='ecrm-0500'>56</span><span id='textcolor1997'><span class='ectt-0800'>         * standard was strictly adhered to, and therefore a newline requirs</span></span> 
+<a id='x1-50114r57'></a><span class='ecrm-0500'>57</span><span id='textcolor1998'><span class='ectt-0800'>         * both a LF and a CR.</span></span> 
 <a id='x1-50116r58'></a><span class='ecrm-0500'>58</span><span id='textcolor1999'><span class='ectt-0800'>         */</span></span> 
 <a id='x1-50118r59'></a><span class='ecrm-0500'>59</span><span class='ectt-0800'>        (ttyops-&gt;write)(my_tty, </span><span id='textcolor2000'><span class='ectt-0800'>"</span></span><span id='textcolor2001'><span class='ectt-0800'>\015\012</span></span><span id='textcolor2002'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, 2);</span> 
 <a id='x1-50120r60'></a><span class='ecrm-0500'>60</span><span class='ectt-0800'>    }</span> 
