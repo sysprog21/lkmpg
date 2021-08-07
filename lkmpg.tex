@@ -1318,32 +1318,40 @@ So even though \emph{flywheel\_thread} is started first you should notice if you
 There are other variations upon the \verb|wait_for_completion| function, which include timeouts or being interrupted, but this basic mechanism is enough for many common situations without adding a lot of complexity.
 
 \section{Avoiding Collisions and Deadlocks}
-\label{sec:org17fc2e9}
-If processes running on different CPUs or in different threads try to access the same memory then it's possible that strange things can happen or your system can lock up. To avoid this various types of mutual exclusion kernel functions are available. These indicate if a section of code is "locked" or "unlocked" so that simultaneous attempts to run it can't happen.
+\label{sec:synchronization}
+If processes running on different CPUs or in different threads try to access the same memory, then it is possible that strange things can happen or your system can lock up.
+To avoid this, various types of mutual exclusion kernel functions are available.
+These indicate if a section of code is "locked" or "unlocked" so that simultaneous attempts to run it can not happen.
 \subsection{Mutex}
-\label{sec:org04a65a4}
-You can use kernel mutexes (mutual exclusions) in much the same manner that you might deploy them in userland. This may be all that's needed to avoid collisions in most cases.
+\label{sec:mutex}
+You can use kernel mutexes (mutual exclusions) in much the same manner that you might deploy them in userland.
+This may be all that is needed to avoid collisions in most cases.
 
 \samplec{examples/example_mutex.c}
 
 \subsection{Spinlocks}
-\label{sec:orgba9012b}
-As the name suggests, spinlocks lock up the CPU that the code is running on, taking 100\% of its resources. Because of this you should only use the spinlock mechanism around code which is likely to take no more than a few milliseconds to run and so won't noticably slow anything down from the user's point of view.
+\label{sec:spinlock}
+As the name suggests, spinlocks lock up the CPU that the code is running on, taking 100\% of its resources.
+Because of this you should only use the spinlock mechanism around code which is likely to take no more than a few milliseconds to run and so will not noticably slow anything down from the user's point of view.
 
-The example here is \emph{"irq safe"} in that if interrupts happen during the lock then they won't be forgotten and will activate when the unlock happens, using the \emph{flags} variable to retain their state.
+The example here is \emph{"irq safe"} in that if interrupts happen during the lock then they will not be forgotten and will activate when the unlock happens, using the \emph{flags} variable to retain their state.
 
 \samplec{examples/example_spinlock.c}
 
 \subsection{Read and write locks}
 \label{sec:org136e336}
-Read and write locks are specialised kinds of spinlocks so that you can exclusively read from something or write to something. Like the earlier spinlocks example the one below shows an "irq safe" situation in which if other functions were triggered from irqs which might also read and write to whatever you are concerned with then they wouldn't disrupt the logic. As before it's a good idea to keep anything done within the lock as short as possible so that it doesn't hang up the system and cause users to start revolting against the tyranny of your module.
+Read and write locks are specialised kinds of spinlocks so that you can exclusively read from something or write to something.
+Like the earlier spinlocks example the one below shows an "irq safe" situation in which if other functions were triggered from irqs which might also read and write to whatever you are concerned with then they would not disrupt the logic.
+As before it is a good idea to keep anything done within the lock as short as possible so that it does not hang up the system and cause users to start revolting against the tyranny of your module.
 
 \samplec{examples/example_rwlock.c}
 
-Of course if you know for sure that there are no functions triggered by irqs which could possibly interfere with your logic then you can use the simpler  \emph{read\_lock(\&myrwlock)} and \emph{read\_unlock(\&myrwlock)} or the corresponding write functions.
+Of course, if you know for sure that there are no functions triggered by irqs which could possibly interfere with your logic then you can use the simpler  \emph{read\_lock(\&myrwlock)} and \emph{read\_unlock(\&myrwlock)} or the corresponding write functions.
 \subsection{Atomic operations}
-\label{sec:org65b297c}
-If you're doing simple arithmetic: adding, subtracting or bitwise operations then there's another way in the multi-CPU and multi-hyperthreaded world to stop other parts of the system from messing with your mojo. By using atomic operations you can be confident that your addition, subtraction or bit flip did actually happen and wasn't overwritten by some other shenanigans. An example is shown below.
+\label{sec:atomics}
+If you are doing simple arithmetic: adding, subtracting or bitwise operations then there is another way in the multi-CPU and multi-hyperthreaded world to stop other parts of the system from messing with your mojo.
+By using atomic operations you can be confident that your addition, subtraction or bit flip did actually happen and was not overwritten by some other shenanigans.
+An example is shown below.
 
 \samplec{examples/example_atomic.c}
 
