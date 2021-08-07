@@ -4,8 +4,8 @@
 <meta charset='utf-8' /> 
 <meta content='TeX4ht (https://tug.org/tex4ht/)' name='generator' /> 
 <meta content='width=device-width,initial-scale=1' name='viewport' /> 
-<link href='lkmpg.css' rel='stylesheet' type='text/css' /> 
-<meta content='lkmpg.tex' name='src' /> 
+<link href='lkmpg-for-ht.css' rel='stylesheet' type='text/css' /> 
+<meta content='lkmpg-for-ht.tex' name='src' /> 
 </head><body>
    <div class='maketitle'>
                                                                   
@@ -298,10 +298,10 @@ to use <span class='ecti-1000'>tabs</span>, not spaces.
    <pre class='fancyvrb' id='fancyvrb11'><a id='x1-12055r1'></a><span class='ecrm-0500'>1</span><span class='ectt-0800'>obj-m += hello-1.o</span> 
 <a id='x1-12057r2'></a><span class='ecrm-0500'>2</span> 
 <a id='x1-12059r3'></a><span class='ecrm-0500'>3</span><span class='ectt-0800'>all:</span> 
-<a id='x1-12061r4'></a><span class='ecrm-0500'>4              </span><span class='ectt-0800'>make -C /lib/modules/</span><span class='colorbox' id='colorbox23'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(shell uname -r)/build M=</span><span class='colorbox' id='colorbox24'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(PWD) modules</span> 
+<a id='x1-12061r4'></a><span class='ecrm-0500'>4</span><span class='ectt-0800'>    make -C /lib/modules/</span><span class='colorbox' id='colorbox23'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(shell uname -r)/build M=</span><span class='colorbox' id='colorbox24'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(PWD) modules</span> 
 <a id='x1-12063r5'></a><span class='ecrm-0500'>5</span> 
 <a id='x1-12065r6'></a><span class='ecrm-0500'>6</span><span class='ectt-0800'>clean:</span> 
-<a id='x1-12067r7'></a><span class='ecrm-0500'>7              </span><span class='ectt-0800'>make -C /lib/modules/</span><span class='colorbox' id='colorbox25'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(shell uname -r)/build M=</span><span class='colorbox' id='colorbox26'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(PWD) clean</span></pre>
+<a id='x1-12067r7'></a><span class='ecrm-0500'>7</span><span class='ectt-0800'>    make -C /lib/modules/</span><span class='colorbox' id='colorbox25'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(shell uname -r)/build M=</span><span class='colorbox' id='colorbox26'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(PWD) clean</span></pre>
 <!-- l. 220 --><p class='indent'>   And finally just: 
 </p>
    <pre class='fancyvrb' id='fancyvrb12'><a id='x1-12070r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>make</span></pre>
@@ -433,10 +433,10 @@ is as simple as this:
 <a id='x1-13058r2'></a><span class='ecrm-0500'>2</span><span class='ectt-0800'>obj-m += hello-2.o</span> 
 <a id='x1-13060r3'></a><span class='ecrm-0500'>3</span> 
 <a id='x1-13062r4'></a><span class='ecrm-0500'>4</span><span class='ectt-0800'>all:</span> 
-<a id='x1-13064r5'></a><span class='ecrm-0500'>5              </span><span class='ectt-0800'>make -C /lib/modules/</span><span class='colorbox' id='colorbox52'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(shell uname -r)/build M=</span><span class='colorbox' id='colorbox53'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(PWD) modules</span> 
+<a id='x1-13064r5'></a><span class='ecrm-0500'>5</span><span class='ectt-0800'>    make -C /lib/modules/</span><span class='colorbox' id='colorbox52'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(shell uname -r)/build M=</span><span class='colorbox' id='colorbox53'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(PWD) modules</span> 
 <a id='x1-13066r6'></a><span class='ecrm-0500'>6</span> 
 <a id='x1-13068r7'></a><span class='ecrm-0500'>7</span><span class='ectt-0800'>clean:</span> 
-<a id='x1-13070r8'></a><span class='ecrm-0500'>8              </span><span class='ectt-0800'>make -C /lib/modules/</span><span class='colorbox' id='colorbox54'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(shell uname -r)/build M=</span><span class='colorbox' id='colorbox55'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(PWD) clean</span></pre>
+<a id='x1-13070r8'></a><span class='ecrm-0500'>8</span><span class='ectt-0800'>    make -C /lib/modules/</span><span class='colorbox' id='colorbox54'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(shell uname -r)/build M=</span><span class='colorbox' id='colorbox55'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(PWD) clean</span></pre>
 <!-- l. 326 --><p class='indent'>   Now have a look at <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>linux/drivers/char/Makefile</span></span></span> for a real world example. As
 you can see, some things get hardwired into the kernel (<span class='obeylines-h'><span class='verb'><span class='ectt-1000'>obj-y</span></span></span>) but where are all
 those <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>obj-m</span></span></span> gone? Those familiar with shell scripts will easily be able to spot them.
@@ -729,10 +729,10 @@ files.
 <a id='x1-17081r7'></a><span class='ecrm-0500'>7</span><span class='ectt-0800'>startstop-objs := start.o stop.o</span> 
 <a id='x1-17083r8'></a><span class='ecrm-0500'>8</span> 
 <a id='x1-17085r9'></a><span class='ecrm-0500'>9</span><span class='ectt-0800'>all:</span> 
-<a id='x1-17087r10'></a><span class='ecrm-0500'>10              </span><span class='ectt-0800'>make -C /lib/modules/</span><span class='colorbox' id='colorbox246'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(shell uname -r)/build M=</span><span class='colorbox' id='colorbox247'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(PWD) modules</span> 
+<a id='x1-17087r10'></a><span class='ecrm-0500'>10</span><span class='ectt-0800'>    make -C /lib/modules/</span><span class='colorbox' id='colorbox246'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(shell uname -r)/build M=</span><span class='colorbox' id='colorbox247'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(PWD) modules</span> 
 <a id='x1-17089r11'></a><span class='ecrm-0500'>11</span> 
 <a id='x1-17091r12'></a><span class='ecrm-0500'>12</span><span class='ectt-0800'>clean:</span> 
-<a id='x1-17093r13'></a><span class='ecrm-0500'>13              </span><span class='ectt-0800'>make -C /lib/modules/</span><span class='colorbox' id='colorbox248'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(shell uname -r)/build M=</span><span class='colorbox' id='colorbox249'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(PWD) clean</span></pre>
+<a id='x1-17093r13'></a><span class='ecrm-0500'>13</span><span class='ectt-0800'>    make -C /lib/modules/</span><span class='colorbox' id='colorbox248'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(shell uname -r)/build M=</span><span class='colorbox' id='colorbox249'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(PWD) clean</span></pre>
 <!-- l. 465 --><p class='indent'>   This is the complete makefile for all the examples we have seen so far. The first
 five lines are nothing special, but for the last example we will need two lines. First we
 invent an object name for our combined module, second we tell make what object
@@ -1192,10 +1192,10 @@ new way of assigning to the structure looks like:
                                                                   
 </p>
    <pre class='fancyvrb' id='fancyvrb32'><a id='x1-27122r1'></a><span class='ecrm-0500'>1</span><span id='textcolor380'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file_operations fops = {</span> 
-<a id='x1-27124r2'></a><span class='ecrm-0500'>2              </span><span class='ectt-0800'>read: device_read,</span> 
-<a id='x1-27126r3'></a><span class='ecrm-0500'>3              </span><span class='ectt-0800'>write: device_write,</span> 
-<a id='x1-27128r4'></a><span class='ecrm-0500'>4              </span><span class='ectt-0800'>open: device_open,</span> 
-<a id='x1-27130r5'></a><span class='ecrm-0500'>5              </span><span class='ectt-0800'>release: device_release</span> 
+<a id='x1-27124r2'></a><span class='ecrm-0500'>2</span><span class='ectt-0800'>    read: device_read,</span> 
+<a id='x1-27126r3'></a><span class='ecrm-0500'>3</span><span class='ectt-0800'>    write: device_write,</span> 
+<a id='x1-27128r4'></a><span class='ecrm-0500'>4</span><span class='ectt-0800'>    open: device_open,</span> 
+<a id='x1-27130r5'></a><span class='ecrm-0500'>5</span><span class='ectt-0800'>    release: device_release</span> 
 <a id='x1-27132r6'></a><span class='ecrm-0500'>6</span><span class='ectt-0800'>};</span></pre>
 <!-- l. 809 --><p class='indent'>   However, there is also a C99 way of assigning to elements of a structure,
 <a href='https://gcc.gnu.org/onlinedocs/gcc/Designated-Inits.html'>designated initializers</a>, and this is definitely preferred over using the GNU extension.
@@ -1204,10 +1204,10 @@ with compatibility:
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb33'><a id='x1-27140r1'></a><span class='ecrm-0500'>1</span><span id='textcolor381'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file_operations fops = {</span> 
-<a id='x1-27142r2'></a><span class='ecrm-0500'>2              </span><span class='ectt-0800'>.read = device_read,</span> 
-<a id='x1-27144r3'></a><span class='ecrm-0500'>3              </span><span class='ectt-0800'>.write = device_write,</span> 
-<a id='x1-27146r4'></a><span class='ecrm-0500'>4              </span><span class='ectt-0800'>.open = device_open,</span> 
-<a id='x1-27148r5'></a><span class='ecrm-0500'>5              </span><span class='ectt-0800'>.release = device_release</span> 
+<a id='x1-27142r2'></a><span class='ecrm-0500'>2</span><span class='ectt-0800'>    .read = device_read,</span> 
+<a id='x1-27144r3'></a><span class='ecrm-0500'>3</span><span class='ectt-0800'>    .write = device_write,</span> 
+<a id='x1-27146r4'></a><span class='ecrm-0500'>4</span><span class='ectt-0800'>    .open = device_open,</span> 
+<a id='x1-27148r5'></a><span class='ecrm-0500'>5</span><span class='ectt-0800'>    .release = device_release</span> 
 <a id='x1-27150r6'></a><span class='ecrm-0500'>6</span><span class='ectt-0800'>};</span></pre>
 <!-- l. 822 --><p class='indent'>   The meaning is clear, and you should be aware that any member of the
 structure which you do not explicitly assign will be initialized to NULL by
@@ -1491,7 +1491,7 @@ multiple kernel versions, you will find yourself having to code conditional comp
 directives. The way to do this to compare the macro <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>LINUX_VERSION_CODE</span></span></span> to the
 macro <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>KERNEL_VERSION</span></span></span>. In version a.b.c of the kernel, the value of this macro would
 be <img alt=' 16    8
-2 a + 2 b+ c  ' class='math' src='lkmpg0x.svg' />.
+2 a + 2 b+ c  ' class='math' src='lkmpg-for-ht0x.svg' />.
 </p><!-- l. 926 --><p class='indent'>   While previous versions of this guide showed how you can write backward
 compatible code with such constructs in great detail, we decided to break with this
 tradition for the better. People interested in doing such might now use a LKMPG
@@ -1942,7 +1942,7 @@ Figure <a href='#ignorespaces-how-seqfile-works'>1<!-- tex4ht:ref: img:seqfile 
                                                                   
 
                                                                   
-<!-- l. 1041 --><p class='noindent'><img alt='srYrsNNYtaeenetoooertusetupstrxr((ntn))( tis)istrr teeaNreNatUaUtmLtLmeLmLen?e?ntntt  ' src='lkmpg1x.svg' />
+<!-- l. 1041 --><p class='noindent'><img alt='srYrsNNYtaeenetoooertusetupstrxr((ntn))( tis)istrr teeaNreNatUaUtmLtLmeLmLen?e?ntntt  ' src='lkmpg-for-ht1x.svg' />
 </p>
 <figcaption class='caption'><span class='id'>Figure 1:</span><span class='content'>How seq_file works</span></figcaption><!-- tex4ht:label?: x1-37001r1  -->
                                                                   
