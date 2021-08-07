@@ -1551,32 +1551,29 @@ That avoids flushing the processor pipeline.
 The opposite happens if you use the \emph{likely} macro.
 
 \section{Common Pitfalls}
-\label{sec:org0e8d92a}
-Before I send you on your way to go out into the world and write kernel modules, there are a few things I need to warn you about. If I fail to warn you and something bad happens, please report the problem to me for a full refund of the amount I was paid for your copy of the book.
+\label{sec:opitfall}
 
 \subsection{Using standard libraries}
-\label{sec:orgba512d5}
-You can't do that. In a kernel module you can only use kernel functions, which are the functions you can see in /proc/kallsyms.
+\label{sec:using_stdlib}
+You can not do that.
+In a kernel module you can only use kernel functions, which are the functions you can see in \verb|/proc/kallsyms|.
 
 \subsection{Disabling interrupts}
-\label{sec:org377e4a8}
-You might need to do this for a short time and that is OK, but if you don't enable them afterwards, your system will be stuck and you'll have to power it off.
-
-\subsection{Sticking your head inside a large carnivore}
-\label{sec:orgc0f5914}
-I probably don't have to warn you about this, but I figured I will anyway, just in case.
+\label{sec:disabling_interrupts}
+You might need to do this for a short time and that is OK, but if you do not enable them afterwards, your system will be stuck and you will have to power it off.
 
 \section{Where To Go From Here?}
-\label{sec:org0a4192c}
-I could easily have squeezed a few more chapters into this book. I could have added a chapter about creating new file systems, or about adding new protocol stacks (as if there's a need for that -- you'd have to dig underground to find a protocol stack not supported by Linux). I could have added explanations of the kernel mechanisms we haven't touched upon, such as bootstrapping or the disk interface.
+\label{sec:where_to_go}
+For people seriously interested in kernel programming, I recommend \href{https://kernelnewbies.org}{kernelnewbies.org} and the \emph{Documentation} subdirectory within the kernel source code which is bot always easy to understand but can be a starting point for further investigation.
+Also, as Linus Torvalds said, the best way to learn the kernel is to read the source code yourself.
 
-However, I chose not to. My purpose in writing this book was to provide initiation into the mysteries of kernel module programming and to teach the common techniques for that purpose. For people seriously interested in kernel programming, I recommend \href{https://kernelnewbies.org}{kernelnewbies.org} and the \emph{Documentation} subdirectory within the kernel source code which isn't always easy to understand but can be a starting point for further investigation. Also, as Linus said, the best way to learn the kernel is to read the source code yourself.
+If you are interested in more examples of short kernel modules then searching on sites such as Github and Gitlab is a good way to start, although there is a lot of duplication of older LKMPG examples which may not compile with newer kernel versions.
+You will also be able to find examples of the use of kernel modules to attack or compromise systems or exfiltrate data and those can be useful for thinking about how to defend systems and learning about existing security mechanisms within the kernel.
 
-If you're interested in more examples of short kernel modules then searching on sites such as Github and Gitlab is a good way to start, although there is a lot of duplication of older LKMPG examples which may not compile with newer kernel versions. You will also be able to find examples of the use of kernel modules to attack or compromise systems or exfiltrate data and those can be useful for thinking about how to defend systems and learning about existing security mechanisms within the kernel.
+I hope I have helped you in your quest to become a better programmer, or at least to have fun through technology.
+And, if you do write useful kernel modules, I hope you publish them under the GPL, so I can use them too.
 
-I hope I have helped you in your quest to become a better programmer, or at least to have fun through technology. And, if you do write useful kernel modules, I hope you publish them under the GPL, so I can use them too.
+If you would like to contribute to this guide or notice anything glaringly wrong, please create an issue at \url{https://github.com/sysprog21/lkmpg}.
 
-If you'd like to contribute to this guide or notice anything glaringly wrong, please create an issue at \url{https://github.com/sysprog21/lkmpg}.
-
-Happy hacking.
+Happy hacking!
 \end{document}
