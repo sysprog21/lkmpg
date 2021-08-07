@@ -1392,12 +1392,14 @@ Adding debug code can change the situation enough to make the bug seem to dissap
 Thus you should try to keep debug code to a minimum and make sure it does not show up in production code.
 
 \section{Scheduling Tasks}
-\label{sec:orgb1eb02f}
-There are two main ways of running tasks: tasklets and work queues. Tasklets are a quick and easy way of scheduling a single function to be run, for example when triggered from an interrupt, whereas work queues are more complicated but also better suited to running multiple things in a sequence.
+\label{sec:scheduling_tasks}
+There are two main ways of running tasks: tasklets and work queues.
+Tasklets are a quick and easy way of scheduling a single function to be run, for example when triggered from an interrupt, whereas work queues are more complicated but also better suited to running multiple things in a sequence.
 
 \subsection{Tasklets}
-\label{sec:org5b372fb}
-Here's an example tasklet module. The \emph{tasklet\_fn} function runs for a few seconds and in the mean time execution of the \emph{example\_tasklet\_init} function continues to the exit point.
+\label{sec:tasklet}
+Here is an example tasklet module.
+The \verb|tasklet_fn| function runs for a few seconds and in the mean time execution of the \verb|example_tasklet_init| function continues to the exit point.
 
 \samplec{examples/example_tasklet.c}
 
@@ -1411,8 +1413,9 @@ Example tasklet ends
 \end{verbatim}
 
 \subsection{Work queues}
-\label{sec:orgb4f6fbb}
-To add a task to the scheduler we can use a workqueue. The kernel then uses the Completely Fair Scheduler (CFS) to execute work within the queue.
+\label{sec:workqueue}
+To add a task to the scheduler we can use a workqueue.
+The kernel then uses the Completely Fair Scheduler (CFS) to execute work within the queue.
 
 \samplec{examples/sched.c}
 
