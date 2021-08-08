@@ -2,10 +2,10 @@ PROJ = lkmpg
 all: $(PROJ).pdf
 
 $(PROJ).pdf: lkmpg.tex
-	rm -rf _minted-$(PROJ)
 	pdflatex -shell-escap $<
 	bibtex $(PROJ) >/dev/null || echo
 	pdflatex -shell-escape $< 2>/dev/null >/dev/null
+	rm -rf _minted-$(PROJ)
 
 html: lkmpg.tex html.cfg
 	sed $ 's/\t/    /g' lkmpg.tex > lkmpg-for-ht.tex
