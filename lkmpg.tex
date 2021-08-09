@@ -269,9 +269,9 @@ However, many people still use \cpp|init_module()| and \cpp|cleanup_module()| fo
 Typically, \cpp|init_module()| either registers a handler for something with the kernel, or it replaces one of the kernel functions with its own code (usually code to do something and then call the original function).
 The \cpp|cleanup_module()| function is supposed to undo whatever \cpp|init_module()| did, so the module can be unloaded safely.
 
-Lastly, every kernel module needs to include \verb|linux/module.h|.
+Lastly, every kernel module needs to include \verb|<linux/module.h>|.
 % TODO: adjust the section anchor
-We needed to include \verb|linux/kernel.h| only for the macro expansion for the \cpp|pr_alert()| log level, which you'll learn about in Section \ref{sec:printk}.
+We needed to include \verb|<linux/kernel.h>| only for the macro expansion for the \cpp|pr_alert()| log level, which you'll learn about in Section \ref{sec:printk}.
 
 \begin{enumerate}
   \item A point about coding style.
