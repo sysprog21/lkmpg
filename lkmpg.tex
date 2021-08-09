@@ -389,7 +389,7 @@ module_param(myint, int, 0);
 
 Arrays are supported too, but things are a bit different now than they were in the olden days.
 To keep track of the number of parameters you need to pass a pointer to a count variable as third parameter. 
-At your option, you could also ignore the count and pass NULL instead. We show both possibilities here:
+At your option, you could also ignore the count and pass \cpp|NULL| instead. We show both possibilities here:
 
 \begin{code}
 int myintarray[2];
@@ -799,7 +799,7 @@ struct file_operations {
 
 Some operations are not implemented by a driver.
 For example, a driver that handles a video card will not need to read from a directory structure.
-The corresponding entries in the \cpp|file_operations| structure should be set to NULL.
+The corresponding entries in the \cpp|file_operations| structure should be set to \cpp|NULL|.
 
 There is a gcc extension that makes assigning to this structure more convenient.
 You will see it in modern drivers, and may catch you by surprise.
@@ -827,9 +827,9 @@ struct file_operations fops = {
 };
 \end{code}
 
-The meaning is clear, and you should be aware that any member of the structure which you do not explicitly assign will be initialized to NULL by gcc.
+The meaning is clear, and you should be aware that any member of the structure which you do not explicitly assign will be initialized to \cpp|NULL| by gcc.
 
-An instance of \cpp|struct file_operations| containing pointers to functions that are used to implement read, write, open, \ldots{} syscalls is commonly named fops.
+An instance of \cpp|struct file_operations| containing pointers to functions that are used to implement \cpp|read|, \cpp|write|, \cpp|open|, \ldots{} system calls is commonly named \cpp|fops|.
 
 Sin Linux v5.6, the \cpp|proc_ops| structure was introduced to replace the use of the \cpp|file_operations| structure when registering proc handlers.
 
@@ -1032,16 +1032,16 @@ It is based on sequence, which is composed of 3 functions: \cpp|start()|, \cpp|n
 The \cpp|seq_file| API starts a sequence when a user read the /proc file.
 
 A sequence begins with the call of the function \cpp|start()|.
-If the return is a non NULL value, the function \cpp|next()| is called.
+If the return is a non \cpp|NULL| value, the function \cpp|next()| is called.
 This function is an iterator, the goal is to go through all the data.
 Each time \cpp|next()| is called, the function \cpp|show()| is also called.
 It writes data values in the buffer read by the user.
-The function \cpp|next()| is called until it returns NULL.
-The sequence ends when \cpp|next()| returns NULL, then the function \cpp|stop()| is called.
+The function \cpp|next()| is called until it returns \cpp|NULL|.
+The sequence ends when \cpp|next()| returns \cpp|NULL|, then the function \cpp|stop()| is called.
 
 BE CAREFUL: when a sequence is finished, another one starts.
 That means that at the end of function \cpp|stop()|, the function \cpp|start()| is called again.
-This loop finishes when the function \cpp|start()| returns NULL.
+This loop finishes when the function \cpp|start()| returns \cpp|NULL|.
 You can see a scheme of this in the Figure~\ref{img:seqfile}.
 
 \begin{figure}
