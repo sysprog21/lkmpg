@@ -929,10 +929,7 @@ In most cases, the device files will also remain the same. On the other hand, th
 
 There are differences between different kernel versions, and if you want to support multiple kernel versions, you will find yourself having to code conditional compilation directives.
 The way to do this to compare the macro \cpp|LINUX_VERSION_CODE| to the macro \cpp|KERNEL_VERSION|.
-In version a.b.c of the kernel, the value of this macro would be \(2^{16}a+2^{8}b+c\).
-
-While previous versions of this guide showed how you can write backward compatible code with such constructs in great detail, we decided to break with this tradition for the better.
-People interested in doing such might now use a LKMPG with a version matching to their kernel.
+In version \verb|a.b.c| of the kernel, the value of this macro would be \(2^{16}a+2^{8}b+c\).
 
 \section{The /proc File System}
 \label{sec:procfs}
