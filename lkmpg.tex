@@ -575,7 +575,7 @@ Since there's more than one way to specify entry and exit functions, I will try 
 Programmers use functions they do not define all the time.
 A prime example of this is \cpp|printf()|.
 You use these library functions which are provided by the standard C library, libc.
-The definitions for these functions do not actually enter your program until the linking stage, which insures that the code (for printf() for example) is available, and fixes the call instruction to point to that code.
+The definitions for these functions do not actually enter your program until the linking stage, which insures that the code (for \cpp|printf()| for example) is available, and fixes the call instruction to point to that code.
 
 Kernel modules are different here, too. In the hello world example, you might have noticed that we used a function, \cpp|pr_info()| but did not include a standard I/O library.
 That is because modules are object files whose symbols get resolved upon \sh|insmod|'ing.
@@ -584,9 +584,9 @@ If you're curious about what symbols have been exported by your kernel, take a l
 
 One point to keep in mind is the difference between library functions and system calls. Library functions are higher level, run completely in user space and provide a more convenient interface for the programmer to the functions that do the real work --- system calls.
 System calls run in kernel mode on the user's behalf and are provided by the kernel itself.
-The library function printf() may look like a very general printing function, but all it really does is format the data into strings and write the string data using the low-level system call write(), which then sends the data to standard output.
+The library function \cpp|printf()| may look like a very general printing function, but all it really does is format the data into strings and write the string data using the low-level system call \cpp|write()|, which then sends the data to standard output.
 
-Would you like to see what system calls are made by printf()?
+Would you like to see what system calls are made by \cpp|printf()|?
 It is easy!
 Compile the following program:
 
@@ -608,11 +608,11 @@ Every line you see corresponds to a system call.
 It is an invaluable tool for figuring out things like what files a program is trying to access.
 Towards the end, you will see a line which looks like \cpp|write(1, "hello", 5hello)|.
 There it is.
-The face behind the printf() mask.
-You may not be familiar with write, since most people use library functions for file I/O (like fopen, fputs, fclose).
+The face behind the \cpp|printf()| mask.
+You may not be familiar with write, since most people use library functions for file I/O (like \cpp|fopen|, \cpp|fputs|, \cpp|fclose|).
 If that is the case, try looking at man 2 write.
-The 2nd man section is devoted to system calls (like kill() and read()).
-The 3rd man section is devoted to library calls, which you would probably be more familiar with (like cosh() and random()).
+The 2nd man section is devoted to system calls (like \cpp|kill()| and \cpp|read()|).
+The 3rd man section is devoted to library calls, which you would probably be more familiar with (like \cpp|cosh()| and \cpp|random()|).
 
 You can even write modules to replace the kernel's system calls, which we will do shortly.
 Crackers often make use of this sort of thing for backdoors or trojans, but you can write your own modules to do more benign things, like have the kernel write Tee hee, that tickles! everytime someone tries to delete a file on your system.
@@ -1023,20 +1023,20 @@ Consider using this mechanism, in case you want to document something kernel rel
 \label{sec:manage_procfs_with_seq_file}
 As we have seen, writing a /proc file may be quite ``complex''.
 So to help people writting /proc file, there is an API named \cpp|seq_file| that helps formating a \verb|/proc| file for output.
-It is based on sequence, which is composed of 3 functions: start(), next(), and stop().
+It is based on sequence, which is composed of 3 functions: \cpp|start()|, \cpp|next()|, and \cpp|stop()|.
 The \cpp|seq_file| API starts a sequence when a user read the /proc file.
 
-A sequence begins with the call of the function start().
-If the return is a non NULL value, the function next() is called.
+A sequence begins with the call of the function \cpp|start()|.
+If the return is a non NULL value, the function \cpp|next()| is called.
 This function is an iterator, the goal is to go through all the data.
-Each time next() is called, the function show() is also called.
+Each time \cpp|next()| is called, the function \cpp|show()| is also called.
 It writes data values in the buffer read by the user.
-The function next() is called until it returns NULL.
-The sequence ends when next() returns NULL, then the function stop() is called.
+The function \cpp|next()| is called until it returns NULL.
+The sequence ends when \cpp|next()| returns NULL, then the function \cpp|stop()| is called.
 
 BE CAREFUL: when a sequence is finished, another one starts.
-That means that at the end of function stop(), the function start() is called again.
-This loop finishes when the function start() returns NULL.
+That means that at the end of function \cpp|stop()|, the function \cpp|start()| is called again.
+This loop finishes when the function \cpp|start()| returns NULL.
 You can see a scheme of this in the Figure~\ref{img:seqfile}.
 
 \begin{figure}
@@ -1200,7 +1200,7 @@ The source code here is an example of such a kernel module.
 We want to ``spy'' on a certain user, and to \cpp|pr_info()| a message whenever that user opens a file.
 Towards this end, we replace the system call to open a file with our own function, called \cpp|our_sys_open|.
 This function checks the uid (user's id) of the current process, and if it is equal to the uid we spy on, it calls \cpp|pr_info()| to display the name of the file to be opened.
-Then, either way, it calls the original open() function with the same parameters, to actually open the file.
+Then, either way, it calls the original \cpp|open()| function with the same parameters, to actually open the file.
 
 The \cpp|init_module| function replaces the appropriate location in \cpp|sys_call_table| and keeps the original pointer in a variable.
 The \cpp|cleanup_module| function uses that variable to restore everything back to normal.
