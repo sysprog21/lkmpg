@@ -197,7 +197,7 @@ static int __init sleep_init(void)
     proc_set_size(Our_Proc_File, 80);
     proc_set_user(Our_Proc_File, GLOBAL_ROOT_UID, GLOBAL_ROOT_GID);
 
-    pr_info("/proc/test created\n");
+    pr_info("/proc/%s created\n", PROC_ENTRY_FILENAME);
 
     return 0;
 }
