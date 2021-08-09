@@ -712,13 +712,12 @@ crw-rw----  1 root  dial 4, 66 Jul  5  2000 /dev/ttyS2
 crw-rw----  1 root  dial 4, 67 Jul  5  2000 /dev/ttyS3
 \end{verbatim}
 
-% FIXME: use the appropriate entries for device drivers
 If you want to see which major numbers have been assigned, you can look at \verb|Documentation/admin-guide/devices.txt|.
 
-When the system was installed, all of those device files were created by the mknod command.
-To create a new char device named `coffee' with major/minor number 12 and 2, simply do mknod /dev/coffee c 12 2.
-You do not have to put your device files into /dev, but it is done by convention.
-Linus put his device files in /dev, and so should you.
+When the system was installed, all of those device files were created by the \sh|mknod| command.
+To create a new char device named \verb|coffee| with major/minor number 12 and 2, simply do \sh|mknod /dev/coffee c 12 2|.
+You do not have to put your device files into \verb|/dev|, but it is done by convention.
+Linus put his device files in \verb|/dev|, and so should you.
 However, when creating a device file for testing purposes, it is probably OK to place it in your working directory where you compile the kernel module.
 Just be sure to put it in the right place when you're done writing the device driver.
 
@@ -745,7 +744,7 @@ So just be aware that the word ``hardware'' in our discussion can mean something
 \label{sec:chardev}
 \subsection{The file\_operations Structure}
 \label{sec:file_operations}
-The \cpp|file_operations| structure is defined in \verb|/usr/include/linux/fs.h|, and holds pointers to functions defined by the driver that perform various operations on the device.
+The \cpp|file_operations| structure is defined in \verb|include/linux/fs.h|, and holds pointers to functions defined by the driver that perform various operations on the device.
 Each field of the structure corresponds to the address of some function defined by the driver to handle a requested operation.
 
 For example, every character driver needs to define a function that reads from the device.
