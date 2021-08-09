@@ -147,6 +147,7 @@ Rest assured, after you get over the initial hurdle of doing it for the first ti
         If you are having trouble loading the modules because of versioning errors, compile a kernel with modversioning turned off.
 
   \item Using X Window System.
+  \label{sec:using_x}
         It is highly recommended that you extract, compile and load all the examples this guide discusses.
         It is also highly recommended you do this from a console.
         You should not be working on this stuff in X Window System.
@@ -261,7 +262,7 @@ Now for more of a description of how this module works.
 Kernel modules must have at least two functions: a "start" (initialization) function called \cpp|init_module()| which is called when the module is insmoded into the kernel, and an "end" (cleanup) function called \cpp|cleanup_module()| which is called just before it is removed from the kernel.
 Actually, things have changed starting with kernel 2.3.13.
 % TODO: adjust the section anchor
-You can now use whatever name you like for the start and end functions of a module, and you will learn how to do this in Section 2.3.
+You can now use whatever name you like for the start and end functions of a module, and you will learn how to do this in Section \ref{hello_n_goodbye}.
 In fact, the new method is the preferred method.
 However, many people still use \cpp|init_module()| and \cpp|cleanup_module()| for their start and end functions.
 
@@ -270,7 +271,7 @@ The \cpp|cleanup_module()| function is supposed to undo whatever \cpp|init_modul
 
 Lastly, every kernel module needs to include \verb|linux/module.h|.
 % TODO: adjust the section anchor
-We needed to include \verb|linux/kernel.h| only for the macro expansion for the \cpp|pr_alert()| log level, which you'll learn about in Section 2.1.1.
+We needed to include \verb|linux/kernel.h| only for the macro expansion for the \cpp|pr_alert()| log level, which you'll learn about in Section \ref{sec:printk}.
 
 \begin{enumerate}
   \item A point about coding style.
@@ -279,10 +280,11 @@ We needed to include \verb|linux/kernel.h| only for the macro expansion for the 
         You may not like it, but you'll need to get used to it if you ever submit a patch upstream.
 
   \item Introducing print macros.
+  \label{sec:printk}
         In the beginning there was \cpp|printk|, usually followed by a priority such as \cpp|KERN_INFO| or \cpp|KERN_DEBUG|.
         More recently this can also be expressed in abbreviated form using a set of print macros, such as \cpp|pr_info| and \cpp|pr_debug|.
         This just saves some mindless keyboard bashing and looks a bit neater.
-        They can be found within \verb|linux/printk.h|.
+        They can be found within \verb|include/linux/printk.h|.
         Take time to read through the available priority macros.
 
   \item About Compiling.
@@ -1362,7 +1364,7 @@ An example is shown below.
 \label{sec:print_macros}
 \subsection{Replacement}
 % FIXME: cross-reference
-In Section 1.2.1.2, I said that X and kernel module programming do not mix.
+In Section \ref{sec:using_x}, I said that X Window System and kernel module programming do not mix.
 That is true for developing kernel modules, but in actual use, you want to be able to send messages to whichever tty the command to load the module came from.
 
 "tty" is an abbreviation of \emph{teletype}: originally a combination keyboard-printer used to communicate with a Unix system, and today an abstraction for the text stream used for a Unix program, whether it is a physical terminal, an xterm on an X display, a network connection used with ssh, etc.
