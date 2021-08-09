@@ -206,7 +206,7 @@ Paste this into you favorite editor and save it as \verb|hello-1.c|:
 
 \samplec{examples/hello-1.c}
 
-Now you will need a Makefile. If you copy and paste this, change the indentation to use \textit{tabs}, not spaces.
+Now you will need a \verb|Makefile|. If you copy and paste this, change the indentation to use \textit{tabs}, not spaces.
 
 \begin{code}
 obj-m += hello-1.o
@@ -307,7 +307,7 @@ What happens?
 \subsection{Hello and Goodbye}
 \label{hello_n_goodbye}
 In early kernel versions you had to use the \cpp|init_module| and \cpp|cleanup_module| functions, as in the first hello world example, but these days you can name those anything you want by using the \cpp|module_init| and \cpp|module_exit| macros.
-These macros are defined in \verb|linux/init.h|.
+These macros are defined in \verb|include/linux/init.h|.
 The only requirement is that your init and cleanup functions must be defined before calling the those macros, otherwise you'll get compilation errors.
 Here is an example of this technique:
 
@@ -326,11 +326,11 @@ clean:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
 \end{code}
 
-Now have a look at \verb|linux/drivers/char/Makefile| for a real world example.
+Now have a look at \verb|drivers/char/Makefile| for a real world example.
 As you can see, some things get hardwired into the kernel (\verb|obj-y|) but where are all those \verb|obj-m| gone?
 Those familiar with shell scripts will easily be able to spot them.
 For those not, the \verb|obj-$(CONFIG_FOO)| entries you see everywhere expand into \verb|obj-y| or \verb|obj-m|, depending on whether the \verb|CONFIG_FOO| variable has been set to y or m.
-While we are at it, those were exactly the kind of variables that you have set in the \verb|linux/.config| file, the last time when you said make menuconfig or something like that.
+While we are at it, those were exactly the kind of variables that you have set in the \verb|.config| file in the top-level directory of Linux kernel source tree, the last time when you said make menuconfig or something like that.
 
 \subsection{The \_\_init and \_\_exit Macros}
 \label{init_n_exit}
@@ -344,7 +344,7 @@ There is also an \cpp|__initdata| which works similarly to \cpp|__init| but for 
 The \cpp|__exit| macro causes the omission of the function when the module is built into the kernel, and like \cpp|__init|, has no effect for loadable modules.
 Again, if you consider when the cleanup function runs, this makes complete sense; built-in drivers do not need a cleanup function, while loadable modules do.
 
-These macros are defined in \verb|linux/init.h| and serve to free up kernel memory.
+These macros are defined in \verb|include/linux/init.h| and serve to free up kernel memory.
 When you boot your kernel and see something like Freeing unused kernel memory: 236k freed, this is precisely what the kernel is freeing.
 
 \samplec{examples/hello-3.c}
@@ -361,7 +361,7 @@ module license 'unspecified' taints kernel.
 
 You can use a few macros to indicate the license for your module.
 Some examples are "GPL", "GPL v2", "GPL and additional rights", "Dual BSD/GPL", "Dual MIT/GPL", "Dual MPL/GPL" and "Proprietary".
-They are defined within \verb|linux/module.h|.
+They are defined within \verb|include/linux/module.h|.
 
 To reference what license you're using a macro is available called \cpp|MODULE_LICENSE|.
 This and a few other macros describing the module are illustrated in the below example.
@@ -521,7 +521,7 @@ You may just want to copy it to your kernel source tree: \sh|cp /boot/config-`un
 
 Let's focus again on the previous error message: a closer look at the version magic strings suggests that, even with two configuration files which are exactly the same, a slight difference in the version magic could be possible, and it is sufficient to prevent insertion of the module into the kernel.
 That slight difference, namely the custom string which appears in the module's version magic and not in the kernel's one, is due to a modification with respect to the original, in the makefile that some distribution include.
-Then, examine your \verb|linux/Makefile|, and make sure that the specified version information matches exactly the one used for your current kernel.
+Then, examine your \verb|Makefile|, and make sure that the specified version information matches exactly the one used for your current kernel.
 For example, you makefile could start as follows:
 
 \begin{verbatim}
@@ -831,7 +831,7 @@ Sin Linux v5.6, the \cpp|proc_ops| structure was introduced to replace the use o
 \subsection{The file structure}
 \label{sec:file_struct}
 
-Each device is represented in the kernel by a file structure, which is defined in \verb|linux/fs.h|.
+Each device is represented in the kernel by a file structure, which is defined in \verb|include/linux/fs.h|.
 Be aware that a file is a kernel level structure and never appears in a user space program.
 It is not the same thing as a \cpp|FILE|, which is defined by glibc and would never appear in a kernel space function.
 Also, its name is a bit misleading; it represents an abstract open `file', not a file on a disk, which is represented by a structure named inode.
