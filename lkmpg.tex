@@ -121,7 +121,7 @@ sudo cat /proc/modules
 \end{codebash}
 
 This can be a long list, and you might prefer to search for something particular.
-To search for the \emph{fat} module:
+To search for the \verb|fat| module:
 \begin{codebash}
 sudo lsmod | grep fat
 \end{codebash}
@@ -181,7 +181,7 @@ sudo apt-get install kmod linux-headers-5.4.0-80-generic
 
 \section{Examples}
 \label{sec:examples}
-All the examples from this document are available within the \emph{examples} subdirectory.
+All the examples from this document are available within the \verb|examples| subdirectory.
 
 If there are any compile errors then you might have a more recent kernel version or need to install the corresponding kernel header files.
 
@@ -514,7 +514,7 @@ How to do this, is the subject of the remainder of this chapter.
 
 First of all, make sure that a kernel source tree is available, having exactly the same version as your current kernel.
 Then, find the configuration file which was used to compile your precompiled kernel.
-Usually, this is available in your current \emph{boot} directory, under a name like \verb|config-5.14.x|.
+Usually, this is available in your current \verb|boot| directory, under a name like \verb|config-5.14.x|.
 You may just want to copy it to your kernel source tree: \sh|cp /boot/config-`uname -r` .config|.
 
 Let's focus again on the previous error message: a closer look at the version magic strings suggests that, even with two configuration files which are exactly the same, a slight difference in the version magic could be possible, and it is sufficient to prevent insertion of the module into the kernel.
@@ -1080,7 +1080,7 @@ You can also read the code of \verb|fs/seq_file.c| in the linux kernel.
 \label{sec:sysfs}
 \emph{sysfs} allows you to interact with the running kernel from userspace by reading or setting variables inside of modules.
 This can be useful for debugging purposes, or just as an interface for applications or scripts.
-You can find sysfs directories and files under the \emph{sys} directory on your system.
+You can find sysfs directories and files under the \verb|/sys| directory on your system.
 
 \begin{codebash}
 ls -l /sys
@@ -1313,7 +1313,7 @@ In the following example two threads are started, but one needs to start before 
 
 \samplec{examples/completions.c}
 
-The \emph{machine} structure stores the completion states for the two threads.
+The \cpp|machine| structure stores the completion states for the two threads.
 At the exit point of each thread the respective completion state is updated, and \cpp|wait_for_completion| is used by the flywheel thread to ensure that it does not begin prematurely.
 
 So even though \cpp|flywheel_thread| is started first you should notice if you load this module and run \sh|dmesg| that turning the crank always happens first because the flywheel thread waits for it to complete.
@@ -1567,7 +1567,7 @@ You might need to do this for a short time and that is OK, but if you do not ena
 
 \section{Where To Go From Here?}
 \label{sec:where_to_go}
-For people seriously interested in kernel programming, I recommend \href{https://kernelnewbies.org}{kernelnewbies.org} and the \emph{Documentation} subdirectory within the kernel source code which is not always easy to understand but can be a starting point for further investigation.
+For people seriously interested in kernel programming, I recommend \href{https://kernelnewbies.org}{kernelnewbies.org} and the \verb|Documentation| subdirectory within the kernel source code which is not always easy to understand but can be a starting point for further investigation.
 Also, as Linus Torvalds said, the best way to learn the kernel is to read the source code yourself.
 
 If you are interested in more examples of short kernel modules then searching on sites such as Github and Gitlab is a good way to start, although there is a lot of duplication of older LKMPG examples which may not compile with newer kernel versions.
