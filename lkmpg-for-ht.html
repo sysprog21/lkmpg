@@ -1300,7 +1300,7 @@ device.
 </p><!-- l. 859 --><p class='indent'>   Adding a driver to your system means registering it with the kernel. This is synonymous
 with assigning it a major number during the module’s initialization. You do this by
 using the <code>  <span class='ectt-1000'>register_chrdev</span>
-</code> function, defined by linux/fs.h.
+</code> function, defined by <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/fs.h'>include/linux/fs.h</a>.
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb35'><a id='x1-29004r1'></a><span class='ecrm-0500'>1</span><span id='textcolor393'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> register_chrdev(</span><span id='textcolor394'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor395'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> major, </span><span id='textcolor396'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor397'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *name, </span><span id='textcolor398'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file_operations *fops);</span></pre>
