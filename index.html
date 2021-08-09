@@ -356,8 +356,8 @@ The <code>  <span class='ectt-1000'>cleanup_module()</span>
 </code> function is supposed to undo whatever
 <code> <span class='ectt-1000'>init_module()</span>
 </code> did, so the module can be unloaded safely.
-</p><!-- l. 272 --><p class='indent'>   Lastly, every kernel module needs to include <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>linux/module.h</span></span></span>. We
-needed to include <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>linux/kernel.h</span></span></span> only for the macro expansion for the
+</p><!-- l. 272 --><p class='indent'>   Lastly, every kernel module needs to include <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>&lt;linux/module.h&gt;</span></span></span>. We
+needed to include <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>&lt;linux/kernel.h&gt;</span></span></span> only for the macro expansion for the
 <code> <span class='ectt-1000'>pr_alert()</span>
 </code> log level, which you’ll learn about in Section <a href='#x1-120992'>2<!-- tex4ht:ref: sec:printk  --></a>.
 </p><!-- l. 276 --><p class='indent'>
@@ -927,10 +927,12 @@ terms “entry function” and “exit function”, but if I slip and simply ref
    <h4 class='subsectionHead' id='functions-available-to-modules'><span class='titlemark'>0.5.2   </span> <a id='x1-210000.5.2'></a>Functions available to modules</h4>
 <!-- l. 575 --><p class='noindent'>Programmers use functions they do not define all the time. A prime example of this
 is <code>  <span class='ectt-1000'>printf()</span>
-</code>. You use these library functions which are provided by the standard C library, libc.
-The definitions for these functions do not actually enter your program until the
-linking stage, which insures that the code (for printf() for example) is available, and
-fixes the call instruction to point to that code.
+</code>. You use these library functions which are provided by the standard C
+library, libc. The definitions for these functions do not actually enter
+your program until the linking stage, which insures that the code (for
+<code> <span class='ectt-1000'>printf()</span>
+</code> for example) is available, and fixes the call instruction to point to that
+code.
 </p><!-- l. 580 --><p class='indent'>   Kernel modules are different here, too. In the hello world
 example, you might have noticed that we used a function,
 <code> <span class='ectt-1000'>pr_info()</span>
@@ -940,43 +942,51 @@ get resolved upon <code>  <span class='ectt-1000'>insmod</span>
 external functions you can use are the ones provided by the kernel. If you’re
 curious about what symbols have been exported by your kernel, take a look at
 <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/kallsyms</span></span></span>.
-</p><!-- l. 585 --><p class='indent'>   One point to keep in mind is the difference between library functions
-and system calls. Library functions are higher level, run completely in user
-space and provide a more convenient interface for the programmer to the
-functions that do the real work — system calls. System calls run in kernel
-mode on the user’s behalf and are provided by the kernel itself. The library
-function printf() may look like a very general printing function, but all it
-really does is format the data into strings and write the string data using
-the low-level system call write(), which then sends the data to standard
-output.
-</p><!-- l. 589 --><p class='indent'>   Would you like to see what system calls are made by printf()? It is easy! Compile
-the following program:
+</p><!-- l. 585 --><p class='indent'>   One point to keep in mind is the difference between library functions and system
+calls. Library functions are higher level, run completely in user space and
+provide a more convenient interface for the programmer to the functions
+that do the real work — system calls. System calls run in kernel mode on
+the user’s behalf and are provided by the kernel itself. The library function
+<code> <span class='ectt-1000'>printf()</span>
+</code> may look like a very general printing function, but all it really does is format the
+data into strings and write the string data using the low-level system call
+<code> <span class='ectt-1000'>write()</span>
+</code>, which then sends the data to standard output.
+</p><!-- l. 589 --><p class='indent'>   Would you like to see what system calls are made by
+<code> <span class='ectt-1000'>printf()</span>
+</code>? It is easy! Compile the following program:
 </p><!-- l. 1 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb30'><a id='x1-21012r1'></a><span class='ecrm-0500'>1</span><span id='textcolor258'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor259'><span class='ectt-0800'>&lt;stdio.h&gt;</span></span> 
-<a id='x1-21014r2'></a><span class='ecrm-0500'>2</span> 
-<a id='x1-21016r3'></a><span class='ecrm-0500'>3</span><span id='textcolor260'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> main(</span><span id='textcolor261'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
-<a id='x1-21018r4'></a><span class='ecrm-0500'>4</span><span class='ectt-0800'>{</span> 
-<a id='x1-21020r5'></a><span class='ecrm-0500'>5</span><span class='ectt-0800'>    printf(</span><span id='textcolor262'><span class='ectt-0800'>"hello"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-21022r6'></a><span class='ecrm-0500'>6</span><span class='ectt-0800'>    </span><span id='textcolor263'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
-<a id='x1-21024r7'></a><span class='ecrm-0500'>7</span><span class='ectt-0800'>}</span></pre>
-<!-- l. 603 --><p class='indent'>   with <code>  <span class='ectt-1000'>gcc -Wall -o hello hello.c</span>
-</code>. Run the exectable with <code>  <span class='ectt-1000'>strace ./hello</span>
-</code>. Are you impressed? Every line you see corresponds to a system call. <a href='https://strace.io/'>strace</a> is a
                                                                   
 
                                                                   
+   <pre class='fancyvrb' id='fancyvrb30'><a id='x1-21016r1'></a><span class='ecrm-0500'>1</span><span id='textcolor258'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor259'><span class='ectt-0800'>&lt;stdio.h&gt;</span></span> 
+<a id='x1-21018r2'></a><span class='ecrm-0500'>2</span> 
+<a id='x1-21020r3'></a><span class='ecrm-0500'>3</span><span id='textcolor260'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> main(</span><span id='textcolor261'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-21022r4'></a><span class='ecrm-0500'>4</span><span class='ectt-0800'>{</span> 
+<a id='x1-21024r5'></a><span class='ecrm-0500'>5</span><span class='ectt-0800'>    printf(</span><span id='textcolor262'><span class='ectt-0800'>"hello"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-21026r6'></a><span class='ecrm-0500'>6</span><span class='ectt-0800'>    </span><span id='textcolor263'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
+<a id='x1-21028r7'></a><span class='ecrm-0500'>7</span><span class='ectt-0800'>}</span></pre>
+<!-- l. 603 --><p class='indent'>   with <code>  <span class='ectt-1000'>gcc -Wall -o hello hello.c</span>
+</code>. Run the exectable with <code>  <span class='ectt-1000'>strace ./hello</span>
+</code>. Are you impressed? Every line you see corresponds to a system call. <a href='https://strace.io/'>strace</a> is a
 handy program that gives you details about what system calls a program is
 making, including which call is made, what its arguments are and what it
 returns. It is an invaluable tool for figuring out things like what files a program
 is trying to access. Towards the end, you will see a line which looks like
 <code> <span class='ectt-1000'>write(1, </span><span id='textcolor264'><span class='ectt-1000'>"hello"</span></span><span class='ectt-1000'>, 5hello)</span>
-</code>. There it is. The face behind the printf() mask. You may not be familiar with write,
-since most people use library functions for file I/O (like fopen, fputs, fclose). If that
-is the case, try looking at man 2 write. The 2nd man section is devoted
-to system calls (like kill() and read()). The 3rd man section is devoted to
-library calls, which you would probably be more familiar with (like cosh() and
-random()).
+</code>. There it is. The face behind the <code>  <span class='ectt-1000'>printf()</span>
+</code> mask. You may not be familiar with write, since most people use library functions for file
+I/O (like <code>  <span class='ectt-1000'>fopen</span>
+</code>, <code>  <span class='ectt-1000'>fputs</span>
+</code>, <code>  <span class='ectt-1000'>fclose</span>
+</code>). If that is the case, try looking at man 2 write. The 2nd man section is devoted to system
+calls (like <code>  <span class='ectt-1000'>kill()</span>
+</code> and <code>  <span class='ectt-1000'>read()</span>
+</code>). The 3rd man section is devoted to library calls, which you would probably be more familiar
+with (like <code>  <span class='ectt-1000'>cosh()</span>
+</code> and <code>  <span class='ectt-1000'>random()</span>
+</code>).
 </p><!-- l. 617 --><p class='indent'>   You can even write modules to replace the kernel’s system calls, which we will do
 shortly. Crackers often make use of this sort of thing for backdoors or trojans, but
 you can write your own modules to do more benign things, like have the kernel
@@ -999,6 +1009,9 @@ mode”.
 </p><!-- l. 630 --><p class='indent'>   Recall the discussion about library functions vs system calls. Typically, you use a
 library function in user mode. The library function calls one or more system calls,
 and these system calls execute on the library function’s behalf, but do so in
+                                                                  
+
+                                                                  
 supervisor mode since they are part of the kernel itself. Once the system call
 completes its task, it returns and execution gets transfered back to user
 mode.
@@ -1007,9 +1020,6 @@ mode.
    <h4 class='subsectionHead' id='name-space'><span class='titlemark'>0.5.4   </span> <a id='x1-230000.5.4'></a>Name Space</h4>
 <!-- l. 637 --><p class='noindent'>When you write a small C program, you use variables which are convenient and make
 sense to the reader. If, on the other hand, you are writing routines which will be part
-                                                                  
-
-                                                                  
 of a bigger problem, any global variables you have are part of a community of other
 peoples’ global variables; some of the variable names can clash. When a program has
 lots of global variables which aren’t meaningful enough to be distinguished, you get
@@ -1043,6 +1053,9 @@ whatever it needs to be. Since the memory space for any two processes do not
 overlap, every process that can access a memory address, say 0xbffff978, would
 be accessing a different location in real physical memory! The processes
 would be accessing an index named 0xbffff978 which points to some kind of
+                                                                  
+
+                                                                  
 offset into the region of memory set aside for that particular process. For
 the most part, a process like our Hello, World program can’t access the
 space of another process, although there are ways which we will talk about
@@ -1053,9 +1066,6 @@ semi-autonomous object), it shares the kernel’s codespace rather than having i
 Therefore, if your module segfaults, the kernel segfaults. And if you start writing
 over data because of an off-by-one error, then you’re trampling on kernel
 data (or code). This is even worse than it sounds, so try your best to be
-                                                                  
-
-                                                                  
 careful.
 </p><!-- l. 666 --><p class='indent'>   By the way, I would like to point out that the above discussion is true for any
 operating system which uses a monolithic kernel. This is not quite the same thing as
@@ -1345,9 +1355,9 @@ is by looking at the 3rd field of <span class='obeylines-h'><span class='verb'><
 <code> <span class='ectt-1000'>cleanup_module</span>
 </code> because the check will be performed for you by the system call
 <code> <span class='ectt-1000'>sys_delete_module</span>
-</code>, defined in <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>linux/module.c</span></span></span>. You should not use this counter directly, but there are
-functions defined in <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>linux/module.h</span></span></span> which let you increase, decrease and display
-this counter:
+</code>, defined in <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>include/linux/syscalls.h</span></span></span>. You should not use this counter directly,
+but there are functions defined in <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>include/linux/module.h</span></span></span> which let you increase,
+decrease and display this counter:
 </p>
      <ul class='itemize1'>
      <li class='itemize'><code>  <span class='ectt-1000'>try_module_get(THIS_MODULE)</span>
@@ -2001,36 +2011,47 @@ yourself.
 <!-- l. 1024 --><p class='noindent'>As we have seen, writing a /proc file may be quite “complex”.
 So to help people writting /proc file, there is an API named
 <code> <span class='ectt-1000'>seq_file</span>
-</code> that helps formating a <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> file for output. It is based on sequence,
-which is composed of 3 functions: start(), next(), and stop(). The
-<code> <span class='ectt-1000'>seq_file</span>
+</code> that helps formating a <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> file for output. It is based on sequence, which is composed of
+3 functions: <code>  <span class='ectt-1000'>start()</span>
+</code>, <code>  <span class='ectt-1000'>next()</span>
+</code>, and <code>  <span class='ectt-1000'>stop()</span>
+</code>. The <code>  <span class='ectt-1000'>seq_file</span>
 </code> API starts a sequence when a user read the /proc file.
-</p><!-- l. 1029 --><p class='indent'>   A sequence begins with the call of the function start(). If the return is a non
-NULL value, the function next() is called. This function is an iterator, the goal is to
-go through all the data. Each time next() is called, the function show() is also called.
-It writes data values in the buffer read by the user. The function next() is called until
-it returns NULL. The sequence ends when next() returns NULL, then the function
-stop() is called.
+</p><!-- l. 1029 --><p class='indent'>   A sequence begins with the call of the function
+<code> <span class='ectt-1000'>start()</span>
+</code>. If the return is a non NULL value, the function
+<code> <span class='ectt-1000'>next()</span>
+</code> is called. This function is an iterator, the goal is to go through all the data. Each
                                                                   
 
                                                                   
-</p><!-- l. 1037 --><p class='indent'>   BE CAREFUL: when a sequence is finished, another one starts. That means that
-at the end of function stop(), the function start() is called again. This loop finishes
-when the function start() returns NULL. You can see a scheme of this in the
-Figure <a href='#ignorespaces-how-seqfile-works'>1<!-- tex4ht:ref: img:seqfile  --></a>.
+time <code>  <span class='ectt-1000'>next()</span>
+</code> is called, the function <code>  <span class='ectt-1000'>show()</span>
+</code> is also called. It writes data values in the buffer read by the user. The function
+<code> <span class='ectt-1000'>next()</span>
+</code> is called until it returns NULL. The sequence ends when
+<code> <span class='ectt-1000'>next()</span>
+</code> returns NULL, then the function <code>  <span class='ectt-1000'>stop()</span>
+</code> is called.
+</p><!-- l. 1037 --><p class='indent'>   BE CAREFUL: when a sequence is finished, another one starts. That means that at the end
+of function <code>  <span class='ectt-1000'>stop()</span>
+</code>, the function <code>  <span class='ectt-1000'>start()</span>
+</code> is called again. This loop finishes when the function
+<code> <span class='ectt-1000'>start()</span>
+</code> returns NULL. You can see a scheme of this in the Figure <a href='#ignorespaces-how-seqfile-works'>1<!-- tex4ht:ref: img:seqfile  --></a>.
 </p>
    <figure class='figure' id='ignorespaces-how-seqfile-works'> 
 
                                                                   
 
                                                                   
-<a id='x1-37003r1'></a>
+<a id='x1-37016r1'></a>
                                                                   
 
                                                                   
 <!-- l. 1044 --><p class='noindent'><img alt='srYrsNNYtaeenetoooertusetupstrxr((ntn))( tis)istrr teeaNreNatUaUtmLtLmeLmLen?e?ntntt  ' src='lkmpg-for-ht1x.svg' />
 </p>
-<figcaption class='caption'><span class='id'>Figure 1:</span><span class='content'>How seq_file works</span></figcaption><!-- tex4ht:label?: x1-37003r1  -->
+<figcaption class='caption'><span class='id'>Figure 1:</span><span class='content'>How seq_file works</span></figcaption><!-- tex4ht:label?: x1-37016r1  -->
                                                                   
 
                                                                   
@@ -2042,123 +2063,123 @@ Figure <a href='#ignorespaces-how-seqfile-works'>1<!-- tex4ht:ref: img:seqfile 
 </code>, and some others. But nothing to write in the /proc file. Of course, you can still use
 the same way as in the previous example.
 </p>
-   <pre class='fancyvrb' id='fancyvrb40'><a id='x1-37009r1'></a><span class='ecrm-0500'>1</span><span id='textcolor803'><span class='ectt-0800'>/*</span></span> 
-<a id='x1-37011r2'></a><span class='ecrm-0500'>2</span><span id='textcolor804'><span class='ectt-0800'> * procfs4.c -  create a "file" in /proc</span></span> 
-<a id='x1-37013r3'></a><span class='ecrm-0500'>3</span><span id='textcolor805'><span class='ectt-0800'> * This program uses the seq_file library to manage the /proc file.</span></span> 
-<a id='x1-37015r4'></a><span class='ecrm-0500'>4</span><span id='textcolor806'><span class='ectt-0800'> */</span></span> 
-<a id='x1-37017r5'></a><span class='ecrm-0500'>5</span> 
-<a id='x1-37019r6'></a><span class='ecrm-0500'>6</span><span id='textcolor807'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor808'><span class='ectt-0800'>&lt;linux/kernel.h&gt;   /* We are doing kernel work */</span></span> 
-<a id='x1-37021r7'></a><span class='ecrm-0500'>7</span><span id='textcolor809'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor810'><span class='ectt-0800'>&lt;linux/module.h&gt;   /* Specifically, a module */</span></span> 
-<a id='x1-37023r8'></a><span class='ecrm-0500'>8</span><span id='textcolor811'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor812'><span class='ectt-0800'>&lt;linux/proc_fs.h&gt;  /* Necessary because we use proc fs */</span></span> 
-<a id='x1-37025r9'></a><span class='ecrm-0500'>9</span><span id='textcolor813'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor814'><span class='ectt-0800'>&lt;linux/seq_file.h&gt; /* for seq_file */</span></span> 
-<a id='x1-37027r10'></a><span class='ecrm-0500'>10</span><span id='textcolor815'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor816'><span class='ectt-0800'>&lt;linux/version.h&gt;</span></span> 
-<a id='x1-37029r11'></a><span class='ecrm-0500'>11</span> 
-<a id='x1-37031r12'></a><span class='ecrm-0500'>12</span><span id='textcolor817'><span class='ectt-0800'>#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(5, 6, 0)</span></span> 
-<a id='x1-37033r13'></a><span class='ecrm-0500'>13</span><span id='textcolor818'><span class='ectt-0800'>#define HAVE_PROC_OPS</span></span> 
-<a id='x1-37035r14'></a><span class='ecrm-0500'>14</span><span id='textcolor819'><span class='ectt-0800'>#endif</span></span> 
-<a id='x1-37037r15'></a><span class='ecrm-0500'>15</span> 
-<a id='x1-37039r16'></a><span class='ecrm-0500'>16</span><span id='textcolor820'><span class='ectt-0800'>#define PROC_NAME "iter"</span></span> 
-<a id='x1-37041r17'></a><span class='ecrm-0500'>17</span> 
-<a id='x1-37043r18'></a><span class='ecrm-0500'>18</span><span id='textcolor821'><span class='ectt-0800'>/* This function is called at the beginning of a sequence.</span></span> 
-<a id='x1-37045r19'></a><span class='ecrm-0500'>19</span><span id='textcolor822'><span class='ectt-0800'> * ie, when:</span></span> 
-<a id='x1-37047r20'></a><span class='ecrm-0500'>20</span><span id='textcolor823'><span class='ectt-0800'> *   - the /proc file is read (first time)</span></span> 
-<a id='x1-37049r21'></a><span class='ecrm-0500'>21</span><span id='textcolor824'><span class='ectt-0800'> *   - after the function stop (end of sequence)</span></span> 
-<a id='x1-37051r22'></a><span class='ecrm-0500'>22</span><span id='textcolor825'><span class='ectt-0800'> */</span></span> 
-<a id='x1-37053r23'></a><span class='ecrm-0500'>23</span><span id='textcolor826'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor827'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> *my_seq_start(</span><span id='textcolor828'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> seq_file *s, loff_t *pos)</span> 
-<a id='x1-37055r24'></a><span class='ecrm-0500'>24</span><span class='ectt-0800'>{</span> 
-<a id='x1-37057r25'></a><span class='ecrm-0500'>25</span><span class='ectt-0800'>    </span><span id='textcolor829'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor830'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor831'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> counter = 0;</span> 
-<a id='x1-37059r26'></a><span class='ecrm-0500'>26</span> 
-<a id='x1-37061r27'></a><span class='ecrm-0500'>27</span><span class='ectt-0800'>    </span><span id='textcolor832'><span class='ectt-0800'>/* beginning a new sequence? */</span></span> 
-<a id='x1-37063r28'></a><span class='ecrm-0500'>28</span><span class='ectt-0800'>    </span><span id='textcolor833'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (*pos == 0) {</span> 
-<a id='x1-37065r29'></a><span class='ecrm-0500'>29</span><span class='ectt-0800'>        </span><span id='textcolor834'><span class='ectt-0800'>/* yes =&gt; return a non null value to begin the sequence */</span></span> 
-<a id='x1-37067r30'></a><span class='ecrm-0500'>30</span><span class='ectt-0800'>        </span><span id='textcolor835'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> &amp;counter;</span> 
-<a id='x1-37069r31'></a><span class='ecrm-0500'>31</span><span class='ectt-0800'>    }</span> 
-<a id='x1-37071r32'></a><span class='ecrm-0500'>32</span><span class='ectt-0800'>    </span><span id='textcolor836'><span class='ectt-0800'>/* no =&gt; it is the end of the sequence, return end to stop reading */</span></span> 
-<a id='x1-37073r33'></a><span class='ecrm-0500'>33</span><span class='ectt-0800'>    *pos = 0;</span> 
-<a id='x1-37075r34'></a><span class='ecrm-0500'>34</span><span class='ectt-0800'>    </span><span id='textcolor837'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> NULL;</span> 
-<a id='x1-37077r35'></a><span class='ecrm-0500'>35</span><span class='ectt-0800'>}</span> 
-<a id='x1-37079r36'></a><span class='ecrm-0500'>36</span> 
-<a id='x1-37081r37'></a><span class='ecrm-0500'>37</span><span id='textcolor838'><span class='ectt-0800'>/* This function is called after the beginning of a sequence.</span></span> 
-<a id='x1-37083r38'></a><span class='ecrm-0500'>38</span><span id='textcolor839'><span class='ectt-0800'> * It is called untill the return is NULL (this ends the sequence).</span></span> 
-<a id='x1-37085r39'></a><span class='ecrm-0500'>39</span><span id='textcolor840'><span class='ectt-0800'> */</span></span> 
-<a id='x1-37087r40'></a><span class='ecrm-0500'>40</span><span id='textcolor841'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor842'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> *my_seq_next(</span><span id='textcolor843'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> seq_file *s, </span><span id='textcolor844'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> *v, loff_t *pos)</span> 
-<a id='x1-37089r41'></a><span class='ecrm-0500'>41</span><span class='ectt-0800'>{</span> 
-<a id='x1-37091r42'></a><span class='ecrm-0500'>42</span><span class='ectt-0800'>    </span><span id='textcolor845'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor846'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> *tmp_v = (</span><span id='textcolor847'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor848'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> *) v;</span> 
-<a id='x1-37093r43'></a><span class='ecrm-0500'>43</span><span class='ectt-0800'>    (*tmp_v)++;</span> 
-<a id='x1-37095r44'></a><span class='ecrm-0500'>44</span><span class='ectt-0800'>    (*pos)++;</span> 
-<a id='x1-37097r45'></a><span class='ecrm-0500'>45</span><span class='ectt-0800'>    </span><span id='textcolor849'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> NULL;</span> 
-<a id='x1-37099r46'></a><span class='ecrm-0500'>46</span><span class='ectt-0800'>}</span> 
-<a id='x1-37101r47'></a><span class='ecrm-0500'>47</span> 
-<a id='x1-37103r48'></a><span class='ecrm-0500'>48</span><span id='textcolor850'><span class='ectt-0800'>/* This function is called at the end of a sequence. */</span></span> 
-<a id='x1-37105r49'></a><span class='ecrm-0500'>49</span><span id='textcolor851'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor852'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> my_seq_stop(</span><span id='textcolor853'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> seq_file *s, </span><span id='textcolor854'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> *v)</span> 
-<a id='x1-37107r50'></a><span class='ecrm-0500'>50</span><span class='ectt-0800'>{</span> 
-<a id='x1-37109r51'></a><span class='ecrm-0500'>51</span><span class='ectt-0800'>    </span><span id='textcolor855'><span class='ectt-0800'>/* nothing to do, we use a static value in start() */</span></span> 
-<a id='x1-37111r52'></a><span class='ecrm-0500'>52</span><span class='ectt-0800'>}</span> 
-<a id='x1-37113r53'></a><span class='ecrm-0500'>53</span> 
-<a id='x1-37115r54'></a><span class='ecrm-0500'>54</span><span id='textcolor856'><span class='ectt-0800'>/* This function is called for each "step" of a sequence. */</span></span> 
-<a id='x1-37117r55'></a><span class='ecrm-0500'>55</span><span id='textcolor857'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor858'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> my_seq_show(</span><span id='textcolor859'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> seq_file *s, </span><span id='textcolor860'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> *v)</span> 
-<a id='x1-37119r56'></a><span class='ecrm-0500'>56</span><span class='ectt-0800'>{</span> 
-<a id='x1-37121r57'></a><span class='ecrm-0500'>57</span><span class='ectt-0800'>    loff_t *spos = (loff_t *) v;</span> 
-<a id='x1-37123r58'></a><span class='ecrm-0500'>58</span> 
-<a id='x1-37125r59'></a><span class='ecrm-0500'>59</span><span class='ectt-0800'>    seq_printf(s, </span><span id='textcolor861'><span class='ectt-0800'>"%Ld</span></span><span id='textcolor862'><span class='ectt-0800'>\n</span></span><span id='textcolor863'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, *spos);</span> 
-<a id='x1-37127r60'></a><span class='ecrm-0500'>60</span><span class='ectt-0800'>    </span><span id='textcolor864'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
-<a id='x1-37129r61'></a><span class='ecrm-0500'>61</span><span class='ectt-0800'>}</span> 
-<a id='x1-37131r62'></a><span class='ecrm-0500'>62</span> 
-<a id='x1-37133r63'></a><span class='ecrm-0500'>63</span><span id='textcolor865'><span class='ectt-0800'>/* This structure gather "function" to manage the sequence */</span></span> 
-<a id='x1-37135r64'></a><span class='ecrm-0500'>64</span><span id='textcolor866'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor867'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> seq_operations my_seq_ops = {</span> 
-<a id='x1-37137r65'></a><span class='ecrm-0500'>65</span><span class='ectt-0800'>    .start = my_seq_start,</span> 
-<a id='x1-37139r66'></a><span class='ecrm-0500'>66</span><span class='ectt-0800'>    .next = my_seq_next,</span> 
-<a id='x1-37141r67'></a><span class='ecrm-0500'>67</span><span class='ectt-0800'>    .stop = my_seq_stop,</span> 
-<a id='x1-37143r68'></a><span class='ecrm-0500'>68</span><span class='ectt-0800'>    .show = my_seq_show,</span> 
-<a id='x1-37145r69'></a><span class='ecrm-0500'>69</span><span class='ectt-0800'>};</span> 
-<a id='x1-37147r70'></a><span class='ecrm-0500'>70</span> 
-<a id='x1-37149r71'></a><span class='ecrm-0500'>71</span><span id='textcolor868'><span class='ectt-0800'>/* This function is called when the /proc file is open. */</span></span> 
-<a id='x1-37151r72'></a><span class='ecrm-0500'>72</span><span id='textcolor869'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor870'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> my_open(</span><span id='textcolor871'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> inode *inode, </span><span id='textcolor872'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file *file)</span> 
-<a id='x1-37153r73'></a><span class='ecrm-0500'>73</span><span class='ectt-0800'>{</span> 
-<a id='x1-37155r74'></a><span class='ecrm-0500'>74</span><span class='ectt-0800'>    </span><span id='textcolor873'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> seq_open(file, &amp;my_seq_ops);</span> 
-<a id='x1-37157r75'></a><span class='ecrm-0500'>75</span><span class='ectt-0800'>};</span> 
-<a id='x1-37159r76'></a><span class='ecrm-0500'>76</span> 
-<a id='x1-37161r77'></a><span class='ecrm-0500'>77</span><span id='textcolor874'><span class='ectt-0800'>/* This structure gather "function" that manage the /proc file */</span></span> 
-<a id='x1-37163r78'></a><span class='ecrm-0500'>78</span><span id='textcolor875'><span class='ectt-0800'>#ifdef HAVE_PROC_OPS</span></span> 
-<a id='x1-37165r79'></a><span class='ecrm-0500'>79</span><span id='textcolor876'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor877'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor878'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> proc_ops my_file_ops = {</span> 
-<a id='x1-37167r80'></a><span class='ecrm-0500'>80</span><span class='ectt-0800'>    .proc_open = my_open,</span> 
-<a id='x1-37169r81'></a><span class='ecrm-0500'>81</span><span class='ectt-0800'>    .proc_read = seq_read,</span> 
-<a id='x1-37171r82'></a><span class='ecrm-0500'>82</span><span class='ectt-0800'>    .proc_lseek = seq_lseek,</span> 
-<a id='x1-37173r83'></a><span class='ecrm-0500'>83</span><span class='ectt-0800'>    .proc_release = seq_release,</span> 
-<a id='x1-37175r84'></a><span class='ecrm-0500'>84</span><span class='ectt-0800'>};</span> 
-<a id='x1-37177r85'></a><span class='ecrm-0500'>85</span><span id='textcolor879'><span class='ectt-0800'>#else</span></span> 
-<a id='x1-37179r86'></a><span class='ecrm-0500'>86</span><span id='textcolor880'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor881'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor882'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file_operations my_file_ops = {</span> 
-<a id='x1-37181r87'></a><span class='ecrm-0500'>87</span><span class='ectt-0800'>    .open = my_open,</span> 
-<a id='x1-37183r88'></a><span class='ecrm-0500'>88</span><span class='ectt-0800'>    .read = seq_read,</span> 
-<a id='x1-37185r89'></a><span class='ecrm-0500'>89</span><span class='ectt-0800'>    .llseek = seq_lseek,</span> 
-<a id='x1-37187r90'></a><span class='ecrm-0500'>90</span><span class='ectt-0800'>    .release = seq_release,</span> 
-<a id='x1-37189r91'></a><span class='ecrm-0500'>91</span><span class='ectt-0800'>};</span> 
-<a id='x1-37191r92'></a><span class='ecrm-0500'>92</span><span id='textcolor883'><span class='ectt-0800'>#endif</span></span> 
-<a id='x1-37193r93'></a><span class='ecrm-0500'>93</span> 
-<a id='x1-37195r94'></a><span class='ecrm-0500'>94</span><span id='textcolor884'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor885'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> __init procfs4_init(</span><span id='textcolor886'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
-<a id='x1-37197r95'></a><span class='ecrm-0500'>95</span><span class='ectt-0800'>{</span> 
-<a id='x1-37199r96'></a><span class='ecrm-0500'>96</span><span class='ectt-0800'>    </span><span id='textcolor887'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> proc_dir_entry *entry;</span> 
-<a id='x1-37201r97'></a><span class='ecrm-0500'>97</span> 
-<a id='x1-37203r98'></a><span class='ecrm-0500'>98</span><span class='ectt-0800'>    entry = proc_create(PROC_NAME, 0, NULL, &amp;my_file_ops);</span> 
-<a id='x1-37205r99'></a><span class='ecrm-0500'>99</span><span class='ectt-0800'>    </span><span id='textcolor888'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (entry == NULL) {</span> 
-<a id='x1-37207r100'></a><span class='ecrm-0500'>100</span><span class='ectt-0800'>        remove_proc_entry(PROC_NAME, NULL);</span> 
-<a id='x1-37209r101'></a><span class='ecrm-0500'>101</span><span class='ectt-0800'>        pr_debug(</span><span id='textcolor889'><span class='ectt-0800'>"Error: Could not initialize /proc/%s</span></span><span id='textcolor890'><span class='ectt-0800'>\n</span></span><span id='textcolor891'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, PROC_NAME);</span> 
-<a id='x1-37211r102'></a><span class='ecrm-0500'>102</span><span class='ectt-0800'>        </span><span id='textcolor892'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> -ENOMEM;</span> 
-<a id='x1-37213r103'></a><span class='ecrm-0500'>103</span><span class='ectt-0800'>    }</span> 
-<a id='x1-37215r104'></a><span class='ecrm-0500'>104</span> 
-<a id='x1-37217r105'></a><span class='ecrm-0500'>105</span><span class='ectt-0800'>    </span><span id='textcolor893'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
-<a id='x1-37219r106'></a><span class='ecrm-0500'>106</span><span class='ectt-0800'>}</span> 
-<a id='x1-37221r107'></a><span class='ecrm-0500'>107</span> 
-<a id='x1-37223r108'></a><span class='ecrm-0500'>108</span><span id='textcolor894'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor895'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit procfs4_exit(</span><span id='textcolor896'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
-<a id='x1-37225r109'></a><span class='ecrm-0500'>109</span><span class='ectt-0800'>{</span> 
-<a id='x1-37227r110'></a><span class='ecrm-0500'>110</span><span class='ectt-0800'>    remove_proc_entry(PROC_NAME, NULL);</span> 
-<a id='x1-37229r111'></a><span class='ecrm-0500'>111</span><span class='ectt-0800'>    pr_debug(</span><span id='textcolor897'><span class='ectt-0800'>"/proc/%s removed</span></span><span id='textcolor898'><span class='ectt-0800'>\n</span></span><span id='textcolor899'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, PROC_NAME);</span> 
-<a id='x1-37231r112'></a><span class='ecrm-0500'>112</span><span class='ectt-0800'>}</span> 
-<a id='x1-37233r113'></a><span class='ecrm-0500'>113</span> 
-<a id='x1-37235r114'></a><span class='ecrm-0500'>114</span><span class='ectt-0800'>module_init(procfs4_init);</span> 
-<a id='x1-37237r115'></a><span class='ecrm-0500'>115</span><span class='ectt-0800'>module_exit(procfs4_exit);</span> 
-<a id='x1-37239r116'></a><span class='ecrm-0500'>116</span> 
-<a id='x1-37241r117'></a><span class='ecrm-0500'>117</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor900'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
+   <pre class='fancyvrb' id='fancyvrb40'><a id='x1-37022r1'></a><span class='ecrm-0500'>1</span><span id='textcolor803'><span class='ectt-0800'>/*</span></span> 
+<a id='x1-37024r2'></a><span class='ecrm-0500'>2</span><span id='textcolor804'><span class='ectt-0800'> * procfs4.c -  create a "file" in /proc</span></span> 
+<a id='x1-37026r3'></a><span class='ecrm-0500'>3</span><span id='textcolor805'><span class='ectt-0800'> * This program uses the seq_file library to manage the /proc file.</span></span> 
+<a id='x1-37028r4'></a><span class='ecrm-0500'>4</span><span id='textcolor806'><span class='ectt-0800'> */</span></span> 
+<a id='x1-37030r5'></a><span class='ecrm-0500'>5</span> 
+<a id='x1-37032r6'></a><span class='ecrm-0500'>6</span><span id='textcolor807'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor808'><span class='ectt-0800'>&lt;linux/kernel.h&gt;   /* We are doing kernel work */</span></span> 
+<a id='x1-37034r7'></a><span class='ecrm-0500'>7</span><span id='textcolor809'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor810'><span class='ectt-0800'>&lt;linux/module.h&gt;   /* Specifically, a module */</span></span> 
+<a id='x1-37036r8'></a><span class='ecrm-0500'>8</span><span id='textcolor811'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor812'><span class='ectt-0800'>&lt;linux/proc_fs.h&gt;  /* Necessary because we use proc fs */</span></span> 
+<a id='x1-37038r9'></a><span class='ecrm-0500'>9</span><span id='textcolor813'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor814'><span class='ectt-0800'>&lt;linux/seq_file.h&gt; /* for seq_file */</span></span> 
+<a id='x1-37040r10'></a><span class='ecrm-0500'>10</span><span id='textcolor815'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor816'><span class='ectt-0800'>&lt;linux/version.h&gt;</span></span> 
+<a id='x1-37042r11'></a><span class='ecrm-0500'>11</span> 
+<a id='x1-37044r12'></a><span class='ecrm-0500'>12</span><span id='textcolor817'><span class='ectt-0800'>#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(5, 6, 0)</span></span> 
+<a id='x1-37046r13'></a><span class='ecrm-0500'>13</span><span id='textcolor818'><span class='ectt-0800'>#define HAVE_PROC_OPS</span></span> 
+<a id='x1-37048r14'></a><span class='ecrm-0500'>14</span><span id='textcolor819'><span class='ectt-0800'>#endif</span></span> 
+<a id='x1-37050r15'></a><span class='ecrm-0500'>15</span> 
+<a id='x1-37052r16'></a><span class='ecrm-0500'>16</span><span id='textcolor820'><span class='ectt-0800'>#define PROC_NAME "iter"</span></span> 
+<a id='x1-37054r17'></a><span class='ecrm-0500'>17</span> 
+<a id='x1-37056r18'></a><span class='ecrm-0500'>18</span><span id='textcolor821'><span class='ectt-0800'>/* This function is called at the beginning of a sequence.</span></span> 
+<a id='x1-37058r19'></a><span class='ecrm-0500'>19</span><span id='textcolor822'><span class='ectt-0800'> * ie, when:</span></span> 
+<a id='x1-37060r20'></a><span class='ecrm-0500'>20</span><span id='textcolor823'><span class='ectt-0800'> *   - the /proc file is read (first time)</span></span> 
+<a id='x1-37062r21'></a><span class='ecrm-0500'>21</span><span id='textcolor824'><span class='ectt-0800'> *   - after the function stop (end of sequence)</span></span> 
+<a id='x1-37064r22'></a><span class='ecrm-0500'>22</span><span id='textcolor825'><span class='ectt-0800'> */</span></span> 
+<a id='x1-37066r23'></a><span class='ecrm-0500'>23</span><span id='textcolor826'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor827'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> *my_seq_start(</span><span id='textcolor828'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> seq_file *s, loff_t *pos)</span> 
+<a id='x1-37068r24'></a><span class='ecrm-0500'>24</span><span class='ectt-0800'>{</span> 
+<a id='x1-37070r25'></a><span class='ecrm-0500'>25</span><span class='ectt-0800'>    </span><span id='textcolor829'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor830'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor831'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> counter = 0;</span> 
+<a id='x1-37072r26'></a><span class='ecrm-0500'>26</span> 
+<a id='x1-37074r27'></a><span class='ecrm-0500'>27</span><span class='ectt-0800'>    </span><span id='textcolor832'><span class='ectt-0800'>/* beginning a new sequence? */</span></span> 
+<a id='x1-37076r28'></a><span class='ecrm-0500'>28</span><span class='ectt-0800'>    </span><span id='textcolor833'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (*pos == 0) {</span> 
+<a id='x1-37078r29'></a><span class='ecrm-0500'>29</span><span class='ectt-0800'>        </span><span id='textcolor834'><span class='ectt-0800'>/* yes =&gt; return a non null value to begin the sequence */</span></span> 
+<a id='x1-37080r30'></a><span class='ecrm-0500'>30</span><span class='ectt-0800'>        </span><span id='textcolor835'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> &amp;counter;</span> 
+<a id='x1-37082r31'></a><span class='ecrm-0500'>31</span><span class='ectt-0800'>    }</span> 
+<a id='x1-37084r32'></a><span class='ecrm-0500'>32</span><span class='ectt-0800'>    </span><span id='textcolor836'><span class='ectt-0800'>/* no =&gt; it is the end of the sequence, return end to stop reading */</span></span> 
+<a id='x1-37086r33'></a><span class='ecrm-0500'>33</span><span class='ectt-0800'>    *pos = 0;</span> 
+<a id='x1-37088r34'></a><span class='ecrm-0500'>34</span><span class='ectt-0800'>    </span><span id='textcolor837'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> NULL;</span> 
+<a id='x1-37090r35'></a><span class='ecrm-0500'>35</span><span class='ectt-0800'>}</span> 
+<a id='x1-37092r36'></a><span class='ecrm-0500'>36</span> 
+<a id='x1-37094r37'></a><span class='ecrm-0500'>37</span><span id='textcolor838'><span class='ectt-0800'>/* This function is called after the beginning of a sequence.</span></span> 
+<a id='x1-37096r38'></a><span class='ecrm-0500'>38</span><span id='textcolor839'><span class='ectt-0800'> * It is called untill the return is NULL (this ends the sequence).</span></span> 
+<a id='x1-37098r39'></a><span class='ecrm-0500'>39</span><span id='textcolor840'><span class='ectt-0800'> */</span></span> 
+<a id='x1-37100r40'></a><span class='ecrm-0500'>40</span><span id='textcolor841'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor842'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> *my_seq_next(</span><span id='textcolor843'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> seq_file *s, </span><span id='textcolor844'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> *v, loff_t *pos)</span> 
+<a id='x1-37102r41'></a><span class='ecrm-0500'>41</span><span class='ectt-0800'>{</span> 
+<a id='x1-37104r42'></a><span class='ecrm-0500'>42</span><span class='ectt-0800'>    </span><span id='textcolor845'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor846'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> *tmp_v = (</span><span id='textcolor847'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor848'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> *) v;</span> 
+<a id='x1-37106r43'></a><span class='ecrm-0500'>43</span><span class='ectt-0800'>    (*tmp_v)++;</span> 
+<a id='x1-37108r44'></a><span class='ecrm-0500'>44</span><span class='ectt-0800'>    (*pos)++;</span> 
+<a id='x1-37110r45'></a><span class='ecrm-0500'>45</span><span class='ectt-0800'>    </span><span id='textcolor849'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> NULL;</span> 
+<a id='x1-37112r46'></a><span class='ecrm-0500'>46</span><span class='ectt-0800'>}</span> 
+<a id='x1-37114r47'></a><span class='ecrm-0500'>47</span> 
+<a id='x1-37116r48'></a><span class='ecrm-0500'>48</span><span id='textcolor850'><span class='ectt-0800'>/* This function is called at the end of a sequence. */</span></span> 
+<a id='x1-37118r49'></a><span class='ecrm-0500'>49</span><span id='textcolor851'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor852'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> my_seq_stop(</span><span id='textcolor853'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> seq_file *s, </span><span id='textcolor854'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> *v)</span> 
+<a id='x1-37120r50'></a><span class='ecrm-0500'>50</span><span class='ectt-0800'>{</span> 
+<a id='x1-37122r51'></a><span class='ecrm-0500'>51</span><span class='ectt-0800'>    </span><span id='textcolor855'><span class='ectt-0800'>/* nothing to do, we use a static value in start() */</span></span> 
+<a id='x1-37124r52'></a><span class='ecrm-0500'>52</span><span class='ectt-0800'>}</span> 
+<a id='x1-37126r53'></a><span class='ecrm-0500'>53</span> 
+<a id='x1-37128r54'></a><span class='ecrm-0500'>54</span><span id='textcolor856'><span class='ectt-0800'>/* This function is called for each "step" of a sequence. */</span></span> 
+<a id='x1-37130r55'></a><span class='ecrm-0500'>55</span><span id='textcolor857'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor858'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> my_seq_show(</span><span id='textcolor859'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> seq_file *s, </span><span id='textcolor860'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> *v)</span> 
+<a id='x1-37132r56'></a><span class='ecrm-0500'>56</span><span class='ectt-0800'>{</span> 
+<a id='x1-37134r57'></a><span class='ecrm-0500'>57</span><span class='ectt-0800'>    loff_t *spos = (loff_t *) v;</span> 
+<a id='x1-37136r58'></a><span class='ecrm-0500'>58</span> 
+<a id='x1-37138r59'></a><span class='ecrm-0500'>59</span><span class='ectt-0800'>    seq_printf(s, </span><span id='textcolor861'><span class='ectt-0800'>"%Ld</span></span><span id='textcolor862'><span class='ectt-0800'>\n</span></span><span id='textcolor863'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, *spos);</span> 
+<a id='x1-37140r60'></a><span class='ecrm-0500'>60</span><span class='ectt-0800'>    </span><span id='textcolor864'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
+<a id='x1-37142r61'></a><span class='ecrm-0500'>61</span><span class='ectt-0800'>}</span> 
+<a id='x1-37144r62'></a><span class='ecrm-0500'>62</span> 
+<a id='x1-37146r63'></a><span class='ecrm-0500'>63</span><span id='textcolor865'><span class='ectt-0800'>/* This structure gather "function" to manage the sequence */</span></span> 
+<a id='x1-37148r64'></a><span class='ecrm-0500'>64</span><span id='textcolor866'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor867'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> seq_operations my_seq_ops = {</span> 
+<a id='x1-37150r65'></a><span class='ecrm-0500'>65</span><span class='ectt-0800'>    .start = my_seq_start,</span> 
+<a id='x1-37152r66'></a><span class='ecrm-0500'>66</span><span class='ectt-0800'>    .next = my_seq_next,</span> 
+<a id='x1-37154r67'></a><span class='ecrm-0500'>67</span><span class='ectt-0800'>    .stop = my_seq_stop,</span> 
+<a id='x1-37156r68'></a><span class='ecrm-0500'>68</span><span class='ectt-0800'>    .show = my_seq_show,</span> 
+<a id='x1-37158r69'></a><span class='ecrm-0500'>69</span><span class='ectt-0800'>};</span> 
+<a id='x1-37160r70'></a><span class='ecrm-0500'>70</span> 
+<a id='x1-37162r71'></a><span class='ecrm-0500'>71</span><span id='textcolor868'><span class='ectt-0800'>/* This function is called when the /proc file is open. */</span></span> 
+<a id='x1-37164r72'></a><span class='ecrm-0500'>72</span><span id='textcolor869'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor870'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> my_open(</span><span id='textcolor871'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> inode *inode, </span><span id='textcolor872'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file *file)</span> 
+<a id='x1-37166r73'></a><span class='ecrm-0500'>73</span><span class='ectt-0800'>{</span> 
+<a id='x1-37168r74'></a><span class='ecrm-0500'>74</span><span class='ectt-0800'>    </span><span id='textcolor873'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> seq_open(file, &amp;my_seq_ops);</span> 
+<a id='x1-37170r75'></a><span class='ecrm-0500'>75</span><span class='ectt-0800'>};</span> 
+<a id='x1-37172r76'></a><span class='ecrm-0500'>76</span> 
+<a id='x1-37174r77'></a><span class='ecrm-0500'>77</span><span id='textcolor874'><span class='ectt-0800'>/* This structure gather "function" that manage the /proc file */</span></span> 
+<a id='x1-37176r78'></a><span class='ecrm-0500'>78</span><span id='textcolor875'><span class='ectt-0800'>#ifdef HAVE_PROC_OPS</span></span> 
+<a id='x1-37178r79'></a><span class='ecrm-0500'>79</span><span id='textcolor876'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor877'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor878'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> proc_ops my_file_ops = {</span> 
+<a id='x1-37180r80'></a><span class='ecrm-0500'>80</span><span class='ectt-0800'>    .proc_open = my_open,</span> 
+<a id='x1-37182r81'></a><span class='ecrm-0500'>81</span><span class='ectt-0800'>    .proc_read = seq_read,</span> 
+<a id='x1-37184r82'></a><span class='ecrm-0500'>82</span><span class='ectt-0800'>    .proc_lseek = seq_lseek,</span> 
+<a id='x1-37186r83'></a><span class='ecrm-0500'>83</span><span class='ectt-0800'>    .proc_release = seq_release,</span> 
+<a id='x1-37188r84'></a><span class='ecrm-0500'>84</span><span class='ectt-0800'>};</span> 
+<a id='x1-37190r85'></a><span class='ecrm-0500'>85</span><span id='textcolor879'><span class='ectt-0800'>#else</span></span> 
+<a id='x1-37192r86'></a><span class='ecrm-0500'>86</span><span id='textcolor880'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor881'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor882'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file_operations my_file_ops = {</span> 
+<a id='x1-37194r87'></a><span class='ecrm-0500'>87</span><span class='ectt-0800'>    .open = my_open,</span> 
+<a id='x1-37196r88'></a><span class='ecrm-0500'>88</span><span class='ectt-0800'>    .read = seq_read,</span> 
+<a id='x1-37198r89'></a><span class='ecrm-0500'>89</span><span class='ectt-0800'>    .llseek = seq_lseek,</span> 
+<a id='x1-37200r90'></a><span class='ecrm-0500'>90</span><span class='ectt-0800'>    .release = seq_release,</span> 
+<a id='x1-37202r91'></a><span class='ecrm-0500'>91</span><span class='ectt-0800'>};</span> 
+<a id='x1-37204r92'></a><span class='ecrm-0500'>92</span><span id='textcolor883'><span class='ectt-0800'>#endif</span></span> 
+<a id='x1-37206r93'></a><span class='ecrm-0500'>93</span> 
+<a id='x1-37208r94'></a><span class='ecrm-0500'>94</span><span id='textcolor884'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor885'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> __init procfs4_init(</span><span id='textcolor886'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-37210r95'></a><span class='ecrm-0500'>95</span><span class='ectt-0800'>{</span> 
+<a id='x1-37212r96'></a><span class='ecrm-0500'>96</span><span class='ectt-0800'>    </span><span id='textcolor887'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> proc_dir_entry *entry;</span> 
+<a id='x1-37214r97'></a><span class='ecrm-0500'>97</span> 
+<a id='x1-37216r98'></a><span class='ecrm-0500'>98</span><span class='ectt-0800'>    entry = proc_create(PROC_NAME, 0, NULL, &amp;my_file_ops);</span> 
+<a id='x1-37218r99'></a><span class='ecrm-0500'>99</span><span class='ectt-0800'>    </span><span id='textcolor888'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (entry == NULL) {</span> 
+<a id='x1-37220r100'></a><span class='ecrm-0500'>100</span><span class='ectt-0800'>        remove_proc_entry(PROC_NAME, NULL);</span> 
+<a id='x1-37222r101'></a><span class='ecrm-0500'>101</span><span class='ectt-0800'>        pr_debug(</span><span id='textcolor889'><span class='ectt-0800'>"Error: Could not initialize /proc/%s</span></span><span id='textcolor890'><span class='ectt-0800'>\n</span></span><span id='textcolor891'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, PROC_NAME);</span> 
+<a id='x1-37224r102'></a><span class='ecrm-0500'>102</span><span class='ectt-0800'>        </span><span id='textcolor892'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> -ENOMEM;</span> 
+<a id='x1-37226r103'></a><span class='ecrm-0500'>103</span><span class='ectt-0800'>    }</span> 
+<a id='x1-37228r104'></a><span class='ecrm-0500'>104</span> 
+<a id='x1-37230r105'></a><span class='ecrm-0500'>105</span><span class='ectt-0800'>    </span><span id='textcolor893'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
+<a id='x1-37232r106'></a><span class='ecrm-0500'>106</span><span class='ectt-0800'>}</span> 
+<a id='x1-37234r107'></a><span class='ecrm-0500'>107</span> 
+<a id='x1-37236r108'></a><span class='ecrm-0500'>108</span><span id='textcolor894'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor895'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit procfs4_exit(</span><span id='textcolor896'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-37238r109'></a><span class='ecrm-0500'>109</span><span class='ectt-0800'>{</span> 
+<a id='x1-37240r110'></a><span class='ecrm-0500'>110</span><span class='ectt-0800'>    remove_proc_entry(PROC_NAME, NULL);</span> 
+<a id='x1-37242r111'></a><span class='ecrm-0500'>111</span><span class='ectt-0800'>    pr_debug(</span><span id='textcolor897'><span class='ectt-0800'>"/proc/%s removed</span></span><span id='textcolor898'><span class='ectt-0800'>\n</span></span><span id='textcolor899'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, PROC_NAME);</span> 
+<a id='x1-37244r112'></a><span class='ecrm-0500'>112</span><span class='ectt-0800'>}</span> 
+<a id='x1-37246r113'></a><span class='ecrm-0500'>113</span> 
+<a id='x1-37248r114'></a><span class='ecrm-0500'>114</span><span class='ectt-0800'>module_init(procfs4_init);</span> 
+<a id='x1-37250r115'></a><span class='ecrm-0500'>115</span><span class='ectt-0800'>module_exit(procfs4_exit);</span> 
+<a id='x1-37252r116'></a><span class='ecrm-0500'>116</span> 
+<a id='x1-37254r117'></a><span class='ecrm-0500'>117</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor900'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
 <!-- l. 1070 --><p class='indent'>   If you want more information, you can read this web page:
 </p>
      <ul class='itemize1'>
@@ -2877,9 +2898,9 @@ replace the system call to open a file with our own function, called
 <code> <span class='ectt-1000'>our_sys_open</span>
 </code>. This function checks the uid (user’s id) of the current process, and if it is equal to the uid we
 spy on, it calls <code>  <span class='ectt-1000'>pr_info()</span>
-</code> to display the name of the file to be opened. Then, either way, it calls the
-original open() function with the same parameters, to actually open the
-file.
+</code> to display the name of the file to be opened. Then, either way, it calls the original
+<code> <span class='ectt-1000'>open()</span>
+</code> function with the same parameters, to actually open the file.
 </p><!-- l. 1205 --><p class='indent'>   The <code>  <span class='ectt-1000'>init_module</span>
 </code> function replaces the appropriate location in
 <code> <span class='ectt-1000'>sys_call_table</span>
@@ -2935,143 +2956,143 @@ patch and the README. Depending on your kernel version, you might even need to
 hand apply the patch.
 </p><!-- l. 1 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb51'><a id='x1-40033r1'></a><span class='ecrm-0500'>1</span><span id='textcolor1339'><span class='ectt-0800'>/*</span></span> 
-<a id='x1-40035r2'></a><span class='ecrm-0500'>2</span><span id='textcolor1340'><span class='ectt-0800'> * syscall.c</span></span> 
-<a id='x1-40037r3'></a><span class='ecrm-0500'>3</span><span id='textcolor1341'><span class='ectt-0800'> *</span></span> 
-<a id='x1-40039r4'></a><span class='ecrm-0500'>4</span><span id='textcolor1342'><span class='ectt-0800'> * System call "stealing" sample.</span></span> 
-<a id='x1-40041r5'></a><span class='ecrm-0500'>5</span><span id='textcolor1343'><span class='ectt-0800'> *</span></span> 
-<a id='x1-40043r6'></a><span class='ecrm-0500'>6</span><span id='textcolor1344'><span class='ectt-0800'> * Disables page protection at a processor level by changing the 16th bit</span></span> 
-<a id='x1-40045r7'></a><span class='ecrm-0500'>7</span><span id='textcolor1345'><span class='ectt-0800'> * in the cr0 register (could be Intel specific).</span></span> 
-<a id='x1-40047r8'></a><span class='ecrm-0500'>8</span><span id='textcolor1346'><span class='ectt-0800'> *</span></span> 
-<a id='x1-40049r9'></a><span class='ecrm-0500'>9</span><span id='textcolor1347'><span class='ectt-0800'> * Based on example by Peter Jay Salzman and</span></span> 
-<a id='x1-40051r10'></a><span class='ecrm-0500'>10</span><span id='textcolor1348'><span class='ectt-0800'> * https://bbs.archlinux.org/viewtopic.php?id=139406</span></span> 
-<a id='x1-40053r11'></a><span class='ecrm-0500'>11</span><span id='textcolor1349'><span class='ectt-0800'> */</span></span> 
-<a id='x1-40055r12'></a><span class='ecrm-0500'>12</span> 
-<a id='x1-40057r13'></a><span class='ecrm-0500'>13</span><span id='textcolor1350'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1351'><span class='ectt-0800'>&lt;linux/delay.h&gt;</span></span> 
-<a id='x1-40059r14'></a><span class='ecrm-0500'>14</span><span id='textcolor1352'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1353'><span class='ectt-0800'>&lt;linux/kernel.h&gt;</span></span> 
-<a id='x1-40061r15'></a><span class='ecrm-0500'>15</span><span id='textcolor1354'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1355'><span class='ectt-0800'>&lt;linux/module.h&gt;</span></span> 
-<a id='x1-40063r16'></a><span class='ecrm-0500'>16</span><span id='textcolor1356'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1357'><span class='ectt-0800'>&lt;linux/moduleparam.h&gt; /* which will have params */</span></span> 
-<a id='x1-40065r17'></a><span class='ecrm-0500'>17</span><span id='textcolor1358'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1359'><span class='ectt-0800'>&lt;linux/syscalls.h&gt;</span></span> 
-<a id='x1-40067r18'></a><span class='ecrm-0500'>18</span><span id='textcolor1360'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1361'><span class='ectt-0800'>&lt;linux/unistd.h&gt; /* The list of system calls */</span></span> 
-<a id='x1-40069r19'></a><span class='ecrm-0500'>19</span> 
-<a id='x1-40071r20'></a><span class='ecrm-0500'>20</span><span id='textcolor1362'><span class='ectt-0800'>/* For the current (process) structure, we need this to know who the</span></span> 
-<a id='x1-40073r21'></a><span class='ecrm-0500'>21</span><span id='textcolor1363'><span class='ectt-0800'> * current user is.</span></span> 
-<a id='x1-40075r22'></a><span class='ecrm-0500'>22</span><span id='textcolor1364'><span class='ectt-0800'> */</span></span> 
-<a id='x1-40077r23'></a><span class='ecrm-0500'>23</span><span id='textcolor1365'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1366'><span class='ectt-0800'>&lt;linux/sched.h&gt;</span></span> 
-<a id='x1-40079r24'></a><span class='ecrm-0500'>24</span><span id='textcolor1367'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1368'><span class='ectt-0800'>&lt;linux/uaccess.h&gt;</span></span> 
-<a id='x1-40081r25'></a><span class='ecrm-0500'>25</span> 
-<a id='x1-40083r26'></a><span class='ecrm-0500'>26</span><span id='textcolor1369'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1370'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> **sys_call_table;</span> 
-<a id='x1-40085r27'></a><span class='ecrm-0500'>27</span><span id='textcolor1371'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1372'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> original_cr0;</span> 
-<a id='x1-40087r28'></a><span class='ecrm-0500'>28</span> 
-<a id='x1-40089r29'></a><span class='ecrm-0500'>29</span><span id='textcolor1373'><span class='ectt-0800'>/* UID we want to spy on - will be filled from the command line. */</span></span> 
-<a id='x1-40091r30'></a><span class='ecrm-0500'>30</span><span id='textcolor1374'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1375'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> uid;</span> 
-<a id='x1-40093r31'></a><span class='ecrm-0500'>31</span><span class='ectt-0800'>module_param(uid, </span><span id='textcolor1376'><span class='ectt-0800'>int</span></span><span class='ectt-0800'>, 0644);</span> 
-<a id='x1-40095r32'></a><span class='ecrm-0500'>32</span> 
-<a id='x1-40097r33'></a><span class='ecrm-0500'>33</span><span id='textcolor1377'><span class='ectt-0800'>/* A pointer to the original system call. The reason we keep this, rather</span></span> 
-<a id='x1-40099r34'></a><span class='ecrm-0500'>34</span><span id='textcolor1378'><span class='ectt-0800'> * than call the original function (sys_open), is because somebody else</span></span> 
-<a id='x1-40101r35'></a><span class='ecrm-0500'>35</span><span id='textcolor1379'><span class='ectt-0800'> * might have replaced the system call before us. Note that this is not</span></span> 
-<a id='x1-40103r36'></a><span class='ecrm-0500'>36</span><span id='textcolor1380'><span class='ectt-0800'> * 100% safe, because if another module replaced sys_open before us,</span></span> 
-<a id='x1-40105r37'></a><span class='ecrm-0500'>37</span><span id='textcolor1381'><span class='ectt-0800'> * then when we are inserted, we will call the function in that module -</span></span> 
-<a id='x1-40107r38'></a><span class='ecrm-0500'>38</span><span id='textcolor1382'><span class='ectt-0800'> * and it might be removed before we are.</span></span> 
-<a id='x1-40109r39'></a><span class='ecrm-0500'>39</span><span id='textcolor1383'><span class='ectt-0800'> *</span></span> 
-<a id='x1-40111r40'></a><span class='ecrm-0500'>40</span><span id='textcolor1384'><span class='ectt-0800'> * Another reason for this is that we can not get sys_open.</span></span> 
-<a id='x1-40113r41'></a><span class='ecrm-0500'>41</span><span id='textcolor1385'><span class='ectt-0800'> * It is a static variable, so it is not exported.</span></span> 
-<a id='x1-40115r42'></a><span class='ecrm-0500'>42</span><span id='textcolor1386'><span class='ectt-0800'> */</span></span> 
-<a id='x1-40117r43'></a><span class='ecrm-0500'>43</span><span class='ectt-0800'>asmlinkage int (*original_call)(</span><span id='textcolor1387'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor1388'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *, </span><span id='textcolor1389'><span class='ectt-0800'>int</span></span><span class='ectt-0800'>, </span><span id='textcolor1390'><span class='ectt-0800'>int</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-40119r44'></a><span class='ecrm-0500'>44</span> 
-<a id='x1-40121r45'></a><span class='ecrm-0500'>45</span><span id='textcolor1391'><span class='ectt-0800'>/* The function we will replace sys_open (the function called when you</span></span> 
-<a id='x1-40123r46'></a><span class='ecrm-0500'>46</span><span id='textcolor1392'><span class='ectt-0800'> * call the open system call) with. To find the exact prototype, with</span></span> 
-<a id='x1-40125r47'></a><span class='ecrm-0500'>47</span><span id='textcolor1393'><span class='ectt-0800'> * the number and type of arguments, we find the original function first</span></span> 
-<a id='x1-40127r48'></a><span class='ecrm-0500'>48</span><span id='textcolor1394'><span class='ectt-0800'> * (it is at fs/open.c).</span></span> 
-<a id='x1-40129r49'></a><span class='ecrm-0500'>49</span><span id='textcolor1395'><span class='ectt-0800'> *</span></span> 
-<a id='x1-40131r50'></a><span class='ecrm-0500'>50</span><span id='textcolor1396'><span class='ectt-0800'> * In theory, this means that we are tied to the current version of the</span></span> 
-<a id='x1-40133r51'></a><span class='ecrm-0500'>51</span><span id='textcolor1397'><span class='ectt-0800'> * kernel. In practice, the system calls almost never change (it would</span></span> 
-<a id='x1-40135r52'></a><span class='ecrm-0500'>52</span><span id='textcolor1398'><span class='ectt-0800'> * wreck havoc and require programs to be recompiled, since the system</span></span> 
-<a id='x1-40137r53'></a><span class='ecrm-0500'>53</span><span id='textcolor1399'><span class='ectt-0800'> * calls are the interface between the kernel and the processes).</span></span> 
-<a id='x1-40139r54'></a><span class='ecrm-0500'>54</span><span id='textcolor1400'><span class='ectt-0800'> */</span></span> 
-<a id='x1-40141r55'></a><span class='ecrm-0500'>55</span><span class='ectt-0800'>asmlinkage </span><span id='textcolor1401'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> our_sys_open(</span><span id='textcolor1402'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor1403'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *filename, </span><span id='textcolor1404'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> flags, </span><span id='textcolor1405'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> mode)</span> 
-<a id='x1-40143r56'></a><span class='ecrm-0500'>56</span><span class='ectt-0800'>{</span> 
-<a id='x1-40145r57'></a><span class='ecrm-0500'>57</span><span class='ectt-0800'>    </span><span id='textcolor1406'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> i = 0;</span> 
-<a id='x1-40147r58'></a><span class='ecrm-0500'>58</span><span class='ectt-0800'>    </span><span id='textcolor1407'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> ch;</span> 
-<a id='x1-40149r59'></a><span class='ecrm-0500'>59</span> 
-<a id='x1-40151r60'></a><span class='ecrm-0500'>60</span><span class='ectt-0800'>    </span><span id='textcolor1408'><span class='ectt-0800'>/* Report the file, if relevant */</span></span> 
-<a id='x1-40153r61'></a><span class='ecrm-0500'>61</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor1409'><span class='ectt-0800'>"Opened file by %d: "</span></span><span class='ectt-0800'>, uid);</span> 
-<a id='x1-40155r62'></a><span class='ecrm-0500'>62</span><span class='ectt-0800'>    </span><span id='textcolor1410'><span class='ectt-0800'>do</span></span><span class='ectt-0800'> {</span> 
-<a id='x1-40157r63'></a><span class='ecrm-0500'>63</span><span class='ectt-0800'>        get_user(ch, filename + i);</span> 
-<a id='x1-40159r64'></a><span class='ecrm-0500'>64</span><span class='ectt-0800'>        i++;</span> 
-<a id='x1-40161r65'></a><span class='ecrm-0500'>65</span><span class='ectt-0800'>        pr_info(</span><span id='textcolor1411'><span class='ectt-0800'>"%c"</span></span><span class='ectt-0800'>, ch);</span> 
-<a id='x1-40163r66'></a><span class='ecrm-0500'>66</span><span class='ectt-0800'>    } </span><span id='textcolor1412'><span class='ectt-0800'>while</span></span><span class='ectt-0800'> (ch != 0);</span> 
-<a id='x1-40165r67'></a><span class='ecrm-0500'>67</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor1413'><span class='ectt-0800'>"</span></span><span id='textcolor1414'><span class='ectt-0800'>\n</span></span><span id='textcolor1415'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-40167r68'></a><span class='ecrm-0500'>68</span> 
-<a id='x1-40169r69'></a><span class='ecrm-0500'>69</span><span class='ectt-0800'>    </span><span id='textcolor1416'><span class='ectt-0800'>/* Call the original sys_open - otherwise, we lose the ability to</span></span> 
-<a id='x1-40171r70'></a><span class='ecrm-0500'>70</span><span id='textcolor1417'><span class='ectt-0800'>     * open files.</span></span> 
-<a id='x1-40173r71'></a><span class='ecrm-0500'>71</span><span id='textcolor1418'><span class='ectt-0800'>     */</span></span> 
-<a id='x1-40175r72'></a><span class='ecrm-0500'>72</span><span class='ectt-0800'>    </span><span id='textcolor1419'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> original_call(filename, flags, mode);</span> 
-<a id='x1-40177r73'></a><span class='ecrm-0500'>73</span><span class='ectt-0800'>}</span> 
-<a id='x1-40179r74'></a><span class='ecrm-0500'>74</span> 
-<a id='x1-40181r75'></a><span class='ecrm-0500'>75</span><span id='textcolor1420'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1421'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1422'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> **aquire_sys_call_table(</span><span id='textcolor1423'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
-<a id='x1-40183r76'></a><span class='ecrm-0500'>76</span><span class='ectt-0800'>{</span> 
-<a id='x1-40185r77'></a><span class='ecrm-0500'>77</span><span class='ectt-0800'>    </span><span id='textcolor1424'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1425'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> </span><span id='textcolor1426'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> offset = PAGE_OFFSET;</span> 
-<a id='x1-40187r78'></a><span class='ecrm-0500'>78</span><span class='ectt-0800'>    </span><span id='textcolor1427'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1428'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> **sct;</span> 
-<a id='x1-40189r79'></a><span class='ecrm-0500'>79</span> 
-<a id='x1-40191r80'></a><span class='ecrm-0500'>80</span><span class='ectt-0800'>    </span><span id='textcolor1429'><span class='ectt-0800'>while</span></span><span class='ectt-0800'> (offset &lt; ULLONG_MAX) {</span> 
-<a id='x1-40193r81'></a><span class='ecrm-0500'>81</span><span class='ectt-0800'>        sct = (</span><span id='textcolor1430'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1431'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> **) offset;</span> 
-<a id='x1-40195r82'></a><span class='ecrm-0500'>82</span> 
-<a id='x1-40197r83'></a><span class='ecrm-0500'>83</span><span class='ectt-0800'>        </span><span id='textcolor1432'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (sct[__NR_close] == (</span><span id='textcolor1433'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1434'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> *) ksys_close)</span> 
-<a id='x1-40199r84'></a><span class='ecrm-0500'>84</span><span class='ectt-0800'>            </span><span id='textcolor1435'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> sct;</span> 
-<a id='x1-40201r85'></a><span class='ecrm-0500'>85</span> 
-<a id='x1-40203r86'></a><span class='ecrm-0500'>86</span><span class='ectt-0800'>        offset += </span><span id='textcolor1436'><span class='ectt-0800'>sizeof</span></span><span class='ectt-0800'>(</span><span id='textcolor1437'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> *);</span> 
-<a id='x1-40205r87'></a><span class='ecrm-0500'>87</span><span class='ectt-0800'>    }</span> 
-<a id='x1-40207r88'></a><span class='ecrm-0500'>88</span> 
-<a id='x1-40209r89'></a><span class='ecrm-0500'>89</span><span class='ectt-0800'>    </span><span id='textcolor1438'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> NULL;</span> 
-<a id='x1-40211r90'></a><span class='ecrm-0500'>90</span><span class='ectt-0800'>}</span> 
-<a id='x1-40213r91'></a><span class='ecrm-0500'>91</span> 
-<a id='x1-40215r92'></a><span class='ecrm-0500'>92</span><span id='textcolor1439'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1440'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> __init syscall_start(</span><span id='textcolor1441'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
-<a id='x1-40217r93'></a><span class='ecrm-0500'>93</span><span class='ectt-0800'>{</span> 
-<a id='x1-40219r94'></a><span class='ecrm-0500'>94</span><span class='ectt-0800'>    </span><span id='textcolor1442'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (!(sys_call_table = aquire_sys_call_table()))</span> 
-<a id='x1-40221r95'></a><span class='ecrm-0500'>95</span><span class='ectt-0800'>        </span><span id='textcolor1443'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> -1;</span> 
-<a id='x1-40223r96'></a><span class='ecrm-0500'>96</span> 
-<a id='x1-40225r97'></a><span class='ecrm-0500'>97</span><span class='ectt-0800'>    original_cr0 = read_cr0();</span> 
-<a id='x1-40227r98'></a><span class='ecrm-0500'>98</span> 
-<a id='x1-40229r99'></a><span class='ecrm-0500'>99</span><span class='ectt-0800'>    write_cr0(original_cr0 &amp; ~0x00010000);</span> 
-<a id='x1-40231r100'></a><span class='ecrm-0500'>100</span> 
-<a id='x1-40233r101'></a><span class='ecrm-0500'>101</span><span class='ectt-0800'>    </span><span id='textcolor1444'><span class='ectt-0800'>/* keep track of the original open function */</span></span> 
-<a id='x1-40235r102'></a><span class='ecrm-0500'>102</span><span class='ectt-0800'>    original_call = (</span><span id='textcolor1445'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> *) sys_call_table[__NR_open];</span> 
-<a id='x1-40237r103'></a><span class='ecrm-0500'>103</span> 
-<a id='x1-40239r104'></a><span class='ecrm-0500'>104</span><span class='ectt-0800'>    </span><span id='textcolor1446'><span class='ectt-0800'>/* use our open function instead */</span></span> 
-<a id='x1-40241r105'></a><span class='ecrm-0500'>105</span><span class='ectt-0800'>    sys_call_table[__NR_open] = (</span><span id='textcolor1447'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1448'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> *) our_sys_open;</span> 
-<a id='x1-40243r106'></a><span class='ecrm-0500'>106</span> 
-<a id='x1-40245r107'></a><span class='ecrm-0500'>107</span><span class='ectt-0800'>    write_cr0(original_cr0);</span> 
-<a id='x1-40247r108'></a><span class='ecrm-0500'>108</span> 
-<a id='x1-40249r109'></a><span class='ecrm-0500'>109</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor1449'><span class='ectt-0800'>"Spying on UID:%d</span></span><span id='textcolor1450'><span class='ectt-0800'>\n</span></span><span id='textcolor1451'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, uid);</span> 
-<a id='x1-40251r110'></a><span class='ecrm-0500'>110</span> 
-<a id='x1-40253r111'></a><span class='ecrm-0500'>111</span><span class='ectt-0800'>    </span><span id='textcolor1452'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
-<a id='x1-40255r112'></a><span class='ecrm-0500'>112</span><span class='ectt-0800'>}</span> 
-<a id='x1-40257r113'></a><span class='ecrm-0500'>113</span> 
-<a id='x1-40259r114'></a><span class='ecrm-0500'>114</span><span id='textcolor1453'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1454'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit syscall_end(</span><span id='textcolor1455'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
-<a id='x1-40261r115'></a><span class='ecrm-0500'>115</span><span class='ectt-0800'>{</span> 
-<a id='x1-40263r116'></a><span class='ecrm-0500'>116</span><span class='ectt-0800'>    </span><span id='textcolor1456'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (!sys_call_table)</span> 
-<a id='x1-40265r117'></a><span class='ecrm-0500'>117</span><span class='ectt-0800'>        </span><span id='textcolor1457'><span class='ectt-0800'>return</span></span><span class='ectt-0800'>;</span> 
-<a id='x1-40267r118'></a><span class='ecrm-0500'>118</span> 
-<a id='x1-40269r119'></a><span class='ecrm-0500'>119</span><span class='ectt-0800'>    </span><span id='textcolor1458'><span class='ectt-0800'>/* Return the system call back to normal */</span></span> 
-<a id='x1-40271r120'></a><span class='ecrm-0500'>120</span><span class='ectt-0800'>    </span><span id='textcolor1459'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (sys_call_table[__NR_open] != (</span><span id='textcolor1460'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1461'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> *) our_sys_open) {</span> 
-<a id='x1-40273r121'></a><span class='ecrm-0500'>121</span><span class='ectt-0800'>        pr_alert(</span><span id='textcolor1462'><span class='ectt-0800'>"Somebody else also played with the "</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-40275r122'></a><span class='ecrm-0500'>122</span><span class='ectt-0800'>        pr_alert(</span><span id='textcolor1463'><span class='ectt-0800'>"open system call</span></span><span id='textcolor1464'><span class='ectt-0800'>\n</span></span><span id='textcolor1465'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-40277r123'></a><span class='ecrm-0500'>123</span><span class='ectt-0800'>        pr_alert(</span><span id='textcolor1466'><span class='ectt-0800'>"The system may be left in "</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-40279r124'></a><span class='ecrm-0500'>124</span><span class='ectt-0800'>        pr_alert(</span><span id='textcolor1467'><span class='ectt-0800'>"an unstable state.</span></span><span id='textcolor1468'><span class='ectt-0800'>\n</span></span><span id='textcolor1469'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-40281r125'></a><span class='ecrm-0500'>125</span><span class='ectt-0800'>    }</span> 
-<a id='x1-40283r126'></a><span class='ecrm-0500'>126</span> 
-<a id='x1-40285r127'></a><span class='ecrm-0500'>127</span><span class='ectt-0800'>    write_cr0(original_cr0 &amp; ~0x00010000);</span> 
-<a id='x1-40287r128'></a><span class='ecrm-0500'>128</span><span class='ectt-0800'>    sys_call_table[__NR_open] = (</span><span id='textcolor1470'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1471'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> *) original_call;</span> 
-<a id='x1-40289r129'></a><span class='ecrm-0500'>129</span><span class='ectt-0800'>    write_cr0(original_cr0);</span> 
-<a id='x1-40291r130'></a><span class='ecrm-0500'>130</span> 
-<a id='x1-40293r131'></a><span class='ecrm-0500'>131</span><span class='ectt-0800'>    msleep(2000);</span> 
-<a id='x1-40295r132'></a><span class='ecrm-0500'>132</span><span class='ectt-0800'>}</span> 
-<a id='x1-40297r133'></a><span class='ecrm-0500'>133</span> 
-<a id='x1-40299r134'></a><span class='ecrm-0500'>134</span><span class='ectt-0800'>module_init(syscall_start);</span> 
-<a id='x1-40301r135'></a><span class='ecrm-0500'>135</span><span class='ectt-0800'>module_exit(syscall_end);</span> 
-<a id='x1-40303r136'></a><span class='ecrm-0500'>136</span> 
-<a id='x1-40305r137'></a><span class='ecrm-0500'>137</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor1472'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
+   <pre class='fancyvrb' id='fancyvrb51'><a id='x1-40034r1'></a><span class='ecrm-0500'>1</span><span id='textcolor1339'><span class='ectt-0800'>/*</span></span> 
+<a id='x1-40036r2'></a><span class='ecrm-0500'>2</span><span id='textcolor1340'><span class='ectt-0800'> * syscall.c</span></span> 
+<a id='x1-40038r3'></a><span class='ecrm-0500'>3</span><span id='textcolor1341'><span class='ectt-0800'> *</span></span> 
+<a id='x1-40040r4'></a><span class='ecrm-0500'>4</span><span id='textcolor1342'><span class='ectt-0800'> * System call "stealing" sample.</span></span> 
+<a id='x1-40042r5'></a><span class='ecrm-0500'>5</span><span id='textcolor1343'><span class='ectt-0800'> *</span></span> 
+<a id='x1-40044r6'></a><span class='ecrm-0500'>6</span><span id='textcolor1344'><span class='ectt-0800'> * Disables page protection at a processor level by changing the 16th bit</span></span> 
+<a id='x1-40046r7'></a><span class='ecrm-0500'>7</span><span id='textcolor1345'><span class='ectt-0800'> * in the cr0 register (could be Intel specific).</span></span> 
+<a id='x1-40048r8'></a><span class='ecrm-0500'>8</span><span id='textcolor1346'><span class='ectt-0800'> *</span></span> 
+<a id='x1-40050r9'></a><span class='ecrm-0500'>9</span><span id='textcolor1347'><span class='ectt-0800'> * Based on example by Peter Jay Salzman and</span></span> 
+<a id='x1-40052r10'></a><span class='ecrm-0500'>10</span><span id='textcolor1348'><span class='ectt-0800'> * https://bbs.archlinux.org/viewtopic.php?id=139406</span></span> 
+<a id='x1-40054r11'></a><span class='ecrm-0500'>11</span><span id='textcolor1349'><span class='ectt-0800'> */</span></span> 
+<a id='x1-40056r12'></a><span class='ecrm-0500'>12</span> 
+<a id='x1-40058r13'></a><span class='ecrm-0500'>13</span><span id='textcolor1350'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1351'><span class='ectt-0800'>&lt;linux/delay.h&gt;</span></span> 
+<a id='x1-40060r14'></a><span class='ecrm-0500'>14</span><span id='textcolor1352'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1353'><span class='ectt-0800'>&lt;linux/kernel.h&gt;</span></span> 
+<a id='x1-40062r15'></a><span class='ecrm-0500'>15</span><span id='textcolor1354'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1355'><span class='ectt-0800'>&lt;linux/module.h&gt;</span></span> 
+<a id='x1-40064r16'></a><span class='ecrm-0500'>16</span><span id='textcolor1356'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1357'><span class='ectt-0800'>&lt;linux/moduleparam.h&gt; /* which will have params */</span></span> 
+<a id='x1-40066r17'></a><span class='ecrm-0500'>17</span><span id='textcolor1358'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1359'><span class='ectt-0800'>&lt;linux/syscalls.h&gt;</span></span> 
+<a id='x1-40068r18'></a><span class='ecrm-0500'>18</span><span id='textcolor1360'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1361'><span class='ectt-0800'>&lt;linux/unistd.h&gt; /* The list of system calls */</span></span> 
+<a id='x1-40070r19'></a><span class='ecrm-0500'>19</span> 
+<a id='x1-40072r20'></a><span class='ecrm-0500'>20</span><span id='textcolor1362'><span class='ectt-0800'>/* For the current (process) structure, we need this to know who the</span></span> 
+<a id='x1-40074r21'></a><span class='ecrm-0500'>21</span><span id='textcolor1363'><span class='ectt-0800'> * current user is.</span></span> 
+<a id='x1-40076r22'></a><span class='ecrm-0500'>22</span><span id='textcolor1364'><span class='ectt-0800'> */</span></span> 
+<a id='x1-40078r23'></a><span class='ecrm-0500'>23</span><span id='textcolor1365'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1366'><span class='ectt-0800'>&lt;linux/sched.h&gt;</span></span> 
+<a id='x1-40080r24'></a><span class='ecrm-0500'>24</span><span id='textcolor1367'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1368'><span class='ectt-0800'>&lt;linux/uaccess.h&gt;</span></span> 
+<a id='x1-40082r25'></a><span class='ecrm-0500'>25</span> 
+<a id='x1-40084r26'></a><span class='ecrm-0500'>26</span><span id='textcolor1369'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1370'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> **sys_call_table;</span> 
+<a id='x1-40086r27'></a><span class='ecrm-0500'>27</span><span id='textcolor1371'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1372'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> original_cr0;</span> 
+<a id='x1-40088r28'></a><span class='ecrm-0500'>28</span> 
+<a id='x1-40090r29'></a><span class='ecrm-0500'>29</span><span id='textcolor1373'><span class='ectt-0800'>/* UID we want to spy on - will be filled from the command line. */</span></span> 
+<a id='x1-40092r30'></a><span class='ecrm-0500'>30</span><span id='textcolor1374'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1375'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> uid;</span> 
+<a id='x1-40094r31'></a><span class='ecrm-0500'>31</span><span class='ectt-0800'>module_param(uid, </span><span id='textcolor1376'><span class='ectt-0800'>int</span></span><span class='ectt-0800'>, 0644);</span> 
+<a id='x1-40096r32'></a><span class='ecrm-0500'>32</span> 
+<a id='x1-40098r33'></a><span class='ecrm-0500'>33</span><span id='textcolor1377'><span class='ectt-0800'>/* A pointer to the original system call. The reason we keep this, rather</span></span> 
+<a id='x1-40100r34'></a><span class='ecrm-0500'>34</span><span id='textcolor1378'><span class='ectt-0800'> * than call the original function (sys_open), is because somebody else</span></span> 
+<a id='x1-40102r35'></a><span class='ecrm-0500'>35</span><span id='textcolor1379'><span class='ectt-0800'> * might have replaced the system call before us. Note that this is not</span></span> 
+<a id='x1-40104r36'></a><span class='ecrm-0500'>36</span><span id='textcolor1380'><span class='ectt-0800'> * 100% safe, because if another module replaced sys_open before us,</span></span> 
+<a id='x1-40106r37'></a><span class='ecrm-0500'>37</span><span id='textcolor1381'><span class='ectt-0800'> * then when we are inserted, we will call the function in that module -</span></span> 
+<a id='x1-40108r38'></a><span class='ecrm-0500'>38</span><span id='textcolor1382'><span class='ectt-0800'> * and it might be removed before we are.</span></span> 
+<a id='x1-40110r39'></a><span class='ecrm-0500'>39</span><span id='textcolor1383'><span class='ectt-0800'> *</span></span> 
+<a id='x1-40112r40'></a><span class='ecrm-0500'>40</span><span id='textcolor1384'><span class='ectt-0800'> * Another reason for this is that we can not get sys_open.</span></span> 
+<a id='x1-40114r41'></a><span class='ecrm-0500'>41</span><span id='textcolor1385'><span class='ectt-0800'> * It is a static variable, so it is not exported.</span></span> 
+<a id='x1-40116r42'></a><span class='ecrm-0500'>42</span><span id='textcolor1386'><span class='ectt-0800'> */</span></span> 
+<a id='x1-40118r43'></a><span class='ecrm-0500'>43</span><span class='ectt-0800'>asmlinkage int (*original_call)(</span><span id='textcolor1387'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor1388'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *, </span><span id='textcolor1389'><span class='ectt-0800'>int</span></span><span class='ectt-0800'>, </span><span id='textcolor1390'><span class='ectt-0800'>int</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-40120r44'></a><span class='ecrm-0500'>44</span> 
+<a id='x1-40122r45'></a><span class='ecrm-0500'>45</span><span id='textcolor1391'><span class='ectt-0800'>/* The function we will replace sys_open (the function called when you</span></span> 
+<a id='x1-40124r46'></a><span class='ecrm-0500'>46</span><span id='textcolor1392'><span class='ectt-0800'> * call the open system call) with. To find the exact prototype, with</span></span> 
+<a id='x1-40126r47'></a><span class='ecrm-0500'>47</span><span id='textcolor1393'><span class='ectt-0800'> * the number and type of arguments, we find the original function first</span></span> 
+<a id='x1-40128r48'></a><span class='ecrm-0500'>48</span><span id='textcolor1394'><span class='ectt-0800'> * (it is at fs/open.c).</span></span> 
+<a id='x1-40130r49'></a><span class='ecrm-0500'>49</span><span id='textcolor1395'><span class='ectt-0800'> *</span></span> 
+<a id='x1-40132r50'></a><span class='ecrm-0500'>50</span><span id='textcolor1396'><span class='ectt-0800'> * In theory, this means that we are tied to the current version of the</span></span> 
+<a id='x1-40134r51'></a><span class='ecrm-0500'>51</span><span id='textcolor1397'><span class='ectt-0800'> * kernel. In practice, the system calls almost never change (it would</span></span> 
+<a id='x1-40136r52'></a><span class='ecrm-0500'>52</span><span id='textcolor1398'><span class='ectt-0800'> * wreck havoc and require programs to be recompiled, since the system</span></span> 
+<a id='x1-40138r53'></a><span class='ecrm-0500'>53</span><span id='textcolor1399'><span class='ectt-0800'> * calls are the interface between the kernel and the processes).</span></span> 
+<a id='x1-40140r54'></a><span class='ecrm-0500'>54</span><span id='textcolor1400'><span class='ectt-0800'> */</span></span> 
+<a id='x1-40142r55'></a><span class='ecrm-0500'>55</span><span class='ectt-0800'>asmlinkage </span><span id='textcolor1401'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> our_sys_open(</span><span id='textcolor1402'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor1403'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *filename, </span><span id='textcolor1404'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> flags, </span><span id='textcolor1405'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> mode)</span> 
+<a id='x1-40144r56'></a><span class='ecrm-0500'>56</span><span class='ectt-0800'>{</span> 
+<a id='x1-40146r57'></a><span class='ecrm-0500'>57</span><span class='ectt-0800'>    </span><span id='textcolor1406'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> i = 0;</span> 
+<a id='x1-40148r58'></a><span class='ecrm-0500'>58</span><span class='ectt-0800'>    </span><span id='textcolor1407'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> ch;</span> 
+<a id='x1-40150r59'></a><span class='ecrm-0500'>59</span> 
+<a id='x1-40152r60'></a><span class='ecrm-0500'>60</span><span class='ectt-0800'>    </span><span id='textcolor1408'><span class='ectt-0800'>/* Report the file, if relevant */</span></span> 
+<a id='x1-40154r61'></a><span class='ecrm-0500'>61</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor1409'><span class='ectt-0800'>"Opened file by %d: "</span></span><span class='ectt-0800'>, uid);</span> 
+<a id='x1-40156r62'></a><span class='ecrm-0500'>62</span><span class='ectt-0800'>    </span><span id='textcolor1410'><span class='ectt-0800'>do</span></span><span class='ectt-0800'> {</span> 
+<a id='x1-40158r63'></a><span class='ecrm-0500'>63</span><span class='ectt-0800'>        get_user(ch, filename + i);</span> 
+<a id='x1-40160r64'></a><span class='ecrm-0500'>64</span><span class='ectt-0800'>        i++;</span> 
+<a id='x1-40162r65'></a><span class='ecrm-0500'>65</span><span class='ectt-0800'>        pr_info(</span><span id='textcolor1411'><span class='ectt-0800'>"%c"</span></span><span class='ectt-0800'>, ch);</span> 
+<a id='x1-40164r66'></a><span class='ecrm-0500'>66</span><span class='ectt-0800'>    } </span><span id='textcolor1412'><span class='ectt-0800'>while</span></span><span class='ectt-0800'> (ch != 0);</span> 
+<a id='x1-40166r67'></a><span class='ecrm-0500'>67</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor1413'><span class='ectt-0800'>"</span></span><span id='textcolor1414'><span class='ectt-0800'>\n</span></span><span id='textcolor1415'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-40168r68'></a><span class='ecrm-0500'>68</span> 
+<a id='x1-40170r69'></a><span class='ecrm-0500'>69</span><span class='ectt-0800'>    </span><span id='textcolor1416'><span class='ectt-0800'>/* Call the original sys_open - otherwise, we lose the ability to</span></span> 
+<a id='x1-40172r70'></a><span class='ecrm-0500'>70</span><span id='textcolor1417'><span class='ectt-0800'>     * open files.</span></span> 
+<a id='x1-40174r71'></a><span class='ecrm-0500'>71</span><span id='textcolor1418'><span class='ectt-0800'>     */</span></span> 
+<a id='x1-40176r72'></a><span class='ecrm-0500'>72</span><span class='ectt-0800'>    </span><span id='textcolor1419'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> original_call(filename, flags, mode);</span> 
+<a id='x1-40178r73'></a><span class='ecrm-0500'>73</span><span class='ectt-0800'>}</span> 
+<a id='x1-40180r74'></a><span class='ecrm-0500'>74</span> 
+<a id='x1-40182r75'></a><span class='ecrm-0500'>75</span><span id='textcolor1420'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1421'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1422'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> **aquire_sys_call_table(</span><span id='textcolor1423'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-40184r76'></a><span class='ecrm-0500'>76</span><span class='ectt-0800'>{</span> 
+<a id='x1-40186r77'></a><span class='ecrm-0500'>77</span><span class='ectt-0800'>    </span><span id='textcolor1424'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1425'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> </span><span id='textcolor1426'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> offset = PAGE_OFFSET;</span> 
+<a id='x1-40188r78'></a><span class='ecrm-0500'>78</span><span class='ectt-0800'>    </span><span id='textcolor1427'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1428'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> **sct;</span> 
+<a id='x1-40190r79'></a><span class='ecrm-0500'>79</span> 
+<a id='x1-40192r80'></a><span class='ecrm-0500'>80</span><span class='ectt-0800'>    </span><span id='textcolor1429'><span class='ectt-0800'>while</span></span><span class='ectt-0800'> (offset &lt; ULLONG_MAX) {</span> 
+<a id='x1-40194r81'></a><span class='ecrm-0500'>81</span><span class='ectt-0800'>        sct = (</span><span id='textcolor1430'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1431'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> **) offset;</span> 
+<a id='x1-40196r82'></a><span class='ecrm-0500'>82</span> 
+<a id='x1-40198r83'></a><span class='ecrm-0500'>83</span><span class='ectt-0800'>        </span><span id='textcolor1432'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (sct[__NR_close] == (</span><span id='textcolor1433'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1434'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> *) ksys_close)</span> 
+<a id='x1-40200r84'></a><span class='ecrm-0500'>84</span><span class='ectt-0800'>            </span><span id='textcolor1435'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> sct;</span> 
+<a id='x1-40202r85'></a><span class='ecrm-0500'>85</span> 
+<a id='x1-40204r86'></a><span class='ecrm-0500'>86</span><span class='ectt-0800'>        offset += </span><span id='textcolor1436'><span class='ectt-0800'>sizeof</span></span><span class='ectt-0800'>(</span><span id='textcolor1437'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> *);</span> 
+<a id='x1-40206r87'></a><span class='ecrm-0500'>87</span><span class='ectt-0800'>    }</span> 
+<a id='x1-40208r88'></a><span class='ecrm-0500'>88</span> 
+<a id='x1-40210r89'></a><span class='ecrm-0500'>89</span><span class='ectt-0800'>    </span><span id='textcolor1438'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> NULL;</span> 
+<a id='x1-40212r90'></a><span class='ecrm-0500'>90</span><span class='ectt-0800'>}</span> 
+<a id='x1-40214r91'></a><span class='ecrm-0500'>91</span> 
+<a id='x1-40216r92'></a><span class='ecrm-0500'>92</span><span id='textcolor1439'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1440'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> __init syscall_start(</span><span id='textcolor1441'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-40218r93'></a><span class='ecrm-0500'>93</span><span class='ectt-0800'>{</span> 
+<a id='x1-40220r94'></a><span class='ecrm-0500'>94</span><span class='ectt-0800'>    </span><span id='textcolor1442'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (!(sys_call_table = aquire_sys_call_table()))</span> 
+<a id='x1-40222r95'></a><span class='ecrm-0500'>95</span><span class='ectt-0800'>        </span><span id='textcolor1443'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> -1;</span> 
+<a id='x1-40224r96'></a><span class='ecrm-0500'>96</span> 
+<a id='x1-40226r97'></a><span class='ecrm-0500'>97</span><span class='ectt-0800'>    original_cr0 = read_cr0();</span> 
+<a id='x1-40228r98'></a><span class='ecrm-0500'>98</span> 
+<a id='x1-40230r99'></a><span class='ecrm-0500'>99</span><span class='ectt-0800'>    write_cr0(original_cr0 &amp; ~0x00010000);</span> 
+<a id='x1-40232r100'></a><span class='ecrm-0500'>100</span> 
+<a id='x1-40234r101'></a><span class='ecrm-0500'>101</span><span class='ectt-0800'>    </span><span id='textcolor1444'><span class='ectt-0800'>/* keep track of the original open function */</span></span> 
+<a id='x1-40236r102'></a><span class='ecrm-0500'>102</span><span class='ectt-0800'>    original_call = (</span><span id='textcolor1445'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> *) sys_call_table[__NR_open];</span> 
+<a id='x1-40238r103'></a><span class='ecrm-0500'>103</span> 
+<a id='x1-40240r104'></a><span class='ecrm-0500'>104</span><span class='ectt-0800'>    </span><span id='textcolor1446'><span class='ectt-0800'>/* use our open function instead */</span></span> 
+<a id='x1-40242r105'></a><span class='ecrm-0500'>105</span><span class='ectt-0800'>    sys_call_table[__NR_open] = (</span><span id='textcolor1447'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1448'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> *) our_sys_open;</span> 
+<a id='x1-40244r106'></a><span class='ecrm-0500'>106</span> 
+<a id='x1-40246r107'></a><span class='ecrm-0500'>107</span><span class='ectt-0800'>    write_cr0(original_cr0);</span> 
+<a id='x1-40248r108'></a><span class='ecrm-0500'>108</span> 
+<a id='x1-40250r109'></a><span class='ecrm-0500'>109</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor1449'><span class='ectt-0800'>"Spying on UID:%d</span></span><span id='textcolor1450'><span class='ectt-0800'>\n</span></span><span id='textcolor1451'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, uid);</span> 
+<a id='x1-40252r110'></a><span class='ecrm-0500'>110</span> 
+<a id='x1-40254r111'></a><span class='ecrm-0500'>111</span><span class='ectt-0800'>    </span><span id='textcolor1452'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
+<a id='x1-40256r112'></a><span class='ecrm-0500'>112</span><span class='ectt-0800'>}</span> 
+<a id='x1-40258r113'></a><span class='ecrm-0500'>113</span> 
+<a id='x1-40260r114'></a><span class='ecrm-0500'>114</span><span id='textcolor1453'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1454'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit syscall_end(</span><span id='textcolor1455'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-40262r115'></a><span class='ecrm-0500'>115</span><span class='ectt-0800'>{</span> 
+<a id='x1-40264r116'></a><span class='ecrm-0500'>116</span><span class='ectt-0800'>    </span><span id='textcolor1456'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (!sys_call_table)</span> 
+<a id='x1-40266r117'></a><span class='ecrm-0500'>117</span><span class='ectt-0800'>        </span><span id='textcolor1457'><span class='ectt-0800'>return</span></span><span class='ectt-0800'>;</span> 
+<a id='x1-40268r118'></a><span class='ecrm-0500'>118</span> 
+<a id='x1-40270r119'></a><span class='ecrm-0500'>119</span><span class='ectt-0800'>    </span><span id='textcolor1458'><span class='ectt-0800'>/* Return the system call back to normal */</span></span> 
+<a id='x1-40272r120'></a><span class='ecrm-0500'>120</span><span class='ectt-0800'>    </span><span id='textcolor1459'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (sys_call_table[__NR_open] != (</span><span id='textcolor1460'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1461'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> *) our_sys_open) {</span> 
+<a id='x1-40274r121'></a><span class='ecrm-0500'>121</span><span class='ectt-0800'>        pr_alert(</span><span id='textcolor1462'><span class='ectt-0800'>"Somebody else also played with the "</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-40276r122'></a><span class='ecrm-0500'>122</span><span class='ectt-0800'>        pr_alert(</span><span id='textcolor1463'><span class='ectt-0800'>"open system call</span></span><span id='textcolor1464'><span class='ectt-0800'>\n</span></span><span id='textcolor1465'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-40278r123'></a><span class='ecrm-0500'>123</span><span class='ectt-0800'>        pr_alert(</span><span id='textcolor1466'><span class='ectt-0800'>"The system may be left in "</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-40280r124'></a><span class='ecrm-0500'>124</span><span class='ectt-0800'>        pr_alert(</span><span id='textcolor1467'><span class='ectt-0800'>"an unstable state.</span></span><span id='textcolor1468'><span class='ectt-0800'>\n</span></span><span id='textcolor1469'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-40282r125'></a><span class='ecrm-0500'>125</span><span class='ectt-0800'>    }</span> 
+<a id='x1-40284r126'></a><span class='ecrm-0500'>126</span> 
+<a id='x1-40286r127'></a><span class='ecrm-0500'>127</span><span class='ectt-0800'>    write_cr0(original_cr0 &amp; ~0x00010000);</span> 
+<a id='x1-40288r128'></a><span class='ecrm-0500'>128</span><span class='ectt-0800'>    sys_call_table[__NR_open] = (</span><span id='textcolor1470'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1471'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> *) original_call;</span> 
+<a id='x1-40290r129'></a><span class='ecrm-0500'>129</span><span class='ectt-0800'>    write_cr0(original_cr0);</span> 
+<a id='x1-40292r130'></a><span class='ecrm-0500'>130</span> 
+<a id='x1-40294r131'></a><span class='ecrm-0500'>131</span><span class='ectt-0800'>    msleep(2000);</span> 
+<a id='x1-40296r132'></a><span class='ecrm-0500'>132</span><span class='ectt-0800'>}</span> 
+<a id='x1-40298r133'></a><span class='ecrm-0500'>133</span> 
+<a id='x1-40300r134'></a><span class='ecrm-0500'>134</span><span class='ectt-0800'>module_init(syscall_start);</span> 
+<a id='x1-40302r135'></a><span class='ecrm-0500'>135</span><span class='ectt-0800'>module_exit(syscall_end);</span> 
+<a id='x1-40304r136'></a><span class='ecrm-0500'>136</span> 
+<a id='x1-40306r137'></a><span class='ecrm-0500'>137</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor1472'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
 <!-- l. 1231 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='blocking-processes-and-threads'><span class='titlemark'>0.11   </span> <a id='x1-410000.11'></a>Blocking Processes and threads</h3>
