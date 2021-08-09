@@ -858,7 +858,7 @@ The minor number is used only by the driver itself to differentiate which device
 
 Adding a driver to your system means registering it with the kernel.
 This is synonymous with assigning it a major number during the module's initialization.
-You do this by using the \cpp|register_chrdev| function, defined by linux/fs.h.
+You do this by using the \cpp|register_chrdev| function, defined by \src{include/linux/fs.h}.
 
 \begin{code}
 int register_chrdev(unsigned int major, const char *name, struct file_operations *fops);
