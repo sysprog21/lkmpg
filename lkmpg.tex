@@ -332,7 +332,7 @@ Now have a look at \src{drivers/char/Makefile} for a real world example.
 As you can see, some things get hardwired into the kernel (\verb|obj-y|) but where are all those \verb|obj-m| gone?
 Those familiar with shell scripts will easily be able to spot them.
 For those not, the \verb|obj-$(CONFIG_FOO)| entries you see everywhere expand into \verb|obj-y| or \verb|obj-m|, depending on whether the \verb|CONFIG_FOO| variable has been set to y or m.
-While we are at it, those were exactly the kind of variables that you have set in the \verb|.config| file in the top-level directory of Linux kernel source tree, the last time when you said make menuconfig or something like that.
+While we are at it, those were exactly the kind of variables that you have set in the \verb|.config| file in the top-level directory of Linux kernel source tree, the last time when you said \sh|make menuconfig| or something like that.
 
 \subsection{The \_\_init and \_\_exit Macros}
 \label{init_n_exit}
@@ -469,7 +469,7 @@ clean:
 
 This is the complete makefile for all the examples we have seen so far.
 The first five lines are nothing special, but for the last example we will need two lines.
-First we invent an object name for our combined module, second we tell make what object files are part of that module.
+First we invent an object name for our combined module, second we tell \sh|make| what object files are part of that module.
 
 \subsection{Building modules for a precompiled kernel}
 \label{precompiled}
@@ -535,10 +535,13 @@ EXTRAVERSION = -rc2
 
 In this case, you need to restore the value of symbol \textbf{EXTRAVERSION} to \textbf{-rc2}.
 We suggest to keep a backup copy of the makefile used to compile your kernel available in \verb|/lib/modules/5.14.0-rc2/build|.
-A simple \sh|cp /lib/modules/`uname-r`/build/Makefile linux-`uname -r`| should suffice.
+A simple command as following should suffice.
+\begin{codebash}
+cp /lib/modules/`uname-r`/build/Makefile linux-`uname -r`
+\end{codebash}
 Here \sh|linux-`uname -r`| is the Linux kernel source you are attempting to build.
 
-Now, please run make to update configuration and version headers and objects:
+Now, please run \sh|make| to update configuration and version headers and objects:
 
 \begin{verbatim}
 $ make
@@ -849,7 +852,7 @@ This is because drivers do not fill file directly; they only use structures cont
 \label{sec:register_device}
 As discussed earlier, char devices are accessed through device files, usually located in /dev.
 This is by convention. When writing a driver, it is OK to put the device file in your current directory.
-Just make sure you place it in /dev for a production driver.
+Just make sure you place it in \verb|/dev| for a production driver.
 The major number tells you which driver handles which device file.
 The minor number is used only by the driver itself to differentiate which device it is operating on, just in case the driver handles more than one device.
 
@@ -1386,7 +1389,7 @@ The following source code illustrates a minimal kernel module which, when loaded
 \samplec{examples/kbleds.c}
 
 If none of the examples in this chapter fit your debugging needs there might yet be some other tricks to try.
-Ever wondered what \cpp|CONFIG_LL_DEBUG| in make menuconfig is good for?
+Ever wondered what \cpp|CONFIG_LL_DEBUG| in \sh|make menuconfig| is good for?
 If you activate that you get low level access to the serial port.
 While this might not sound very powerful by itself, you can patch \src{kernel/printk.c} or any other essential syscall to print ASCII characters, thus makeing it possible to trace virtually everything what your code does over a serial line.
 If you find yourself porting the kernel to some new and former unsupported architecture, this is usually amongst the first things that should be implemented.
