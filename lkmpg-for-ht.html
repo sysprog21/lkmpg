@@ -296,7 +296,7 @@ module.
 <a id='x1-12042r18'></a><span class='ecrm-0500'>18</span><span class='ectt-0800'>}</span> 
 <a id='x1-12044r19'></a><span class='ecrm-0500'>19</span> 
 <a id='x1-12046r20'></a><span class='ecrm-0500'>20</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor22'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 209 --><p class='indent'>   Now you will need a Makefile. If you copy and paste this, change the indentation
+<!-- l. 209 --><p class='indent'>   Now you will need a <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>Makefile</span></span></span>. If you copy and paste this, change the indentation
 to use <span class='ecti-1000'>tabs</span>, not spaces.
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -412,8 +412,8 @@ needed to include <span class='obeylines-h'><span class='verb'><span class='ectt
 </code> functions, as in the first hello world example, but these days you can name those anything you
 want by using the <code>  <span class='ectt-1000'>module_init</span>
 </code> and <code>  <span class='ectt-1000'>module_exit</span>
-</code> macros. These macros are defined in <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>linux/init.h</span></span></span>. The only requirement is that
-your init and cleanup functions must be defined before calling the those
+</code> macros. These macros are defined in <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>include/linux/init.h</span></span></span>. The only requirement
+is that your init and cleanup functions must be defined before calling the those
 macros, otherwise you’ll get compilation errors. Here is an example of this
 technique:
 </p><!-- l. 1 --><p class='indent'>
@@ -456,13 +456,14 @@ is as simple as this:
                                                                   
 
                                                                   
-<!-- l. 329 --><p class='indent'>   Now have a look at <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>linux/drivers/char/Makefile</span></span></span> for a real world example. As
-you can see, some things get hardwired into the kernel (<span class='obeylines-h'><span class='verb'><span class='ectt-1000'>obj-y</span></span></span>) but where are all
-those <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>obj-m</span></span></span> gone? Those familiar with shell scripts will easily be able to spot them.
-For those not, the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>obj-$(CONFIG_FOO)</span></span></span> entries you see everywhere expand into <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>obj-y</span></span></span>
-or <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>obj-m</span></span></span>, depending on whether the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>CONFIG_FOO</span></span></span> variable has been set to y or m.
-While we are at it, those were exactly the kind of variables that you have set in the
-<span class='obeylines-h'><span class='verb'><span class='ectt-1000'>linux/.config</span></span></span> file, the last time when you said make menuconfig or something like
+<!-- l. 329 --><p class='indent'>   Now have a look at <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>drivers/char/Makefile</span></span></span> for a real world example. As you
+can see, some things get hardwired into the kernel (<span class='obeylines-h'><span class='verb'><span class='ectt-1000'>obj-y</span></span></span>) but where are all those
+<span class='obeylines-h'><span class='verb'><span class='ectt-1000'>obj-m</span></span></span> gone? Those familiar with shell scripts will easily be able to spot them. For
+those not, the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>obj-$(CONFIG_FOO)</span></span></span> entries you see everywhere expand into <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>obj-y</span></span></span>
+or <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>obj-m</span></span></span>, depending on whether the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>CONFIG_FOO</span></span></span> variable has been set to
+y or m. While we are at it, those were exactly the kind of variables that
+you have set in the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>.config</span></span></span> file in the top-level directory of Linux kernel
+source tree, the last time when you said make menuconfig or something like
 that.
 </p><!-- l. 335 --><p class='noindent'>
 </p>
@@ -482,9 +483,9 @@ like <code>  <span class='ectt-1000'>__init</span>
 </code>, has no effect for loadable modules. Again, if you consider when the cleanup function
 runs, this makes complete sense; built-in drivers do not need a cleanup function,
 while loadable modules do.
-</p><!-- l. 347 --><p class='indent'>   These macros are defined in <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>linux/init.h</span></span></span> and serve to free up kernel memory.
-When you boot your kernel and see something like Freeing unused kernel memory:
-236k freed, this is precisely what the kernel is freeing.
+</p><!-- l. 347 --><p class='indent'>   These macros are defined in <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>include/linux/init.h</span></span></span> and serve to free up kernel
+memory. When you boot your kernel and see something like Freeing unused kernel
+memory: 236k freed, this is precisely what the kernel is freeing.
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb21'><a id='x1-14007r1'></a><span class='ecrm-0500'>1</span><span id='textcolor56'><span class='ectt-0800'>/*</span></span> 
@@ -529,7 +530,7 @@ module license 'unspecified' taints kernel.
 </p><!-- l. 362 --><p class='indent'>   You can use a few macros to indicate the license for your module. Some examples
 are "GPL", "GPL v2", "GPL and additional rights", "Dual BSD/GPL", "Dual
 MIT/GPL", "Dual MPL/GPL" and "Proprietary". They are defined within
-<span class='obeylines-h'><span class='verb'><span class='ectt-1000'>linux/module.h</span></span></span>.
+<span class='obeylines-h'><span class='verb'><span class='ectt-1000'>include/linux/module.h</span></span></span>.
 </p><!-- l. 366 --><p class='indent'>   To reference what license you’re using a macro is available called
 <code> <span class='ectt-1000'>MODULE_LICENSE</span>
 </code>. This and a few other macros describing the module are illustrated in the below
@@ -843,11 +844,11 @@ tree: <code>  <span class='ectt-1000'>cp /boot/config-</span><span id='textcolo
 </code>.
 </p><!-- l. 522 --><p class='indent'>   Let’s focus again on the previous error message: a closer look at the version magic
 strings suggests that, even with two configuration files which are exactly the same, a
-slight difference in the version magic could be possible, and it is sufficient to prevent
-insertion of the module into the kernel. That slight difference, namely the
-custom string which appears in the module’s version magic and not in the
-kernel’s one, is due to a modification with respect to the original, in the
-makefile that some distribution include. Then, examine your <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>linux/Makefile</span></span></span>,
+slight difference in the version magic could be possible, and it is sufficient to
+prevent insertion of the module into the kernel. That slight difference, namely
+the custom string which appears in the module’s version magic and not in
+the kernel’s one, is due to a modification with respect to the original, in
+the makefile that some distribution include. Then, examine your <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>Makefile</span></span></span>,
 and make sure that the specified version information matches exactly the
 one used for your current kernel. For example, you makefile could start as
 follows:
@@ -1267,8 +1268,8 @@ syscalls is commonly named fops.
 </p><!-- l. 831 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='the-file-structure'><span class='titlemark'>0.6.2   </span> <a id='x1-280000.6.2'></a>The file structure</h4>
-<!-- l. 834 --><p class='noindent'>Each device is represented in the kernel by a file structure, which is defined
-in <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>linux/fs.h</span></span></span>. Be aware that a file is a kernel level structure and
+<!-- l. 834 --><p class='noindent'>Each device is represented in the kernel by a file structure, which is defined in
+<span class='obeylines-h'><span class='verb'><span class='ectt-1000'>include/linux/fs.h</span></span></span>. Be aware that a file is a kernel level structure and
 never appears in a user space program. It is not the same thing as a
 <code> <span id='textcolor392'><span class='ectt-1000'>FILE</span></span>
 </code>, which is defined by glibc and would never appear in a kernel space function. Also,
