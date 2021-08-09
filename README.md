@@ -31,14 +31,14 @@ Now we could build document with following commands:
 $ git clone https://github.com/sysprog21/lkmpg.git && cd lkmpg
 
 # run commands
-$ make all              # compile pdf document
-$ make html             # convert to HTML
-$ make clean            # delete generated files
+$ make all              # Generate PDFdocument
+$ make html             # Convert TeX to HTML
+$ make clean            # Delete generated files
 ```
 
 ### Compile with Docker
 
-The compile process could be run completely using Docker. **Using Docker is recommended, as it guarantees the same dependencies with our GitHub Actions wokrflow.
+The compilation could be completed flawlessly using Docker. **Using Docker is recommended, as it guarantees the same dependencies with our GitHub Actions wokrflow.
 
 After [install docker engine](https://docs.docker.com/engine/install/) on your machine, pulling the docker image [twtug/lkmpg](https://hub.docker.com/r/twtug/lkmpg) and compile with it.
 
@@ -53,9 +53,9 @@ $ docker pull twtug/lkmpg
 $ docker run --rm -it -v $(pwd):/workdir twtug/lkmpg
 
 # run commands
-$ make all              # compile pdf document
-$ make html             # convert to HTML
-$ make clean            # delete generated files
+$ make all              # Generate PDF document
+$ make html             # Convert TeX to HTML
+$ make clean            # Delete generated files
 ```
 
 ## License
