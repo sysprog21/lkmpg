@@ -711,7 +711,7 @@ crw-rw----  1 root  dial 4, 67 Jul  5  2000 /dev/ttyS3
 \end{verbatim}
 
 % FIXME: use the appropriate entries for device drivers
-If you want to see which major numbers have been assigned, you can look at \verb|Documentation/devices.txt|.
+If you want to see which major numbers have been assigned, you can look at \verb|Documentation/admin-guide/devices.txt|.
 
 When the system was installed, all of those device files were created by the mknod command.
 To create a new char device named `coffee' with major/minor number 12 and 2, simply do mknod /dev/coffee c 12 2.
@@ -863,8 +863,7 @@ A negative return value means the registration failed. Note that we didn't pass 
 That is because the kernel doesn't care about the minor number; only our driver uses it.
 
 Now the question is, how do you get a major number without hijacking one that's already in use?
-% FIXME: use the correct entry of Documentation
-The easiest way would be to look through Documentation /devices.txt and pick an unused one.
+The easiest way would be to look through \verb|Documentation/admin-guide/devices.txt| and pick an unused one.
 That is a bad way of doing things because you will never be sure if the number you picked will be assigned later.
 The answer is that you can ask the kernel to assign you a dynamic major number.
 
@@ -1148,7 +1147,7 @@ In the example below, the header file is chardev.h and the program which uses it
 
 If you want to use ioctls in your own kernel modules, it is best to receive an official ioctl assignment, so if you accidentally get somebody else's ioctls, or if they get yours, you'll know something is wrong.
 % FIXME: use the right entry about ioctl assignment
-For more information, consult the kernel source tree at Documentation/ioctl-number.txt.
+For more information, consult the kernel source tree at \verb|Documentation/driver-api/ioctl.rst|.
 
 \samplec{examples/chardev2.c}
 
