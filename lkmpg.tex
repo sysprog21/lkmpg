@@ -514,12 +514,13 @@ How to do this, is the subject of the remainder of this chapter.
 
 First of all, make sure that a kernel source tree is available, having exactly the same version as your current kernel.
 Then, find the configuration file which was used to compile your precompiled kernel.
-Usually, this is available in your current \emph{boot} directory, under a name like config-2.6.x.
+Usually, this is available in your current \emph{boot} directory, under a name like \verb|config-5.14.x|.
 You may just want to copy it to your kernel source tree: \sh|cp /boot/config-`uname -r` .config|.
 
 Let's focus again on the previous error message: a closer look at the version magic strings suggests that, even with two configuration files which are exactly the same, a slight difference in the version magic could be possible, and it is sufficient to prevent insertion of the module into the kernel.
 That slight difference, namely the custom string which appears in the module's version magic and not in the kernel's one, is due to a modification with respect to the original, in the makefile that some distribution include.
-Then, examine your \verb|/usr/src/linux/Makefile|, and make sure that the specified version information matches exactly the one used for your current kernel. For example, you makefile could start as follows:
+Then, examine your \verb|linux/Makefile|, and make sure that the specified version information matches exactly the one used for your current kernel.
+For example, you makefile could start as follows:
 
 \begin{verbatim}
 VERSION = 5
@@ -530,9 +531,8 @@ EXTRAVERSION = -rc2
 
 In this case, you need to restore the value of symbol \textbf{EXTRAVERSION} to \textbf{-rc2}.
 We suggest to keep a backup copy of the makefile used to compile your kernel available in \verb|/lib/modules/5.14.0-rc2/build|.
-A simple \sh|cp /lib/modules/`uname-r`/build/Makefile /usr/src/linux-`uname -r`| should suffice.
-% TODO: out-of-date information
-Additionally, if you already started a kernel build with the previous (wrong) Makefile, you should also rerun make, or directly modify symbol \cpp|UTS_RELEASE| in file \verb|/usr/src/linux-5.14.0/include/linux/version.h| according to contents of file \verb|/lib/modules/5.14.0/build/include/linux/version.h|, or overwrite the latter with the first.
+A simple \sh|cp /lib/modules/`uname-r`/build/Makefile linux-`uname -r`| should suffice.
+Here \sh|linux-`uname -r`| is the Linux kernel source you are attempting to build.
 
 Now, please run make to update configuration and version headers and objects:
 
