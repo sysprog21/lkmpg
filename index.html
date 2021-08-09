@@ -3407,7 +3407,7 @@ $
 <a id='x1-42410r197'></a><span class='ecrm-0500'>197</span><span class='ectt-0800'>    proc_set_size(Our_Proc_File, 80);</span> 
 <a id='x1-42412r198'></a><span class='ecrm-0500'>198</span><span class='ectt-0800'>    proc_set_user(Our_Proc_File, GLOBAL_ROOT_UID, GLOBAL_ROOT_GID);</span> 
 <a id='x1-42414r199'></a><span class='ecrm-0500'>199</span> 
-<a id='x1-42416r200'></a><span class='ecrm-0500'>200</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor1644'><span class='ectt-0800'>"/proc/test created</span></span><span id='textcolor1645'><span class='ectt-0800'>\n</span></span><span id='textcolor1646'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-42416r200'></a><span class='ecrm-0500'>200</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor1644'><span class='ectt-0800'>"/proc/%s created</span></span><span id='textcolor1645'><span class='ectt-0800'>\n</span></span><span id='textcolor1646'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, PROC_ENTRY_FILENAME);</span> 
 <a id='x1-42418r201'></a><span class='ecrm-0500'>201</span> 
 <a id='x1-42420r202'></a><span class='ecrm-0500'>202</span><span class='ectt-0800'>    </span><span id='textcolor1647'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
 <a id='x1-42422r203'></a><span class='ecrm-0500'>203</span><span class='ectt-0800'>}</span> 
