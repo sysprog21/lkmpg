@@ -95,7 +95,7 @@ Besides having larger kernels, this has the disadvantage of requiring us to rebu
 \subsection{Kernel module package}
 \label{sec:packages}
 
-Linux distributions provide the commands \emph{modprobe}, \emph{insmod} and \emph{depmod} within a package.
+Linux distributions provide the commands \sh|modprobe|, \sh|insmod| and \sh|depmod| within a package.
 
 On Ubuntu/Debian:
 \begin{codebash}
@@ -110,7 +110,7 @@ sudo pacman -S gcc kmod
 \subsection{What Modules are in my Kernel?}
 \label{sec:modutils}
 
-To discover what modules are already loaded within your current kernel use the command \textbf{lsmod}.
+To discover what modules are already loaded within your current kernel use the command \sh|lsmod|.
 \begin{codebash}
 sudo lsmod
 \end{codebash}
@@ -140,7 +140,7 @@ Rest assured, after you get over the initial hurdle of doing it for the first ti
 
 \begin{enumerate}
   \item Modversioning.
-        A module compiled for one kernel will not load if you boot a different kernel unless you enable \verb|CONFIG_MODVERSIONS| in the kernel.
+        A module compiled for one kernel will not load if you boot a different kernel unless you enable \cpp|CONFIG_MODVERSIONS| in the kernel.
         We will not go into module versioning until later in this guide.
         Until we cover modversions, the examples in the guide may not work if you are running a kernel with modversioning turned on.
         However, most stock Linux distribution kernels come with it turned on.
@@ -151,9 +151,9 @@ Rest assured, after you get over the initial hurdle of doing it for the first ti
         It is also highly recommended you do this from a console.
         You should not be working on this stuff in X Window System.
 
-        Modules can not print to the screen like \verb|printf()| can, but they can log information and warnings, which ends up being printed on your screen, but only on a console.
+        Modules can not print to the screen like \cpp|printf()| can, but they can log information and warnings, which ends up being printed on your screen, but only on a console.
         If you insmod a module from an xterm, the information and warnings will be logged, but only to your systemd journal.
-        You will not see it unless you look through your \verb|journalctl|.
+        You will not see it unless you look through your \sh|journalctl|.
         See \ref{sec:helloworld} for details.
         To have immediate access to this information, do all your work from the console.
 \end{enumerate}
@@ -201,7 +201,7 @@ mkdir -p ~/develop/kernel/hello-1
 cd ~/develop/kernel/hello-1
 \end{codebash}
 
-Paste this into you favorite editor and save it as \textbf{hello-1.c}:
+Paste this into you favorite editor and save it as \verb|hello-1.c|:
 
 \samplec{examples/hello-1.c}
 
@@ -222,7 +222,7 @@ And finally just:
 make
 \end{codebash}
 
-If all goes smoothly you should then find that you have a compiled \textbf{hello-1.ko} module.
+If all goes smoothly you should then find that you have a compiled \verb|hello-1.ko| module.
 You can find info on it with the command:
 \begin{codebash}
 sudo modinfo hello-1.ko
@@ -258,19 +258,19 @@ journalctl --since "1 hour ago" | grep kernel
 You now know the basics of creating, compiling, installing and removing modules.
 Now for more of a description of how this module works.
 
-Kernel modules must have at least two functions: a "start" (initialization) function called \textbf{init\_module()} which is called when the module is insmoded into the kernel, and an "end" (cleanup) function called \textbf{cleanup\_module()} which is called just before it is removed from the kernel.
+Kernel modules must have at least two functions: a "start" (initialization) function called \cpp|init_module()| which is called when the module is insmoded into the kernel, and an "end" (cleanup) function called \cpp|cleanup_module()| which is called just before it is removed from the kernel.
 Actually, things have changed starting with kernel 2.3.13.
 % TODO: adjust the section anchor
 You can now use whatever name you like for the start and end functions of a module, and you will learn how to do this in Section 2.3.
 In fact, the new method is the preferred method.
-However, many people still use \verb|init_module()| and \verb|cleanup_module()| for their start and end functions.
+However, many people still use \cpp|init_module()| and \cpp|cleanup_module()| for their start and end functions.
 
-Typically, init\_module() either registers a handler for something with the kernel, or it replaces one of the kernel functions with its own code (usually code to do something and then call the original function).
-The \verb|cleanup_module()| function is supposed to undo whatever \verb|init_module()| did, so the module can be unloaded safely.
+Typically, \cpp|init_module()| either registers a handler for something with the kernel, or it replaces one of the kernel functions with its own code (usually code to do something and then call the original function).
+The \cpp|cleanup_module()| function is supposed to undo whatever \cpp|init_module()| did, so the module can be unloaded safely.
 
 Lastly, every kernel module needs to include \verb|linux/module.h|.
 % TODO: adjust the section anchor
-We needed to include \textbf{linux/kernel.h} only for the macro expansion for the pr\_alert() log level, which you'll learn about in Section 2.1.1.
+We needed to include \verb|linux/kernel.h| only for the macro expansion for the \cpp|pr_alert()| log level, which you'll learn about in Section 2.1.1.
 
 \begin{enumerate}
   \item A point about coding style.
@@ -279,10 +279,10 @@ We needed to include \textbf{linux/kernel.h} only for the macro expansion for th
         You may not like it, but you'll need to get used to it if you ever submit a patch upstream.
 
   \item Introducing print macros.
-        In the beginning there was \textbf{printk}, usually followed by a priority such as \verb|KERN_INFO| or \verb|KERN_DEBUG|.
-        More recently this can also be expressed in abbreviated form using a set of print macros, such as \textbf{pr\_info} and \textbf{pr\_debug}.
+        In the beginning there was \cpp|printk|, usually followed by a priority such as \cpp|KERN_INFO| or \cpp|KERN_DEBUG|.
+        More recently this can also be expressed in abbreviated form using a set of print macros, such as \cpp|pr_info| and \cpp|pr_debug|.
         This just saves some mindless keyboard bashing and looks a bit neater.
-        They can be found within \textbf{linux/printk.h}.
+        They can be found within \verb|linux/printk.h|.
         Take time to read through the available priority macros.
 
   \item About Compiling.
@@ -296,7 +296,7 @@ Additional details about Makefiles for kernel modules are available in \verb|Doc
 
 \begin{quote}
 Here is another exercise for the reader.
-See that comment above the return statement in \verb|init_module()|?
+See that comment above the return statement in \cpp|init_module()|?
 Change the return value to something negative, recompile and load the module again.
 What happens?
 \end{quote}
@@ -304,8 +304,9 @@ What happens?
 
 \subsection{Hello and Goodbye}
 \label{hello_n_goodbye}
-In early kernel versions you had to use the \textbf{init\_module} and \textbf{cleanup\_module} functions, as in the first hello world example, but these days you can name those anything you want by using the \textbf{module\_init} and \textbf{module\_exit} macros.
-These macros are defined in \textbf{linux/init.h}. The only requirement is that your init and cleanup functions must be defined before calling the those macros, otherwise you'll get compilation errors.
+In early kernel versions you had to use the \cpp|init_module| and \cpp|cleanup_module| functions, as in the first hello world example, but these days you can name those anything you want by using the \cpp|module_init| and \cpp|module_exit| macros.
+These macros are defined in \verb|linux/init.h|.
+The only requirement is that your init and cleanup functions must be defined before calling the those macros, otherwise you'll get compilation errors.
 Here is an example of this technique:
 
 \samplec{examples/hello-2.c}
@@ -333,15 +334,15 @@ While we are at it, those were exactly the kind of variables that you have set i
 \label{init_n_exit}
 This demonstrates a feature of kernel 2.2 and later.
 Notice the change in the definitions of the init and cleanup functions.
-The \textbf{\_\_init} macro causes the init function to be discarded and its memory freed once the init function finishes for built-in drivers, but not loadable modules.
+The \cpp|__init| macro causes the init function to be discarded and its memory freed once the init function finishes for built-in drivers, but not loadable modules.
 If you think about when the init function is invoked, this makes perfect sense.
 
-There is also an \textbf{\_\_initdata} which works similarly to \textbf{\_\_init} but for init variables rather than functions.
+There is also an \cpp|__initdata| which works similarly to \cpp|__init| but for init variables rather than functions.
 
-The \textbf{\_\_exit} macro causes the omission of the function when the module is built into the kernel, and like \_\_init, has no effect for loadable modules.
+The \cpp|__exit| macro causes the omission of the function when the module is built into the kernel, and like \cpp|__init|, has no effect for loadable modules.
 Again, if you consider when the cleanup function runs, this makes complete sense; built-in drivers do not need a cleanup function, while loadable modules do.
 
-These macros are defined in \textbf{linux/init.h} and serve to free up kernel memory.
+These macros are defined in \verb|linux/init.h| and serve to free up kernel memory.
 When you boot your kernel and see something like Freeing unused kernel memory: 236k freed, this is precisely what the kernel is freeing.
 
 \samplec{examples/hello-3.c}
@@ -358,9 +359,9 @@ module license 'unspecified' taints kernel.
 
 You can use a few macros to indicate the license for your module.
 Some examples are "GPL", "GPL v2", "GPL and additional rights", "Dual BSD/GPL", "Dual MIT/GPL", "Dual MPL/GPL" and "Proprietary".
-They are defined within \textbf{linux/module.h}.
+They are defined within \verb|linux/module.h|.
 
-To reference what license you're using a macro is available called \textbf{MODULE\_LICENSE}.
+To reference what license you're using a macro is available called \cpp|MODULE_LICENSE|.
 This and a few other macros describing the module are illustrated in the below example.
 
 \samplec{examples/hello-4.c}
@@ -369,13 +370,13 @@ This and a few other macros describing the module are illustrated in the below e
 \label{modparam}
 Modules can take command line arguments, but not with the argc/argv you might be used to.
 
-To allow arguments to be passed to your module, declare the variables that will take the values of the command line arguments as global and then use the module\_param() macro, (defined in linux/moduleparam.h) to set the mechanism up.
+To allow arguments to be passed to your module, declare the variables that will take the values of the command line arguments as global and then use the \cpp|module_param()| macro, (defined in \verb|linux/moduleparam.h|) to set the mechanism up.
 At runtime, insmod will fill the variables with any command line arguments that are given, like insmod ./mymodule.ko myvariable=5.
 The variable declarations and macros should be placed at the beginning of the module for clarity.
 The example code should clear up my admittedly lousy explanation.
 
-The module\_param() macro takes 3 arguments: the name of the variable, its type and permissions for the corresponding file in sysfs.
-Integer types can be signed as usual or unsigned. If you'd like to use arrays of integers or strings see \verb|module_param_array()| and \verb|module_param_string()|.
+The \cpp|module_param()| macro takes 3 arguments: the name of the variable, its type and permissions for the corresponding file in sysfs.
+Integer types can be signed as usual or unsigned. If you'd like to use arrays of integers or strings see \cpp|module_param_array()| and \cpp|module_param_string()|.
 
 \begin{code}
 int myint = 3;
@@ -399,7 +400,7 @@ A good use for this is to have the module variable's default values set, like an
 If the variables contain the default values, then perform autodetection (explained elsewhere). Otherwise, keep the current value.
 This will be made clear later on.
 
-Lastly, there's a macro function, \textbf{MODULE\_PARM\_DESC()}, that is used to document arguments that the module can take.
+Lastly, there is a macro function, \cpp|MODULE_PARM_DESC()|, that is used to document arguments that the module can take.
 It takes two parameters: a variable name and a free form string describing that variable.
 
 \samplec{examples/hello-5.c}
@@ -468,7 +469,7 @@ First we invent an object name for our combined module, second we tell make what
 
 \subsection{Building modules for a precompiled kernel}
 \label{precompiled}
-Obviously, we strongly suggest you to recompile your kernel, so that you can enable a number of useful debugging features, such as forced module unloading (\textbf{MODULE\_FORCE\_UNLOAD}): when this option is enabled, you can force the kernel to unload a module even when it believes it is unsafe, via a \textbf{sudo rmmod -f module} command.
+Obviously, we strongly suggest you to recompile your kernel, so that you can enable a number of useful debugging features, such as forced module unloading (\cpp|MODULE_FORCE_UNLOAD|): when this option is enabled, you can force the kernel to unload a module even when it believes it is unsafe, via a \sh|sudo rmmod -f module| command.
 This option can save you a lot of time and a number of reboots during the development of a module.
 If you do not want to recompile your kernel then you should consider running the examples within a test distribution on a virtual machine.
 If you mess anything up then you can easily reboot or restore the virtual machine (VM).
@@ -492,7 +493,7 @@ REGPARM 4KSTACKS gcc-3.3' should be '2.6.5-1.358 686 REGPARM 4KSTACKS gcc-3.3'
 
 In other words, your kernel refuses to accept your module because version strings (more precisely, version magics) do not match.
 Incidentally, version magics are stored in the module object in the form of a static string, starting with vermagic:.
-Version data are inserted in your module when it is linked against the \textbf{init/vermagic.o} file.
+Version data are inserted in your module when it is linked against the \verb|init/vermagic.o| file.
 To inspect version magics and other strings stored in a given module, issue the modinfo module.ko command:
 
 \begin{verbatim}
@@ -514,11 +515,11 @@ How to do this, is the subject of the remainder of this chapter.
 First of all, make sure that a kernel source tree is available, having exactly the same version as your current kernel.
 Then, find the configuration file which was used to compile your precompiled kernel.
 Usually, this is available in your current \emph{boot} directory, under a name like config-2.6.x.
-You may just want to copy it to your kernel source tree: \verb|cp /boot/config-`uname -r` .config|.
+You may just want to copy it to your kernel source tree: \sh|cp /boot/config-`uname -r` .config|.
 
 Let's focus again on the previous error message: a closer look at the version magic strings suggests that, even with two configuration files which are exactly the same, a slight difference in the version magic could be possible, and it is sufficient to prevent insertion of the module into the kernel.
 That slight difference, namely the custom string which appears in the module's version magic and not in the kernel's one, is due to a modification with respect to the original, in the makefile that some distribution include.
-Then, examine your \textbf{/usr/src/linux/Makefile}, and make sure that the specified version information matches exactly the one used for your current kernel. For example, you makefile could start as follows:
+Then, examine your \verb|/usr/src/linux/Makefile|, and make sure that the specified version information matches exactly the one used for your current kernel. For example, you makefile could start as follows:
 
 \begin{verbatim}
 VERSION = 5
@@ -528,10 +529,10 @@ EXTRAVERSION = -rc2
 \end{verbatim}
 
 In this case, you need to restore the value of symbol \textbf{EXTRAVERSION} to \textbf{-rc2}.
-We suggest to keep a backup copy of the makefile used to compile your kernel available in \textbf{/lib/modules/5.14.0-rc2/build}.
-A simple \textbf{cp /lib/modules/`uname-r`/build/Makefile /usr/src/linux-`uname -r`} should suffice.
+We suggest to keep a backup copy of the makefile used to compile your kernel available in \verb|/lib/modules/5.14.0-rc2/build|.
+A simple \sh|cp /lib/modules/`uname-r`/build/Makefile /usr/src/linux-`uname -r`| should suffice.
 % TODO: out-of-date information
-Additionally, if you already started a kernel build with the previous (wrong) Makefile, you should also rerun make, or directly modify symbol UTS\_RELEASE in file \textbf{/usr/src/linux-5.14.0/include/linux/version.h} according to contents of file \textbf{/lib/modules/5.14.0/build/include/linux/version.h}, or overwrite the latter with the first.
+Additionally, if you already started a kernel build with the previous (wrong) Makefile, you should also rerun make, or directly modify symbol \cpp|UTS_RELEASE| in file \verb|/usr/src/linux-5.14.0/include/linux/version.h| according to contents of file \verb|/lib/modules/5.14.0/build/include/linux/version.h|, or overwrite the latter with the first.
 
 Now, please run make to update configuration and version headers and objects:
 
@@ -555,28 +556,29 @@ Now you can turn back to the directory of your module and compile it: It will be
 \section{Preliminaries}
 \subsection{How modules begin and end}
 \label{sec:module_init_exit}
-A program usually begins with a \textbf{main()} function, executes a bunch of instructions and terminates upon completion of those instructions.
-Kernel modules work a bit differently. A module always begin with either the init\_module or the function you specify with module\_init call.
+A program usually begins with a \cpp|main()| function, executes a bunch of instructions and terminates upon completion of those instructions.
+Kernel modules work a bit differently. A module always begin with either the \cpp|init_module| or the function you specify with \cpp|module_init| call.
 This is the entry function for modules; it tells the kernel what functionality the module provides and sets up the kernel to run the module's functions when they are needed.
 Once it does this, entry function returns and the module does nothing until the kernel wants to do something with the code that the module provides.
 
-All modules end by calling either \textbf{cleanup\_module} or the function you specify with the \textbf{module\_exit} call.
+All modules end by calling either \cpp|cleanup_module| or the function you specify with the \cpp|module_exit| call.
 This is the exit function for modules; it undoes whatever entry function did.
 It unregisters the functionality that the entry function registered.
 
 Every module must have an entry function and an exit function.
-Since there's more than one way to specify entry and exit functions, I'll try my best to use the terms ``entry function'' and ``exit function'', but if I slip and simply refer to them as init\_module and cleanup\_module, I think you'll know what I mean.
+Since there's more than one way to specify entry and exit functions, I will try my best to use the terms ``entry function'' and ``exit function'', but if I slip and simply refer to them as \cpp|init_module| and \cpp|cleanup_module|, I think you will know what I mean.
 
 \subsection{Functions available to modules}
 \label{sec:avail_func}
-Programmers use functions they do not define all the time. A prime example of this is \textbf{printf()}.
+Programmers use functions they do not define all the time.
+A prime example of this is \cpp|printf()|.
 You use these library functions which are provided by the standard C library, libc.
 The definitions for these functions do not actually enter your program until the linking stage, which insures that the code (for printf() for example) is available, and fixes the call instruction to point to that code.
 
-Kernel modules are different here, too. In the hello world example, you might have noticed that we used a function, \textbf{pr\_info()} but did not include a standard I/O library.
-That is because modules are object files whose symbols get resolved upon insmod'ing.
+Kernel modules are different here, too. In the hello world example, you might have noticed that we used a function, \cpp|pr_info()| but did not include a standard I/O library.
+That is because modules are object files whose symbols get resolved upon \sh|insmod|'ing.
 The definition for the symbols comes from the kernel itself; the only external functions you can use are the ones provided by the kernel.
-If you're curious about what symbols have been exported by your kernel, take a look at \textbf{/proc/kallsyms}.
+If you're curious about what symbols have been exported by your kernel, take a look at \verb|/proc/kallsyms|.
 
 One point to keep in mind is the difference between library functions and system calls. Library functions are higher level, run completely in user space and provide a more convenient interface for the programmer to the functions that do the real work --- system calls.
 System calls run in kernel mode on the user's behalf and are provided by the kernel itself.
@@ -596,13 +598,13 @@ int main(void)
 }
 \end{code}
 
-with \textbf{gcc -Wall -o hello hello.c}.
-Run the exectable with \textbf{strace ./hello}.
+with \sh|gcc -Wall -o hello hello.c|.
+Run the exectable with \sh|strace ./hello|.
 Are you impressed?
 Every line you see corresponds to a system call.
 \href{https://strace.io/}{strace} is a handy program that gives you details about what system calls a program is making, including which call is made, what its arguments are and what it returns.
 It is an invaluable tool for figuring out things like what files a program is trying to access.
-Towards the end, you will see a line which looks like \verb|write(1, "hello", 5hello)|.
+Towards the end, you will see a line which looks like \cpp|write(1, "hello", 5hello)|.
 There it is.
 The face behind the printf() mask.
 You may not be familiar with write, since most people use library functions for file I/O (like fopen, fputs, fclose).
@@ -640,7 +642,7 @@ The best way to deal with this is to declare all your variables as static and to
 By convention, all kernel prefixes are lowercase. If you do not want to declare everything as static, another option is to declare a symbol table and register it with a kernel.
 We will get to this later.
 
-The file \textbf{/proc/kallsyms} holds all the symbols that the kernel knows about and which are therefore accessible to your modules since they share the kernel's codespace.
+The file \verb|/proc/kallsyms| holds all the symbols that the kernel knows about and which are therefore accessible to your modules since they share the kernel's codespace.
 
 \subsection{Code space}
 \label{sec:codespace}
@@ -741,11 +743,11 @@ So just be aware that the word ``hardware'' in our discussion can mean something
 \label{sec:chardev}
 \subsection{The file\_operations Structure}
 \label{sec:file_operations}
-The \verb|file_operations| structure is defined in \textbf{/usr/include/linux/fs.h}, and holds pointers to functions defined by the driver that perform various operations on the device.
+The \cpp|file_operations| structure is defined in \verb|/usr/include/linux/fs.h|, and holds pointers to functions defined by the driver that perform various operations on the device.
 Each field of the structure corresponds to the address of some function defined by the driver to handle a requested operation.
 
 For example, every character driver needs to define a function that reads from the device.
-The \verb|file_operations| structure holds the address of the module's function that performs that operation.
+The \cpp|file_operations| structure holds the address of the module's function that performs that operation.
 Here is what the definition looks like for kernel 5.4:
 
 \begin{code}
@@ -791,7 +793,7 @@ struct file_operations {
 
 Some operations are not implemented by a driver.
 For example, a driver that handles a video card will not need to read from a directory structure.
-The corresponding entries in the \verb|file_operations| structure should be set to NULL.
+The corresponding entries in the \cpp|file_operations| structure should be set to NULL.
 
 There is a gcc extension that makes assigning to this structure more convenient.
 You will see it in modern drivers, and may catch you by surprise.
@@ -821,16 +823,16 @@ struct file_operations fops = {
 
 The meaning is clear, and you should be aware that any member of the structure which you do not explicitly assign will be initialized to NULL by gcc.
 
-An instance of struct \verb|file_operations| containing pointers to functions that are used to implement read, write, open, \ldots{} syscalls is commonly named fops.
+An instance of \cpp|struct file_operations| containing pointers to functions that are used to implement read, write, open, \ldots{} syscalls is commonly named fops.
 
-Sin Linux v5.6, the \verb|proc_ops| structure was introduced to replace the use of the \verb|file_operations| structure when registering proc handlers.
+Sin Linux v5.6, the \cpp|proc_ops| structure was introduced to replace the use of the \cpp|file_operations| structure when registering proc handlers.
 
 \subsection{The file structure}
 \label{sec:file_struct}
 
-Each device is represented in the kernel by a file structure, which is defined in \textbf{linux/fs.h}.
+Each device is represented in the kernel by a file structure, which is defined in \verb|linux/fs.h|.
 Be aware that a file is a kernel level structure and never appears in a user space program.
-It is not the same thing as a \textbf{FILE}, which is defined by glibc and would never appear in a kernel space function.
+It is not the same thing as a \cpp|FILE|, which is defined by glibc and would never appear in a kernel space function.
 Also, its name is a bit misleading; it represents an abstract open `file', not a file on a disk, which is represented by a structure named inode.
 
 An instance of struct file is commonly named filp. You'll also see it refered to as struct file file.
@@ -850,14 +852,14 @@ The minor number is used only by the driver itself to differentiate which device
 
 Adding a driver to your system means registering it with the kernel.
 This is synonymous with assigning it a major number during the module's initialization.
-You do this by using the \verb|register_chrdev| function, defined by linux/fs.h.
+You do this by using the \cpp|register_chrdev| function, defined by linux/fs.h.
 
 \begin{code}
 int register_chrdev(unsigned int major, const char *name, struct file_operations *fops);
 \end{code}
 
-where unsigned int major is the major number you want to request, \emph{const char *name} is the name of the device as it will appear in \textbf{/proc/devices} and \emph{struct file\_operations *fops} is a pointer to the \verb|file_operations| table for your driver.
-A negative return value means the registration failed. Note that we didn't pass the minor number to register\_chrdev.
+where unsigned int major is the major number you want to request, \cpp|const char *name| is the name of the device as it will appear in \verb|/proc/devices| and \cpp|struct file_operations *fops| is a pointer to the \cpp|file_operations| table for your driver.
+A negative return value means the registration failed. Note that we didn't pass the minor number to \cpp|register_chrdev|.
 That is because the kernel doesn't care about the minor number; only our driver uses it.
 
 Now the question is, how do you get a major number without hijacking one that's already in use?
@@ -866,12 +868,12 @@ The easiest way would be to look through Documentation /devices.txt and pick an 
 That is a bad way of doing things because you will never be sure if the number you picked will be assigned later.
 The answer is that you can ask the kernel to assign you a dynamic major number.
 
-If you pass a major number of 0 to \verb|register_chrdev|, the return value will be the dynamically allocated major number.
-The downside is that you can not make a device file in advance, since you don't know what the major number will be.
+If you pass a major number of 0 to \cpp|register_chrdev|, the return value will be the dynamically allocated major number.
+The downside is that you can not make a device file in advance, since you do not know what the major number will be.
 There are a couple of ways to do this.
 First, the driver itself can print the newly assigned number and we can make the device file by hand.
-Second, the newly registered device will have an entry in \textbf{/proc/devices}, and we can either make the device file by hand or write a shell script to read the file in and make the device file.
-The third method is we can have our driver make the the device file using the \textbf{device\_create} function after a successful registration and \textbf{device\_destroy} during the call to cleanup\_module.
+Second, the newly registered device will have an entry in \verb|/proc/devices|, and we can either make the device file by hand or write a shell script to read the file in and make the device file.
+The third method is we can have our driver make the the device file using the \cpp|device_create| function after a successful registration and \cpp|device_destroy| during the call to \cpp|cleanup_module|.
 
 \subsection{Unregistering A Device}
 \label{sec:unregister_device}
@@ -881,16 +883,17 @@ If we are lucky, no other code was loaded there, and we'll get an ugly error mes
 If we are unlucky, another kernel module was loaded into the same location, which means a jump into the middle of another function within the kernel.
 The results of this would be impossible to predict, but they can not be very positive.
 
-Normally, when you don't want to allow something, you return an error code (a negative number) from the function which is supposed to do it.
-With cleanup\_module that's impossible because it is a void function.
+Normally, when you do not want to allow something, you return an error code (a negative number) from the function which is supposed to do it.
+With \cpp|cleanup_module| that's impossible because it is a void function.
 However, there is a counter which keeps track of how many processes are using your module.
-You can see what its value is by looking at the 3rd field of \textbf{/proc/modules}.
-If this number isn't zero, rmmod will fail. Note that you don't have to check the counter from within cleanup\_module because the check will be performed for you by the system call sys\_delete\_module, defined in \textbf{linux/module.c}.
-You should not use this counter directly, but there are functions defined in \textbf{linux/module.h} which let you increase, decrease and display this counter:
+You can see what its value is by looking at the 3rd field of \verb|/proc/modules|.
+If this number isn't zero, rmmod will fail.
+Note that you do not have to check the counter from within \cpp|cleanup_module| because the check will be performed for you by the system call \cpp|sys_delete_module|, defined in \verb|linux/module.c|.
+You should not use this counter directly, but there are functions defined in \verb|linux/module.h| which let you increase, decrease and display this counter:
 
 \begin{itemize}
-\item try\_module\_get(THIS\_MODULE): Increment the use count.
-\item module\_put(THIS\_MODULE): Decrement the use count.
+  \item \cpp|try_module_get(THIS_MODULE)|: Increment the use count.
+  \item \cpp|module_put(THIS_MODULE)|: Decrement the use count.
 \end{itemize}
 
 It is important to keep the counter accurate; if you ever do lose track of the correct usage count, you will never be able to unload the module; it's now reboot time, boys and girls.
@@ -906,7 +909,7 @@ cat /proc/devices
 \end{codebash}
 
 (or open the file with a program) and the driver will put the number of times the device file has been read from into the file.
-We do not support writing to the file (like \textbf{echo "hi" > /dev/hello}), but catch these attempts and tell the user that the operation is not supported.
+We do not support writing to the file (like \sh|echo "hi" > /dev/hello|), but catch these attempts and tell the user that the operation is not supported.
 Don't worry if you don't see what we do with the data we read into the buffer; we don't do much with it.
 We simply read in the data and print a message acknowledging that we received it.
 
@@ -920,7 +923,7 @@ This is necessary for backward compatibility -- a new kernel version is not supp
 In most cases, the device files will also remain the same. On the other hand, the internal interfaces within the kernel can and do change between versions.
 
 There are differences between different kernel versions, and if you want to support multiple kernel versions, you will find yourself having to code conditional compilation directives.
-The way to do this to compare the macro \verb|LINUX_VERSION_CODE| to the macro \verb|KERNEL_VERSION|.
+The way to do this to compare the macro \cpp|LINUX_VERSION_CODE| to the macro \cpp|KERNEL_VERSION|.
 In version a.b.c of the kernel, the value of this macro would be \(2^{16}a+2^{8}b+c\).
 
 While previous versions of this guide showed how you can write backward compatible code with such constructs in great detail, we decided to break with this tradition for the better.
@@ -928,26 +931,26 @@ People interested in doing such might now use a LKMPG with a version matching to
 
 \section{The /proc File System}
 \label{sec:procfs}
-In Linux, there is an additional mechanism for the kernel and kernel modules to send information to processes --- the \textbf{/proc} file system.
-Originally designed to allow easy access to information about processes (hence the name), it is now used by every bit of the kernel which has something interesting to report, such as \textbf{/proc/modules} which provides the list of modules and \textbf{/proc/meminfo} which stats memory usage statistics.
+In Linux, there is an additional mechanism for the kernel and kernel modules to send information to processes --- the \verb|/proc| file system.
+Originally designed to allow easy access to information about processes (hence the name), it is now used by every bit of the kernel which has something interesting to report, such as \verb|/proc/modules| which provides the list of modules and \verb|/proc/meminfo| which stats memory usage statistics.
 
-The method to use the proc file system is very similar to the one used with device drivers --- a structure is created with all the information needed for the \textbf{/proc} file, including pointers to any handler functions (in our case there is only one, the one called when somebody attempts to read from the \textbf{/proc} file).
-Then, init\_module registers the structure with the kernel and cleanup\_module unregisters it.
+The method to use the proc file system is very similar to the one used with device drivers --- a structure is created with all the information needed for the \verb|/proc| file, including pointers to any handler functions (in our case there is only one, the one called when somebody attempts to read from the \verb|/proc| file).
+Then, \cpp|init_module| registers the structure with the kernel and \cpp|cleanup_module| unregisters it.
 
-Normal file systems are located on a disk, rather than just in memory (which is where \textbf{/proc} is), and in that case the inode number is a pointer to a disk location where the file's index-node (inode for short) is located.
+Normal file systems are located on a disk, rather than just in memory (which is where \verb|/proc| is), and in that case the inode number is a pointer to a disk location where the file's index-node (inode for short) is located.
 The inode contains information about the file, for example the file's permissions, together with a pointer to the disk location or locations where the file's data can be found.
 
-Because we don't get called when the file is opened or closed, there's nowhere for us to put try\_module\_get and try\_module\_put in this module, and if the file is opened and then the module is removed, there's no way to avoid the consequences.
+Because we don't get called when the file is opened or closed, there's nowhere for us to put \cpp|try_module_get| and \cpp|try_module_put| in this module, and if the file is opened and then the module is removed, there's no way to avoid the consequences.
 
-Here a simple example showing how to use a \textbf{/proc} file.
-This is the HelloWorld for the \textbf{/proc} filesystem.
-There are three parts: create the file \textbf{/proc/helloworld} in the function init\_module, return a value (and a buffer) when the file \textbf{/proc/helloworld} is read in the callback function \textbf{procfile\_read}, and delete the file \textbf{/proc/helloworld} in the function cleanup\_module.
+Here a simple example showing how to use a \verb|/proc| file.
+This is the HelloWorld for the \verb|/proc| filesystem.
+There are three parts: create the file \verb|/proc/helloworld| in the function \cpp|init_module|, return a value (and a buffer) when the file \verb|/proc/helloworld| is read in the callback function \cpp|procfile_read|, and delete the file \verb|/proc/helloworld| in the function \cpp|cleanup_module|.
 
-The \textbf{/proc/helloworld} is created when the module is loaded with the function \textbf{proc\_create}.
-The return value is a \textbf{struct proc\_dir\_entry} , and it will be used to configure the file \textbf{/proc/helloworld} (for example, the owner of this file).
+The \verb|/proc/helloworld| is created when the module is loaded with the function \cpp|proc_create|.
+The return value is a \cpp|struct proc_dir_entry|, and it will be used to configure the file \verb|/proc/helloworld| (for example, the owner of this file).
 A null return value means that the creation has failed.
 
-Each time, everytime the file \textbf{/proc/helloworld} is read, the function \textbf{procfile\_read} is called.
+Each time, everytime the file \verb|/proc/helloworld| is read, the function \cpp|procfile_read| is called.
 Two parameters of this function are very important: the buffer (the second parameter) and the offset (the fourth one).
 The content of the buffer will be returned to the application which read it (for example the cat command).
 The offset is the current position in the file.
@@ -963,27 +966,27 @@ HelloWorld!
 
 \subsection{The proc\_ops Structure}
 \label{sec:proc_ops}
-The \verb|proc_ops| structure is defined in \textbf{/usr/include/linux/proc\_fs.h} in Linux v5.6+.
-In older kernels, it used \verb|file_operations| for custom hooks in \textbf{/proc} file system, but it contains some members that are unnecessary in VFS, and every time VFS expands \verb|file_operations| set, \textbf{/proc} code comes bloated.
+The \cpp|proc_ops| structure is defined in \verb|include/linux/proc_fs.h| in Linux v5.6+.
+In older kernels, it used \cpp|file_operations| for custom hooks in \verb|/proc| file system, but it contains some members that are unnecessary in VFS, and every time VFS expands \cpp|file_operations| set, \verb|/proc| code comes bloated.
 On the other hand, not only the space, but also some operations were saved by this structure to improve its performance.
-For example, the file which never disappears in \textbf{/proc} can set the \textbf{proc\_flag} as \textbf{PROC\_ENTRY\_PERMANENT} to save 2 atomic ops, 1 allocation, 1 free in per open/read/close sequence.
+For example, the file which never disappears in \verb|/proc| can set the \cpp|proc_flag| as \cpp|PROC_ENTRY_PERMANENT| to save 2 atomic ops, 1 allocation, 1 free in per open/read/close sequence.
 
 \subsection{Read and Write a /proc File}
 \label{sec:read_write_procfs}
 We have seen a very simple example for a /proc file where we only read the file /proc/helloworld.
 It is also possible to write in a /proc file.
 It works the same way as read, a function is called when the /proc file is written.
-But there is a little difference with read, data comes from user, so you have to import data from user space to kernel space (with copy\_from\_user or get\_user)
+But there is a little difference with read, data comes from user, so you have to import data from user space to kernel space (with \cpp|copy_from_user| or \cpp|get_user|)
 
-The reason for copy\_from\_user or get\_user is that Linux memory (on Intel architecture, it may be different under some other processors) is segmented.
+The reason for \cpp|copy_from_user| or \cpp|get_user| is that Linux memory (on Intel architecture, it may be different under some other processors) is segmented.
 This means that a pointer, by itself, does not reference a unique location in memory, only a location in a memory segment, and you need to know which memory segment it is to be able to use it.
 There is one memory segment for the kernel, and one for each of the processes.
 
 The only memory segment accessible to a process is its own, so when writing regular programs to run as processes, there is no need to worry about segments.
 When you write a kernel module, normally you want to access the kernel memory segment, which is handled automatically by the system.
 However, when the content of a memory buffer needs to be passed between the currently running process and the kernel, the kernel function receives a pointer to the memory buffer which is in the process segment.
-The put\_user and get\_user macros allow you to access that memory.
-These functions handle only one character, you can handle several characters with copy\_to\_user and copy\_from\_user.
+The \cpp|put_user| and \cpp|get_user| macros allow you to access that memory.
+These functions handle only one character, you can handle several characters with \cpp|copy_to_user| and \cpp|copy_from_user|.
 As the buffer (in read or write function) is in kernel space, for write function you need to import data because it comes from user space, but not for the read function because data is already in kernel space.
 
 \samplec{examples/procfs2.c}
@@ -995,14 +998,14 @@ But it is also possible to manage /proc file with inodes.
 The main concern is to use advanced functions, like permissions.
 
 In Linux, there is a standard mechanism for file system registration.
-Since every file system has to have its own functions to handle inode and file operations, there is a special structure to hold pointers to all those functions, struct \textbf{inode\_operations}, which includes a pointer to struct proc\_ops.
+Since every file system has to have its own functions to handle inode and file operations, there is a special structure to hold pointers to all those functions, \cpp|struct inode_operations|, which includes a pointer to \cpp|struct proc_ops|.
 
 The difference between file and inode operations is that file operations deal with the file itself whereas inode operations deal with ways of referencing the file, such as creating links to it.
 
-In /proc, whenever we register a new file, we're allowed to specify which struct inode\_operations will be used to access to it.
-This is the mechanism we use, a struct inode\_operations which includes a pointer to a struct proc\_ops which includes pointers to our procfs\_read and procfs\_write functions.
+In /proc, whenever we register a new file, we're allowed to specify which \cpp|struct inode_operations| will be used to access to it.
+This is the mechanism we use, a \cpp|struct inode_operations| which includes a pointer to a \cpp|struct proc_ops| which includes pointers to our \cpp|procf_read| and \cpp|procfs_write| functions.
 
-Another interesting point here is the \verb|module_permission| function.
+Another interesting point here is the \cpp|module_permission| function.
 This function is called whenever a process tries to do something with the /proc file, and it can decide whether to allow access or not.
 Right now it is only based on the operation and the uid of the current user (as available in current, a pointer to a structure which includes information on the currently running process), but it could be based on anything we like, such as what other processes are doing with the same file, the time of day, or the last input we received.
 
@@ -1019,9 +1022,9 @@ Consider using this mechanism, in case you want to document something kernel rel
 \subsection{Manage /proc file with seq\_file}
 \label{sec:manage_procfs_with_seq_file}
 As we have seen, writing a /proc file may be quite ``complex''.
-So to help people writting /proc file, there is an API named \verb|seq_file| that helps formating a /proc file for output.
+So to help people writting /proc file, there is an API named \cpp|seq_file| that helps formating a /proc file for output.
 It is based on sequence, which is composed of 3 functions: start(), next(), and stop().
-The \verb|seq_file| API starts a sequence when a user read the /proc file.
+The \cpp|seq_file| API starts a sequence when a user read the /proc file.
 
 A sequence begins with the call of the function start().
 If the return is a non NULL value, the function next() is called.
@@ -1058,7 +1061,7 @@ You can see a scheme of this in the Figure~\ref{img:seqfile}.
   \label{img:seqfile}
 \end{figure}
 
-The \verb|seq_file| provides basic functions for \verb|proc_ops|, such as seq\_read, seq\_lseek, and some others.
+The \cpp|seq_file| provides basic functions for \cpp|proc_ops|, such as \cpp|seq_read|, \cpp|seq_lseek|, and some others.
 But nothing to write in the /proc file.
 Of course, you can still use the same way as in the previous example.
 
@@ -1071,7 +1074,7 @@ If you want more information, you can read this web page:
   \item \url{https://kernelnewbies.org/Documents/SeqFileHowTo}
 \end{itemize}
 
-You can also read the code of fs/seq\_file.c in the linux kernel.
+You can also read the code of \verb|fs/seq_file.c| in the linux kernel.
 
 \section{sysfs: Interacting with your module}
 \label{sec:sysfs}
@@ -1100,13 +1103,13 @@ Check that it exists:
 sudo lsmod | grep hello_sysfs
 \end{codebash}
 
-What is the current value of \emph{myvariable} ?
+What is the current value of \cpp|myvariable| ?
 
 \begin{codebash}
 cat /sys/kernel/mymodule/myvariable
 \end{codebash}
 
-Set the value of \emph{myvariable} and check that it changed.
+Set the value of \cpp|myvariable| and check that it changed.
 
 \begin{codebash}
 echo "32" > /sys/kernel/mymodule/myvariable
@@ -1124,14 +1127,14 @@ sudo rmmod hello_sysfs
 Device files are supposed to represent physical devices.
 Most physical devices are used for output as well as input, so there has to be some mechanism for device drivers in the kernel to get the output to send to the device from processes.
 This is done by opening the device file for output and writing to it, just like writing to a file.
-In the following example, this is implemented by device\_write.
+In the following example, this is implemented by \cpp|device_write|.
 
 This is not always enough.
 Imagine you had a serial port connected to a modem (even if you have an internal modem, it is still implemented from the CPU's perspective as a serial port connected to a modem, so you don't have to tax your imagination too hard).
 The natural thing to do would be to use the device file to write things to the modem (either modem commands or data to be sent through the phone line) and read things from the modem (either responses for commands or the data received through the phone line).
 However, this leaves open the question of what to do when you need to talk to the serial port itself, for example to send the rate at which data is sent and received.
 
-The answer in Unix is to use a special function called \textbf{ioctl} (short for Input Output ConTroL).
+The answer in Unix is to use a special function called \cpp|ioctl| (short for Input Output ConTroL).
 Every device can have its own ioctl commands, which can be read ioctl's (to send information from a process to the kernel), write ioctl's (to return information to a process), both or neither.
 Notice here the roles of read and write are reversed again, so in ioctl's read is to send information to the kernel and write is to receive information from the kernel.
 
@@ -1139,7 +1142,7 @@ The ioctl function is called with three parameters: the file descriptor of the a
 You will not be able to pass a structure this way, but you will be able to pass a pointer to the structure.
 
 The ioctl number encodes the major device number, the type of the ioctl, the command, and the type of the parameter.
-This ioctl number is usually created by a macro call (\_IO, \_IOR, \_IOW or \_IOWR --- depending on the type) in a header file.
+This ioctl number is usually created by a macro call (\cpp|_IO|, \cpp|_IOR|, \cpp|_IOW| or \cpp|_IOWR| --- depending on the type) in a header file.
 This header file should then be included both by the programs which will use ioctl (so they can generate the appropriate ioctl's) and by the kernel module (so it can understand it).
 In the example below, the header file is chardev.h and the program which uses it is ioctl.c.
 
@@ -1155,25 +1158,25 @@ For more information, consult the kernel source tree at Documentation/ioctl-numb
 
 \section{System Calls}
 \label{sec:syscall}
-So far, the only thing we've done was to use well defined kernel mechanisms to register \textbf{/proc} files and device handlers.
+So far, the only thing we've done was to use well defined kernel mechanisms to register \verb|/proc| files and device handlers.
 This is fine if you want to do something the kernel programmers thought you'd want, such as write a device driver.
 But what if you want to do something unusual, to change the behavior of the system in some way?
 Then, you are mostly on your own.
 
 If you are not being sensible and using a virtual machine then this is where kernel programming can become hazardous.
-While writing the example below, I killed the \textbf{open()} system call.
+While writing the example below, I killed the \cpp|open()| system call.
 This meant I could not open any files, I could not run any programs, and I could not shutdown the system.
 I had to restart the virtual machine.
 No important files got anihilated, but if I was doing this on some live mission critical system then that could have been a possible outcome.
-To ensure you do not lose any files, even within a test environment, please run \textbf{sync} right before you do the \textbf{insmod} and the \textbf{rmmod}.
+To ensure you do not lose any files, even within a test environment, please run \sh|sync| right before you do the \sh|insmod| and the \sh|rmmod|.
 
-Forget about \textbf{/proc} files, forget about device files.
+Forget about \verb|/proc| files, forget about device files.
 They are just minor details.
 Minutiae in the vast expanse of the universe.
 The real process to kernel communication mechanism, the one used by all processes, is \emph{system calls}.
 When a process requests a service from the kernel (such as opening a file, forking to a new process, or requesting more memory), this is the mechanism used.
 If you want to change the behaviour of the kernel in interesting ways, this is the place to do it.
-By the way, if you want to see which system calls a program uses, run \verb|strace <arguments>|.
+By the way, if you want to see which system calls a program uses, run \sh|strace <arguments>|.
 
 In general, a process is not supposed to be able to access the kernel.
 It can not access kernel memory and it can't call kernel functions.
@@ -1186,37 +1189,37 @@ Under Intel CPUs, this is done by means of interrupt 0x80. The hardware knows th
 % FIXME: recent kernel changes the system call entries
 The location in the kernel a process can jump to is called \verb|system_call|.
 The procedure at that location checks the system call number, which tells the kernel what service the process requested.
-Then, it looks at the table of system calls (\verb|sys_call_table|) to see the address of the kernel function to call.
+Then, it looks at the table of system calls (\cpp|sys_call_table|) to see the address of the kernel function to call.
 Then it calls the function, and after it returns, does a few system checks and then return back to the process (or to a different process, if the process time ran out).
-If you want to read this code, it is at the source file \verb|arch/$(architecture)/kernel/entry.S|, after the line \verb|ENTRY(system_call)|.
+If you want to read this code, it is at the source file \verb|arch/$(architecture)/kernel/entry.S|, after the line \cpp|ENTRY(system_call)|.
 
-So, if we want to change the way a certain system call works, what we need to do is to write our own function to implement it (usually by adding a bit of our own code, and then calling the original function) and then change the pointer at sys\_call\_table to point to our function.
-Because we might be removed later and we don't want to leave the system in an unstable state, it's important for cleanup\_module to restore the table to its original state.
+So, if we want to change the way a certain system call works, what we need to do is to write our own function to implement it (usually by adding a bit of our own code, and then calling the original function) and then change the pointer at \cpp|sys_call_table| to point to our function.
+Because we might be removed later and we don't want to leave the system in an unstable state, it's important for \cpp|cleanup_module| to restore the table to its original state.
 
 The source code here is an example of such a kernel module.
-We want to ``spy'' on a certain user, and to \textbf{pr\_info()} a message whenever that user opens a file.
-Towards this end, we replace the system call to open a file with our own function, called \textbf{our\_sys\_open}.
-This function checks the uid (user's id) of the current process, and if it is equal to the uid we spy on, it calls pr\_info() to display the name of the file to be opened.
+We want to ``spy'' on a certain user, and to \cpp|pr_info()| a message whenever that user opens a file.
+Towards this end, we replace the system call to open a file with our own function, called \cpp|our_sys_open|.
+This function checks the uid (user's id) of the current process, and if it is equal to the uid we spy on, it calls \cpp|pr_info()| to display the name of the file to be opened.
 Then, either way, it calls the original open() function with the same parameters, to actually open the file.
 
-The \textbf{init\_module} function replaces the appropriate location in \textbf{sys\_call\_table} and keeps the original pointer in a variable.
-The cleanup\_module function uses that variable to restore everything back to normal.
+The \cpp|init_module| function replaces the appropriate location in \cpp|sys_call_table| and keeps the original pointer in a variable.
+The \cpp|cleanup_module| function uses that variable to restore everything back to normal.
 This approach is dangerous, because of the possibility of two kernel modules changing the same system call.
-Imagine we have two kernel modules, A and B. A's open system call will be A\_open and B's will be B\_open.
-Now, when A is inserted into the kernel, the system call is replaced with A\_open, which will call the original sys\_open when it is done.
-Next, B is inserted into the kernel, which replaces the system call with B\_open, which will call what it thinks is the original system call, A\_open, when it's done.
+Imagine we have two kernel modules, A and B. A's open system call will be \cpp|A_open| and B's will be \cpp|B_open|.
+Now, when A is inserted into the kernel, the system call is replaced with \cpp|A_open|, which will call the original \cpp|sys_open| when it is done.
+Next, B is inserted into the kernel, which replaces the system call with \cpp|B_open|, which will call what it thinks is the original system call, \cpp|A_open|, when it's done.
 
-Now, if B is removed first, everything will be well --- it will simply restore the system call to A\_open, which calls the original.
+Now, if B is removed first, everything will be well --- it will simply restore the system call to \cpp|A_open|, which calls the original.
 However, if A is removed and then B is removed, the system will crash.
-A's removal will restore the system call to the original, sys\_open, cutting B out of the loop.
-Then, when B is removed, it will restore the system call to what it thinks is the original, \textbf{A\_open}, which is no longer in memory.
+A's removal will restore the system call to the original, \cpp|sys_open|, cutting B out of the loop.
+Then, when B is removed, it will restore the system call to what it thinks is the original, \cpp|A_open|, which is no longer in memory.
 At first glance, it appears we could solve this particular problem by checking if the system call is equal to our open function and if so not changing it at all (so that B won't change the system call when it is removed), but that will cause an even worse problem.
-When A is removed, it sees that the system call was changed to \textbf{B\_open} so that it is no longer pointing to \textbf{A\_open}, so it will not restore it to \textbf{sys\_open} before it is removed from memory.
-Unfortunately, \textbf{B\_open} will still try to call \textbf{A\_open} which is no longer there, so that even without removing B the system would crash.
+When A is removed, it sees that the system call was changed to \cpp|B_open| so that it is no longer pointing to \cpp|A_open|, so it will not restore it to \cpp|sys_open| before it is removed from memory.
+Unfortunately, \cpp|B_open| will still try to call \cpp|A_open| which is no longer there, so that even without removing B the system would crash.
 
 Note that all the related problems make syscall stealing unfeasiable for production use.
-In order to keep people from doing potential harmful things \textbf{sys\_call\_table} is no longer exported.
-This means, if you want to do something more than a mere dry run of this example, you will have to patch your current kernel in order to have \verb|sys_call_table| exported.
+In order to keep people from doing potential harmful things \cpp|sys_call_table| is no longer exported.
+This means, if you want to do something more than a mere dry run of this example, you will have to patch your current kernel in order to have \cpp|sys_call_table| exported.
 In the example directory you will find a README and the patch.
 As you can imagine, such modifications are not to be taken lightly.
 Do not try this on valueable systems (ie systems that you do not own - or cannot restore easily).
@@ -1236,8 +1239,8 @@ You can put the process to sleep until you can service it.
 After all, processes are being put to sleep by the kernel and woken up all the time (that is the way multiple processes appear to run on the same time on a single CPU).
 
 This kernel module is an example of this.
-The file (called \textbf{/proc/sleep}) can only be opened by a single process at a time.
-If the file is already open, the kernel module calls \verb|wait_event_interruptible|.
+The file (called \verb|/proc/sleep|) can only be opened by a single process at a time.
+If the file is already open, the kernel module calls \cpp|wait_event_interruptible|.
 The easiest way to keep a file open is to open it with:
 
 \begin{codebash}
@@ -1245,15 +1248,15 @@ tail -f
 \end{codebash}
 
 This function changes the status of the task (a task is the kernel data structure which holds information about a process and the system call it is in,
-if any) to \textbf{TASK\_INTERRUPTIBLE}, which means that the task will not run until it is woken up somehow, and adds it to WaitQ, the queue of tasks waiting to access the file.
+if any) to \cpp|TASK_INTERRUPTIBLE|, which means that the task will not run until it is woken up somehow, and adds it to WaitQ, the queue of tasks waiting to access the file.
 Then, the function calls the scheduler to context switch to a different process, one which has some use for the CPU.
 
-When a process is done with the file, it closes it, and \verb|module_close| is called.
+When a process is done with the file, it closes it, and \cpp|module_close| is called.
 That function wakes up all the processes in the queue (there's no mechanism to only wake up one of them).
 It then returns and the process which just closed the file can continue to run.
 In time, the scheduler decides that that process has had enough and gives control of the CPU to another process.
 Eventually, one of the processes which was in the queue will be given control of the CPU by the scheduler.
-It starts at the point right after the call to \verb|module_interruptible_sleep_on|.
+It starts at the point right after the call to \cpp|module_interruptible_sleep_on|.
 
 This means that the process is still in kernel mode - as far as the process is concerned, it issued the open system call and the system call has not returned yet.
 The process does not know somebody else used the CPU for most of the time between the moment it issued the call and the moment it returned.
@@ -1261,18 +1264,18 @@ The process does not know somebody else used the CPU for most of the time betwee
 It can then proceed to set a global variable to tell all the other processes that the file is still open and go on with its life.
 When the other processes get a piece of the CPU, they'll see that global variable and go back to sleep.
 
-So we will use \verb|tail -f| to keep the file open in the background, while trying to access it with another process (again in the background, so that we need not switch to a different vt).
+So we will use \sh|tail -f| to keep the file open in the background, while trying to access it with another process (again in the background, so that we need not switch to a different vt).
 As soon as the first background process is killed with kill \%1 , the second is woken up, is able to access the file and finally terminates.
 
-To make our life more interesting, \textbf{module\_close} does not have a monopoly on waking up the processes which wait to access the file.
-A signal, such as \emph{Ctrl +c} (\textbf{SIGINT}) can also wake up a process. This is because we used \textbf{module\_interruptible\_sleep\_on}.
-We could have used \textbf{module\_sleep\_on} instead, but that would have resulted in extremely angry users whose \emph{Ctrl+c}'s are ignored.
+To make our life more interesting, \cpp|module_close| does not have a monopoly on waking up the processes which wait to access the file.
+A signal, such as \emph{Ctrl +c} (\textbf{SIGINT}) can also wake up a process. This is because we used \cpp|module_interruptible_sleep_on|.
+We could have used \cpp|module_sleep_on| instead, but that would have resulted in extremely angry users whose \emph{Ctrl+c}'s are ignored.
 
-In that case, we want to return with \textbf{-EINTR} immediately. This is important so users can, for example, kill the process before it receives the file.
+In that case, we want to return with \cpp|-EINTR| immediately. This is important so users can, for example, kill the process before it receives the file.
 
 There is one more point to remember. Some times processes don't want to sleep, they want either to get what they want immediately, or to be told it cannot be done.
-Such processes use the \verb|O_NONBLOCK| flag when opening the file.
-The kernel is supposed to respond by returning with the error code \textbf{-EAGAIN} from operations which would otherwise block, such as opening the file in this example. The program \verb|cat_nonblock|, available in the \textit{examples/other} directory for this chapter, can be used to open a file with \verb|O_NONBLOCK|.
+Such processes use the \cpp|O_NONBLOCK| flag when opening the file.
+The kernel is supposed to respond by returning with the error code \cpp|-EAGAIN| from operations which would otherwise block, such as opening the file in this example. The program \verb|cat_nonblock|, available in the \textit{examples/other} directory for this chapter, can be used to open a file with \cpp|O_NONBLOCK|.
 
 \begin{verbatim}
 $ sudo insmod sleep.ko
@@ -1304,18 +1307,18 @@ $
 \subsection{Completions}
 \label{sec:completion}
 Sometimes one thing should happen before another within a module having multiple threads.
-Rather than using \verb|/bin/sleep| commands, the kernel has another way to do this which allows timeouts or interrupts to also happen.
+Rather than using \sh|/bin/sleep| commands, the kernel has another way to do this which allows timeouts or interrupts to also happen.
 
 In the following example two threads are started, but one needs to start before another.
 
 \samplec{examples/completions.c}
 
 The \emph{machine} structure stores the completion states for the two threads.
-At the exit point of each thread the respective completion state is updated, and \verb|{wait_for_completion| is used by the flywheel thread to ensure that it does not begin prematurely.
+At the exit point of each thread the respective completion state is updated, and \cpp|wait_for_completion| is used by the flywheel thread to ensure that it does not begin prematurely.
 
-So even though \emph{flywheel\_thread} is started first you should notice if you load this module and run \emph{dmesg} that turning the crank always happens first because the flywheel thread waits for it to complete.
+So even though \cpp|flywheel_thread| is started first you should notice if you load this module and run \sh|dmesg| that turning the crank always happens first because the flywheel thread waits for it to complete.
 
-There are other variations upon the \verb|wait_for_completion| function, which include timeouts or being interrupted, but this basic mechanism is enough for many common situations without adding a lot of complexity.
+There are other variations upon the \cpp|wait_for_completion| function, which include timeouts or being interrupted, but this basic mechanism is enough for many common situations without adding a lot of complexity.
 
 \section{Avoiding Collisions and Deadlocks}
 \label{sec:synchronization}
@@ -1334,7 +1337,7 @@ This may be all that is needed to avoid collisions in most cases.
 As the name suggests, spinlocks lock up the CPU that the code is running on, taking 100\% of its resources.
 Because of this you should only use the spinlock mechanism around code which is likely to take no more than a few milliseconds to run and so will not noticably slow anything down from the user's point of view.
 
-The example here is \emph{"irq safe"} in that if interrupts happen during the lock then they will not be forgotten and will activate when the unlock happens, using the \emph{flags} variable to retain their state.
+The example here is \verb|"irq safe"| in that if interrupts happen during the lock then they will not be forgotten and will activate when the unlock happens, using the \cpp|flags| variable to retain their state.
 
 \samplec{examples/example_spinlock.c}
 
@@ -1346,7 +1349,7 @@ As before it is a good idea to keep anything done within the lock as short as po
 
 \samplec{examples/example_rwlock.c}
 
-Of course, if you know for sure that there are no functions triggered by irqs which could possibly interfere with your logic then you can use the simpler  \emph{read\_lock(\&myrwlock)} and \emph{read\_unlock(\&myrwlock)} or the corresponding write functions.
+Of course, if you know for sure that there are no functions triggered by irqs which could possibly interfere with your logic then you can use the simpler \cpp|read_lock(&myrwlock)| and \cpp|read_unlock(&myrwlock)| or the corresponding write functions.
 \subsection{Atomic operations}
 \label{sec:atomics}
 If you are doing simple arithmetic: adding, subtracting or bitwise operations then there is another way in the multi-CPU and multi-hyperthreaded world to stop other parts of the system from messing with your mojo.
@@ -1381,9 +1384,9 @@ The following source code illustrates a minimal kernel module which, when loaded
 \samplec{examples/kbleds.c}
 
 If none of the examples in this chapter fit your debugging needs there might yet be some other tricks to try.
-Ever wondered what \verb|CONFIG_LL_DEBUG| in make menuconfig is good for?
+Ever wondered what \cpp|CONFIG_LL_DEBUG| in make menuconfig is good for?
 If you activate that you get low level access to the serial port.
-While this might not sound very powerful by itself, you can patch \textbf{kernel/printk.c} or any other essential syscall to print ASCII characters, thus makeing it possible to trace virtually everything what your code does over a serial line.
+While this might not sound very powerful by itself, you can patch \verb|kernel/printk.c| or any other essential syscall to print ASCII characters, thus makeing it possible to trace virtually everything what your code does over a serial line.
 If you find yourself porting the kernel to some new and former unsupported architecture, this is usually amongst the first things that should be implemented.
 Logging over a netconsole might also be worth a try.
 
@@ -1399,11 +1402,11 @@ Tasklets are a quick and easy way of scheduling a single function to be run, for
 \subsection{Tasklets}
 \label{sec:tasklet}
 Here is an example tasklet module.
-The \verb|tasklet_fn| function runs for a few seconds and in the mean time execution of the \verb|example_tasklet_init| function continues to the exit point.
+The \cpp|tasklet_fn| function runs for a few seconds and in the mean time execution of the \cpp|example_tasklet_init| function continues to the exit point.
 
 \samplec{examples/example_tasklet.c}
 
-So with this example loaded \emph{dmesg} should show:
+So with this example loaded \sh|dmesg| should show:
 
 \begin{verbatim}
 tasklet example init
@@ -1423,7 +1426,7 @@ The kernel then uses the Completely Fair Scheduler (CFS) to execute work within 
 \label{sec:interrupt_handler}
 \subsection{Interrupt Handlers}
 \label{sec:irq}
-Except for the last chapter, everything we did in the kernel so far we have done as a response to a process asking for it, either by dealing with a special file, sending an \verb|ioctl()|, or issuing a system call.
+Except for the last chapter, everything we did in the kernel so far we have done as a response to a process asking for it, either by dealing with a special file, sending an \cpp|ioctl()|, or issuing a system call.
 But the job of the kernel is not just to respond to process requests.
 Another job, which is every bit as important, is to speak to the hardware connected to the machine.
 
@@ -1444,7 +1447,7 @@ This means that certain things are not allowed in the interrupt handler itself, 
 The solution to this problem is for the interrupt handler to do what needs to be done immediately, usually read something from the hardware or send something to the hardware, and then schedule the handling of the new information at a later time (this is called the "bottom half") and return.
 The kernel is then guaranteed to call the bottom half as soon as possible -- and when it does, everything allowed in kernel modules will be allowed.
 
-The way to implement this is to call \textbf{request\_irq()} to get your interrupt handler called when the relevant IRQ is received.
+The way to implement this is to call \cpp|request_irq()| to get your interrupt handler called when the relevant IRQ is received.
 
 In practice IRQ handling can be a bit more complex.
 Hardware is often designed in a way that chains two interrupt controllers, so that all the IRQs from interrupt controller B are cascaded to a certain IRQ from interrupt controller A.
@@ -1458,7 +1461,7 @@ People still interested in more details, might want to refer to "APIC" now.
 This function receives the IRQ number, the name of the function, flags, a name for \verb|/proc/interrupts| and a parameter to pass to the interrupt handler.
 Usually there is a certain number of IRQs available.
 How many IRQs there are is hardware-dependent.
-The flags can include \verb|SA_SHIRQ| to indicate you are willing to share the IRQ with other interrupt handlers (usually because a number of hardware devices sit on the same IRQ) and \verb|SA_INTERRUPT| to indicate this is a fast interrupt.
+The flags can include \cpp|SA_SHIRQ| to indicate you are willing to share the IRQ with other interrupt handlers (usually because a number of hardware devices sit on the same IRQ) and \cpp|SA_INTERRUPT| to indicate this is a fast interrupt.
 This function will only succeed if there is not already a handler on this IRQ, or if you are both willing to share.
 
 \subsection{Detecting button presses}
@@ -1532,8 +1535,8 @@ An example is show below, and you can use this as a template to add your own sus
 \subsection{Likely and Unlikely conditions}
 \label{sec:likely_unlikely}
 Sometimes you might want your code to run as quickly as possible, especially if it is handling an interrupt or doing something which might cause noticible latency.
-If your code contains boolean conditions and if you know that the conditions are almost always likely to evaluate as either \emph{true} or \emph{false},
-then you can allow the compiler to optimize for this using the \emph{likely} and \emph{unlikely} macros.
+If your code contains boolean conditions and if you know that the conditions are almost always likely to evaluate as either \cpp|true| or \cpp|false|,
+then you can allow the compiler to optimize for this using the \cpp|likely| and \cpp|unlikely| macros.
 
 For example, when allocating memory you are almost always expecting this to succeed.
 
@@ -1546,9 +1549,9 @@ if (unlikely(!bvl)) {
 }
 \end{code}
 
-When the \emph{unlikely} macro is used, the compiler alters its machine instruction output, so that it continues along the false branch and only jumps if the condition is true.
+When the \cpp|unlikely| macro is used, the compiler alters its machine instruction output, so that it continues along the false branch and only jumps if the condition is true.
 That avoids flushing the processor pipeline.
-The opposite happens if you use the \emph{likely} macro.
+The opposite happens if you use the \cpp|likely| macro.
 
 \section{Common Pitfalls}
 \label{sec:opitfall}
