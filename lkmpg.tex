@@ -537,7 +537,7 @@ In this case, you need to restore the value of symbol \textbf{EXTRAVERSION} to \
 We suggest to keep a backup copy of the makefile used to compile your kernel available in \verb|/lib/modules/5.14.0-rc2/build|.
 A simple command as following should suffice.
 \begin{codebash}
-cp /lib/modules/`uname-r`/build/Makefile linux-`uname -r`
+cp /lib/modules/`uname -r`/build/Makefile linux-`uname -r`
 \end{codebash}
 Here \sh|linux-`uname -r`| is the Linux kernel source you are attempting to build.
 
