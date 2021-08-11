@@ -261,7 +261,7 @@ journalctl --since "1 hour ago" | grep kernel
 You now know the basics of creating, compiling, installing and removing modules.
 Now for more of a description of how this module works.
 
-Kernel modules must have at least two functions: a "start" (initialization) function called \cpp|init_module()| which is called when the module is insmoded into the kernel, and an "end" (cleanup) function called \cpp|cleanup_module()| which is called just before it is removed from the kernel.
+Kernel modules must have at least two functions: a "start" (initialization) function called \cpp|init_module()| which is called when the module is \sh|insmod|ed into the kernel, and an "end" (cleanup) function called \cpp|cleanup_module()| which is called just before it is removed from the kernel.
 Actually, things have changed starting with kernel 2.3.13.
 % TODO: adjust the section anchor
 You can now use whatever name you like for the start and end functions of a module, and you will learn how to do this in Section \ref{hello_n_goodbye}.
@@ -375,7 +375,7 @@ This and a few other macros describing the module are illustrated in the below e
 Modules can take command line arguments, but not with the argc/argv you might be used to.
 
 To allow arguments to be passed to your module, declare the variables that will take the values of the command line arguments as global and then use the \cpp|module_param()| macro, (defined in \src{include/linux/moduleparam.h}) to set the mechanism up.
-At runtime, \sh|insmod| will fill the variables with any command line arguments that are given, like \sh|insmod ./mymodule.ko myvariable=5|.
+At runtime, \sh|insmod| will fill the variables with any command line arguments that are given, like \sh|insmod mymodule.ko myvariable=5|.
 The variable declarations and macros should be placed at the beginning of the module for clarity.
 The example code should clear up my admittedly lousy explanation.
 
@@ -882,7 +882,7 @@ The third method is we can have our driver make the the device file using the \c
 
 \subsection{Unregistering A Device}
 \label{sec:unregister_device}
-We can not allow the kernel module to be rmmod'ed whenever root feels like it.
+We can not allow the kernel module to be \sh|rmmod|'ed whenever root feels like it.
 If the device file is opened by a process and then we remove the kernel module, using the file would cause a call to the memory location where the appropriate function (read/write) used to be.
 If we are lucky, no other code was loaded there, and we'll get an ugly error message.
 If we are unlucky, another kernel module was loaded into the same location, which means a jump into the middle of another function within the kernel.
