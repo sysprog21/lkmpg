@@ -1346,7 +1346,7 @@ The example here is \verb|"irq safe"| in that if interrupts happen during the lo
 \subsection{Read and write locks}
 \label{sec:rwlock}
 Read and write locks are specialised kinds of spinlocks so that you can exclusively read from something or write to something.
-Like the earlier spinlocks example the one below shows an "irq safe" situation in which if other functions were triggered from irqs which might also read and write to whatever you are concerned with then they would not disrupt the logic.
+Like the earlier spinlocks example, the one below shows an "irq safe" situation in which if other functions were triggered from irqs which might also read and write to whatever you are concerned with then they would not disrupt the logic.
 As before it is a good idea to keep anything done within the lock as short as possible so that it does not hang up the system and cause users to start revolting against the tyranny of your module.
 
 \samplec{examples/example_rwlock.c}
@@ -1354,7 +1354,7 @@ As before it is a good idea to keep anything done within the lock as short as po
 Of course, if you know for sure that there are no functions triggered by irqs which could possibly interfere with your logic then you can use the simpler \cpp|read_lock(&myrwlock)| and \cpp|read_unlock(&myrwlock)| or the corresponding write functions.
 \subsection{Atomic operations}
 \label{sec:atomics}
-If you are doing simple arithmetic: adding, subtracting or bitwise operations then there is another way in the multi-CPU and multi-hyperthreaded world to stop other parts of the system from messing with your mojo.
+If you are doing simple arithmetic: adding, subtracting or bitwise operations, then there is another way in the multi-CPU and multi-hyperthreaded world to stop other parts of the system from messing with your mojo.
 By using atomic operations you can be confident that your addition, subtraction or bit flip did actually happen and was not overwritten by some other shenanigans.
 An example is shown below.
 
@@ -1366,7 +1366,7 @@ An example is shown below.
 \subsection{Replacement}
 % FIXME: cross-reference
 In Section \ref{sec:using_x}, I said that X Window System and kernel module programming do not mix.
-That is true for developing kernel modules, but in actual use, you want to be able to send messages to whichever tty the command to load the module came from.
+That is true for developing kernel modules. But in actual use, you want to be able to send messages to whichever tty the command to load the module came from.
 
 "tty" is an abbreviation of \emph{teletype}: originally a combination keyboard-printer used to communicate with a Unix system, and today an abstraction for the text stream used for a Unix program, whether it is a physical terminal, an xterm on an X display, a network connection used with ssh, etc.
 
@@ -1385,10 +1385,10 @@ The following source code illustrates a minimal kernel module which, when loaded
 
 \samplec{examples/kbleds.c}
 
-If none of the examples in this chapter fit your debugging needs there might yet be some other tricks to try.
+If none of the examples in this chapter fit your debugging needs, there might yet be some other tricks to try.
 Ever wondered what \cpp|CONFIG_LL_DEBUG| in \sh|make menuconfig| is good for?
 If you activate that you get low level access to the serial port.
-While this might not sound very powerful by itself, you can patch \src{kernel/printk.c} or any other essential syscall to print ASCII characters, thus makeing it possible to trace virtually everything what your code does over a serial line.
+While this might not sound very powerful by itself, you can patch \src{kernel/printk.c} or any other essential syscall to print ASCII characters, thus making it possible to trace virtually everything what your code does over a serial line.
 If you find yourself porting the kernel to some new and former unsupported architecture, this is usually amongst the first things that should be implemented.
 Logging over a netconsole might also be worth a try.
 
@@ -1399,7 +1399,7 @@ Thus you should try to keep debug code to a minimum and make sure it does not sh
 \section{Scheduling Tasks}
 \label{sec:scheduling_tasks}
 There are two main ways of running tasks: tasklets and work queues.
-Tasklets are a quick and easy way of scheduling a single function to be run, for example when triggered from an interrupt, whereas work queues are more complicated but also better suited to running multiple things in a sequence.
+Tasklets are a quick and easy way of scheduling a single function to be run. For example, when triggered from an interrupt, whereas work queues are more complicated but also better suited to running multiple things in a sequence.
 
 \subsection{Tasklets}
 \label{sec:tasklet}
@@ -1433,7 +1433,7 @@ But the job of the kernel is not just to respond to process requests.
 Another job, which is every bit as important, is to speak to the hardware connected to the machine.
 
 There are two types of interaction between the CPU and the rest of the computer's hardware.
-The first type is when the CPU gives orders to the hardware, the other is when the hardware needs to tell the CPU something.
+The first type is when the CPU gives orders to the hardware, the order is when the hardware needs to tell the CPU something.
 The second, called interrupts, is much harder to implement because it has to be dealt with when convenient for the hardware, not the CPU.
 Hardware devices typically have a very small amount of RAM, and if you do not read their information when available, it is lost.
 
@@ -1460,7 +1460,7 @@ SMP enabled kernels running on systems with more than one processor need to solv
 It is not enough to know if a certain IRQs has happend, it's also important for what CPU(s) it was for.
 People still interested in more details, might want to refer to "APIC" now.
 
-This function receives the IRQ number, the name of the function, flags, a name for \verb|/proc/interrupts| and a parameter to pass to the interrupt handler.
+This function receives the IRQ number, the name of the function, flags, a name for \verb|/proc/interrupts| and a parameter to be passed to the interrupt handler.
 Usually there is a certain number of IRQs available.
 How many IRQs there are is hardware-dependent.
 The flags can include \cpp|SA_SHIRQ| to indicate you are willing to share the IRQ with other interrupt handlers (usually because a number of hardware devices sit on the same IRQ) and \cpp|SA_INTERRUPT| to indicate this is a fast interrupt.
@@ -1470,7 +1470,7 @@ This function will only succeed if there is not already a handler on this IRQ, o
 \label{sec:detect_button}
 Many popular single board computers, such as Raspberry Pi or Beagleboards, have a bunch of GPIO pins.
 Attaching buttons to those and then having a button press do something is a classic case in which you might need to use interrupts,
-so that instead of having the CPU waste time and battery power polling for a change in input state it is better for the input to trigger the CPU to then run a particular handling function.
+so that instead of having the CPU waste time and battery power polling for a change in input state, it is better for the input to trigger the CPU to then run a particular handling function.
 
 Here is an example where buttons are connected to GPIO numbers 17 and 18 and an LED is connected to GPIO 4.
 You can change those numbers to whatever is appropriate for your board.
@@ -1489,10 +1489,10 @@ The example below modifies the previous example to also run an additional task w
 
 \section{Crypto}
 \label{sec:crypto}
-At the dawn of the internet everybody trusted everybody completely\ldots{}but that did not work out so well.
-When this guide was originally written it was a more innocent era in which almost nobody actually gave a damn about crypto - least of all kernel developers.
+At the dawn of the internet, everybody trusted everybody completely\ldots{}but that did not work out so well.
+When this guide was originally written, it was a more innocent era in which almost nobody actually gave a damn about crypto - least of all kernel developers.
 That is certainly no longer the case now.
-To handle crypto stuff the kernel has its own API enabling common methods of encryption, decryption and your favourite hash functions.
+To handle crypto stuff, the kernel has its own API enabling common methods of encryption, decryption and your favourite hash functions.
 
 \subsection{Hash functions}
 \label{sec:hashfunc}
@@ -1561,7 +1561,7 @@ The opposite happens if you use the \cpp|likely| macro.
 \subsection{Using standard libraries}
 \label{sec:using_stdlib}
 You can not do that.
-In a kernel module you can only use kernel functions, which are the functions you can see in \verb|/proc/kallsyms|.
+In a kernel module, you can only use kernel functions which are the functions you can see in \verb|/proc/kallsyms|.
 
 \subsection{Disabling interrupts}
 \label{sec:disabling_interrupts}
