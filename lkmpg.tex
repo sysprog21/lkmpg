@@ -831,7 +831,7 @@ The meaning is clear, and you should be aware that any member of the structure w
 
 An instance of \cpp|struct file_operations| containing pointers to functions that are used to implement \cpp|read|, \cpp|write|, \cpp|open|, \ldots{} system calls is commonly named \cpp|fops|.
 
-Sin Linux v5.6, the \cpp|proc_ops| structure was introduced to replace the use of the \cpp|file_operations| structure when registering proc handlers.
+Since Linux v5.6, the \cpp|proc_ops| structure was introduced to replace the use of the \cpp|file_operations| structure when registering proc handlers.
 
 \subsection{The file structure}
 \label{sec:file_struct}
