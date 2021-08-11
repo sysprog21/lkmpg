@@ -17,7 +17,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>August 10, 2021</span></div>
+<div class='date'><span class='ecrm-1200'>August 11, 2021</span></div>
                                                                   
 
                                                                   
@@ -337,8 +337,9 @@ the logs:
 Now for more of a description of how this module works.
 </p><!-- l. 264 --><p class='indent'>   Kernel modules must have at least two functions: a "start" (initialization) function
 called <code>  <span class='ectt-1000'>init_module()</span>
-</code> which is called when the module is insmoded into the kernel, and an "end" (cleanup) function
-called <code>  <span class='ectt-1000'>cleanup_module()</span>
+</code> which is called when the module is <code>  <span class='ectt-1000'>insmod</span>
+</code>ed into the kernel, and an "end" (cleanup) function called
+<code> <span class='ectt-1000'>cleanup_module()</span>
 </code> which is called just before it is removed from the kernel. Actually, things have
 changed starting with kernel 2.3.13. You can now use whatever name you like for the
 start and end functions of a module, and you will learn how to do this in Section
@@ -348,10 +349,10 @@ use <code>  <span class='ectt-1000'>init_module()</span>
 </code> for their start and end functions.
 </p><!-- l. 271 --><p class='indent'>   Typically, <code>  <span class='ectt-1000'>init_module()</span>
 </code> either registers a handler for something with the kernel, or it replaces one of the kernel
-functions with its own code (usually code to do something and then call the original function).
                                                                   
 
                                                                   
+functions with its own code (usually code to do something and then call the original function).
 The <code>  <span class='ectt-1000'>cleanup_module()</span>
 </code> function is supposed to undo whatever
 <code> <span class='ectt-1000'>init_module()</span>
@@ -359,16 +360,16 @@ The <code>  <span class='ectt-1000'>cleanup_module()</span>
 </p><!-- l. 274 --><p class='indent'>   Lastly, every kernel module needs to include <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>&lt;linux/module.h&gt;</span></span></span>. We
 needed to include <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>&lt;linux/kernel.h&gt;</span></span></span> only for the macro expansion for the
 <code> <span class='ectt-1000'>pr_alert()</span>
-</code> log level, which you’ll learn about in Section <a href='#x1-120992'>2<!-- tex4ht:ref: sec:printk  --></a>.
+</code> log level, which you’ll learn about in Section <a href='#x1-121002'>2<!-- tex4ht:ref: sec:printk  --></a>.
 </p><!-- l. 278 --><p class='indent'>
      </p><ol class='enumerate1'>
-<li class='enumerate' id='x1-12098x1'>A point about coding style. Another thing which may not be immediately
+<li class='enumerate' id='x1-12099x1'>A point about coding style. Another thing which may not be immediately
      obvious  to  anyone  getting  started  with  kernel  programming  is  that
      indentation within your code should be using <span class='ecbx-1000'>tabs </span>and <span class='ecbx-1000'>not spaces</span>. It is
      one of the coding conventions of the kernel. You may not like it, but you’ll
      need to get used to it if you ever submit a patch upstream.
      </li>
-<li class='enumerate' id='x1-12100x2'>Introducing print macros. <a id='x1-120992'></a>In the beginning there was <code>  <span class='ectt-1000'>printk</span>
+<li class='enumerate' id='x1-12101x2'>Introducing print macros. <a id='x1-121002'></a>In the beginning there was <code>  <span class='ectt-1000'>printk</span>
      </code>, usually followed by a priority such as <code>  <span class='ectt-1000'>KERN_INFO</span>
      </code> or <code>  <span class='ectt-1000'>KERN_DEBUG</span>
      </code>. More recently this can also be expressed in abbreviated form using a set of
@@ -378,16 +379,16 @@ needed to include <span class='obeylines-h'><span class='verb'><span class='ectt
      They can be found within <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/printk.h'>include/linux/printk.h</a>. Take time to read through
      the available priority macros.
      </li>
-<li class='enumerate' id='x1-12107x3'>
+<li class='enumerate' id='x1-12108x3'>
      <!-- l. 292 --><p class='noindent'>About Compiling. Kernel modules need to be compiled a bit differently
      from  regular  userspace  apps.  Former  kernel  versions  required  us  to
      care much about these settings, which are usually stored in Makefiles.
      Although hierarchically organized, many redundant settings accumulated
      in sublevel Makefiles and made them large and rather difficult to maintain.
-     Fortunately, there is a new way of doing these things, called kbuild, and
                                                                   
 
                                                                   
+     Fortunately, there is a new way of doing these things, called kbuild, and
      the build process for external loadable modules is now fully integrated into
      the standard kernel build mechanism. To learn more on how to compile
      modules which are not part of the official kernel (such as all the examples
@@ -573,7 +574,7 @@ take the values of the command line arguments as global and then use the
 </code> macro, (defined in <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/moduleparam.h'>include/linux/moduleparam.h</a>) to set the mechanism up. At runtime,
 <code> <span class='ectt-1000'>insmod</span>
 </code> will fill the variables with any command line arguments that are given, like
-<code> <span class='ectt-1000'>insmod ./mymodule.ko myvariable=5</span>
+<code> <span class='ectt-1000'>insmod mymodule.ko myvariable=5</span>
 </code>. The variable declarations and macros should be placed at the beginning of the
 module for clarity. The example code should clear up my admittedly lousy
 explanation.
@@ -1346,13 +1347,15 @@ third method is we can have our driver make the the device file using the
 </p><!-- l. 883 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='unregistering-a-device'><span class='titlemark'>0.6.4   </span> <a id='x1-300000.6.4'></a>Unregistering A Device</h4>
-<!-- l. 885 --><p class='noindent'>We can not allow the kernel module to be rmmod’ed whenever root feels like it. If the
-device file is opened by a process and then we remove the kernel module, using the
-file would cause a call to the memory location where the appropriate function
-(read/write) used to be. If we are lucky, no other code was loaded there, and we’ll get
-an ugly error message. If we are unlucky, another kernel module was loaded into the
-same location, which means a jump into the middle of another function within the
-kernel. The results of this would be impossible to predict, but they can not be very
+<!-- l. 885 --><p class='noindent'>We can not allow the kernel module to be
+<code> <span class='ectt-1000'>rmmod</span>
+</code>’ed whenever root feels like it. If the device file is opened by a process and then we
+remove the kernel module, using the file would cause a call to the memory location
+where the appropriate function (read/write) used to be. If we are lucky, no
+other code was loaded there, and we’ll get an ugly error message. If we are
+unlucky, another kernel module was loaded into the same location, which
+means a jump into the middle of another function within the kernel. The
+results of this would be impossible to predict, but they can not be very
 positive.
 </p><!-- l. 891 --><p class='indent'>   Normally, when you do not want to allow something, you return an error code
 (a negative number) from the function which is supposed to do it. With
@@ -1375,11 +1378,11 @@ decrease and display this counter:
      </li>
      <li class='itemize'><code>  <span class='ectt-1000'>module_put(THIS_MODULE)</span>
      </code>: Decrement the use count.</li></ul>
-<!-- l. 904 --><p class='indent'>   It is important to keep the counter accurate; if you ever do lose track of the
-correct usage count, you will never be able to unload the module; it’s now reboot
                                                                   
 
                                                                   
+<!-- l. 904 --><p class='indent'>   It is important to keep the counter accurate; if you ever do lose track of the
+correct usage count, you will never be able to unload the module; it’s now reboot
 time, boys and girls. This is bound to happen to you sooner or later during a
 module’s development.
 </p><!-- l. 907 --><p class='noindent'>
