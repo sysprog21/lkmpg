@@ -117,7 +117,7 @@ To discover what modules are already loaded within your current kernel use the c
 sudo lsmod
 \end{codebash}
 
-Modules are stored within the file /proc/modules, so you can also see them with:
+Modules are stored within the file \verb|/proc/modules|, so you can also see them with:
 \begin{codebash}
 sudo cat /proc/modules
 \end{codebash}
@@ -676,10 +676,11 @@ The \href{https://www.gnu.org/software/hurd/}{GNU Hurd} and the \href{https://fu
 \subsection{Device Drivers}
 \label{sec:device_drivers}
 One class of module is the device driver, which provides functionality for hardware like a serial port.
-On Unix, each piece of hardware is represented by a file located in /dev named a device file which provides the means to communicate with the hardware.
+On Unix, each piece of hardware is represented by a file located in \verb|/dev| named a device file which provides the means to communicate with the hardware.
 The device driver provides the communication on behalf of a user program.
-So the es1370.ko sound card device driver might connect the /dev/sound device file to the Ensoniq IS1370 sound card.
-A userspace program like mp3blaster can use /dev/sound without ever knowing what kind of sound card is installed.
+% FIXME: use popular device for example
+So the es1370.ko sound card device driver might connect the \verb|/dev/sound| device file to the Ensoniq IS1370 sound card.
+A userspace program like mp3blaster can use \verb|/dev/sound| without ever knowing what kind of sound card is installed.
 
 Let's look at some device files.
 % FIXME: use popular devices
@@ -694,7 +695,8 @@ brw-rw----  1 root  disk  3, 3 Jul  5  2000 /dev/hda3
 
 Notice the column of numbers separated by a comma.
 The first number is called the device's major number.
-The second number is the minor number. The major number tells you which driver is used to access the hardware.
+The second number is the minor number.
+The major number tells you which driver is used to access the hardware.
 Each driver is assigned a unique major number; all device files with the same major number are controlled by the same driver.
 All the above major numbers are 3, because they're all controlled by the same driver.
 
@@ -839,7 +841,7 @@ Since Linux v5.6, the \cpp|proc_ops| structure was introduced to replace the use
 Each device is represented in the kernel by a file structure, which is defined in \src{include/linux/fs.h}.
 Be aware that a file is a kernel level structure and never appears in a user space program.
 It is not the same thing as a \cpp|FILE|, which is defined by glibc and would never appear in a kernel space function.
-Also, its name is a bit misleading; it represents an abstract open `file', not a file on a disk, which is represented by a structure named inode.
+Also, its name is a bit misleading; it represents an abstract open `file', not a file on a disk, which is represented by a structure named \cpp|inode|.
 
 An instance of struct file is commonly named \cpp|filp|.
 You'll also see it referred to as a struct file object.
@@ -851,7 +853,7 @@ This is because drivers do not fill file directly; they only use structures cont
 
 \subsection{Registering A Device}
 \label{sec:register_device}
-As discussed earlier, char devices are accessed through device files, usually located in /dev.
+As discussed earlier, char devices are accessed through device files, usually located in \verb|/dev|.
 This is by convention. When writing a driver, it is OK to put the device file in your current directory.
 Just make sure you place it in \verb|/dev| for a production driver.
 The major number tells you which driver handles which device file.
@@ -907,7 +909,7 @@ This is bound to happen to you sooner or later during a module's development.
 
 \subsection{chardev.c}
 \label{sec:org7ce767e}
-The next code sample creates a char driver named chardev.
+The next code sample creates a char driver named \verb|chardev|.
 You can cat its device file.
 
 \begin{codebash}
@@ -976,9 +978,9 @@ For example, the file which never disappears in \verb|/proc| can set the \cpp|pr
 
 \subsection{Read and Write a /proc File}
 \label{sec:read_write_procfs}
-We have seen a very simple example for a /proc file where we only read the file /proc/helloworld.
-It is also possible to write in a /proc file.
-It works the same way as read, a function is called when the /proc file is written.
+We have seen a very simple example for a \verb|/proc| file where we only read the file \verb|/proc/helloworld|.
+It is also possible to write in a \verb|/proc| file.
+It works the same way as read, a function is called when the \verb|/proc| file is written.
 But there is a little difference with read, data comes from user, so you have to import data from user space to kernel space (with \cpp|copy_from_user| or \cpp|get_user|)
 
 The reason for \cpp|copy_from_user| or \cpp|get_user| is that Linux memory (on Intel architecture, it may be different under some other processors) is segmented.
@@ -996,8 +998,8 @@ As the buffer (in read or write function) is in kernel space, for write function
 
 \subsection{Manage /proc file with standard filesystem}
 \label{sec:manage_procfs}
-We have seen how to read and write a /proc file with the /proc interface.
-But it is also possible to manage /proc file with inodes.
+We have seen how to read and write a \verb|/proc| file with the \verb|/proc| interface.
+But it is also possible to manage \verb|/proc| file with inodes.
 The main concern is to use advanced functions, like permissions.
 
 In Linux, there is a standard mechanism for file system registration.
@@ -1005,11 +1007,11 @@ Since every file system has to have its own functions to handle inode and file o
 
 The difference between file and inode operations is that file operations deal with the file itself whereas inode operations deal with ways of referencing the file, such as creating links to it.
 
-In /proc, whenever we register a new file, we're allowed to specify which \cpp|struct inode_operations| will be used to access to it.
+In \verb|/proc|, whenever we register a new file, we're allowed to specify which \cpp|struct inode_operations| will be used to access to it.
 This is the mechanism we use, a \cpp|struct inode_operations| which includes a pointer to a \cpp|struct proc_ops| which includes pointers to our \cpp|procf_read| and \cpp|procfs_write| functions.
 
 Another interesting point here is the \cpp|module_permission| function.
-This function is called whenever a process tries to do something with the /proc file, and it can decide whether to allow access or not.
+This function is called whenever a process tries to do something with the \verb|/proc| file, and it can decide whether to allow access or not.
 Right now it is only based on the operation and the uid of the current user (as available in current, a pointer to a structure which includes information on the currently running process), but it could be based on anything we like, such as what other processes are doing with the same file, the time of day, or the last input we received.
 
 It is important to note that the standard roles of read and write are reversed in the kernel.
@@ -1024,10 +1026,10 @@ Consider using this mechanism, in case you want to document something kernel rel
 
 \subsection{Manage /proc file with seq\_file}
 \label{sec:manage_procfs_with_seq_file}
-As we have seen, writing a /proc file may be quite ``complex''.
-So to help people writting /proc file, there is an API named \cpp|seq_file| that helps formating a \verb|/proc| file for output.
+As we have seen, writing a \verb|/proc| file may be quite ``complex''.
+So to help people writting \verb|/proc| file, there is an API named \cpp|seq_file| that helps formating a \verb|/proc| file for output.
 It is based on sequence, which is composed of 3 functions: \cpp|start()|, \cpp|next()|, and \cpp|stop()|.
-The \cpp|seq_file| API starts a sequence when a user read the /proc file.
+The \cpp|seq_file| API starts a sequence when a user read the \verb|/proc| file.
 
 A sequence begins with the call of the function \cpp|start()|.
 If the return is a non \cpp|NULL| value, the function \cpp|next()| is called.
@@ -1065,7 +1067,7 @@ You can see a scheme of this in the Figure~\ref{img:seqfile}.
 \end{figure}
 
 The \cpp|seq_file| provides basic functions for \cpp|proc_ops|, such as \cpp|seq_read|, \cpp|seq_lseek|, and some others.
-But nothing to write in the /proc file.
+But nothing to write in the \verb|/proc| file.
 Of course, you can still use the same way as in the previous example.
 
 \samplec{examples/procfs4.c}
