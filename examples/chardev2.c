@@ -17,7 +17,7 @@
 #define DEVICE_NAME "char_dev"
 #define BUF_LEN 80
 
-/* Is the device open right now? Used to prevent concurent access into
+/* Is the device open right now? Used to prevent concurrent access into
  * the same device
  */
 static int Device_Open = 0;
