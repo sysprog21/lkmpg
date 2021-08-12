@@ -17,7 +17,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>August 11, 2021</span></div>
+<div class='date'><span class='ecrm-1200'>August 12, 2021</span></div>
                                                                   
 
                                                                   
@@ -2376,7 +2376,7 @@ source tree at <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/l
 <a id='x1-39041r17'></a><span class='ecrm-0500'>17</span><span id='textcolor989'><span class='ectt-0800'>#define DEVICE_NAME "char_dev"</span></span> 
 <a id='x1-39043r18'></a><span class='ecrm-0500'>18</span><span id='textcolor990'><span class='ectt-0800'>#define BUF_LEN 80</span></span> 
 <a id='x1-39045r19'></a><span class='ecrm-0500'>19</span> 
-<a id='x1-39047r20'></a><span class='ecrm-0500'>20</span><span id='textcolor991'><span class='ectt-0800'>/* Is the device open right now? Used to prevent concurent access into</span></span> 
+<a id='x1-39047r20'></a><span class='ecrm-0500'>20</span><span id='textcolor991'><span class='ectt-0800'>/* Is the device open right now? Used to prevent concurrent access into</span></span> 
 <a id='x1-39049r21'></a><span class='ecrm-0500'>21</span><span id='textcolor992'><span class='ectt-0800'> * the same device</span></span> 
 <a id='x1-39051r22'></a><span class='ecrm-0500'>22</span><span id='textcolor993'><span class='ectt-0800'> */</span></span> 
 <a id='x1-39053r23'></a><span class='ecrm-0500'>23</span><span id='textcolor994'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor995'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> Device_Open = 0;</span> 
