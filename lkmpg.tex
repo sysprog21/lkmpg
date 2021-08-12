@@ -841,7 +841,8 @@ Be aware that a file is a kernel level structure and never appears in a user spa
 It is not the same thing as a \cpp|FILE|, which is defined by glibc and would never appear in a kernel space function.
 Also, its name is a bit misleading; it represents an abstract open `file', not a file on a disk, which is represented by a structure named inode.
 
-An instance of struct file is commonly named filp. You'll also see it refered to as struct file file.
+An instance of struct file is commonly named \cpp|filp|.
+You'll also see it referred to as a struct file object.
 Resist the temptation.
 
 Go ahead and look at the definition of file.
