@@ -881,7 +881,7 @@ The downside is that you can not make a device file in advance, since you do not
 There are a couple of ways to do this.
 First, the driver itself can print the newly assigned number and we can make the device file by hand.
 Second, the newly registered device will have an entry in \verb|/proc/devices|, and we can either make the device file by hand or write a shell script to read the file in and make the device file.
-The third method is we can have our driver make the the device file using the \cpp|device_create| function after a successful registration and \cpp|device_destroy| during the call to \cpp|cleanup_module|.
+The third method is that we can have our driver make the device file using the \cpp|device_create| function after a successful registration and \cpp|device_destroy| during the call to \cpp|cleanup_module|.
 
 \subsection{Unregistering A Device}
 \label{sec:unregister_device}
@@ -945,7 +945,7 @@ Then, \cpp|init_module| registers the structure with the kernel and \cpp|cleanup
 Normal file systems are located on a disk, rather than just in memory (which is where \verb|/proc| is), and in that case the inode number is a pointer to a disk location where the file's index-node (inode for short) is located.
 The inode contains information about the file, for example the file's permissions, together with a pointer to the disk location or locations where the file's data can be found.
 
-Because we don't get called when the file is opened or closed, there's nowhere for us to put \cpp|try_module_get| and \cpp|try_module_put| in this module, and if the file is opened and then the module is removed, there's no way to avoid the consequences.
+Because we don't get called when the file is opened or closed, there's nowhere for us to put \cpp|try_module_get| and \cpp|module_put| in this module, and if the file is opened and then the module is removed, there's no way to avoid the consequences.
 
 Here a simple example showing how to use a \verb|/proc| file.
 This is the HelloWorld for the \verb|/proc| filesystem.
