@@ -331,7 +331,7 @@ clean:
 Now have a look at \src{drivers/char/Makefile} for a real world example.
 As you can see, some things get hardwired into the kernel (\verb|obj-y|) but where are all those \verb|obj-m| gone?
 Those familiar with shell scripts will easily be able to spot them.
-For those not, the \verb|obj-$(CONFIG_FOO)| entries you see everywhere expand into \verb|obj-y| or \verb|obj-m|, depending on whether the \verb|CONFIG_FOO| variable has been set to y or m.
+For those not, the \verb|obj-$(CONFIG_FOO)| entries you see everywhere expand into \verb|obj-y| or \verb|obj-m|, depending on whether the \verb|CONFIG_FOO| variable has been set to \verb|y| or \verb|m|.
 While we are at it, those were exactly the kind of variables that you have set in the \verb|.config| file in the top-level directory of Linux kernel source tree, the last time when you said \sh|make menuconfig| or something like that.
 
 \subsection{The \_\_init and \_\_exit Macros}
