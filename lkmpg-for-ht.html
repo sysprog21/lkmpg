@@ -17,7 +17,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>August 12, 2021</span></div>
+<div class='date'><span class='ecrm-1200'>August 16, 2021</span></div>
                                                                   
 
                                                                   
@@ -1339,7 +1339,7 @@ this. First, the driver itself can print the newly assigned number and we
 can make the device file by hand. Second, the newly registered device will
 have an entry in <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/devices</span></span></span>, and we can either make the device file by
 hand or write a shell script to read the file in and make the device file. The
-third method is we can have our driver make the the device file using the
+third method is that we can have our driver make the device file using the
 <code> <span class='ectt-1000'>device_create</span>
                                                                   
 
@@ -1599,7 +1599,7 @@ with a pointer to the disk location or locations where the file’s data can be
 found.
 </p><!-- l. 948 --><p class='indent'>   Because we don’t get called when the file is opened or closed, there’s nowhere for
 us to put <code>  <span class='ectt-1000'>try_module_get</span>
-</code> and <code>  <span class='ectt-1000'>try_module_put</span>
+</code> and <code>  <span class='ectt-1000'>module_put</span>
 </code> in this module, and if the file is opened and then the module is removed, there’s no
 way to avoid the consequences.
 </p><!-- l. 950 --><p class='indent'>   Here a simple example showing how to use a <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> file. This is the HelloWorld for
