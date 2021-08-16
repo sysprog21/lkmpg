@@ -1366,7 +1366,8 @@ An example is shown below.
 \subsection{Replacement}
 % FIXME: cross-reference
 In Section \ref{sec:using_x}, I said that X Window System and kernel module programming do not mix.
-That is true for developing kernel modules. But in actual use, you want to be able to send messages to whichever tty the command to load the module came from.
+That is true for developing kernel modules.
+But in actual use, you want to be able to send messages to whichever tty the command to load the module came from.
 
 "tty" is an abbreviation of \emph{teletype}: originally a combination keyboard-printer used to communicate with a Unix system, and today an abstraction for the text stream used for a Unix program, whether it is a physical terminal, an xterm on an X display, a network connection used with ssh, etc.
 
@@ -1399,7 +1400,8 @@ Thus you should try to keep debug code to a minimum and make sure it does not sh
 \section{Scheduling Tasks}
 \label{sec:scheduling_tasks}
 There are two main ways of running tasks: tasklets and work queues.
-Tasklets are a quick and easy way of scheduling a single function to be run. For example, when triggered from an interrupt, whereas work queues are more complicated but also better suited to running multiple things in a sequence.
+Tasklets are a quick and easy way of scheduling a single function to be run.
+For example, when triggered from an interrupt, whereas work queues are more complicated but also better suited to running multiple things in a sequence.
 
 \subsection{Tasklets}
 \label{sec:tasklet}
