@@ -488,7 +488,7 @@ Now, if you just install a kernel source tree, use it to compile your kernel mod
 insmod: error inserting 'poet_atkm.ko': -1 Invalid module format
 \end{verbatim}
 
-Less cryptical information are logged to the systemd journal:
+Less cryptic information is logged to the systemd journal:
 
 \begin{verbatim}
 Jun  4 22:07:54 localhost kernel: poet_atkm: version magic '2.6.5-1.358custom 686
@@ -512,7 +512,7 @@ name:           hello_4
 vermagic:       5.4.0-70-generic SMP mod_unload modversions
 \end{verbatim}
 
-To overcome this problem we could resort to the \verb|--force-vermagic| option, but this solution is potentially unsafe, and unquestionably inacceptable in production modules.
+To overcome this problem we could resort to the \verb|--force-vermagic| option, but this solution is potentially unsafe, and unquestionably unacceptable in production modules.
 Consequently, we want to compile our module in an environment which was identical to the one in which our precompiled kernel was built.
 How to do this, is the subject of the remainder of this chapter.
 
@@ -522,7 +522,7 @@ Usually, this is available in your current \verb|boot| directory, under a name l
 You may just want to copy it to your kernel source tree: \sh|cp /boot/config-`uname -r` .config|.
 
 Let's focus again on the previous error message: a closer look at the version magic strings suggests that, even with two configuration files which are exactly the same, a slight difference in the version magic could be possible, and it is sufficient to prevent insertion of the module into the kernel.
-That slight difference, namely the custom string which appears in the module's version magic and not in the kernel's one, is due to a modification with respect to the original, in the makefile that some distribution include.
+That slight difference, namely the custom string which appears in the module's version magic and not in the kernel's one, is due to a modification with respect to the original, in the makefile that some distributions include.
 Then, examine your \verb|Makefile|, and make sure that the specified version information matches exactly the one used for your current kernel.
 For example, you makefile could start as follows:
 
@@ -606,7 +606,7 @@ int main(void)
 \end{code}
 
 with \sh|gcc -Wall -o hello hello.c|.
-Run the exectable with \sh|strace ./hello|.
+Run the executable with \sh|strace ./hello|.
 Are you impressed?
 Every line you see corresponds to a system call.
 \href{https://strace.io/}{strace} is a handy program that gives you details about what system calls a program is making, including which call is made, what its arguments are and what it returns.
@@ -620,7 +620,7 @@ The 2nd man section is devoted to system calls (like \cpp|kill()| and \cpp|read(
 The 3rd man section is devoted to library calls, which you would probably be more familiar with (like \cpp|cosh()| and \cpp|random()|).
 
 You can even write modules to replace the kernel's system calls, which we will do shortly.
-Crackers often make use of this sort of thing for backdoors or trojans, but you can write your own modules to do more benign things, like have the kernel write Tee hee, that tickles! everytime someone tries to delete a file on your system.
+Crackers often make use of this sort of thing for backdoors or trojans, but you can write your own modules to do more benign things, like have the kernel write Tee hee, that tickles! every time someone tries to delete a file on your system.
 
 \subsection{User Space vs Kernel Space}
 \label{sec:user_kernl_space}
@@ -956,7 +956,7 @@ The \verb|/proc/helloworld| is created when the module is loaded with the functi
 The return value is a \cpp|struct proc_dir_entry|, and it will be used to configure the file \verb|/proc/helloworld| (for example, the owner of this file).
 A null return value means that the creation has failed.
 
-Each time, everytime the file \verb|/proc/helloworld| is read, the function \cpp|procfile_read| is called.
+Every time the file \verb|/proc/helloworld| is read, the function \cpp|procfile_read| is called.
 Two parameters of this function are very important: the buffer (the second parameter) and the offset (the fourth one).
 The content of the buffer will be returned to the application which read it (for example the \sh|cat| command).
 The offset is the current position in the file.
@@ -1173,7 +1173,7 @@ If you are not being sensible and using a virtual machine then this is where ker
 While writing the example below, I killed the \cpp|open()| system call.
 This meant I could not open any files, I could not run any programs, and I could not shutdown the system.
 I had to restart the virtual machine.
-No important files got anihilated, but if I was doing this on some live mission critical system then that could have been a possible outcome.
+No important files got annihilated, but if I was doing this on some live mission critical system then that could have been a possible outcome.
 To ensure you do not lose any files, even within a test environment, please run \sh|sync| right before you do the \sh|insmod| and the \sh|rmmod|.
 
 Forget about \verb|/proc| files, forget about device files.
@@ -1223,12 +1223,12 @@ At first glance, it appears we could solve this particular problem by checking i
 When A is removed, it sees that the system call was changed to \cpp|B_open| so that it is no longer pointing to \cpp|A_open|, so it will not restore it to \cpp|sys_open| before it is removed from memory.
 Unfortunately, \cpp|B_open| will still try to call \cpp|A_open| which is no longer there, so that even without removing B the system would crash.
 
-Note that all the related problems make syscall stealing unfeasiable for production use.
+Note that all the related problems make syscall stealing unfeasible for production use.
 In order to keep people from doing potential harmful things \cpp|sys_call_table| is no longer exported.
 This means, if you want to do something more than a mere dry run of this example, you will have to patch your current kernel in order to have \cpp|sys_call_table| exported.
 In the example directory you will find a README and the patch.
 As you can imagine, such modifications are not to be taken lightly.
-Do not try this on valueable systems (ie systems that you do not own - or cannot restore easily).
+Do not try this on valuable systems (ie systems that you do not own - or cannot restore easily).
 You will need to get the complete sourcecode of this guide as a tarball in order to get the patch and the README.
 Depending on your kernel version, you might even need to hand apply the patch.
 
@@ -1341,7 +1341,7 @@ This may be all that is needed to avoid collisions in most cases.
 \subsection{Spinlocks}
 \label{sec:spinlock}
 As the name suggests, spinlocks lock up the CPU that the code is running on, taking 100\% of its resources.
-Because of this you should only use the spinlock mechanism around code which is likely to take no more than a few milliseconds to run and so will not noticably slow anything down from the user's point of view.
+Because of this you should only use the spinlock mechanism around code which is likely to take no more than a few milliseconds to run and so will not noticeably slow anything down from the user's point of view.
 
 The example here is \verb|"irq safe"| in that if interrupts happen during the lock then they will not be forgotten and will activate when the unlock happens, using the \cpp|flags| variable to retain their state.
 
@@ -1463,7 +1463,7 @@ Of course, that requires that the kernel finds out which IRQ it really was after
 To take advantage of them requires handlers to be written in assembler, so they do not really fit into the kernel.
 They can be made to work similar to the others, but after that procedure, they are no longer any faster than "common" IRQs.
 SMP enabled kernels running on systems with more than one processor need to solve another truckload of problems.
-It is not enough to know if a certain IRQs has happend, it's also important for what CPU(s) it was for.
+It is not enough to know if a certain IRQs has happened, it's also important to know what CPU(s) it was for.
 People still interested in more details, might want to refer to "APIC" now.
 
 This function receives the IRQ number, the name of the function, flags, a name for \verb|/proc/interrupts| and a parameter to be passed to the interrupt handler.
@@ -1534,7 +1534,7 @@ Here is an example of symmetrically encrypting a string using the AES algorithm 
 \label{sec:device_model}
 Up to this point we have seen all kinds of modules doing all kinds of things, but there was no consistency in their interfaces with the rest of the kernel.
 To impose some consistency such that there is at minimum a standardized way to start, suspend and resume a device a device model was added.
-An example is show below, and you can use this as a template to add your own suspend, resume or other interface functions.
+An example is shown below, and you can use this as a template to add your own suspend, resume or other interface functions.
 
 \samplec{examples/devicemodel.c}
 
@@ -1542,10 +1542,9 @@ An example is show below, and you can use this as a template to add your own sus
 \label{sec:optimization}
 \subsection{Likely and Unlikely conditions}
 \label{sec:likely_unlikely}
-Sometimes you might want your code to run as quickly as possible, especially if it is handling an interrupt or doing something which might cause noticible latency.
+Sometimes you might want your code to run as quickly as possible, especially if it is handling an interrupt or doing something which might cause noticeable latency.
 If your code contains boolean conditions and if you know that the conditions are almost always likely to evaluate as either \cpp|true| or \cpp|false|,
 then you can allow the compiler to optimize for this using the \cpp|likely| and \cpp|unlikely| macros.
-
 For example, when allocating memory you are almost always expecting this to succeed.
 
 \begin{code}
