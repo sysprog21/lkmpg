@@ -8,7 +8,6 @@
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("LKMPG");
 MODULE_DESCRIPTION("A sample driver");
-MODULE_SUPPORTED_DEVICE("testdevice");
 
 static int __init init_hello_4(void)
 {
