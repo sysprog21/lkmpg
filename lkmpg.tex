@@ -896,7 +896,7 @@ With \cpp|cleanup_module| that's impossible because it is a void function.
 However, there is a counter which keeps track of how many processes are using your module.
 You can see what its value is by looking at the 3rd field of \verb|/proc/modules|.
 If this number isn't zero, \sh|rmmod| will fail.
-Note that you do not have to check the counter from within \cpp|cleanup_module| because the check will be performed for you by the system call \cpp|sys_delete_module|, defined in \src{include/linux/syscalls.h}.
+Note that you do not have to check the counter within \cpp|cleanup_module| because the check will be performed for you by the system call \cpp|sys_delete_module|, defined in \src{include/linux/syscalls.h}.
 You should not use this counter directly, but there are functions defined in \src{include/linux/module.h} which let you increase, decrease and display this counter:
 
 \begin{itemize}
