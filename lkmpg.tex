@@ -1153,8 +1153,7 @@ This header file should then be included both by the programs which will use ioc
 In the example below, the header file is chardev.h and the program which uses it is ioctl.c.
 
 If you want to use ioctls in your own kernel modules, it is best to receive an official ioctl assignment, so if you accidentally get somebody else's ioctls, or if they get yours, you'll know something is wrong.
-% FIXME: use the right entry about ioctl assignment
-For more information, consult the kernel source tree at \src{Documentation/driver-api/ioctl.rst}.
+For more information, consult the kernel source tree at \src{Documentation/userspace-api/ioctl/ioctl-number.rst}.
 
 \samplec{examples/chardev2.c}
 
