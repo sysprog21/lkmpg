@@ -833,11 +833,12 @@ name:           hello_4
 vermagic:       5.4.0-70-generic SMP mod_unload modversions
 </pre>
 <!-- l. 513 --><p class='nopar'>
-</p><!-- l. 515 --><p class='indent'>   To overcome this problem we could resort to the <span class='ecbx-1000'>–force-vermagic </span>option, but
-this solution is potentially unsafe, and unquestionably inacceptable in production
-modules. Consequently, we want to compile our module in an environment which was
-identical to the one in which our precompiled kernel was built. How to do this, is the
-subject of the remainder of this chapter.
+</p><!-- l. 515 --><p class='indent'>   To overcome this problem we could resort to the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>--force-vermagic</span></span></span>
+option, but this solution is potentially unsafe, and unquestionably inacceptable
+in production modules. Consequently, we want to compile our module in
+an environment which was identical to the one in which our precompiled
+kernel was built. How to do this, is the subject of the remainder of this
+chapter.
 </p><!-- l. 519 --><p class='indent'>   First of all, make sure that a kernel source tree is available, having exactly the same
 version as your current kernel. Then, find the configuration file which was used to
 compile your precompiled kernel. Usually, this is available in your current <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>boot</span></span></span> directory,
