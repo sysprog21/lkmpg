@@ -1368,7 +1368,7 @@ positive.
 keeps track of how many processes are using your module. You can see what its value
 is by looking at the 3rd field of <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/modules</span></span></span>. If this number isn’t zero,
 <code> <span class='ectt-1000'>rmmod</span>
-</code> will fail. Note that you do not have to check the counter from within
+</code> will fail. Note that you do not have to check the counter within
 <code> <span class='ectt-1000'>cleanup_module</span>
 </code> because the check will be performed for you by the system call
 <code> <span class='ectt-1000'>sys_delete_module</span>
