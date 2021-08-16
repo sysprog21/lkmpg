@@ -646,7 +646,7 @@ In large projects, effort must be made to remember reserved names, and to find w
 
 When writing kernel code, even the smallest module will be linked against the entire kernel, so this is definitely an issue.
 The best way to deal with this is to declare all your variables as static and to use a well-defined prefix for your symbols.
-By convention, all kernel prefixes are lowercase. If you do not want to declare everything as static, another option is to declare a symbol table and register it with a kernel.
+By convention, all kernel prefixes are lowercase. If you do not want to declare everything as static, another option is to declare a symbol table and register it with the kernel.
 We will get to this later.
 
 The file \verb|/proc/kallsyms| holds all the symbols that the kernel knows about and which are therefore accessible to your modules since they share the kernel's codespace.
