@@ -1138,7 +1138,7 @@ In the following example, this is implemented by \cpp|device_write|.
 This is not always enough.
 Imagine you had a serial port connected to a modem (even if you have an internal modem, it is still implemented from the CPU's perspective as a serial port connected to a modem, so you don't have to tax your imagination too hard).
 The natural thing to do would be to use the device file to write things to the modem (either modem commands or data to be sent through the phone line) and read things from the modem (either responses for commands or the data received through the phone line).
-However, this leaves open the question of what to do when you need to talk to the serial port itself, for example to send the rate at which data is sent and received.
+However, this leaves open the question of what to do when you need to talk to the serial port itself, for example to configure the rate at which data is sent and received.
 
 The answer in Unix is to use a special function called \cpp|ioctl| (short for Input Output ConTroL).
 Every device can have its own \cpp|ioctl| commands, which can be read ioctl's (to send information from a process to the kernel), write ioctl's (to return information to a process), both or neither.
