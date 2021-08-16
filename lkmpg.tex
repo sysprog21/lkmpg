@@ -938,7 +938,7 @@ In version \verb|a.b.c| of the kernel, the value of this macro would be \(2^{16}
 \section{The /proc File System}
 \label{sec:procfs}
 In Linux, there is an additional mechanism for the kernel and kernel modules to send information to processes --- the \verb|/proc| file system.
-Originally designed to allow easy access to information about processes (hence the name), it is now used by every bit of the kernel which has something interesting to report, such as \verb|/proc/modules| which provides the list of modules and \verb|/proc/meminfo| which stats memory usage statistics.
+Originally designed to allow easy access to information about processes (hence the name), it is now used by every bit of the kernel which has something interesting to report, such as \verb|/proc/modules| which provides the list of modules and \verb|/proc/meminfo| which gathers memory usage statistics.
 
 The method to use the proc file system is very similar to the one used with device drivers --- a structure is created with all the information needed for the \verb|/proc| file, including pointers to any handler functions (in our case there is only one, the one called when somebody attempts to read from the \verb|/proc| file).
 Then, \cpp|init_module| registers the structure with the kernel and \cpp|cleanup_module| unregisters it.
