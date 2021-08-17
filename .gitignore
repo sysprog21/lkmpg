@@ -29,3 +29,6 @@ lkmpg.pdf
 *.lg 
 *.idv
 *.xref
+
+# format checks
+expected-format
