@@ -10,18 +10,18 @@ The original guide may be found at [Linux Documentation Project](http://www.tldp
 
 ### Compile on Local Machine
 
-To prepare for build this book on your local machine, we're going to have make, TeXLive (MacTeX), dvipng and latexmk installed. On various Unix/Linux operating systems, this can be done simply by:
+To prepare for build this book on your local machine, we're going to install TeXLive (MacTeX). On various Unix/Linux operating systems, this can be done simply by:
 
 ```bash
 # Debian / Ubuntu
-$ sudo apt install make texlive-full latexmk dvipng
+$ sudo apt install make texlive-full
 
 # Arch / Manjaro
-$ sudo pacman -S make texlive-most texlive-bin dvipng
+$ sudo pacman -S make texlive-most texlive-bin
 
 # macOS
 $ brew install --cask mactex
-$ sudo tlmgr update --self && sudo tlmgr install dvipng latexmk
+$ sudo tlmgr update --self
 ```
 
 Now we could build document with following commands:
