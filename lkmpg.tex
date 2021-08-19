@@ -255,7 +255,7 @@ sudo rmmod hello_1
 Notice that the dash was replaced by an underscore.
 To see what just happened in the logs:
 \begin{codebash}
-journalctl --since "1 hour ago" | grep kernel
+sudo journalctl --since "1 hour ago" | grep kernel
 \end{codebash}
 
 You now know the basics of creating, compiling, installing and removing modules.
@@ -336,8 +336,6 @@ While we are at it, those were exactly the kind of variables that you have set i
 
 \subsection{The \_\_init and \_\_exit Macros}
 \label{init_n_exit}
-This demonstrates a feature of kernel 2.2 and later.
-Notice the change in the definitions of the init and cleanup functions.
 The \cpp|__init| macro causes the init function to be discarded and its memory freed once the init function finishes for built-in drivers, but not loadable modules.
 If you think about when the init function is invoked, this makes perfect sense.
 
@@ -485,19 +483,18 @@ If you can't think of a case that will force you to use modules for a precompile
 Now, if you just install a kernel source tree, use it to compile your kernel module and you try to insert your module into the kernel, in most cases you would obtain an error as follows:
 
 \begin{verbatim}
-insmod: error inserting 'poet_atkm.ko': -1 Invalid module format
+insmod: ERROR: could not insert module poet.ko: Invalid module format
 \end{verbatim}
 
 Less cryptic information is logged to the systemd journal:
 
 \begin{verbatim}
-Jun  4 22:07:54 localhost kernel: poet_atkm: version magic '2.6.5-1.358custom 686
-REGPARM 4KSTACKS gcc-3.3' should be '2.6.5-1.358 686 REGPARM 4KSTACKS gcc-3.3'
+kernel: poet: disagrees about version of symbol module_layout
 \end{verbatim}
 
-In other words, your kernel refuses to accept your module because version strings (more precisely, version magics) do not match.
-Incidentally, version magics are stored in the module object in the form of a static string, starting with vermagic:.
-Version data are inserted in your module when it is linked against the \verb|init/vermagic.o| file.
+In other words, your kernel refuses to accept your module because version strings (more precisely, \textit{version magic}, see \src{include/linux/vermagic.h}) do not match.
+Incidentally, version magic strings are stored in the module object in the form of a static string, starting with \cpp|vermagic:|.
+Version data are inserted in your module when it is linked against the \verb|kernel/module.o| file.
 To inspect version magics and other strings stored in a given module, issue the command \sh|modinfo module.ko|:
 
 \begin{verbatim}
