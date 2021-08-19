@@ -542,16 +542,19 @@ Now, please run \sh|make| to update configuration and version headers and object
 
 \begin{verbatim}
 $ make
-CHK     include/linux/version.h
-UPD     include/linux/version.h
-SYMLINK include/asm -> include/asm-i386
-SPLIT   include/linux/autoconf.h -> include/config/*
-HOSTCC  scripts/basic/fixdep
-HOSTCC  scripts/basic/split-include
-HOSTCC  scripts/basic/docproc
-HOSTCC  scripts/conmakehash
-HOSTCC  scripts/kallsyms
-CC      scripts/empty.o
+  SYNC    include/config/auto.conf.cmd
+  HOSTCC  scripts/basic/fixdep
+  HOSTCC  scripts/kconfig/conf.o
+  HOSTCC  scripts/kconfig/confdata.o
+  HOSTCC  scripts/kconfig/expr.o
+  LEX     scripts/kconfig/lexer.lex.c
+  YACC    scripts/kconfig/parser.tab.[ch]
+  HOSTCC  scripts/kconfig/preprocess.o
+  HOSTCC  scripts/kconfig/symbol.o
+  HOSTCC  scripts/kconfig/util.o
+  HOSTCC  scripts/kconfig/lexer.lex.o
+  HOSTCC  scripts/kconfig/parser.tab.o
+  HOSTLD  scripts/kconfig/conf
 \end{verbatim}
 
 If you do not desire to actually compile the kernel, you can interrupt the build process (CTRL-C) just after the SPLIT line, because at that time, the files you need will be are ready.
