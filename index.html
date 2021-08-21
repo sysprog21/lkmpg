@@ -20,7 +20,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>August 19, 2021</span></div>
+<div class='date'><span class='ecrm-1200'>August 21, 2021</span></div>
                                                                   
 
                                                                   
@@ -4038,13 +4038,13 @@ loaded, starts blinking the keyboard LEDs until it is unloaded.
 <a id='x1-51048r24'></a><span class='ecrm-0500'>24</span><span id='textcolor2057'><span class='ectt-0800'>/* Function my_timer_func blinks the keyboard LEDs periodically by invoking</span></span> 
 <a id='x1-51050r25'></a><span class='ecrm-0500'>25</span><span id='textcolor2058'><span class='ectt-0800'> * command KDSETLED of ioctl() on the keyboard driver. To learn more on virtual</span></span> 
 <a id='x1-51052r26'></a><span class='ecrm-0500'>26</span><span id='textcolor2059'><span class='ectt-0800'> * terminal ioctl operations, please see file:</span></span> 
-<a id='x1-51054r27'></a><span class='ecrm-0500'>27</span><span id='textcolor2060'><span class='ectt-0800'> *   drivers/char/vt_ioctl.c, function vt_ioctl().</span></span> 
+<a id='x1-51054r27'></a><span class='ecrm-0500'>27</span><span id='textcolor2060'><span class='ectt-0800'> *   drivers/tty/vt/vt_ioctl.c, function vt_ioctl().</span></span> 
 <a id='x1-51056r28'></a><span class='ecrm-0500'>28</span><span id='textcolor2061'><span class='ectt-0800'> *</span></span> 
 <a id='x1-51058r29'></a><span class='ecrm-0500'>29</span><span id='textcolor2062'><span class='ectt-0800'> * The argument to KDSETLED is alternatively set to 7 (thus causing the led</span></span> 
 <a id='x1-51060r30'></a><span class='ecrm-0500'>30</span><span id='textcolor2063'><span class='ectt-0800'> * mode to be set to LED_SHOW_IOCTL, and all the leds are lit) and to 0xFF</span></span> 
 <a id='x1-51062r31'></a><span class='ecrm-0500'>31</span><span id='textcolor2064'><span class='ectt-0800'> * (any value above 7 switches back the led mode to LED_SHOW_FLAGS, thus</span></span> 
 <a id='x1-51064r32'></a><span class='ecrm-0500'>32</span><span id='textcolor2065'><span class='ectt-0800'> * the LEDs reflect the actual keyboard status).  To learn more on this,</span></span> 
-<a id='x1-51066r33'></a><span class='ecrm-0500'>33</span><span id='textcolor2066'><span class='ectt-0800'> * please see file: drivers/char/keyboard.c, function setledstate().</span></span> 
+<a id='x1-51066r33'></a><span class='ecrm-0500'>33</span><span id='textcolor2066'><span class='ectt-0800'> * please see file: drivers/tty/vt/keyboard.c, function setledstate().</span></span> 
 <a id='x1-51068r34'></a><span class='ecrm-0500'>34</span><span id='textcolor2067'><span class='ectt-0800'> */</span></span> 
 <a id='x1-51070r35'></a><span class='ecrm-0500'>35</span> 
 <a id='x1-51072r36'></a><span class='ecrm-0500'>36</span><span id='textcolor2068'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2069'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> my_timer_func(</span><span id='textcolor2070'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor2071'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> ptr)</span> 
