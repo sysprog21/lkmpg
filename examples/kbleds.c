@@ -24,13 +24,13 @@ char kbledstatus = 0;
 /* Function my_timer_func blinks the keyboard LEDs periodically by invoking
  * command KDSETLED of ioctl() on the keyboard driver. To learn more on virtual
  * terminal ioctl operations, please see file:
- *   drivers/char/vt_ioctl.c, function vt_ioctl().
+ *   drivers/tty/vt/vt_ioctl.c, function vt_ioctl().
  *
  * The argument to KDSETLED is alternatively set to 7 (thus causing the led
  * mode to be set to LED_SHOW_IOCTL, and all the leds are lit) and to 0xFF
  * (any value above 7 switches back the led mode to LED_SHOW_FLAGS, thus
  * the LEDs reflect the actual keyboard status).  To learn more on this,
- * please see file: drivers/char/keyboard.c, function setledstate().
+ * please see file: drivers/tty/vt/keyboard.c, function setledstate().
  */
 
 static void my_timer_func(unsigned long ptr)
