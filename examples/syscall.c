@@ -14,14 +14,23 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/moduleparam.h> /* which will have params */
-#include <linux/syscalls.h>
-#include <linux/unistd.h> /* The list of system calls */
+#include <linux/unistd.h>      /* The list of system calls */
+#include <linux/version.h>
 
 /* For the current (process) structure, we need this to know who the
  * current user is.
  */
 #include <linux/sched.h>
 #include <linux/uaccess.h>
+
+/* The in-kernel calls to the ksys_close() syscall were removed in Linux v5.11+.
+ */
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 11, 0))
+#include <linux/syscalls.h> /* ksys_close() wrapper for backward compatibility */
+#define close_fd ksys_close
+#else
+#include <linux/fdtable.h> /* For close_fd */
+#endif
 
 unsigned long **sys_call_table;
 unsigned long original_cr0;
@@ -80,7 +89,7 @@ static unsigned long **aquire_sys_call_table(void)
     while (offset < ULLONG_MAX) {
         sct = (unsigned long **) offset;
 
-        if (sct[__NR_close] == (unsigned long *) ksys_close)
+        if (sct[__NR_close] == (unsigned long *) close_fd)
             return sct;
 
         offset += sizeof(void *);

@@ -6,6 +6,13 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
 
+/* Macro DECLARE_TASKLET_OLD exists for compatibiity.
+ * See https://lwn.net/Articles/830964/
+ */
+#ifndef DECLARE_TASKLET_OLD
+#define DECLARE_TASKLET_OLD(arg1, arg2) DECLARE_TASKLET(arg1, arg2, 0L)
+#endif
+
 static void tasklet_fn(unsigned long data)
 {
     pr_info("Example tasklet starts\n");
@@ -13,7 +20,7 @@ static void tasklet_fn(unsigned long data)
     pr_info("Example tasklet ends\n");
 }
 
-DECLARE_TASKLET(mytask, tasklet_fn, 0L);
+DECLARE_TASKLET_OLD(mytask, tasklet_fn);
 
 static int example_tasklet_init(void)
 {

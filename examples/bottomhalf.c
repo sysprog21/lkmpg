@@ -14,6 +14,13 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
 
+/* Macro DECLARE_TASKLET_OLD exists for compatibiity.
+ * See https://lwn.net/Articles/830964/
+ */
+#ifndef DECLARE_TASKLET_OLD
+#define DECLARE_TASKLET_OLD(arg1, arg2) DECLARE_TASKLET(arg1, arg2, 0L)
+#endif
+
 static int button_irqs[] = {-1, -1};
 
 /* Define GPIOs for LEDs.
@@ -38,7 +45,7 @@ static void bottomhalf_tasklet_fn(unsigned long data)
     pr_info("Bottom half tasklet ends\n");
 }
 
-DECLARE_TASKLET(buttontask, bottomhalf_tasklet_fn, 0L);
+DECLARE_TASKLET_OLD(buttontask, bottomhalf_tasklet_fn);
 
 /* interrupt function triggered when a button is pressed */
 static irqreturn_t button_isr(int irq, void *data)
