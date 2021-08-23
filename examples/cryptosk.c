@@ -4,6 +4,8 @@
 #include <crypto/internal/skcipher.h>
 #include <linux/crypto.h>
 #include <linux/module.h>
+#include <linux/random.h>
+#include <linux/scatterlist.h>
 
 #define SYMMETRIC_KEY_LENGTH 32
 #define CIPHER_BLOCK_SIZE 16

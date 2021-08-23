@@ -2,6 +2,7 @@
 *.o
 *.ko
 *cmd
+*.dwo
 *.swp
 *.symvers
 *.mod

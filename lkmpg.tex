@@ -1421,6 +1421,15 @@ Example tasklet starts
 Example tasklet init continues...
 Example tasklet ends
 \end{verbatim}
+Although tasklet is easy to use, it comes with several defators, and developers are discussing about getting rid of tasklet in linux kernel.
+The tasklet callback runs in atomic context, inside a software interrupt, meaning that it cannot sleep or access user-space data, so not all work can be done in a tasklet handler.
+Also, the kernel only allows one instance of any given tasklet to be running at any given time; multiple different tasklet callbacks can run in parallel.
+
+In recent kernels, tasklets can be replaced by workqueues, timers, or threaded interrupts.\footnote{The goal of threaded interrupts is to push more of the work to separate threads, so that the minimum needed for acknowledging an interrupt is reduced, and therefore the time spent handling the interrupt (where it can't handle any other interrupts at the same time) is reduced.
+See https://lwn.net/Articles/302043/}
+While the removal of tasklets remains a longer-term goal, the current kernel contains more than a hundred uses of tasklets.
+Now developers are proceeding with the API changes and the macro \cpp|DECLARE_TASKLET_OLD| exists for compatibiity.
+For further information, see \url{https://lwn.net/Articles/830964/}.
 
 \subsection{Work queues}
 \label{sec:workqueue}
