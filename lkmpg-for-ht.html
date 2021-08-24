@@ -3493,7 +3493,7 @@ $
 <a id='x1-42532r39'></a><span class='ecrm-0500'>39</span> 
 <a id='x1-42534r40'></a><span class='ecrm-0500'>40</span><span class='ectt-0800'>        </span><span id='textcolor1707'><span class='ectt-0800'>/* If there</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s an error, report it and die */</span></span> 
 <a id='x1-42536r41'></a><span class='ecrm-0500'>41</span><span class='ectt-0800'>        </span><span id='textcolor1708'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (bytes == -1) {</span> 
-<a id='x1-42538r42'></a><span class='ecrm-0500'>42</span><span class='ectt-0800'>            </span><span id='textcolor1709'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (errno = EAGAIN)</span> 
+<a id='x1-42538r42'></a><span class='ecrm-0500'>42</span><span class='ectt-0800'>            </span><span id='textcolor1709'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (errno == EAGAIN)</span> 
 <a id='x1-42540r43'></a><span class='ecrm-0500'>43</span><span class='ectt-0800'>                puts(</span><span id='textcolor1710'><span class='ectt-0800'>"Normally I</span><span class='tctt-0800'>'</span><span class='ectt-0800'>d block, but you told me not to"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-42542r44'></a><span class='ecrm-0500'>44</span><span class='ectt-0800'>            </span><span id='textcolor1711'><span class='ectt-0800'>else</span></span> 
 <a id='x1-42544r45'></a><span class='ecrm-0500'>45</span><span class='ectt-0800'>                puts(</span><span id='textcolor1712'><span class='ectt-0800'>"Another read error"</span></span><span class='ectt-0800'>);</span> 
