@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 
         /* If there's an error, report it and die */
         if (bytes == -1) {
-            if (errno = EAGAIN)
+            if (errno == EAGAIN)
                 puts("Normally I'd block, but you told me not to");
             else
                 puts("Another read error");
