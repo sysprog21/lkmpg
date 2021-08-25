@@ -30,8 +30,6 @@ static char Message[BUF_LEN];
  */
 static char *Message_Ptr;
 
-/* Major number assigned to our device driver */
-static int Major;
 static struct class *cls;
 
 /* This is called whenever a process attempts to open the device file */
@@ -201,10 +199,8 @@ static int __init chardev2_init(void)
         return ret_val;
     }
 
-    Major = ret_val;
-
     cls = class_create(THIS_MODULE, DEVICE_FILE_NAME);
-    device_create(cls, NULL, MKDEV(Major, MAJOR_NUM), NULL, DEVICE_FILE_NAME);
+    device_create(cls, NULL, MKDEV(MAJOR_NUM, 0), NULL, DEVICE_FILE_NAME);
 
     pr_info("Device created on /dev/%s\n", DEVICE_FILE_NAME);
 
@@ -214,11 +210,11 @@ static int __init chardev2_init(void)
 /* Cleanup - unregister the appropriate file from /proc */
 static void __exit chardev2_exit(void)
 {
-    device_destroy(cls, MKDEV(Major, 0));
+    device_destroy(cls, MKDEV(MAJOR_NUM, 0));
     class_destroy(cls);
 
     /* Unregister the device */
-    unregister_chrdev(Major, DEVICE_NAME);
+    unregister_chrdev(MAJOR_NUM, DEVICE_NAME);
 }
 
 module_init(chardev2_init);
