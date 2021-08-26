@@ -1204,6 +1204,100 @@ If you want to read this code, it is at the source file \verb|arch/$(architectur
 So, if we want to change the way a certain system call works, what we need to do is to write our own function to implement it (usually by adding a bit of our own code, and then calling the original function) and then change the pointer at \cpp|sys_call_table| to point to our function.
 Because we might be removed later and we don't want to leave the system in an unstable state, it's important for \cpp|cleanup_module| to restore the table to its original state.
 
+To modify the content of \cpp|sys_call_table|, we need to consider the control register.
+A control register is a processor register that changes or controls the general behavior of the CPU.
+For x86 architecture, the \verb|cr0| register has various control flags that modify the basic operation of the processor.
+The \verb|WP| flag in \verb|cr0| stands for write protection.
+Once the \verb|WP| flag is set, the processor disallows further write attempts to the read-only sections
+Therefore, we must disable the \verb|WP| flag before modifying \cpp|sys_call_table|.
+Since Linux v5.3, the \cpp|write_cr0| function cannot be used because of the sensitive \verb|cr0| bits pinned by the security issue, the attacker may write into CPU control registers to disable CPU protections like write protection.
+As a result, we have to provide the custom assembly routine to bypass it.
+
+However, \cpp|sys_call_table| symbol is unexported to prevent misuse.
+But there have few ways to get the symbol, manual symbol lookup and \cpp|kallsyms_lookup_name|.
+Here we use both depend on the kernel version.
+
+Because of the \textit{control-flow integrity}, which is a technique to prevent the redirect execution code from the attacker, for making sure that the indirect calls go to the expected addresses and the return addresses are not changed.
+Since Linux v5.7, the kernel patched the series of \textit{control-flow enforcement} (CET) for x86, and some configurations of GCC, like GCC versions 9 and 10 in Ubuntu, will add with CET (the \verb|-fcf-protection| option) in the kernel by default.
+Using that GCC to compile the kernel with retpoline off may result in CET being enabled in the kernel.
+You can use the following command to check out the \verb|-fcf-protection| option is enabled or not:
+\begin{verbatim}
+$ gcc -v -Q -O2 --help=target | grep protection
+Using built-in specs.
+COLLECT_GCC=gcc
+COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/9/lto-wrapper
+...
+gcc version 9.3.0 (Ubuntu 9.3.0-17ubuntu1~20.04)
+COLLECT_GCC_OPTIONS='-v' '-Q' '-O2' '--help=target' '-mtune=generic' '-march=x86-64'
+ /usr/lib/gcc/x86_64-linux-gnu/9/cc1 -v ... -fcf-protection ...
+ GNU C17 (Ubuntu 9.3.0-17ubuntu1~20.04) version 9.3.0 (x86_64-linux-gnu)
+...
+\end{verbatim}
+But CET should not be enabled in the kernel, it may break the Kprobes and bpf.
+Consequently, CET is disabled since v.11.
+To guarantee the manual symbol lookup worked, we only use up to v5.4.
+
+Unfortunately, since Linux v5.7 \cpp|kallsyms_lookup_name| is also unexported, it needs certain trick to get the address of \cpp|kallsyms_lookup_name|.
+If \cpp|CONFIG_KPROBES| is enabled, we can facilitate the retrieval of function addresses by means of Kprobes to dynamically break into the specific kernel routine.
+Kprobes inserts a breakpoint at the entry of function by replacing the first bytes of the probed instruction.
+When a CPU hits the breakpoint, registers are stored, and the control will pass to Kprobes.
+It passes the addresses of the saved registers and the Kprobe struct to the handler you defined, then executes it.
+Kprobes can be registered by symbol name or address.
+Within the symbol name, the address will be handled by the kernel.
+
+Otherwise, specify the address of \cpp|sys_call_table| from \verb|/proc/kallsyms| and \verb|/boot/System.map| into \cpp|sym| parameter.
+Following is the sample usage for \verb|/proc/kallsyms|:
+\begin{verbatim}
+$ sudo grep sys_call_table /proc/kallsyms
+ffffffff82000280 R x32_sys_call_table
+ffffffff820013a0 R sys_call_table
+ffffffff820023e0 R ia32_sys_call_table
+$ sudo insmod syscall.ko sym=0xffffffff820013a0
+\end{verbatim}
+
+Using the address from \verb|/boot/System.map|, be careful about \verb|KASLR| (Kernel Address Space Layout Randomization).
+\verb|KASLR| may randomize the address of kernel code and data at every boot time, such as the static address listed in \verb|/boot/System.map| will offset by some entropy.
+The purpose of \verb|KASLR| is to protect the kernel space from the attacker.
+Without \verb|KASLR|, the attacker may find the target address in the fixed address easily.
+Then the attacker can use return-oriented programming to insert some malicious codes to execute or receive the target data by a tampered pointer.
+\verb|KASLR| mitigates these kinds of attacks because the attacker cannot immediately know the target address, but a brute-force attack can still work.
+If the address of a symbol in \verb|/proc/kallsyms| is different from the address in \verb|/boot/System.map|, \verb|KASLR| is enabled with the kernel, which your system running on.
+\begin{verbatim}
+$ grep GRUB_CMDLINE_LINUX_DEFAULT /etc/default/grub
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"
+$ sudo grep sys_call_table /boot/System.map-$(uname -r)
+ffffffff82000300 R sys_call_table
+$ sudo grep sys_call_table /proc/kallsyms
+ffffffff820013a0 R sys_call_table
+# Reboot
+$ sudo grep sys_call_table /boot/System.map-$(uname -r)
+ffffffff82000300 R sys_call_table
+$ sudo grep sys_call_table /proc/kallsyms 
+ffffffff86400300 R sys_call_table
+\end{verbatim}
+If \verb|KASLR| is enabled, we have to take care of the address from \verb|/proc/kallsyms| each time we reboot the machine.
+In order to use the address from \verb|/boot/System.map|, make sure that \verb|KASLR| is disabled.
+You can add the \verb|nokaslr| for disabling \verb|KASLR| in next booting time:
+\begin{verbatim}
+$ grep GRUB_CMDLINE_LINUX_DEFAULT /etc/default/grub
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"
+$ sudo perl -i -pe 'm/quiet/ and s//quiet nokaslr/' /etc/default/grub
+$ grep quiet /etc/default/grub
+GRUB_CMDLINE_LINUX_DEFAULT="quiet nokaslr splash"
+$ sudo update-grub
+\end{verbatim}
+
+For more information, check out the following:
+
+\begin{itemize}
+ \item \href{https://lwn.net/Articles/804849/}{Cook: Security things in Linux v5.3}
+ \item \href{https://lwn.net/Articles/12211/}{Unexporting the system call table}
+ \item \href{https://lwn.net/Articles/810077/}{Control-flow integrity for the kernel}
+ \item \href{https://lwn.net/Articles/813350/}{Unexporting kallsyms\_lookup\_name()}
+ \item \href{https://www.kernel.org/doc/Documentation/kprobes.txt}{Kernel Probes (Kprobes)}
+ \item \href{https://lwn.net/Articles/569635/}{Kernel address space layout randomization}
+\end{itemize}
+
 The source code here is an example of such a kernel module.
 We want to ``spy'' on a certain user, and to \cpp|pr_info()| a message whenever that user opens a file.
 Towards this end, we replace the system call to open a file with our own function, called \cpp|our_sys_open|.
