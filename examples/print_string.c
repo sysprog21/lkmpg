@@ -11,17 +11,14 @@
 
 static void print_string(char *str)
 {
-    struct tty_struct *my_tty;
-    const struct tty_operations *ttyops;
-
-    /* The tty for the current task, for 2.6.6+ kernels */
-    my_tty = get_current_tty();
-    ttyops = my_tty->driver->ops;
+    /* The tty for the current task */
+    struct tty_struct *my_tty = get_current_tty();
 
     /* If my_tty is NULL, the current task has no tty you can print to (i.e.,
      * if it is a daemon). If so, there is nothing we can do.
      */
     if (my_tty) {
+        const struct tty_operations *ttyops = my_tty->driver->ops;
         /* my_tty->driver is a struct which holds the tty's functions,
          * one of which (write) is used to write strings to the tty.
          * It can be used to take a string either from the user's or
