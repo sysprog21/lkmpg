@@ -20,7 +20,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>August 26, 2021</span></div>
+<div class='date'><span class='ecrm-1200'>August 29, 2021</span></div>
                                                                   
 
                                                                   
@@ -3940,70 +3940,67 @@ tty.
 <a id='x1-50022r11'></a><span class='ecrm-0500'>11</span> 
 <a id='x1-50024r12'></a><span class='ecrm-0500'>12</span><span id='textcolor1983'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1984'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> print_string(</span><span id='textcolor1985'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *str)</span> 
 <a id='x1-50026r13'></a><span class='ecrm-0500'>13</span><span class='ectt-0800'>{</span> 
-<a id='x1-50028r14'></a><span class='ecrm-0500'>14</span><span class='ectt-0800'>    </span><span id='textcolor1986'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> tty_struct *my_tty;</span> 
-<a id='x1-50030r15'></a><span class='ecrm-0500'>15</span><span class='ectt-0800'>    </span><span id='textcolor1987'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor1988'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> tty_operations *ttyops;</span> 
+<a id='x1-50028r14'></a><span class='ecrm-0500'>14</span><span class='ectt-0800'>    </span><span id='textcolor1986'><span class='ectt-0800'>/* The tty for the current task */</span></span> 
+<a id='x1-50030r15'></a><span class='ecrm-0500'>15</span><span class='ectt-0800'>    </span><span id='textcolor1987'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> tty_struct *my_tty = get_current_tty();</span> 
 <a id='x1-50032r16'></a><span class='ecrm-0500'>16</span> 
-<a id='x1-50034r17'></a><span class='ecrm-0500'>17</span><span class='ectt-0800'>    </span><span id='textcolor1989'><span class='ectt-0800'>/* The tty for the current task, for 2.6.6+ kernels */</span></span> 
-<a id='x1-50036r18'></a><span class='ecrm-0500'>18</span><span class='ectt-0800'>    my_tty = get_current_tty();</span> 
-<a id='x1-50038r19'></a><span class='ecrm-0500'>19</span><span class='ectt-0800'>    ttyops = my_tty-&gt;driver-&gt;ops;</span> 
-<a id='x1-50040r20'></a><span class='ecrm-0500'>20</span> 
-<a id='x1-50042r21'></a><span class='ecrm-0500'>21</span><span class='ectt-0800'>    </span><span id='textcolor1990'><span class='ectt-0800'>/* If my_tty is NULL, the current task has no tty you can print to (i.e.,</span></span> 
-<a id='x1-50044r22'></a><span class='ecrm-0500'>22</span><span id='textcolor1991'><span class='ectt-0800'>     * if it is a daemon). If so, there is nothing we can do.</span></span> 
-<a id='x1-50046r23'></a><span class='ecrm-0500'>23</span><span id='textcolor1992'><span class='ectt-0800'>     */</span></span> 
-<a id='x1-50048r24'></a><span class='ecrm-0500'>24</span><span class='ectt-0800'>    </span><span id='textcolor1993'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (my_tty) {</span> 
-<a id='x1-50050r25'></a><span class='ecrm-0500'>25</span><span class='ectt-0800'>        </span><span id='textcolor1994'><span class='ectt-0800'>/* my_tty-&gt;driver is a struct which holds the tty</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s functions,</span></span> 
-<a id='x1-50052r26'></a><span class='ecrm-0500'>26</span><span id='textcolor1995'><span class='ectt-0800'>         * one of which (write) is used to write strings to the tty.</span></span> 
-<a id='x1-50054r27'></a><span class='ecrm-0500'>27</span><span id='textcolor1996'><span class='ectt-0800'>         * It can be used to take a string either from the user</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s or</span></span> 
-<a id='x1-50056r28'></a><span class='ecrm-0500'>28</span><span id='textcolor1997'><span class='ectt-0800'>         * kernel</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s memory segment.</span></span> 
-<a id='x1-50058r29'></a><span class='ecrm-0500'>29</span><span id='textcolor1998'><span class='ectt-0800'>         *</span></span> 
-<a id='x1-50060r30'></a><span class='ecrm-0500'>30</span><span id='textcolor1999'><span class='ectt-0800'>         * The function</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s 1st parameter is the tty to write to, because the</span></span> 
-<a id='x1-50062r31'></a><span class='ecrm-0500'>31</span><span id='textcolor2000'><span class='ectt-0800'>         * same function would normally be used for all tty</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s of a certain</span></span> 
-<a id='x1-50064r32'></a><span class='ecrm-0500'>32</span><span id='textcolor2001'><span class='ectt-0800'>         * type.</span></span> 
-<a id='x1-50066r33'></a><span class='ecrm-0500'>33</span><span id='textcolor2002'><span class='ectt-0800'>         * The 2nd parameter is a pointer to a string.</span></span> 
-<a id='x1-50068r34'></a><span class='ecrm-0500'>34</span><span id='textcolor2003'><span class='ectt-0800'>         * The 3rd parameter is the length of the string.</span></span> 
-<a id='x1-50070r35'></a><span class='ecrm-0500'>35</span><span id='textcolor2004'><span class='ectt-0800'>         *</span></span> 
-<a id='x1-50072r36'></a><span class='ecrm-0500'>36</span><span id='textcolor2005'><span class='ectt-0800'>         * As you will see below, sometimes it</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s necessary to use</span></span> 
-<a id='x1-50074r37'></a><span class='ecrm-0500'>37</span><span id='textcolor2006'><span class='ectt-0800'>         * preprocessor stuff to create code that works for different</span></span> 
-<a id='x1-50076r38'></a><span class='ecrm-0500'>38</span><span id='textcolor2007'><span class='ectt-0800'>         * kernel versions. The (naive) approach we</span><span class='tctt-0800'>'</span><span class='ectt-0800'>ve taken here does not</span></span> 
-<a id='x1-50078r39'></a><span class='ecrm-0500'>39</span><span id='textcolor2008'><span class='ectt-0800'>         * scale well. The right way to deal with this is described in</span></span> 
-<a id='x1-50080r40'></a><span class='ecrm-0500'>40</span><span id='textcolor2009'><span class='ectt-0800'>         * section 2 of</span></span> 
-<a id='x1-50082r41'></a><span class='ecrm-0500'>41</span><span id='textcolor2010'><span class='ectt-0800'>         * linux/Documentation/SubmittingPatches</span></span> 
-<a id='x1-50084r42'></a><span class='ecrm-0500'>42</span><span id='textcolor2011'><span class='ectt-0800'>         */</span></span> 
-<a id='x1-50086r43'></a><span class='ecrm-0500'>43</span><span class='ectt-0800'>        (ttyops-&gt;write)(my_tty,       </span><span id='textcolor2012'><span class='ectt-0800'>/* The tty itself */</span></span> 
-<a id='x1-50088r44'></a><span class='ecrm-0500'>44</span><span class='ectt-0800'>                        str,          </span><span id='textcolor2013'><span class='ectt-0800'>/* String                 */</span></span> 
-<a id='x1-50090r45'></a><span class='ecrm-0500'>45</span><span class='ectt-0800'>                        strlen(str)); </span><span id='textcolor2014'><span class='ectt-0800'>/* Length */</span></span> 
-<a id='x1-50092r46'></a><span class='ecrm-0500'>46</span> 
-<a id='x1-50094r47'></a><span class='ecrm-0500'>47</span><span class='ectt-0800'>        </span><span id='textcolor2015'><span class='ectt-0800'>/* ttys were originally hardware devices, which (usually) strictly</span></span> 
-<a id='x1-50096r48'></a><span class='ecrm-0500'>48</span><span id='textcolor2016'><span class='ectt-0800'>         * followed the ASCII standard. In ASCII, to move to a new line you</span></span> 
-<a id='x1-50098r49'></a><span class='ecrm-0500'>49</span><span id='textcolor2017'><span class='ectt-0800'>         * need two characters, a carriage return and a line feed. On Unix,</span></span> 
-<a id='x1-50100r50'></a><span class='ecrm-0500'>50</span><span id='textcolor2018'><span class='ectt-0800'>         * the ASCII line feed is used for both purposes - so we can not</span></span> 
-<a id='x1-50102r51'></a><span class='ecrm-0500'>51</span><span id='textcolor2019'><span class='ectt-0800'>         * just use \n, because it would not have a carriage return and the</span></span> 
-<a id='x1-50104r52'></a><span class='ecrm-0500'>52</span><span id='textcolor2020'><span class='ectt-0800'>         * next line will start at the column right after the line feed.</span></span> 
-<a id='x1-50106r53'></a><span class='ecrm-0500'>53</span><span id='textcolor2021'><span class='ectt-0800'>         *</span></span> 
-<a id='x1-50108r54'></a><span class='ecrm-0500'>54</span><span id='textcolor2022'><span class='ectt-0800'>         * This is why text files are different between Unix and MS Windows.</span></span> 
-<a id='x1-50110r55'></a><span class='ecrm-0500'>55</span><span id='textcolor2023'><span class='ectt-0800'>         * In CP/M and derivatives, like MS-DOS and MS Windows, the ASCII</span></span> 
-<a id='x1-50112r56'></a><span class='ecrm-0500'>56</span><span id='textcolor2024'><span class='ectt-0800'>         * standard was strictly adhered to, and therefore a newline requirs</span></span> 
-<a id='x1-50114r57'></a><span class='ecrm-0500'>57</span><span id='textcolor2025'><span class='ectt-0800'>         * both a LF and a CR.</span></span> 
-<a id='x1-50116r58'></a><span class='ecrm-0500'>58</span><span id='textcolor2026'><span class='ectt-0800'>         */</span></span> 
-<a id='x1-50118r59'></a><span class='ecrm-0500'>59</span><span class='ectt-0800'>        (ttyops-&gt;write)(my_tty, </span><span id='textcolor2027'><span class='ectt-0800'>"</span></span><span id='textcolor2028'><span class='ectt-0800'>\015\012</span></span><span id='textcolor2029'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, 2);</span> 
-<a id='x1-50120r60'></a><span class='ecrm-0500'>60</span><span class='ectt-0800'>    }</span> 
-<a id='x1-50122r61'></a><span class='ecrm-0500'>61</span><span class='ectt-0800'>}</span> 
-<a id='x1-50124r62'></a><span class='ecrm-0500'>62</span> 
-<a id='x1-50126r63'></a><span class='ecrm-0500'>63</span><span id='textcolor2030'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2031'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> __init print_string_init(</span><span id='textcolor2032'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
-<a id='x1-50128r64'></a><span class='ecrm-0500'>64</span><span class='ectt-0800'>{</span> 
-<a id='x1-50130r65'></a><span class='ecrm-0500'>65</span><span class='ectt-0800'>    print_string(</span><span id='textcolor2033'><span class='ectt-0800'>"The module has been inserted.  Hello world!"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-50132r66'></a><span class='ecrm-0500'>66</span><span class='ectt-0800'>    </span><span id='textcolor2034'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
-<a id='x1-50134r67'></a><span class='ecrm-0500'>67</span><span class='ectt-0800'>}</span> 
-<a id='x1-50136r68'></a><span class='ecrm-0500'>68</span> 
-<a id='x1-50138r69'></a><span class='ecrm-0500'>69</span><span id='textcolor2035'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2036'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit print_string_exit(</span><span id='textcolor2037'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
-<a id='x1-50140r70'></a><span class='ecrm-0500'>70</span><span class='ectt-0800'>{</span> 
-<a id='x1-50142r71'></a><span class='ecrm-0500'>71</span><span class='ectt-0800'>    print_string(</span><span id='textcolor2038'><span class='ectt-0800'>"The module has been removed.  Farewell world!"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-50144r72'></a><span class='ecrm-0500'>72</span><span class='ectt-0800'>}</span> 
+<a id='x1-50034r17'></a><span class='ecrm-0500'>17</span><span class='ectt-0800'>    </span><span id='textcolor1988'><span class='ectt-0800'>/* If my_tty is NULL, the current task has no tty you can print to (i.e.,</span></span> 
+<a id='x1-50036r18'></a><span class='ecrm-0500'>18</span><span id='textcolor1989'><span class='ectt-0800'>     * if it is a daemon). If so, there is nothing we can do.</span></span> 
+<a id='x1-50038r19'></a><span class='ecrm-0500'>19</span><span id='textcolor1990'><span class='ectt-0800'>     */</span></span> 
+<a id='x1-50040r20'></a><span class='ecrm-0500'>20</span><span class='ectt-0800'>    </span><span id='textcolor1991'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (my_tty) {</span> 
+<a id='x1-50042r21'></a><span class='ecrm-0500'>21</span><span class='ectt-0800'>        </span><span id='textcolor1992'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor1993'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> tty_operations *ttyops = my_tty-&gt;driver-&gt;ops;</span> 
+<a id='x1-50044r22'></a><span class='ecrm-0500'>22</span><span class='ectt-0800'>        </span><span id='textcolor1994'><span class='ectt-0800'>/* my_tty-&gt;driver is a struct which holds the tty</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s functions,</span></span> 
+<a id='x1-50046r23'></a><span class='ecrm-0500'>23</span><span id='textcolor1995'><span class='ectt-0800'>         * one of which (write) is used to write strings to the tty.</span></span> 
+<a id='x1-50048r24'></a><span class='ecrm-0500'>24</span><span id='textcolor1996'><span class='ectt-0800'>         * It can be used to take a string either from the user</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s or</span></span> 
+<a id='x1-50050r25'></a><span class='ecrm-0500'>25</span><span id='textcolor1997'><span class='ectt-0800'>         * kernel</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s memory segment.</span></span> 
+<a id='x1-50052r26'></a><span class='ecrm-0500'>26</span><span id='textcolor1998'><span class='ectt-0800'>         *</span></span> 
+<a id='x1-50054r27'></a><span class='ecrm-0500'>27</span><span id='textcolor1999'><span class='ectt-0800'>         * The function</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s 1st parameter is the tty to write to, because the</span></span> 
+<a id='x1-50056r28'></a><span class='ecrm-0500'>28</span><span id='textcolor2000'><span class='ectt-0800'>         * same function would normally be used for all tty</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s of a certain</span></span> 
+<a id='x1-50058r29'></a><span class='ecrm-0500'>29</span><span id='textcolor2001'><span class='ectt-0800'>         * type.</span></span> 
+<a id='x1-50060r30'></a><span class='ecrm-0500'>30</span><span id='textcolor2002'><span class='ectt-0800'>         * The 2nd parameter is a pointer to a string.</span></span> 
+<a id='x1-50062r31'></a><span class='ecrm-0500'>31</span><span id='textcolor2003'><span class='ectt-0800'>         * The 3rd parameter is the length of the string.</span></span> 
+<a id='x1-50064r32'></a><span class='ecrm-0500'>32</span><span id='textcolor2004'><span class='ectt-0800'>         *</span></span> 
+<a id='x1-50066r33'></a><span class='ecrm-0500'>33</span><span id='textcolor2005'><span class='ectt-0800'>         * As you will see below, sometimes it</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s necessary to use</span></span> 
+<a id='x1-50068r34'></a><span class='ecrm-0500'>34</span><span id='textcolor2006'><span class='ectt-0800'>         * preprocessor stuff to create code that works for different</span></span> 
+<a id='x1-50070r35'></a><span class='ecrm-0500'>35</span><span id='textcolor2007'><span class='ectt-0800'>         * kernel versions. The (naive) approach we</span><span class='tctt-0800'>'</span><span class='ectt-0800'>ve taken here does not</span></span> 
+<a id='x1-50072r36'></a><span class='ecrm-0500'>36</span><span id='textcolor2008'><span class='ectt-0800'>         * scale well. The right way to deal with this is described in</span></span> 
+<a id='x1-50074r37'></a><span class='ecrm-0500'>37</span><span id='textcolor2009'><span class='ectt-0800'>         * section 2 of</span></span> 
+<a id='x1-50076r38'></a><span class='ecrm-0500'>38</span><span id='textcolor2010'><span class='ectt-0800'>         * linux/Documentation/SubmittingPatches</span></span> 
+<a id='x1-50078r39'></a><span class='ecrm-0500'>39</span><span id='textcolor2011'><span class='ectt-0800'>         */</span></span> 
+<a id='x1-50080r40'></a><span class='ecrm-0500'>40</span><span class='ectt-0800'>        (ttyops-&gt;write)(my_tty,       </span><span id='textcolor2012'><span class='ectt-0800'>/* The tty itself */</span></span> 
+<a id='x1-50082r41'></a><span class='ecrm-0500'>41</span><span class='ectt-0800'>                        str,          </span><span id='textcolor2013'><span class='ectt-0800'>/* String                 */</span></span> 
+<a id='x1-50084r42'></a><span class='ecrm-0500'>42</span><span class='ectt-0800'>                        strlen(str)); </span><span id='textcolor2014'><span class='ectt-0800'>/* Length */</span></span> 
+<a id='x1-50086r43'></a><span class='ecrm-0500'>43</span> 
+<a id='x1-50088r44'></a><span class='ecrm-0500'>44</span><span class='ectt-0800'>        </span><span id='textcolor2015'><span class='ectt-0800'>/* ttys were originally hardware devices, which (usually) strictly</span></span> 
+<a id='x1-50090r45'></a><span class='ecrm-0500'>45</span><span id='textcolor2016'><span class='ectt-0800'>         * followed the ASCII standard. In ASCII, to move to a new line you</span></span> 
+<a id='x1-50092r46'></a><span class='ecrm-0500'>46</span><span id='textcolor2017'><span class='ectt-0800'>         * need two characters, a carriage return and a line feed. On Unix,</span></span> 
+<a id='x1-50094r47'></a><span class='ecrm-0500'>47</span><span id='textcolor2018'><span class='ectt-0800'>         * the ASCII line feed is used for both purposes - so we can not</span></span> 
+<a id='x1-50096r48'></a><span class='ecrm-0500'>48</span><span id='textcolor2019'><span class='ectt-0800'>         * just use \n, because it would not have a carriage return and the</span></span> 
+<a id='x1-50098r49'></a><span class='ecrm-0500'>49</span><span id='textcolor2020'><span class='ectt-0800'>         * next line will start at the column right after the line feed.</span></span> 
+<a id='x1-50100r50'></a><span class='ecrm-0500'>50</span><span id='textcolor2021'><span class='ectt-0800'>         *</span></span> 
+<a id='x1-50102r51'></a><span class='ecrm-0500'>51</span><span id='textcolor2022'><span class='ectt-0800'>         * This is why text files are different between Unix and MS Windows.</span></span> 
+<a id='x1-50104r52'></a><span class='ecrm-0500'>52</span><span id='textcolor2023'><span class='ectt-0800'>         * In CP/M and derivatives, like MS-DOS and MS Windows, the ASCII</span></span> 
+<a id='x1-50106r53'></a><span class='ecrm-0500'>53</span><span id='textcolor2024'><span class='ectt-0800'>         * standard was strictly adhered to, and therefore a newline requirs</span></span> 
+<a id='x1-50108r54'></a><span class='ecrm-0500'>54</span><span id='textcolor2025'><span class='ectt-0800'>         * both a LF and a CR.</span></span> 
+<a id='x1-50110r55'></a><span class='ecrm-0500'>55</span><span id='textcolor2026'><span class='ectt-0800'>         */</span></span> 
+<a id='x1-50112r56'></a><span class='ecrm-0500'>56</span><span class='ectt-0800'>        (ttyops-&gt;write)(my_tty, </span><span id='textcolor2027'><span class='ectt-0800'>"</span></span><span id='textcolor2028'><span class='ectt-0800'>\015\012</span></span><span id='textcolor2029'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, 2);</span> 
+<a id='x1-50114r57'></a><span class='ecrm-0500'>57</span><span class='ectt-0800'>    }</span> 
+<a id='x1-50116r58'></a><span class='ecrm-0500'>58</span><span class='ectt-0800'>}</span> 
+<a id='x1-50118r59'></a><span class='ecrm-0500'>59</span> 
+<a id='x1-50120r60'></a><span class='ecrm-0500'>60</span><span id='textcolor2030'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2031'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> __init print_string_init(</span><span id='textcolor2032'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-50122r61'></a><span class='ecrm-0500'>61</span><span class='ectt-0800'>{</span> 
+<a id='x1-50124r62'></a><span class='ecrm-0500'>62</span><span class='ectt-0800'>    print_string(</span><span id='textcolor2033'><span class='ectt-0800'>"The module has been inserted.  Hello world!"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-50126r63'></a><span class='ecrm-0500'>63</span><span class='ectt-0800'>    </span><span id='textcolor2034'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
+<a id='x1-50128r64'></a><span class='ecrm-0500'>64</span><span class='ectt-0800'>}</span> 
+<a id='x1-50130r65'></a><span class='ecrm-0500'>65</span> 
+<a id='x1-50132r66'></a><span class='ecrm-0500'>66</span><span id='textcolor2035'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2036'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit print_string_exit(</span><span id='textcolor2037'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-50134r67'></a><span class='ecrm-0500'>67</span><span class='ectt-0800'>{</span> 
+<a id='x1-50136r68'></a><span class='ecrm-0500'>68</span><span class='ectt-0800'>    print_string(</span><span id='textcolor2038'><span class='ectt-0800'>"The module has been removed.  Farewell world!"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-50138r69'></a><span class='ecrm-0500'>69</span><span class='ectt-0800'>}</span> 
+<a id='x1-50140r70'></a><span class='ecrm-0500'>70</span> 
+<a id='x1-50142r71'></a><span class='ecrm-0500'>71</span><span class='ectt-0800'>module_init(print_string_init);</span> 
+<a id='x1-50144r72'></a><span class='ecrm-0500'>72</span><span class='ectt-0800'>module_exit(print_string_exit);</span> 
 <a id='x1-50146r73'></a><span class='ecrm-0500'>73</span> 
-<a id='x1-50148r74'></a><span class='ecrm-0500'>74</span><span class='ectt-0800'>module_init(print_string_init);</span> 
-<a id='x1-50150r75'></a><span class='ecrm-0500'>75</span><span class='ectt-0800'>module_exit(print_string_exit);</span> 
-<a id='x1-50152r76'></a><span class='ecrm-0500'>76</span> 
-<a id='x1-50154r77'></a><span class='ecrm-0500'>77</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2039'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
+<a id='x1-50148r74'></a><span class='ecrm-0500'>74</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2039'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
 <!-- l. 1385 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='flashing-keyboard-leds'><span class='titlemark'>13.2   </span> <a id='x1-5100013.2'></a>Flashing keyboard LEDs</h4>
