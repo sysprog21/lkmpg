@@ -1234,7 +1234,7 @@ COLLECT_GCC_OPTIONS='-v' '-Q' '-O2' '--help=target' '-mtune=generic' '-march=x86
 ...
 \end{verbatim}
 But CET should not be enabled in the kernel, it may break the Kprobes and bpf.
-Consequently, CET is disabled since v.11.
+Consequently, CET is disabled since v5.11.
 To guarantee the manual symbol lookup worked, we only use up to v5.4.
 
 Unfortunately, since Linux v5.7 \cpp|kallsyms_lookup_name| is also unexported, it needs certain trick to get the address of \cpp|kallsyms_lookup_name|.
