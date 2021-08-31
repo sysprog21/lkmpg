@@ -188,6 +188,7 @@ pre.fancyvrb, { white-space: pre; }
 figure, .fancyvrb, .verbatim { margin-inline: 0; overflow-x: auto; }
 .ecrm-0500 { font-size: 70%; font-style: italic; color: gray; width: 1.5rem; display: inline-block; -webkit-user-select: none; -moz-user-select: none; -o-user-select: none; user-select: none; }
 .flushright:first-child { position:absolute; top: 10px; right: 50px; }
+.right { text-align: right; }
 pre#fancyvrb1{padding:5.69054pt;}
 pre#fancyvrb1{ border-top: solid 0.4pt; }
 pre#fancyvrb1{ border-left: solid 0.4pt; }
