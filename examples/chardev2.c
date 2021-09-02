@@ -20,15 +20,15 @@
 /* Is the device open right now? Used to prevent concurrent access into
  * the same device
  */
-static int Device_Open = 0;
+static int open_device_cnt = 0;
 
 /* The message the device will give when asked */
-static char Message[BUF_LEN];
+static char message[BUF_LEN];
 
 /* How far did the process reading the message get? Useful if the message
  * is larger than the size of the buffer we get to fill in device_read.
  */
-static char *Message_Ptr;
+static char *message_ptr;
 
 static struct class *cls;
 
@@ -38,12 +38,12 @@ static int device_open(struct inode *inode, struct file *file)
     pr_info("device_open(%p)\n", file);
 
     /* We don't want to talk to two processes at the same time. */
-    if (Device_Open)
+    if (open_device_cnt)
         return -EBUSY;
 
-    Device_Open++;
+    open_device_cnt++;
     /* Initialize the message */
-    Message_Ptr = Message;
+    message_ptr = message;
     try_module_get(THIS_MODULE);
     return SUCCESS;
 }
@@ -53,7 +53,7 @@ static int device_release(struct inode *inode, struct file *file)
     pr_info("device_release(%p,%p)\n", inode, file);
 
     /* We're now ready for our next caller */
-    Device_Open--;
+    open_device_cnt--;
 
     module_put(THIS_MODULE);
     return SUCCESS;
@@ -62,9 +62,9 @@ static int device_release(struct inode *inode, struct file *file)
 /* This function is called whenever a process which has already opened the
  * device file attempts to read from it.
  */
-static ssize_t device_read(struct file *file,   /* see include/linux/fs.h   */
+static ssize_t device_read(struct file *file, /* see include/linux/fs.h   */
                            char __user *buffer, /* buffer to be filled  */
-                           size_t length,       /* length of the buffer     */
+                           size_t length, /* length of the buffer     */
                            loff_t *offset)
 {
     /* Number of bytes actually written to the buffer */
@@ -73,17 +73,17 @@ static ssize_t device_read(struct file *file,   /* see include/linux/fs.h   */
     pr_info("device_read(%p,%p,%ld)\n", file, buffer, length);
 
     /* If at the end of message, return 0 (which signifies end of file). */
-    if (*Message_Ptr == 0)
+    if (*message_ptr == 0)
         return 0;
 
     /* Actually put the data into the buffer */
-    while (length && *Message_Ptr) {
+    while (length && *message_ptr) {
         /* Because the buffer is in the user data segment, not the kernel
          * data segment, assignment would not work. Instead, we have to
          * use put_user which copies data from the kernel data segment to
          * the user data segment.
          */
-        put_user(*(Message_Ptr++), buffer++);
+        put_user(*(message_ptr++), buffer++);
         length--;
         bytes_read++;
     }
@@ -97,19 +97,17 @@ static ssize_t device_read(struct file *file,   /* see include/linux/fs.h   */
 }
 
 /* called when somebody tries to write into our device file. */
-static ssize_t device_write(struct file *file,
-                            const char __user *buffer,
-                            size_t length,
-                            loff_t *offset)
+static ssize_t device_write(struct file *file, const char __user *buffer,
+                            size_t length, loff_t *offset)
 {
     int i;
 
     pr_info("device_write(%p,%s,%ld)", file, buffer, length);
 
     for (i = 0; i < length && i < BUF_LEN; i++)
-        get_user(Message[i], buffer + i);
+        get_user(message[i], buffer + i);
 
-    Message_Ptr = Message;
+    message_ptr = message;
 
     /* Again, return the number of input characters used. */
     return i;
@@ -123,7 +121,7 @@ static ssize_t device_write(struct file *file,
  * If the ioctl is write or read/write (meaning output is returned to the
  * calling process), the ioctl call returns the output of this function.
  */
-long device_ioctl(struct file *file,      /* ditto */
+long device_ioctl(struct file *file, /* ditto */
                   unsigned int ioctl_num, /* number and param for ioctl */
                   unsigned long ioctl_param)
 {
@@ -138,33 +136,33 @@ long device_ioctl(struct file *file,      /* ditto */
          * be the device's message.  Get the parameter given to ioctl by
          * the process.
          */
-        temp = (char *) ioctl_param;
+        temp = (char *)ioctl_param;
 
         /* Find the length of the message */
         get_user(ch, temp);
         for (i = 0; ch && i < BUF_LEN; i++, temp++)
             get_user(ch, temp);
 
-        device_write(file, (char *) ioctl_param, i, 0);
+        device_write(file, (char *)ioctl_param, i, 0);
         break;
 
     case IOCTL_GET_MSG:
         /* Give the current message to the calling process - the parameter
          * we got is a pointer, fill it.
          */
-        i = device_read(file, (char *) ioctl_param, 99, 0);
+        i = device_read(file, (char *)ioctl_param, 99, 0);
 
         /* Put a zero at the end of the buffer, so it will be properly
          * terminated.
          */
-        put_user('\0', (char *) ioctl_param + i);
+        put_user('\0', (char *)ioctl_param + i);
         break;
 
     case IOCTL_GET_NTH_BYTE:
         /* This ioctl is both input (ioctl_param) and output (the return
          * value of this function).
          */
-        return Message[ioctl_param];
+        return message[ioctl_param];
         break;
     }
 
@@ -178,7 +176,7 @@ long device_ioctl(struct file *file,      /* ditto */
  * is kept in the devices table, it can't be local to init_module. NULL is
  * for unimplemented functions.
  */
-struct file_operations Fops = {
+struct file_operations fops = {
     .read = device_read,
     .write = device_write,
     .unlocked_ioctl = device_ioctl,
@@ -190,7 +188,7 @@ struct file_operations Fops = {
 static int __init chardev2_init(void)
 {
     /* Register the character device (atleast try) */
-    int ret_val = register_chrdev(MAJOR_NUM, DEVICE_NAME, &Fops);
+    int ret_val = register_chrdev(MAJOR_NUM, DEVICE_NAME, &fops);
 
     /* Negative values signify an error */
     if (ret_val < 0) {

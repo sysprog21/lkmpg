@@ -21,19 +21,19 @@
 #define DECLARE_TASKLET_OLD(arg1, arg2) DECLARE_TASKLET(arg1, arg2, 0L)
 #endif
 
-static int button_irqs[] = {-1, -1};
+static int button_irqs[] = { -1, -1 };
 
 /* Define GPIOs for LEDs.
  * TODO: Change the numbers for the GPIO on your board.
  */
-static struct gpio leds[] = {{4, GPIOF_OUT_INIT_LOW, "LED 1"}};
+static struct gpio leds[] = { { 4, GPIOF_OUT_INIT_LOW, "LED 1" } };
 
 /* Define GPIOs for BUTTONS
  * TODO: Change the numbers for the GPIO on your board.
  */
 static struct gpio buttons[] = {
-    {17, GPIOF_IN, "LED 1 ON BUTTON"},
-    {18, GPIOF_IN, "LED 1 OFF BUTTON"},
+    { 17, GPIOF_IN, "LED 1 ON BUTTON" },
+    { 18, GPIOF_IN, "LED 1 OFF BUTTON" },
 };
 
 /* Tasklet containing some non-trivial amount of processing */
@@ -105,7 +105,6 @@ static int __init bottomhalf_init(void)
         pr_err("Unable to request IRQ: %d\n", ret);
         goto fail2;
     }
-
 
     ret = gpio_to_irq(buttons[1].gpio);
 

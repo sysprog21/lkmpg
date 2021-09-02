@@ -13,18 +13,18 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
 
-static int button_irqs[] = {-1, -1};
+static int button_irqs[] = { -1, -1 };
 
 /* Define GPIOs for LEDs.
  * TODO: Change the numbers for the GPIO on your board.
  */
-static struct gpio leds[] = {{4, GPIOF_OUT_INIT_LOW, "LED 1"}};
+static struct gpio leds[] = { { 4, GPIOF_OUT_INIT_LOW, "LED 1" } };
 
 /* Define GPIOs for BUTTONS
  * TODO: Change the numbers for the GPIO on your board.
  */
-static struct gpio buttons[] = {{17, GPIOF_IN, "LED 1 ON BUTTON"},
-                                {18, GPIOF_IN, "LED 1 OFF BUTTON"}};
+static struct gpio buttons[] = { { 17, GPIOF_IN, "LED 1 ON BUTTON" },
+                                 { 18, GPIOF_IN, "LED 1 OFF BUTTON" } };
 
 /* interrupt function triggered when a button is pressed. */
 static irqreturn_t button_isr(int irq, void *data)
@@ -82,7 +82,6 @@ static int __init intrpt_init(void)
         pr_err("Unable to request IRQ: %d\n", ret);
         goto fail2;
     }
-
 
     ret = gpio_to_irq(buttons[1].gpio);
 

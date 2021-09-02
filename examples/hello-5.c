@@ -13,7 +13,7 @@ static short int myshort = 1;
 static int myint = 420;
 static long int mylong = 9999;
 static char *mystring = "blah";
-static int myintArray[2] = {420, 420};
+static int myintarray[2] = { 420, 420 };
 static int arr_argc = 0;
 
 /* module_param(foo, int, 0000)
@@ -38,22 +38,23 @@ MODULE_PARM_DESC(mystring, "A character string");
  * of elements of the array initialized by the user at module loading time.
  * The fourth argument is the permission bits.
  */
-module_param_array(myintArray, int, &arr_argc, 0000);
-MODULE_PARM_DESC(myintArray, "An array of integers");
+module_param_array(myintarray, int, &arr_argc, 0000);
+MODULE_PARM_DESC(myintarray, "An array of integers");
 
 static int __init hello_5_init(void)
 {
     int i;
+
     pr_info("Hello, world 5\n=============\n");
     pr_info("myshort is a short integer: %hd\n", myshort);
     pr_info("myint is an integer: %d\n", myint);
     pr_info("mylong is a long integer: %ld\n", mylong);
     pr_info("mystring is a string: %s\n", mystring);
 
-    for (i = 0; i < (sizeof myintArray / sizeof(int)); i++)
-        pr_info("myintArray[%d] = %d\n", i, myintArray[i]);
+    for (i = 0; i < ARRAY_SIZE(myintarray); i++)
+        pr_info("myintarray[%d] = %d\n", i, myintarray[i]);
 
-    pr_info("got %d arguments for myintArray.\n", arr_argc);
+    pr_info("got %d arguments for myintarray.\n", arr_argc);
     return 0;
 }
 

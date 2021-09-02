@@ -3,9 +3,9 @@
  * This program uses the seq_file library to manage the /proc file.
  */
 
-#include <linux/kernel.h>   /* We are doing kernel work */
-#include <linux/module.h>   /* Specifically, a module */
-#include <linux/proc_fs.h>  /* Necessary because we use proc fs */
+#include <linux/kernel.h> /* We are doing kernel work */
+#include <linux/module.h> /* Specifically, a module */
+#include <linux/proc_fs.h> /* Necessary because we use proc fs */
 #include <linux/seq_file.h> /* for seq_file */
 #include <linux/version.h>
 
@@ -29,6 +29,7 @@ static void *my_seq_start(struct seq_file *s, loff_t *pos)
         /* yes => return a non null value to begin the sequence */
         return &counter;
     }
+
     /* no => it is the end of the sequence, return end to stop reading */
     *pos = 0;
     return NULL;
@@ -39,7 +40,7 @@ static void *my_seq_start(struct seq_file *s, loff_t *pos)
  */
 static void *my_seq_next(struct seq_file *s, void *v, loff_t *pos)
 {
-    unsigned long *tmp_v = (unsigned long *) v;
+    unsigned long *tmp_v = (unsigned long *)v;
     (*tmp_v)++;
     (*pos)++;
     return NULL;
@@ -54,7 +55,7 @@ static void my_seq_stop(struct seq_file *s, void *v)
 /* This function is called for each "step" of a sequence. */
 static int my_seq_show(struct seq_file *s, void *v)
 {
-    loff_t *spos = (loff_t *) v;
+    loff_t *spos = (loff_t *)v;
 
     seq_printf(s, "%Ld\n", *spos);
     return 0;

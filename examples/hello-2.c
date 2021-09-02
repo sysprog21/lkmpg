@@ -2,7 +2,7 @@
  * hello-2.c - Demonstrating the module_init() and module_exit() macros.
  * This is preferred over using init_module() and cleanup_module().
  */
-#include <linux/init.h>   /* Needed for the macros */
+#include <linux/init.h> /* Needed for the macros */
 #include <linux/kernel.h> /* Needed for pr_info() */
 #include <linux/module.h> /* Needed by all modules */
 

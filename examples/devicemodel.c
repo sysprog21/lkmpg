@@ -13,7 +13,7 @@ struct devicemodel_data {
 static int devicemodel_probe(struct platform_device *dev)
 {
     struct devicemodel_data *pd =
-        (struct devicemodel_data *) (dev->dev.platform_data);
+        (struct devicemodel_data *)(dev->dev.platform_data);
 
     pr_info("devicemodel probe\n");
     pr_info("devicemodel greeting: %s; %d\n", pd->greeting, pd->number);

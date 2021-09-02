@@ -93,8 +93,7 @@ static void test_skcipher_callback(struct crypto_async_request *req, int error)
 #endif
 }
 
-static int test_skcipher_encrypt(char *plaintext,
-                                 char *password,
+static int test_skcipher_encrypt(char *plaintext, char *password,
                                  struct skcipher_def *sk)
 {
     int ret = -EFAULT;
@@ -121,10 +120,10 @@ static int test_skcipher_encrypt(char *plaintext,
                                   test_skcipher_callback, &sk->result);
 
     /* clear the key */
-    memset((void *) key, '\0', SYMMETRIC_KEY_LENGTH);
+    memset((void *)key, '\0', SYMMETRIC_KEY_LENGTH);
 
     /* Use the world's favourite password */
-    sprintf((char *) key, "%s", password);
+    sprintf((char *)key, "%s", password);
 
     /* AES 256 with given symmetric key */
     if (crypto_skcipher_setkey(sk->tfm, key, SYMMETRIC_KEY_LENGTH)) {
@@ -153,7 +152,7 @@ static int test_skcipher_encrypt(char *plaintext,
             goto out;
         }
     }
-    sprintf((char *) sk->scratchpad, "%s", plaintext);
+    sprintf((char *)sk->scratchpad, "%s", plaintext);
 
     sg_init_one(&sk->sg, sk->scratchpad, CIPHER_BLOCK_SIZE);
     skcipher_request_set_crypt(sk->req, &sk->sg, &sk->sg, CIPHER_BLOCK_SIZE,

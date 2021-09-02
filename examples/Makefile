@@ -36,3 +36,6 @@ all:
 clean:
 	$(MAKE) -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
 	$(RM) other/cat_noblock *.plist
+
+indent:
+	clang-format -i *[.ch]

@@ -14,13 +14,10 @@
 
 #define procfs_name "helloworld"
 
-struct proc_dir_entry *Our_Proc_File;
+struct proc_dir_entry *our_proc_file;
 
-
-ssize_t procfile_read(struct file *filePointer,
-                      char *buffer,
-                      size_t buffer_length,
-                      loff_t *offset)
+ssize_t procfile_read(struct file *filePointer, char *buffer,
+                      size_t buffer_length, loff_t *offset)
 {
     char s[13] = "HelloWorld!\n";
     int len = sizeof(s);
@@ -49,9 +46,9 @@ static const struct file_operations proc_file_fops = {
 
 static int __init procfs1_init(void)
 {
-    Our_Proc_File = proc_create(procfs_name, 0644, NULL, &proc_file_fops);
-    if (NULL == Our_Proc_File) {
-        proc_remove(Our_Proc_File);
+    our_proc_file = proc_create(procfs_name, 0644, NULL, &proc_file_fops);
+    if (NULL == our_proc_file) {
+        proc_remove(our_proc_file);
         pr_alert("Error:Could not initialize /proc/%s\n", procfs_name);
         return -ENOMEM;
     }
@@ -62,7 +59,7 @@ static int __init procfs1_init(void)
 
 static void __exit procfs1_exit(void)
 {
-    proc_remove(Our_Proc_File);
+    proc_remove(our_proc_file);
     pr_info("/proc/%s removed\n", procfs_name);
 }
 

@@ -35,7 +35,7 @@ char kbledstatus = 0;
 
 static void my_timer_func(unsigned long ptr)
 {
-    unsigned long *pstatus = (unsigned long *) ptr;
+    unsigned long *pstatus = (unsigned long *)ptr;
     struct tty_struct *t = vc_cons[fg_console].d->port.tty;
 
     if (*pstatus == ALL_LEDS_ON)
@@ -59,7 +59,7 @@ static int __init kbleds_init(void)
         if (!vc_cons[i].d)
             break;
         pr_info("poet_atkm: console[%i/%i] #%i, tty %lx\n", i, MAX_NR_CONSOLES,
-                vc_cons[i].d->vc_num, (unsigned long) vc_cons[i].d->port.tty);
+                vc_cons[i].d->vc_num, (unsigned long)vc_cons[i].d->port.tty);
     }
     pr_info("kbleds: finished scanning consoles\n");
 
@@ -67,8 +67,7 @@ static int __init kbleds_init(void)
     pr_info("kbleds: tty driver magic %x\n", my_driver->magic);
 
     /* Set up the LED blink timer the first time. */
-    timer_setup(&my_timer, (void *) &my_timer_func,
-                (unsigned long) &kbledstatus);
+    timer_setup(&my_timer, (void *)&my_timer_func, (unsigned long)&kbledstatus);
     my_timer.expires = jiffies + BLINK_DELAY;
     add_timer(&my_timer);
 
