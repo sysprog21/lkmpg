@@ -2,9 +2,9 @@
  *  cat_nonblock.c - open a file and display its contents, but exit rather than
  *  wait for input.
  */
-#include <errno.h>  /* for errno */
-#include <fcntl.h>  /* for open */
-#include <stdio.h>  /* standard I/O */
+#include <errno.h> /* for errno */
+#include <fcntl.h> /* for open */
+#include <stdio.h> /* standard I/O */
 #include <stdlib.h> /* for exit */
 #include <unistd.h> /* for read */
 
@@ -12,8 +12,8 @@
 
 int main(int argc, char *argv[])
 {
-    int fd;                 /* The file descriptor for the file to read */
-    size_t bytes;           /* The number of bytes read */
+    int fd; /* The file descriptor for the file to read */
+    size_t bytes; /* The number of bytes read */
     char buffer[MAX_BYTES]; /* The buffer for the bytes */
 
     /* Usage */

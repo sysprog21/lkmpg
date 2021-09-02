@@ -39,3 +39,4 @@ clean:
 
 indent:
 	clang-format -i *[.ch]
+	clang-format -i other/*[.ch]
