@@ -14,24 +14,21 @@ static struct kobject *mymodule;
 static int myvariable = 0;
 
 static ssize_t myvariable_show(struct kobject *kobj,
-                               struct kobj_attribute *attr,
-                               char *buf)
+                               struct kobj_attribute *attr, char *buf)
 {
     return sprintf(buf, "%d\n", myvariable);
 }
 
 static ssize_t myvariable_store(struct kobject *kobj,
-                                struct kobj_attribute *attr,
-                                char *buf,
+                                struct kobj_attribute *attr, char *buf,
                                 size_t count)
 {
     sscanf(buf, "%du", &myvariable);
     return count;
 }
 
-
 static struct kobj_attribute myvariable_attribute =
-    __ATTR(myvariable, 0660, myvariable_show, (void *) myvariable_store);
+    __ATTR(myvariable, 0660, myvariable_show, (void *)myvariable_store);
 
 static int __init mymodule_init(void)
 {
@@ -45,9 +42,8 @@ static int __init mymodule_init(void)
 
     error = sysfs_create_file(mymodule, &myvariable_attribute.attr);
     if (error) {
-        pr_info(
-            "failed to create the myvariable file "
-            "in /sys/kernel/mymodule\n");
+        pr_info("failed to create the myvariable file "
+                "in /sys/kernel/mymodule\n");
     }
 
     return error;

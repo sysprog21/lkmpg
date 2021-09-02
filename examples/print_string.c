@@ -7,7 +7,7 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/sched.h> /* For current */
-#include <linux/tty.h>   /* For the tty declarations */
+#include <linux/tty.h> /* For the tty declarations */
 
 static void print_string(char *str)
 {
@@ -37,8 +37,8 @@ static void print_string(char *str)
          * section 2 of
          * linux/Documentation/SubmittingPatches
          */
-        (ttyops->write)(my_tty,       /* The tty itself */
-                        str,          /* String                 */
+        (ttyops->write)(my_tty, /* The tty itself */
+                        str, /* String */
                         strlen(str)); /* Length */
 
         /* ttys were originally hardware devices, which (usually) strictly

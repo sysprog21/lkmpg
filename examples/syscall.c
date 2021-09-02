@@ -14,7 +14,7 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/moduleparam.h> /* which will have params */
-#include <linux/unistd.h>      /* The list of system calls */
+#include <linux/unistd.h> /* The list of system calls */
 #include <linux/version.h>
 
 /* For the current (process) structure, we need this to know who the
@@ -22,7 +22,6 @@
  */
 #include <linux/sched.h>
 #include <linux/uaccess.h>
-
 
 /* The way we access "sys_call_table" varies as kernel internal changes.
  * - ver <= 5.4 : manual symbol lookup
@@ -56,9 +55,9 @@
  */
 static unsigned long sym = 0;
 module_param(sym, ulong, 0644);
-#endif
+#endif /* CONFIG_KPROBES */
 
-#endif
+#endif /* Version < v5.7 */
 
 unsigned long **sys_call_table;
 
@@ -115,9 +114,9 @@ static unsigned long **aquire_sys_call_table(void)
     unsigned long **sct;
 
     while (offset < ULLONG_MAX) {
-        sct = (unsigned long **) offset;
+        sct = (unsigned long **)offset;
 
-        if (sct[__NR_close] == (unsigned long *) ksys_close)
+        if (sct[__NR_close] == (unsigned long *)ksys_close)
             return sct;
 
         offset += sizeof(void *);
@@ -128,23 +127,20 @@ static unsigned long **aquire_sys_call_table(void)
 
 #ifdef HAVE_PARAM
     const char sct_name[15] = "sys_call_table";
-    char symbol[40] = {0};
+    char symbol[40] = { 0 };
 
     if (sym == 0) {
-        pr_alert(
-            "For Linux v5.7+, Kprobes is the preferable way to get "
-            "symbol.\n");
-        pr_info(
-            "If Kprobes is absent, you have to specify the address of "
-            "sys_call_table symbol\n");
-        pr_info(
-            "by /boot/System.map or /proc/kallsyms, which contains all the "
-            "symbol addresses, into sym parameter.\n");
+        pr_alert("For Linux v5.7+, Kprobes is the preferable way to get "
+                 "symbol.\n");
+        pr_info("If Kprobes is absent, you have to specify the address of "
+                "sys_call_table symbol\n");
+        pr_info("by /boot/System.map or /proc/kallsyms, which contains all the "
+                "symbol addresses, into sym parameter.\n");
         return NULL;
     }
     sprint_symbol(symbol, sym);
     if (!strncmp(sct_name, symbol, sizeof(sct_name) - 1))
-        return (unsigned long **) sym;
+        return (unsigned long **)sym;
 
     return NULL;
 #endif
@@ -157,11 +153,11 @@ static unsigned long **aquire_sys_call_table(void)
 
     if (register_kprobe(&kp) < 0)
         return NULL;
-    kallsyms_lookup_name = (unsigned long (*)(const char *name)) kp.addr;
+    kallsyms_lookup_name = (unsigned long (*)(const char *name))kp.addr;
     unregister_kprobe(&kp);
 #endif
 
-    return (unsigned long **) kallsyms_lookup_name("sys_call_table");
+    return (unsigned long **)kallsyms_lookup_name("sys_call_table");
 }
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 3, 0)
@@ -195,10 +191,10 @@ static int __init syscall_start(void)
     disable_write_protection();
 
     /* keep track of the original open function */
-    original_call = (void *) sys_call_table[__NR_open];
+    original_call = (void *)sys_call_table[__NR_open];
 
     /* use our open function instead */
-    sys_call_table[__NR_open] = (unsigned long *) our_sys_open;
+    sys_call_table[__NR_open] = (unsigned long *)our_sys_open;
 
     enable_write_protection();
 
@@ -213,7 +209,7 @@ static void __exit syscall_end(void)
         return;
 
     /* Return the system call back to normal */
-    if (sys_call_table[__NR_open] != (unsigned long *) our_sys_open) {
+    if (sys_call_table[__NR_open] != (unsigned long *)our_sys_open) {
         pr_alert("Somebody else also played with the ");
         pr_alert("open system call\n");
         pr_alert("The system may be left in ");
@@ -221,7 +217,7 @@ static void __exit syscall_end(void)
     }
 
     disable_write_protection();
-    sys_call_table[__NR_open] = (unsigned long *) original_call;
+    sys_call_table[__NR_open] = (unsigned long *)original_call;
     enable_write_protection();
 
     msleep(2000);

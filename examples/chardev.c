@@ -21,14 +21,14 @@ static ssize_t device_write(struct file *, const char *, size_t, loff_t *);
 
 #define SUCCESS 0
 #define DEVICE_NAME "chardev" /* Dev name as it appears in /proc/devices   */
-#define BUF_LEN 80            /* Max length of the message from the device */
+#define BUF_LEN 80 /* Max length of the message from the device */
 
 /* Global variables are declared as static, so are global within the file. */
 
-static int major;               /* major number assigned to our device driver */
+static int major; /* major number assigned to our device driver */
 static int open_device_cnt = 0; /* Is device open?
                                  * Used to prevent multiple access to device */
-static char msg[BUF_LEN];       /* The msg the device will give when asked */
+static char msg[BUF_LEN]; /* The msg the device will give when asked */
 static char *msg_ptr;
 
 static struct class *cls;
@@ -105,8 +105,8 @@ static int device_release(struct inode *inode, struct file *file)
  * read from it.
  */
 static ssize_t device_read(struct file *filp, /* see include/linux/fs.h   */
-                           char *buffer,      /* buffer to fill with data */
-                           size_t length,     /* length of the buffer     */
+                           char *buffer, /* buffer to fill with data */
+                           size_t length, /* length of the buffer     */
                            loff_t *offset)
 {
     /* Number of bytes actually written to the buffer */
@@ -134,9 +134,7 @@ static ssize_t device_read(struct file *filp, /* see include/linux/fs.h   */
 }
 
 /* Called when a process writes to dev file: echo "hi" > /dev/hello */
-static ssize_t device_write(struct file *filp,
-                            const char *buff,
-                            size_t len,
+static ssize_t device_write(struct file *filp, const char *buff, size_t len,
                             loff_t *off)
 {
     pr_alert("Sorry, this operation is not supported.\n");

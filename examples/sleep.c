@@ -3,10 +3,10 @@
  * at the same time, put all but one to sleep.
  */
 
-#include <linux/kernel.h>  /* We're doing kernel work */
-#include <linux/module.h>  /* Specifically, a module */
+#include <linux/kernel.h> /* We're doing kernel work */
+#include <linux/module.h> /* Specifically, a module */
 #include <linux/proc_fs.h> /* Necessary because we use proc fs */
-#include <linux/sched.h>   /* For putting processes to sleep and
+#include <linux/sched.h> /* For putting processes to sleep and
                                    waking them up */
 #include <linux/uaccess.h> /* for get_user and put_user */
 #include <linux/version.h>
@@ -19,9 +19,9 @@
  * input.
  */
 #define MESSAGE_LENGTH 80
-static char Message[MESSAGE_LENGTH];
+static char message[MESSAGE_LENGTH];
 
-static struct proc_dir_entry *Our_Proc_File;
+static struct proc_dir_entry *our_proc_file;
 #define PROC_ENTRY_FILENAME "sleep"
 
 /* Since we use the file operations struct, we can't use the special proc
@@ -29,14 +29,14 @@ static struct proc_dir_entry *Our_Proc_File;
  * function.
  */
 static ssize_t module_output(struct file *file, /* see include/linux/fs.h   */
-                             char *buf,         /* The buffer to put data to
+                             char *buf, /* The buffer to put data to
                                                    (in the user segment)    */
-                             size_t len,        /* The length of the buffer */
+                             size_t len, /* The length of the buffer */
                              loff_t *offset)
 {
     static int finished = 0;
     int i;
-    char message[MESSAGE_LENGTH + 30];
+    char output_msg[MESSAGE_LENGTH + 30];
 
     /* Return 0 to signify end of file - that we have nothing more to say
      * at this point.
@@ -46,9 +46,9 @@ static ssize_t module_output(struct file *file, /* see include/linux/fs.h   */
         return 0;
     }
 
-    sprintf(message, "Last input:%s\n", Message);
-    for (i = 0; i < len && message[i]; i++)
-        put_user(message[i], buf + i);
+    sprintf(output_msg, "Last input:%s\n", message);
+    for (i = 0; i < len && output_msg[i]; i++)
+        put_user(output_msg[i], buf + i);
 
     finished = 1;
     return i; /* Return the number of bytes "read" */
@@ -58,9 +58,9 @@ static ssize_t module_output(struct file *file, /* see include/linux/fs.h   */
  * /proc file.
  */
 static ssize_t module_input(struct file *file, /* The file itself */
-                            const char *buf,   /* The buffer with input */
-                            size_t length,     /* The buffer's length */
-                            loff_t *offset)    /* offset to file - ignore */
+                            const char *buf, /* The buffer with input */
+                            size_t length, /* The buffer's length */
+                            loff_t *offset) /* offset to file - ignore */
 {
     int i;
 
@@ -68,19 +68,19 @@ static ssize_t module_input(struct file *file, /* The file itself */
      * to use it.
      */
     for (i = 0; i < MESSAGE_LENGTH - 1 && i < length; i++)
-        get_user(Message[i], buf + i);
+        get_user(message[i], buf + i);
     /* we want a standard, zero terminated string */
-    Message[i] = '\0';
+    message[i] = '\0';
 
     /* We need to return the number of input characters used */
     return i;
 }
 
 /* 1 if the file is currently open by somebody */
-int Already_Open = 0;
+int already_open = 0;
 
 /* Queue of processes who want our file */
-DECLARE_WAIT_QUEUE_HEAD(WaitQ);
+DECLARE_WAIT_QUEUE_HEAD(waitq);
 
 /* Called when the /proc file is opened */
 static int module_open(struct inode *inode, struct file *file)
@@ -90,7 +90,7 @@ static int module_open(struct inode *inode, struct file *file)
      * we should fail with -EAGAIN, meaning "you will have to try again",
      * instead of blocking a process which would rather stay awake.
      */
-    if ((file->f_flags & O_NONBLOCK) && Already_Open)
+    if ((file->f_flags & O_NONBLOCK) && already_open)
         return -EAGAIN;
 
     /* This is the correct place for try_module_get(THIS_MODULE) because if
@@ -100,17 +100,17 @@ static int module_open(struct inode *inode, struct file *file)
     try_module_get(THIS_MODULE);
 
     /* If the file is already open, wait until it is not. */
-    while (Already_Open) {
+    while (already_open) {
         int i, is_sig = 0;
 
         /* This function puts the current process, including any system
          * calls, such as us, to sleep.  Execution will be resumed right
          * after the function call, either because somebody called
-         * wake_up(&WaitQ) (only module_close does that, when the file
+         * wake_up(&waitq) (only module_close does that, when the file
          * is closed) or when a signal, such as Ctrl-C, is sent
          * to the process
          */
-        wait_event_interruptible(WaitQ, !Already_Open);
+        wait_event_interruptible(waitq, !already_open);
 
         /* If we woke up because we got a signal we're not blocking,
          * return -EINTR (fail the system call).  This allows processes
@@ -133,27 +133,27 @@ static int module_open(struct inode *inode, struct file *file)
         }
     }
 
-    /* If we got here, Already_Open must be zero. */
+    /* If we got here, already_open must be zero. */
 
     /* Open the file */
-    Already_Open = 1;
+    already_open = 1;
     return 0; /* Allow the access */
 }
 
 /* Called when the /proc file is closed */
 int module_close(struct inode *inode, struct file *file)
 {
-    /* Set Already_Open to zero, so one of the processes in the WaitQ will
-     * be able to set Already_Open back to one and to open the file. All
-     * the other processes will be called when Already_Open is back to one,
+    /* Set already_open to zero, so one of the processes in the waitq will
+     * be able to set already_open back to one and to open the file. All
+     * the other processes will be called when already_open is back to one,
      * so they'll go back to sleep.
      */
-    Already_Open = 0;
+    already_open = 0;
 
-    /* Wake up all the processes in WaitQ, so if anybody is waiting for the
+    /* Wake up all the processes in waitq, so if anybody is waiting for the
      * file, they can have it.
      */
-    wake_up(&WaitQ);
+    wake_up(&waitq);
 
     module_put(THIS_MODULE);
 
@@ -169,14 +169,14 @@ int module_close(struct inode *inode, struct file *file)
  * means we don't want to deal with something.
  */
 #ifdef HAVE_PROC_OPS
-static const struct proc_ops File_Ops_4_Our_Proc_File = {
-    .proc_read = module_output,   /* "read" from the file */
-    .proc_write = module_input,   /* "write" to the file */
-    .proc_open = module_open,     /* called when the /proc file is opened */
+static const struct proc_ops file_ops_4_our_proc_file = {
+    .proc_read = module_output, /* "read" from the file */
+    .proc_write = module_input, /* "write" to the file */
+    .proc_open = module_open, /* called when the /proc file is opened */
     .proc_release = module_close, /* called when it's closed */
 };
 #else
-static const struct file_operations File_Ops_4_Our_Proc_File = {
+static const struct file_operations file_ops_4_our_proc_file = {
     .read = module_output,
     .write = module_input,
     .open = module_open,
@@ -187,15 +187,15 @@ static const struct file_operations File_Ops_4_Our_Proc_File = {
 /* Initialize the module - register the proc file */
 static int __init sleep_init(void)
 {
-    Our_Proc_File =
-        proc_create(PROC_ENTRY_FILENAME, 0644, NULL, &File_Ops_4_Our_Proc_File);
-    if (Our_Proc_File == NULL) {
+    our_proc_file =
+        proc_create(PROC_ENTRY_FILENAME, 0644, NULL, &file_ops_4_our_proc_file);
+    if (our_proc_file == NULL) {
         remove_proc_entry(PROC_ENTRY_FILENAME, NULL);
         pr_debug("Error: Could not initialize /proc/%s\n", PROC_ENTRY_FILENAME);
         return -ENOMEM;
     }
-    proc_set_size(Our_Proc_File, 80);
-    proc_set_user(Our_Proc_File, GLOBAL_ROOT_UID, GLOBAL_ROOT_GID);
+    proc_set_size(our_proc_file, 80);
+    proc_set_user(our_proc_file, GLOBAL_ROOT_UID, GLOBAL_ROOT_GID);
 
     pr_info("/proc/%s created\n", PROC_ENTRY_FILENAME);
 
@@ -203,7 +203,7 @@ static int __init sleep_init(void)
 }
 
 /* Cleanup - unregister our file from /proc.  This could get dangerous if
- * there are still processes waiting in WaitQ, because they are inside our
+ * there are still processes waiting in waitq, because they are inside our
  * open function, which will get unloaded. I'll explain how to avoid removal
  * of a kernel module in such a case in chapter 10.
  */

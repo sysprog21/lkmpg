@@ -13,7 +13,7 @@ static void show_hash_result(char *plaintext, char *hash_sha256)
 
     pr_info("sha256 test for string: \"%s\"\n", plaintext);
     for (i = 0; i < SHA256_LENGTH; i++)
-        sprintf(&str[i * 2], "%02x", (unsigned char) hash_sha256[i]);
+        sprintf(&str[i * 2], "%02x", (unsigned char)hash_sha256[i]);
     str[i * 2] = 0;
     pr_info("%s\n", str);
 }
@@ -53,7 +53,9 @@ int cryptosha256_init(void)
     return 0;
 }
 
-void cryptosha256_exit(void) {}
+void cryptosha256_exit(void)
+{
+}
 
 module_init(cryptosha256_init);
 module_exit(cryptosha256_exit);
