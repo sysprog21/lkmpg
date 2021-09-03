@@ -1559,8 +1559,8 @@ saves certain parameters on the stack and calls the interrupt handler.
 This means that certain things are not allowed in the interrupt handler itself, because the system is in an unknown state.
 % TODO: add some diagrams
 Linux kernel solves the problem by splitting interrupt handling into two parts.
-The first part executes right away and mask the interrupt line.
-Hardware interrupts must be handled quick, and that is why we need the second part to handle the heavy work deferred from a interrupt handler.
+The first part executes right away and masks the interrupt line.
+Hardware interrupts must be handled quickly, and that is why we need the second part to handle the heavy work deferred from an interrupt handler.
 Historically, BH (Linux naming for \textit{Bottom Halves}) statistically book-keeps the deferred functions.
 \textbf{Softirq} and its higher level abstraction, \textbf{Tasklet}, replace BH since Linux 2.3.
 
