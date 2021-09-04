@@ -86,8 +86,8 @@ done:
     return retval;
 }
 
-ssize_t test_ioctl_read(struct file *filp, char __user *buf, size_t count,
-                        loff_t *f_pos)
+static ssize_t test_ioctl_read(struct file *filp, char __user *buf,
+                               size_t count, loff_t *f_pos)
 {
     struct test_ioctl_data *ioctl_data = filp->private_data;
     unsigned char val;
@@ -139,7 +139,7 @@ static int test_ioctl_open(struct inode *inode, struct file *filp)
     return 0;
 }
 
-struct file_operations fops = {
+static struct file_operations fops = {
     .owner = THIS_MODULE,
     .open = test_ioctl_open,
     .release = test_ioctl_close,

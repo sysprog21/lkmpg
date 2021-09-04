@@ -25,8 +25,8 @@ static char procfs_buffer[PROCFS_MAX_SIZE];
 static unsigned long procfs_buffer_size = 0;
 
 /* This function is called then the /proc file is read */
-ssize_t procfile_read(struct file *filePointer, char *buffer,
-                      size_t buffer_length, loff_t *offset)
+static ssize_t procfile_read(struct file *filePointer, char __user *buffer,
+                             size_t buffer_length, loff_t *offset)
 {
     char s[13] = "HelloWorld!\n";
     int len = sizeof(s);
@@ -44,8 +44,8 @@ ssize_t procfile_read(struct file *filePointer, char *buffer,
 }
 
 /* This function is called with the /proc file is written. */
-static ssize_t procfile_write(struct file *file, const char *buff, size_t len,
-                              loff_t *off)
+static ssize_t procfile_write(struct file *file, const char __user *buff,
+                              size_t len, loff_t *off)
 {
     procfs_buffer_size = len;
     if (procfs_buffer_size > PROCFS_MAX_SIZE)

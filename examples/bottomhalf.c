@@ -45,7 +45,7 @@ static void bottomhalf_tasklet_fn(unsigned long data)
     pr_info("Bottom half tasklet ends\n");
 }
 
-DECLARE_TASKLET_OLD(buttontask, bottomhalf_tasklet_fn);
+static DECLARE_TASKLET_OLD(buttontask, bottomhalf_tasklet_fn);
 
 /* interrupt function triggered when a button is pressed */
 static irqreturn_t button_isr(int irq, void *data)

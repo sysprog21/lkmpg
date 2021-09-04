@@ -20,7 +20,7 @@ static void tasklet_fn(unsigned long data)
     pr_info("Example tasklet ends\n");
 }
 
-DECLARE_TASKLET_OLD(mytask, tasklet_fn);
+static DECLARE_TASKLET_OLD(mytask, tasklet_fn);
 
 static int example_tasklet_init(void)
 {

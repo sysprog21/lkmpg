@@ -14,10 +14,10 @@
 
 #define procfs_name "helloworld"
 
-struct proc_dir_entry *our_proc_file;
+static struct proc_dir_entry *our_proc_file;
 
-ssize_t procfile_read(struct file *filePointer, char *buffer,
-                      size_t buffer_length, loff_t *offset)
+static ssize_t procfile_read(struct file *filePointer, char __user *buffer,
+                             size_t buffer_length, loff_t *offset)
 {
     char s[13] = "HelloWorld!\n";
     int len = sizeof(s);
