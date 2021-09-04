@@ -6,7 +6,7 @@
 #include <linux/module.h>
 #include <linux/mutex.h>
 
-DEFINE_MUTEX(mymutex);
+static DEFINE_MUTEX(mymutex);
 
 static int example_mutex_init(void)
 {

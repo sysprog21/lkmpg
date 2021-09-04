@@ -61,7 +61,7 @@ ERROR_THREAD_1:
     return -1;
 }
 
-void completions_exit(void)
+static void completions_exit(void)
 {
     wait_for_completion(&machine.crank_comp);
     wait_for_completion(&machine.flywheel_comp);

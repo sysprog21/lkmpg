@@ -59,7 +59,7 @@ module_param(sym, ulong, 0644);
 
 #endif /* Version < v5.7 */
 
-unsigned long **sys_call_table;
+static unsigned long **sys_call_table;
 
 /* UID we want to spy on - will be filled from the command line. */
 static int uid;
@@ -75,7 +75,7 @@ module_param(uid, int, 0644);
  * Another reason for this is that we can not get sys_open.
  * It is a static variable, so it is not exported.
  */
-asmlinkage int (*original_call)(const char *, int, int);
+static asmlinkage int (*original_call)(const char *, int, int);
 
 /* The function we will replace sys_open (the function called when you
  * call the open system call) with. To find the exact prototype, with
@@ -87,7 +87,7 @@ asmlinkage int (*original_call)(const char *, int, int);
  * wreck havoc and require programs to be recompiled, since the system
  * calls are the interface between the kernel and the processes).
  */
-asmlinkage int our_sys_open(const char *filename, int flags, int mode)
+static asmlinkage int our_sys_open(const char *filename, int flags, int mode)
 {
     int i = 0;
     char ch;
@@ -95,7 +95,7 @@ asmlinkage int our_sys_open(const char *filename, int flags, int mode)
     /* Report the file, if relevant */
     pr_info("Opened file by %d: ", uid);
     do {
-        get_user(ch, filename + i);
+        get_user(ch, (char __user *)filename + i);
         i++;
         pr_info("%c", ch);
     } while (ch != 0);

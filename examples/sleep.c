@@ -29,7 +29,7 @@ static struct proc_dir_entry *our_proc_file;
  * function.
  */
 static ssize_t module_output(struct file *file, /* see include/linux/fs.h   */
-                             char *buf, /* The buffer to put data to
+                             char __user *buf, /* The buffer to put data to
                                                    (in the user segment)    */
                              size_t len, /* The length of the buffer */
                              loff_t *offset)
@@ -58,7 +58,7 @@ static ssize_t module_output(struct file *file, /* see include/linux/fs.h   */
  * /proc file.
  */
 static ssize_t module_input(struct file *file, /* The file itself */
-                            const char *buf, /* The buffer with input */
+                            const char __user *buf, /* The buffer with input */
                             size_t length, /* The buffer's length */
                             loff_t *offset) /* offset to file - ignore */
 {
@@ -77,10 +77,10 @@ static ssize_t module_input(struct file *file, /* The file itself */
 }
 
 /* 1 if the file is currently open by somebody */
-int already_open = 0;
+static int already_open = 0;
 
 /* Queue of processes who want our file */
-DECLARE_WAIT_QUEUE_HEAD(waitq);
+static DECLARE_WAIT_QUEUE_HEAD(waitq);
 
 /* Called when the /proc file is opened */
 static int module_open(struct inode *inode, struct file *file)
@@ -141,7 +141,7 @@ static int module_open(struct inode *inode, struct file *file)
 }
 
 /* Called when the /proc file is closed */
-int module_close(struct inode *inode, struct file *file)
+static int module_close(struct inode *inode, struct file *file)
 {
     /* Set already_open to zero, so one of the processes in the waitq will
      * be able to set already_open back to one and to open the file. All

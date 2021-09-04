@@ -13,9 +13,9 @@
 
 MODULE_DESCRIPTION("Example module illustrating the use of Keyboard LEDs.");
 
-struct timer_list my_timer;
-struct tty_driver *my_driver;
-char kbledstatus = 0;
+static struct timer_list my_timer;
+static struct tty_driver *my_driver;
+static char kbledstatus = 0;
 
 #define BLINK_DELAY HZ / 5
 #define ALL_LEDS_ON 0x07

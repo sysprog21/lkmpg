@@ -171,7 +171,7 @@ out:
     return ret;
 }
 
-int cryptoapi_init(void)
+static int cryptoapi_init(void)
 {
     /* The world's favorite password */
     char *password = "password123";
@@ -186,7 +186,7 @@ int cryptoapi_init(void)
     return 0;
 }
 
-void cryptoapi_exit(void)
+static void cryptoapi_exit(void)
 {
     test_skcipher_finish(&sk);
 }

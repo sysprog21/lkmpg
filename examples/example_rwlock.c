@@ -5,7 +5,7 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
 
-DEFINE_RWLOCK(myrwlock);
+static DEFINE_RWLOCK(myrwlock);
 
 static void example_read_lock(void)
 {

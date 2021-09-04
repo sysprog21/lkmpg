@@ -7,8 +7,8 @@
 #include <linux/module.h>
 #include <linux/spinlock.h>
 
-DEFINE_SPINLOCK(sl_static);
-spinlock_t sl_dynamic;
+static DEFINE_SPINLOCK(sl_static);
+static spinlock_t sl_dynamic;
 
 static void example_spinlock_static(void)
 {

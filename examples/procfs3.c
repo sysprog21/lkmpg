@@ -16,12 +16,12 @@
 #define PROCFS_MAX_SIZE 2048
 #define PROCFS_ENTRY_FILENAME "buffer2k"
 
-struct proc_dir_entry *our_proc_file;
+static struct proc_dir_entry *our_proc_file;
 static char procfs_buffer[PROCFS_MAX_SIZE];
 static unsigned long procfs_buffer_size = 0;
 
-static ssize_t procfs_read(struct file *filp, char *buffer, size_t length,
-                           loff_t *offset)
+static ssize_t procfs_read(struct file *filp, char __user *buffer,
+                           size_t length, loff_t *offset)
 {
     static int finished = 0;
 
@@ -38,8 +38,8 @@ static ssize_t procfs_read(struct file *filp, char *buffer, size_t length,
     pr_debug("procfs_read: read %lu bytes\n", procfs_buffer_size);
     return procfs_buffer_size;
 }
-static ssize_t procfs_write(struct file *file, const char *buffer, size_t len,
-                            loff_t *off)
+static ssize_t procfs_write(struct file *file, const char __user *buffer,
+                            size_t len, loff_t *off)
 {
     if (len > PROCFS_MAX_SIZE)
         procfs_buffer_size = PROCFS_MAX_SIZE;
@@ -51,12 +51,12 @@ static ssize_t procfs_write(struct file *file, const char *buffer, size_t len,
     pr_debug("procfs_write: write %lu bytes\n", procfs_buffer_size);
     return procfs_buffer_size;
 }
-int procfs_open(struct inode *inode, struct file *file)
+static int procfs_open(struct inode *inode, struct file *file)
 {
     try_module_get(THIS_MODULE);
     return 0;
 }
-int procfs_close(struct inode *inode, struct file *file)
+static int procfs_close(struct inode *inode, struct file *file)
 {
     module_put(THIS_MODULE);
     return 0;

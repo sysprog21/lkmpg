@@ -121,9 +121,10 @@ static ssize_t device_write(struct file *file, const char __user *buffer,
  * If the ioctl is write or read/write (meaning output is returned to the
  * calling process), the ioctl call returns the output of this function.
  */
-long device_ioctl(struct file *file, /* ditto */
-                  unsigned int ioctl_num, /* number and param for ioctl */
-                  unsigned long ioctl_param)
+static long
+device_ioctl(struct file *file, /* ditto */
+             unsigned int ioctl_num, /* number and param for ioctl */
+             unsigned long ioctl_param)
 {
     int i;
     char *temp;
@@ -139,23 +140,23 @@ long device_ioctl(struct file *file, /* ditto */
         temp = (char *)ioctl_param;
 
         /* Find the length of the message */
-        get_user(ch, temp);
+        get_user(ch, (char __user *)temp);
         for (i = 0; ch && i < BUF_LEN; i++, temp++)
-            get_user(ch, temp);
+            get_user(ch, (char __user *)temp);
 
-        device_write(file, (char *)ioctl_param, i, 0);
+        device_write(file, (char __user *)ioctl_param, i, NULL);
         break;
 
     case IOCTL_GET_MSG:
         /* Give the current message to the calling process - the parameter
          * we got is a pointer, fill it.
          */
-        i = device_read(file, (char *)ioctl_param, 99, 0);
+        i = device_read(file, (char __user *)ioctl_param, 99, NULL);
 
         /* Put a zero at the end of the buffer, so it will be properly
          * terminated.
          */
-        put_user('\0', (char *)ioctl_param + i);
+        put_user('\0', (char __user *)ioctl_param + i);
         break;
 
     case IOCTL_GET_NTH_BYTE:
@@ -176,7 +177,7 @@ long device_ioctl(struct file *file, /* ditto */
  * is kept in the devices table, it can't be local to init_module. NULL is
  * for unimplemented functions.
  */
-struct file_operations fops = {
+static struct file_operations fops = {
     .read = device_read,
     .write = device_write,
     .unlocked_ioctl = device_ioctl,
