@@ -20,7 +20,7 @@
 /* Is the device open right now? Used to prevent concurrent access into
  * the same device
  */
-static int open_device_cnt = 0;
+static atomic_t already_open = ATOMIC_INIT(0);
 
 /* The message the device will give when asked */
 static char message[BUF_LEN];
@@ -38,10 +38,9 @@ static int device_open(struct inode *inode, struct file *file)
     pr_info("device_open(%p)\n", file);
 
     /* We don't want to talk to two processes at the same time. */
-    if (open_device_cnt)
+    if (atomic_cmpxchg(&already_open, 0, 1))
         return -EBUSY;
 
-    open_device_cnt++;
     /* Initialize the message */
     message_ptr = message;
     try_module_get(THIS_MODULE);
@@ -53,7 +52,7 @@ static int device_release(struct inode *inode, struct file *file)
     pr_info("device_release(%p,%p)\n", inode, file);
 
     /* We're now ready for our next caller */
-    open_device_cnt--;
+    atomic_set(&already_open, 0);
 
     module_put(THIS_MODULE);
     return SUCCESS;

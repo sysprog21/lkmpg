@@ -912,7 +912,7 @@ It is important to keep the counter accurate; if you ever do lose track of the c
 This is bound to happen to you sooner or later during a module's development.
 
 \subsection{chardev.c}
-\label{sec:org7ce767e}
+\label{sec:chardev_c}
 The next code sample creates a char driver named \verb|chardev|.
 You can cat its device file.
 
@@ -924,6 +924,13 @@ cat /proc/devices
 We do not support writing to the file (like \sh|echo "hi" > /dev/hello|), but catch these attempts and tell the user that the operation is not supported.
 Don't worry if you don't see what we do with the data we read into the buffer; we don't do much with it.
 We simply read in the data and print a message acknowledging that we received it.
+
+In the multiple-threaded environment, without any protection, concurrent access to the same memory may lead to the race condition, and will not preserve the performance.
+In the kernel module, this problem may happen due to multiple instances accessing the shared resources.
+Therefore, a solution is to enforce the exclusive access.
+We use atomic Compare-And-Swap (CAS), the single atomic operation, to determine whether the file is currently open by someone.
+CAS compares the contents of a memory loaction with the expected value and, only if they are the same, modifies the contents of that memory location to the desired value.
+See more concurrency details in the \ref{sec:synchronization} section.
 
 \samplec{examples/chardev.c}
 
@@ -1157,6 +1164,9 @@ In the example below, the header file is chardev.h and the program which uses it
 
 If you want to use ioctls in your own kernel modules, it is best to receive an official ioctl assignment, so if you accidentally get somebody else's ioctls, or if they get yours, you'll know something is wrong.
 For more information, consult the kernel source tree at \src{Documentation/userspace-api/ioctl/ioctl-number.rst}.
+
+Also, we need to be careful that concurrent access to the shared resources will lead to the race condition.
+The solution is using atomic Compare-And-Swap (CAS), which we mentioned at \ref{sec:chardev_c} section, to enforce the exclusive access.
 
 \samplec{examples/chardev2.c}
 
@@ -1459,6 +1469,16 @@ By using atomic operations you can be confident that your addition, subtraction 
 An example is shown below.
 
 \samplec{examples/example_atomic.c}
+
+Before the C11 standard adopts the built-in atomic types, the kernel already provided a small set of atomic types by using a bunch of tricky architecture-specific codes.
+Implementing the atomic types by C11 atomics may allow the kernel to throw away the architecture-specific codes and letting the kernel code be more friendly to the people who understand the standard.
+But there are some problems, such as the memory model of the kernel doesn't match the model formed by the C11 atomics.
+For further details, see:
+\begin{itemize}
+ \item \href{https://www.kernel.org/doc/Documentation/atomic_t.txt}{kernel documentation of atomic types}
+ \item \href{https://lwn.net/Articles/691128/}{Time to move to C11 atomics?}
+ \item \href{https://lwn.net/Articles/698315/}{Atomic usage patterns in the kernel}
+\end{itemize}
 
 % FIXME: we should rewrite this section
 \section{Replacing Print Macros}

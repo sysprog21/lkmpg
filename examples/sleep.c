@@ -77,7 +77,7 @@ static ssize_t module_input(struct file *file, /* The file itself */
 }
 
 /* 1 if the file is currently open by somebody */
-static int already_open = 0;
+static atomic_t already_open = ATOMIC_INIT(0);
 
 /* Queue of processes who want our file */
 static DECLARE_WAIT_QUEUE_HEAD(waitq);
@@ -90,7 +90,7 @@ static int module_open(struct inode *inode, struct file *file)
      * we should fail with -EAGAIN, meaning "you will have to try again",
      * instead of blocking a process which would rather stay awake.
      */
-    if ((file->f_flags & O_NONBLOCK) && already_open)
+    if ((file->f_flags & O_NONBLOCK) && atomic_read(&already_open))
         return -EAGAIN;
 
     /* This is the correct place for try_module_get(THIS_MODULE) because if
@@ -99,8 +99,7 @@ static int module_open(struct inode *inode, struct file *file)
      */
     try_module_get(THIS_MODULE);
 
-    /* If the file is already open, wait until it is not. */
-    while (already_open) {
+    while (atomic_cmpxchg(&already_open, 0, 1)) {
         int i, is_sig = 0;
 
         /* This function puts the current process, including any system
@@ -110,7 +109,7 @@ static int module_open(struct inode *inode, struct file *file)
          * is closed) or when a signal, such as Ctrl-C, is sent
          * to the process
          */
-        wait_event_interruptible(waitq, !already_open);
+        wait_event_interruptible(waitq, !atomic_read(&already_open));
 
         /* If we woke up because we got a signal we're not blocking,
          * return -EINTR (fail the system call).  This allows processes
@@ -133,10 +132,6 @@ static int module_open(struct inode *inode, struct file *file)
         }
     }
 
-    /* If we got here, already_open must be zero. */
-
-    /* Open the file */
-    already_open = 1;
     return 0; /* Allow the access */
 }
 
@@ -148,7 +143,7 @@ static int module_close(struct inode *inode, struct file *file)
      * the other processes will be called when already_open is back to one,
      * so they'll go back to sleep.
      */
-    already_open = 0;
+    atomic_set(&already_open, 0);
 
     /* Wake up all the processes in waitq, so if anybody is waiting for the
      * file, they can have it.
