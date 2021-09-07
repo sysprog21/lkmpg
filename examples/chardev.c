@@ -27,8 +27,8 @@ static ssize_t device_write(struct file *, const char __user *, size_t,
 /* Global variables are declared as static, so are global within the file. */
 
 static int major; /* major number assigned to our device driver */
-static int open_device_cnt = 0; /* Is device open?
-                                 * Used to prevent multiple access to device */
+/* Is device open? Used to prevent multiple access to device */
+static atomic_t already_open = ATOMIC_INIT(0);
 static char msg[BUF_LEN]; /* The msg the device will give when asked */
 static char *msg_ptr;
 
@@ -78,10 +78,9 @@ static int device_open(struct inode *inode, struct file *file)
 {
     static int counter = 0;
 
-    if (open_device_cnt)
+    if (atomic_cmpxchg(&already_open, 0, 1))
         return -EBUSY;
 
-    open_device_cnt++;
     sprintf(msg, "I already told you %d times Hello world!\n", counter++);
     msg_ptr = msg;
     try_module_get(THIS_MODULE);
@@ -92,7 +91,7 @@ static int device_open(struct inode *inode, struct file *file)
 /* Called when a process closes the device file. */
 static int device_release(struct inode *inode, struct file *file)
 {
-    open_device_cnt--; /* We're now ready for our next caller */
+    atomic_set(&already_open, 0); /* We're now ready for our next caller */
 
     /* Decrement the usage count, or else once you opened the file, you will
      * never get get rid of the module.
