@@ -36,13 +36,14 @@ jobs:
           tag_name: "latest"
           prerelease: true
 
-  coding_style:
+  validate:
     runs-on: ubuntu-20.04
     steps:
       - name: checkout code
         uses: actions/checkout@v2
-      - name: style check
+      - name: validate coding style and functionality
         run: |
             sudo apt-get install -q -y clang-format-11
             sh .ci/check-format.sh
+            bash .ci/build-n-run.sh
         shell: bash
