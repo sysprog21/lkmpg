@@ -3,8 +3,8 @@ obj-m += hello-2.o
 obj-m += hello-3.o
 obj-m += hello-4.o
 obj-m += hello-5.o
-obj-m += start.o
-obj-m += stop.o
+obj-m += startstop.o
+startstop-objs := start.o stop.o
 obj-m += chardev.o
 obj-m += procfs1.o
 obj-m += procfs2.o
@@ -29,6 +29,8 @@ obj-m += example_atomic.o
 obj-m += example_mutex.o
 obj-m += bottomhalf.o
 obj-m += ioctl.o
+
+PWD := $(CURDIR)
 
 all:
 	$(MAKE) -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
