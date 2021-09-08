@@ -1502,6 +1502,47 @@ In certain conditions, you may desire a simpler and more direct way to communica
 Flashing keyboard LEDs can be such a solution: It is an immediate way to attract attention or to display a status condition.
 Keyboard LEDs are present on every hardware, they are always visible, they do not need any setup, and their use is rather simple and non-intrusive, compared to writing to a tty or a file.
 
+From v4.14 to v4.15, the timer API made a series of changes to improve memory safety.
+A buffer overflow in the area of a \cpp|timer_list| structure may be able to overwrite the \cpp|function| and \cpp|data| fields, providing the attacker with a way to use return-object programming (ROP) to call arbitrary functions within the kernel.
+Also, the function prototype of the callback, containing a \cpp|unsigned long| argument, will prevent work from any type checking.
+Furthermore, the function prototype with \cpp|unsigned long| argument may be an obstacle to the \textit{control-flow integrity}.
+Thus, it is better to use a unique prototype to separate from the cluster that takes an \cpp|unsigned long| argument.
+The timer callback should be passed a pointer to the \cpp|timer_list| structure rather than an \cpp|unsigned long| argument.
+Then, it wraps all the information the callback needs, including the \cpp|timer_list| structure, into a larger structure, and it can use the \cpp|container_of| macro instead of the \cpp|unsigned long| value.
+
+Before Linux v4.14, \cpp|setup_timer| was used to initialize the timer and the \cpp|timer_list| structure looked like:
+\begin{code}
+struct timer_list {
+    unsigned long expires;
+    void (*function)(unsigned long);
+    unsigned long data;
+    u32 flags;
+    /* ... */
+};
+
+void setup_timer(struct timer_list *timer, void (*callback)(unsigned long),
+                 unsigned long data);
+\end{code}
+
+Since Linux v4.14, \cpp|timer_setup| is adopted and the kernel step by step converting to \cpp|timer_setup| from \cpp|setup_timer|.
+One of the reasons why API was changed is it need to coexist with the old version interface.
+Moreover, the \cpp|timer_setup| was implemented by \cpp|setup_timer| at first.
+\begin{code}
+void timer_setup(struct timer_list *timer,
+                 void (*callback)(struct timer_list *), unsigned int flags);
+\end{code}
+
+The \cpp|setup_timer| was then removed since v4.15.
+As a result, the \cpp|timer_list| structure had changed to the following.
+\begin{code}
+struct timer_list {
+    unsigned long expires;
+    void (*function)(struct timer_list *);
+    u32 flags;
+    /* ... */
+};
+\end{code}
+
 The following source code illustrates a minimal kernel module which, when loaded, starts blinking the keyboard LEDs until it is unloaded.
 
 \samplec{examples/kbleds.c}
