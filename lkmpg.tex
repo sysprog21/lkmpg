@@ -153,13 +153,12 @@ Rest assured, after you get over the initial hurdle of doing it for the first ti
 
   \item Using X Window System.
   \label{sec:using_x}
-        It is highly recommended that you extract, compile and load all the examples this guide discusses.
-        It is also highly recommended you do this from a console.
+        It is highly recommended that you extract, compile and load all the examples this guide discusses from a console.
         You should not be working on this stuff in X Window System.
 
         Modules can not print to the screen like \cpp|printf()| can, but they can log information and warnings, which ends up being printed on your screen, but only on a console.
         If you \sh|insmod| a module from an xterm, the information and warnings will be logged, but only to your systemd journal.
-        You will not see it unless you look through your \sh|journalctl|.
+        You will not see it unless you look through your \sh|journalctl| .
         See \ref{sec:helloworld} for details.
         To have immediate access to this information, do all your work from the console.
 \end{enumerate}
