@@ -183,7 +183,7 @@ pre.fancyvrb {white-space: pre-wrap; margin:0em;font-family:monospace,monospace;
 html { width: 100vw; overflow-x: hidden; }
 body { max-width: 55rem; box-sizing: border-box; padding: 1rem; margin: 0 auto; overflow-x: hidden; background-color: #F4ECD8; color: #5B464B; line-height: 1.5; }
 a { color: #0060DF; }
-p, a { font-size: 1.2em; }
+p, a { font-size: 1.2rem; }
 p + pre { font-size: 1.1em; }
 div.author { white-space: normal; }
 img.math { height: 1rem; vertical-align: top; }
