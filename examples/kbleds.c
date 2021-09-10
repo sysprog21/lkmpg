@@ -5,17 +5,16 @@
 #include <linux/init.h>
 #include <linux/kd.h> /* For KDSETLED */
 #include <linux/module.h>
-#include <linux/tty.h> /* For fg_console, MAX_NR_CONSOLES */
-#include <linux/vt.h>
+#include <linux/tty.h> /* For tty_struct */
+#include <linux/vt.h> /* For MAX_NR_CONSOLES */
 #include <linux/vt_kern.h> /* for fg_console */
-
 #include <linux/console_struct.h> /* For vc_cons */
 
 MODULE_DESCRIPTION("Example module illustrating the use of Keyboard LEDs.");
 
 static struct timer_list my_timer;
 static struct tty_driver *my_driver;
-static char kbledstatus = 0;
+static unsigned long kbledstatus = 0;
 
 #define BLINK_DELAY HZ / 5
 #define ALL_LEDS_ON 0x07
@@ -32,18 +31,16 @@ static char kbledstatus = 0;
  * the LEDs reflect the actual keyboard status).  To learn more on this,
  * please see file: drivers/tty/vt/keyboard.c, function setledstate().
  */
-
-static void my_timer_func(unsigned long ptr)
+static void my_timer_func(struct timer_list *unused)
 {
-    unsigned long *pstatus = (unsigned long *)ptr;
     struct tty_struct *t = vc_cons[fg_console].d->port.tty;
 
-    if (*pstatus == ALL_LEDS_ON)
-        *pstatus = RESTORE_LEDS;
+    if (kbledstatus == ALL_LEDS_ON)
+        kbledstatus = RESTORE_LEDS;
     else
-        *pstatus = ALL_LEDS_ON;
+        kbledstatus = ALL_LEDS_ON;
 
-    (my_driver->ops->ioctl)(t, KDSETLED, *pstatus);
+    (my_driver->ops->ioctl)(t, KDSETLED, kbledstatus);
 
     my_timer.expires = jiffies + BLINK_DELAY;
     add_timer(&my_timer);
@@ -67,7 +64,7 @@ static int __init kbleds_init(void)
     pr_info("kbleds: tty driver magic %x\n", my_driver->magic);
 
     /* Set up the LED blink timer the first time. */
-    timer_setup(&my_timer, (void *)&my_timer_func, (unsigned long)&kbledstatus);
+    timer_setup(&my_timer, my_timer_func, 0);
     my_timer.expires = jiffies + BLINK_DELAY;
     add_timer(&my_timer);
 
