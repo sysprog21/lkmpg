@@ -2793,7 +2793,7 @@ which we mentioned at <a href='#chardevc'>6.5<!-- tex4ht:ref: sec:chardev_c  -->
 <a id='x1-39845r149'></a><span class='ecrm-0500'>149</span> 
 <a id='x1-39847r150'></a><span class='ecrm-0500'>150</span><span id='textcolor1316'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1317'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> ioctl_init(</span><span id='textcolor1318'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
 <a id='x1-39849r151'></a><span class='ecrm-0500'>151</span><span class='ectt-0800'>{</span> 
-<a id='x1-39851r152'></a><span class='ecrm-0500'>152</span><span class='ectt-0800'>    </span><span id='textcolor1319'><span class='ectt-0800'>dev_t</span></span><span class='ectt-0800'> dev = MKDEV(test_ioctl_major, 0);</span> 
+<a id='x1-39851r152'></a><span class='ecrm-0500'>152</span><span class='ectt-0800'>    </span><span id='textcolor1319'><span class='ectt-0800'>dev_t</span></span><span class='ectt-0800'> dev;</span> 
 <a id='x1-39853r153'></a><span class='ecrm-0500'>153</span><span class='ectt-0800'>    </span><span id='textcolor1320'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> alloc_ret = 0;</span> 
 <a id='x1-39855r154'></a><span class='ecrm-0500'>154</span><span class='ectt-0800'>    </span><span id='textcolor1321'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> cdev_ret = 0;</span> 
 <a id='x1-39857r155'></a><span class='ecrm-0500'>155</span><span class='ectt-0800'>    alloc_ret = alloc_chrdev_region(&amp;dev, 0, num_of_dev, DRIVER_NAME);</span> 
