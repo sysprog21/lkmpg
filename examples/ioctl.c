@@ -149,7 +149,7 @@ static struct file_operations fops = {
 
 static int ioctl_init(void)
 {
-    dev_t dev = MKDEV(test_ioctl_major, 0);
+    dev_t dev;
     int alloc_ret = 0;
     int cdev_ret = 0;
     alloc_ret = alloc_chrdev_region(&dev, 0, num_of_dev, DRIVER_NAME);
