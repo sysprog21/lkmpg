@@ -12,4 +12,3 @@ WORKDIR /workdir
 
 COPY --from=builder /workdir/lkmpg.pdf /workdir
 COPY --from=builder /workdir/html /workdir
-
