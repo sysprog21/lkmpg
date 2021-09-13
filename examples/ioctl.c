@@ -10,7 +10,6 @@
 #include <linux/uaccess.h>
 
 struct ioctl_arg {
-    unsigned int reg;
     unsigned int val;
 };
 
