@@ -7,21 +7,21 @@ function build_example()
 
 function list_mod()
 {
-    #following list will contain all file names which are not specified in file non-working.
-    echo `ls examples/*.ko | awk -F "[/|.]" '{print $2}' | grep -vFxf .ci/non-working`
+    # Filter out the modules specified in non-working
+    ls examples/*.ko | awk -F "[/|.]" '{print $2}' | grep -vFxf .ci/non-working
 }
 
-#test module 2 times
 function run_mod()
 {
-    ( sudo insmod "examples/$1.ko" && sudo rmmod "$1" ) || exit 1;
-    ( sudo insmod "examples/$1.ko" && sudo rmmod "$1" ) || exit 1;
+    # insert/remove twice to ensure resource allocations
+    ( sudo insmod "examples/$1.ko" && sudo rmmod "$1" ) || exit 1
+    ( sudo insmod "examples/$1.ko" && sudo rmmod "$1" ) || exit 1
 }
 
 function run_examples()
 {
     for module in $(list_mod); do
-        echo "$module"
+        echo "Running $module"
         run_mod "$module"
     done
 }
