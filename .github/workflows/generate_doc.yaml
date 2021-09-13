@@ -44,6 +44,6 @@ jobs:
       - name: validate coding style and functionality
         run: |
             sudo apt-get install -q -y clang-format-11
-            sh .ci/check-format.sh
-            bash .ci/build-n-run.sh
+            .ci/check-format.sh
+            .ci/build-n-run.sh
         shell: bash
