@@ -681,26 +681,26 @@ parameters: a variable name and a free form string describing that variable.
 <a id='x1-16166r67'></a><span class='ecrm-0500'>67</span><span class='ectt-0800'>module_exit(hello_5_exit);</span></pre>
 <!-- l. 412 --><p class='indent'>   I would recommend playing around with this code: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb26'><a id='x1-16194r1'></a><span class='ecrm-0500'>1</span><span class='colorbox' id='colorbox201'><span class='ectt-0800'>$</span></span><span class='ectt-0800'> sudo insmod hello-5.ko mystring=</span><span id='textcolor202'><span class='ectt-0800'>"bebop"</span></span><span class='ectt-0800'> myintArray=-1</span> 
+   <pre class='fancyvrb' id='fancyvrb26'><a id='x1-16194r1'></a><span class='ecrm-0500'>1</span><span class='colorbox' id='colorbox201'><span class='ectt-0800'>$</span></span><span class='ectt-0800'> sudo insmod hello-5.ko mystring=</span><span id='textcolor202'><span class='ectt-0800'>"bebop"</span></span><span class='ectt-0800'> myintarray=-1</span> 
 <a id='x1-16196r2'></a><span class='ecrm-0500'>2</span><span class='ectt-0800'>myshort is a </span><span id='textcolor203'><span class='ectt-0800'>short</span></span><span class='ectt-0800'> integer: 1</span> 
 <a id='x1-16198r3'></a><span class='ecrm-0500'>3</span><span class='ectt-0800'>myint is an integer: 420</span> 
 <a id='x1-16200r4'></a><span class='ecrm-0500'>4</span><span class='ectt-0800'>mylong is a </span><span id='textcolor204'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> integer: 9999</span> 
 <a id='x1-16202r5'></a><span class='ecrm-0500'>5</span><span class='ectt-0800'>mystring is a string: bebop</span> 
-<a id='x1-16204r6'></a><span class='ecrm-0500'>6</span><span class='ectt-0800'>myintArray[0] = -1</span> 
-<a id='x1-16206r7'></a><span class='ecrm-0500'>7</span><span class='ectt-0800'>myintArray[1] = 420</span> 
-<a id='x1-16208r8'></a><span class='ecrm-0500'>8</span><span class='ectt-0800'>got 1 arguments </span><span id='textcolor205'><span class='ectt-0800'>for</span></span><span class='ectt-0800'> myintArray.</span> 
+<a id='x1-16204r6'></a><span class='ecrm-0500'>6</span><span class='ectt-0800'>myintarray[0] = -1</span> 
+<a id='x1-16206r7'></a><span class='ecrm-0500'>7</span><span class='ectt-0800'>myintarray[1] = 420</span> 
+<a id='x1-16208r8'></a><span class='ecrm-0500'>8</span><span class='ectt-0800'>got 1 arguments </span><span id='textcolor205'><span class='ectt-0800'>for</span></span><span class='ectt-0800'> myintarray.</span> 
 <a id='x1-16210r9'></a><span class='ecrm-0500'>9</span> 
 <a id='x1-16212r10'></a><span class='ecrm-0500'>10</span><span class='colorbox' id='colorbox206'><span class='ectt-0800'>$</span></span><span class='ectt-0800'> sudo rmmod hello-5</span> 
 <a id='x1-16214r11'></a><span class='ecrm-0500'>11</span><span class='ectt-0800'>Goodbye, world 5</span> 
 <a id='x1-16216r12'></a><span class='ecrm-0500'>12</span> 
-<a id='x1-16218r13'></a><span class='ecrm-0500'>13</span><span class='colorbox' id='colorbox207'><span class='ectt-0800'>$</span></span><span class='ectt-0800'> sudo insmod hello-5.ko mystring=</span><span id='textcolor208'><span class='ectt-0800'>"supercalifragilisticexpialidocious"</span></span><span class='ectt-0800'> myintArray=-1,-1</span> 
+<a id='x1-16218r13'></a><span class='ecrm-0500'>13</span><span class='colorbox' id='colorbox207'><span class='ectt-0800'>$</span></span><span class='ectt-0800'> sudo insmod hello-5.ko mystring=</span><span id='textcolor208'><span class='ectt-0800'>"supercalifragilisticexpialidocious"</span></span><span class='ectt-0800'> myintarray=-1,-1</span> 
 <a id='x1-16220r14'></a><span class='ecrm-0500'>14</span><span class='ectt-0800'>myshort is a </span><span id='textcolor209'><span class='ectt-0800'>short</span></span><span class='ectt-0800'> integer: 1</span> 
 <a id='x1-16222r15'></a><span class='ecrm-0500'>15</span><span class='ectt-0800'>myint is an integer: 420</span> 
 <a id='x1-16224r16'></a><span class='ecrm-0500'>16</span><span class='ectt-0800'>mylong is a </span><span id='textcolor210'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> integer: 9999</span> 
 <a id='x1-16226r17'></a><span class='ecrm-0500'>17</span><span class='ectt-0800'>mystring is a string: supercalifragilisticexpialidocious</span> 
-<a id='x1-16228r18'></a><span class='ecrm-0500'>18</span><span class='ectt-0800'>myintArray[0] = -1</span> 
-<a id='x1-16230r19'></a><span class='ecrm-0500'>19</span><span class='ectt-0800'>myintArray[1] = -1</span> 
-<a id='x1-16232r20'></a><span class='ecrm-0500'>20</span><span class='ectt-0800'>got 2 arguments </span><span id='textcolor211'><span class='ectt-0800'>for</span></span><span class='ectt-0800'> myintArray.</span> 
+<a id='x1-16228r18'></a><span class='ecrm-0500'>18</span><span class='ectt-0800'>myintarray[0] = -1</span> 
+<a id='x1-16230r19'></a><span class='ecrm-0500'>19</span><span class='ectt-0800'>myintarray[1] = -1</span> 
+<a id='x1-16232r20'></a><span class='ecrm-0500'>20</span><span class='ectt-0800'>got 2 arguments </span><span id='textcolor211'><span class='ectt-0800'>for</span></span><span class='ectt-0800'> myintarray.</span> 
 <a id='x1-16234r21'></a><span class='ecrm-0500'>21</span> 
 <a id='x1-16236r22'></a><span class='ecrm-0500'>22</span><span class='colorbox' id='colorbox212'><span class='ectt-0800'>$</span></span><span class='ectt-0800'> sudo rmmod hello-5</span> 
 <a id='x1-16238r23'></a><span class='ecrm-0500'>23</span><span class='ectt-0800'>Goodbye, world 5</span> 
