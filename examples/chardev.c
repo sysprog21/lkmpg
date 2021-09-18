@@ -27,10 +27,16 @@ static ssize_t device_write(struct file *, const char __user *, size_t,
 /* Global variables are declared as static, so are global within the file. */
 
 static int major; /* major number assigned to our device driver */
+
+enum {
+    CDEV_NOT_USED = 0,
+    CDEV_EXCLUSIVE_OPEN = 1,
+};
+
 /* Is device open? Used to prevent multiple access to device */
-static atomic_t already_open = ATOMIC_INIT(0);
+static atomic_t already_open = ATOMIC_INIT(CDEV_NOT_USED);
+
 static char msg[BUF_LEN]; /* The msg the device will give when asked */
-static char *msg_ptr;
 
 static struct class *cls;
 
@@ -78,11 +84,10 @@ static int device_open(struct inode *inode, struct file *file)
 {
     static int counter = 0;
 
-    if (atomic_cmpxchg(&already_open, 0, 1))
+    if (atomic_cmpxchg(&already_open, CDEV_NOT_USED, CDEV_EXCLUSIVE_OPEN))
         return -EBUSY;
 
     sprintf(msg, "I already told you %d times Hello world!\n", counter++);
-    msg_ptr = msg;
     try_module_get(THIS_MODULE);
 
     return SUCCESS;
@@ -91,7 +96,8 @@ static int device_open(struct inode *inode, struct file *file)
 /* Called when a process closes the device file. */
 static int device_release(struct inode *inode, struct file *file)
 {
-    atomic_set(&already_open, 0); /* We're now ready for our next caller */
+    /* We're now ready for our next caller */
+    atomic_set(&already_open, CDEV_NOT_USED);
 
     /* Decrement the usage count, or else once you opened the file, you will
      * never get get rid of the module.
@@ -111,10 +117,14 @@ static ssize_t device_read(struct file *filp, /* see include/linux/fs.h   */
 {
     /* Number of bytes actually written to the buffer */
     int bytes_read = 0;
+    const char *msg_ptr = msg;
 
-    /* If we are at the end of message, return 0 signifying end of file. */
-    if (*msg_ptr == 0)
-        return 0;
+    if (!*(msg_ptr + *offset)) { /* we are at the end of message */
+        *offset = 0; /* reset the offset */
+        return 0; /* signify end of file */
+    }
+
+    msg_ptr += *offset;
 
     /* Actually put the data into the buffer */
     while (length && *msg_ptr) {
@@ -124,10 +134,11 @@ static ssize_t device_read(struct file *filp, /* see include/linux/fs.h   */
          * the user data segment.
          */
         put_user(*(msg_ptr++), buffer++);
-
         length--;
         bytes_read++;
     }
+
+    *offset += bytes_read;
 
     /* Most read functions return the number of bytes put into the buffer. */
     return bytes_read;
