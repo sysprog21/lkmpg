@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>September 15, 2021</span></div>
+<div class='date'><span class='ecrm-1200'>September 19, 2021</span></div>
                                                                   
 
                                                                   
@@ -1317,7 +1317,7 @@ using the <code>  <span class='ectt-1000'>register_chrdev</span>
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb35'><a id='x1-29004r1'></a><span class='ecrm-0500'>1</span><span id='textcolor390'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> register_chrdev(</span><span id='textcolor391'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor392'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> major, </span><span id='textcolor393'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor394'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *name, </span><span id='textcolor395'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file_operations *fops);</span></pre>
-<!-- l. 872 --><p class='indent'>   where unsigned int major is the major number you want to request,
+<!-- l. 872 --><p class='indent'>   Where unsigned int major is the major number you want to request,
 <code> <span id='textcolor396'><span class='ectt-1000'>const</span></span><span class='ectt-1000'> </span><span id='textcolor397'><span class='ectt-1000'>char</span></span><span class='ectt-1000'> *name</span>
 </code> is the name of the device as it will appear in <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/devices</span></span></span> and
 <code> <span id='textcolor398'><span class='ectt-1000'>struct</span></span><span class='ectt-1000'> file_operations *fops</span>
