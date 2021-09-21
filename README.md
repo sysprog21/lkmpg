@@ -5,7 +5,7 @@ The guide has been around since 2001 and most copies of it on the web only descr
 
 The book can be freely accessed via https://sysprog21.github.io/lkmpg/ or [latest PDF file](https://github.com/sysprog21/lkmpg/releases).
 The original guide may be found at [Linux Documentation Project](http://www.tldp.org/LDP/lkmpg/).
-You may check other [freely available programming books](https://ebookfoundation.github.io/free-programming-books/books/free-programming-books.html) listed by The [Free Ebook Foundation](https://ebookfoundation.org/).
+You may check other [freely available programming books](https://ebookfoundation.github.io/free-programming-books/books/free-programming-books.html) listed by The [Free Ebook Foundation](https://ebookfoundation.org/) or [Linux online books](https://onlinebooks.library.upenn.edu/webbin/book/browse?type=lcsubc&key=Linux) collected by [The Online Books Page](https://onlinebooks.library.upenn.edu/).
 
 ## Getting Started
 
