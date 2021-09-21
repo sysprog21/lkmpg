@@ -13,10 +13,12 @@
 #include <linux/module.h>
 #include <linux/poll.h>
 
-typedef struct table{
+/* Structure for every task's offset */
+typedef struct element{
     int pid;
     long offset;
-}offsetTable;
+    struct element *next;
+}list_ele_t;
 
 /*  Prototypes - this would normally go in a .h file */
 static int device_open(struct inode *, struct file *);
@@ -36,8 +38,8 @@ static int major; /* major number assigned to our device driver */
 static atomic_t already_open = ATOMIC_INIT(0);
 static char msg[BUF_LEN]; /* The msg the device will give when asked */
 
-static offsetTable mtable[20] = {0};/*  */
-static int refCount = 0;
+static list_ele_t *taskList = NULL;
+struct mutex etx_mutex; 
 
 static struct class *cls;
 
@@ -63,6 +65,7 @@ static int __init chardev_init(void)
     device_create(cls, NULL, MKDEV(major, 0), NULL, DEVICE_NAME);
 
     pr_info("Device created on /dev/%s\n", DEVICE_NAME);
+    mutex_init(&etx_mutex);
 
     return SUCCESS;
 }
@@ -94,9 +97,23 @@ static int device_open(struct inode *inode, struct file *file)
     return SUCCESS;
 }
 
+void freeTaskList(void){
+    list_ele_t *tmp = taskList;
+    if(taskList == NULL)
+        return;
+    do{
+        taskList = tmp;
+        tmp = tmp->next;
+        kfree(taskList);
+    }while(tmp);
+    return;
+}
+
 /* Called when a process closes the device file. */
 static int device_release(struct inode *inode, struct file *file)
 {
+
+    freeTaskList();
     atomic_set(&already_open, 0); /* We're now ready for our next caller */
 
     /* Decrement the usage count, or else once you opened the file, you will
@@ -106,6 +123,53 @@ static int device_release(struct inode *inode, struct file *file)
 
     return SUCCESS;
 }
+
+int findTaskOffset(int currentPid){
+    list_ele_t *tmp = taskList;
+    if(tmp == NULL)
+        return -1;
+    do{
+        if(currentPid == tmp->pid){
+            return tmp->offset;
+        }
+        tmp = tmp->next;
+    }while(tmp);
+    return -1;
+}
+
+int insertTaskOffset(int currentPid){
+    list_ele_t *tmp = taskList;
+    list_ele_t *new = kmalloc(sizeof(list_ele_t), GFP_ATOMIC);
+    if(new < 0)
+        return false;
+    new->pid = currentPid;
+    new->next = NULL;
+
+    if(!tmp)
+        taskList = new;
+    else{
+        while(tmp->next)
+            tmp = tmp->next;
+        tmp->next = new;
+    }
+    return true;
+}
+
+bool setTaskOffset(int currentPid, int newOffset){
+    list_ele_t *tmp = taskList;
+    if(tmp == NULL)
+        return false;
+    do{
+        if(currentPid == tmp->pid){
+            tmp->offset = newOffset;
+            printk("[DEBUG] set the new offset. PID: %d off:%d\n", currentPid, newOffset);
+            return true;
+        }
+        tmp = tmp->next;
+    }while(tmp);
+    return false;
+}
+
 
 /* Called when a process, which already opened the dev file, attempts to
  * read from it.
@@ -117,32 +181,24 @@ static ssize_t device_read(struct file *filp, /* see include/linux/fs.h   */
 {
     /* Number of bytes actually written to the buffer */
     char *msg_ptr = msg;
-    int index;
-    /*  */
-    int currentOffset = -1;
-    int bytes_read = 0;
     
-
+    /* Now we know which task is reading the device. */
     int currentPid = task_pid_nr(current);
+    int currentOffset;
+    bool ret;
+    int bytes_read =0;
 
-    for(index = 0; index < refCount; index++){
-        if(mtable[index].pid != currentPid){
-            continue;
-        }
-        else{
-            currentOffset = mtable[index].offset;
-        }
-    }
+    mutex_lock(&etx_mutex);
+    currentOffset = findTaskOffset(currentPid);
 
     if(currentOffset == -1){
-        mtable[index+1].pid = currentPid;
-        mtable[index+1].offset = 0;
+        /* A new task is reading the device, so just add a new element in the list.*/
+        
+        ret = insertTaskOffset(currentPid);
+        printk("[DEBUG] add the pid %d entry.\n", currentPid);
         currentOffset = 0;
-        refCount++;
     }
-    printk("PID %d, Offset %d",currentPid, currentOffset);
-
-
+    mutex_unlock(&etx_mutex);   
 
     /* If we are at the end of message, reset the offset and
      * return 0 (which signifies end of file).
@@ -154,22 +210,19 @@ static ssize_t device_read(struct file *filp, /* see include/linux/fs.h   */
     }
 
     /* Actually put the data into the buffer */
-    while (length && *msg_ptr) {
+    while (length && *(msg_ptr + currentOffset)) {
         /* The buffer is in the user data segment, not the kernel
          * segment so "*" assignment won't work.  We have to use
          * put_user which copies data from the kernel data segment to
          * the user data segment.
          */
-        put_user(*(msg_ptr++), buffer++);
+        put_user(*((msg_ptr++)+currentOffset), buffer++);
 
         length--;
         bytes_read++;
-        
     }
-    if(*msg_ptr == 0)
-        mtable[index].offset = 0;
-    else
-        mtable[index].offset += bytes_read;
+    /* Add bytes_read to the current task offset. */
+    setTaskOffset(currentPid, currentOffset+bytes_read);
 
     /* Most read functions return the number of bytes put into the buffer. */
     return bytes_read;
