@@ -106,6 +106,7 @@ void freeTaskList(void){
         tmp = tmp->next;
         kfree(taskList);
     }while(tmp);
+    taskList = NULL;
     return;
 }
 
