@@ -13,6 +13,11 @@
 #include <linux/module.h>
 #include <linux/poll.h>
 
+typedef struct table{
+    int pid;
+    long offset;
+}offsetTable;
+
 /*  Prototypes - this would normally go in a .h file */
 static int device_open(struct inode *, struct file *);
 static int device_release(struct inode *, struct file *);
@@ -30,7 +35,9 @@ static int major; /* major number assigned to our device driver */
 /* Is device open? Used to prevent multiple access to device */
 static atomic_t already_open = ATOMIC_INIT(0);
 static char msg[BUF_LEN]; /* The msg the device will give when asked */
-static char *msg_ptr;
+
+static offsetTable mtable[20] = {0};/*  */
+static int refCount = 0;
 
 static struct class *cls;
 
@@ -82,7 +89,6 @@ static int device_open(struct inode *inode, struct file *file)
         return -EBUSY;
 
     sprintf(msg, "I already told you %d times Hello world!\n", counter++);
-    msg_ptr = msg;
     try_module_get(THIS_MODULE);
 
     return SUCCESS;
@@ -110,11 +116,42 @@ static ssize_t device_read(struct file *filp, /* see include/linux/fs.h   */
                            loff_t *offset)
 {
     /* Number of bytes actually written to the buffer */
+    char *msg_ptr = msg;
+    int index;
+    /*  */
+    int currentOffset = -1;
     int bytes_read = 0;
+    
 
-    /* If we are at the end of message, return 0 signifying end of file. */
-    if (*msg_ptr == 0)
+    int currentPid = task_pid_nr(current);
+
+    for(index = 0; index < refCount; index++){
+        if(mtable[index].pid != currentPid){
+            continue;
+        }
+        else{
+            currentOffset = mtable[index].offset;
+        }
+    }
+
+    if(currentOffset == -1){
+        mtable[index+1].pid = currentPid;
+        mtable[index+1].offset = 0;
+        currentOffset = 0;
+        refCount++;
+    }
+    printk("PID %d, Offset %d",currentPid, currentOffset);
+
+
+
+    /* If we are at the end of message, reset the offset and
+     * return 0 (which signifies end of file).
+     */
+
+    if (!*(msg_ptr + currentOffset)) {
+        currentOffset = 0;
         return 0;
+    }
 
     /* Actually put the data into the buffer */
     while (length && *msg_ptr) {
@@ -127,7 +164,12 @@ static ssize_t device_read(struct file *filp, /* see include/linux/fs.h   */
 
         length--;
         bytes_read++;
+        
     }
+    if(*msg_ptr == 0)
+        mtable[index].offset = 0;
+    else
+        mtable[index].offset += bytes_read;
 
     /* Most read functions return the number of bytes put into the buffer. */
     return bytes_read;
