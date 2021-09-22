@@ -412,31 +412,35 @@ It takes two parameters: a variable name and a free form string describing that 
 I would recommend playing around with this code:
 \begin{code}
 $ sudo insmod hello-5.ko mystring="bebop" myintarray=-1
-myshort is a short integer: 1
-myint is an integer: 420
-mylong is a long integer: 9999
-mystring is a string: bebop
-myintarray[0] = -1
-myintarray[1] = 420
-got 1 arguments for myintarray.
+$ dmesg | tail -7
+[191207.935945] myshort is a short integer: 1
+[191207.935946] myint is an integer: 420
+[191207.935946] mylong is a long integer: 9999
+[191207.935946] mystring is a string: bebop
+[191207.935947] myintarray[0] = -1
+[191207.935947] myintarray[1] = 420
+[191207.935948] got 1 arguments for myintarray.
 
 $ sudo rmmod hello-5
-Goodbye, world 5
+$ dmesg | tail -1
+[191321.412066] Goodbye, world 5
 
 $ sudo insmod hello-5.ko mystring="supercalifragilisticexpialidocious" myintarray=-1,-1
-myshort is a short integer: 1
-myint is an integer: 420
-mylong is a long integer: 9999
-mystring is a string: supercalifragilisticexpialidocious
-myintarray[0] = -1
-myintarray[1] = -1
-got 2 arguments for myintarray.
+$ dmesg | tail -7
+[191471.680611] myshort is a short integer: 1
+[191471.680612] myint is an integer: 420
+[191471.680612] mylong is a long integer: 9999
+[191471.680613] mystring is a string: supercalifragilisticexpialidocious
+[191471.680613] myintarray[0] = -1
+[191471.680614] myintarray[1] = -1
+[191471.680614] got 2 arguments for myintarray.
 
 $ sudo rmmod hello-5
-Goodbye, world 5
+$ dmesg | tail -1
+[191518.000468] Goodbye, world 5
 
 $ sudo insmod hello-5.ko mylong=hello
-hello-5.o: invalid argument syntax for mylong: 'h'
+insmod: ERROR: could not insert module hello-5.ko: Invalid parameters
 \end{code}
 
 \subsection{Modules Spanning Multiple Files}
