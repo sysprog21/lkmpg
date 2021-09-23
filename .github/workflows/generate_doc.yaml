@@ -35,17 +35,3 @@ jobs:
             lkmpg-html.tar.gz
           tag_name: "latest"
           prerelease: true
-
-  validate:
-    runs-on: ubuntu-20.04
-    steps:
-      - name: checkout code
-        uses: actions/checkout@v2
-      - name: validate coding style and functionality
-        run: |
-            sudo apt-get install -q -y clang-format-11
-            sudo apt-get install -q -y cppcheck
-            .ci/check-format.sh
-            .ci/static-analysis.sh
-            .ci/build-n-run.sh
-        shell: bash
