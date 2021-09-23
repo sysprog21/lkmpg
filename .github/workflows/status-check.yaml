@@ -1,0 +1,24 @@
+name: status-checks
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v2
+      - name: validate coding style and functionality
+        run: |
+            sudo apt-get install -q -y clang-format-11
+            sudo apt-get install -q -y cppcheck
+            .ci/check-format.sh
+            .ci/static-analysis.sh
+            .ci/build-n-run.sh
+        shell: bash
