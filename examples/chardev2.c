@@ -17,18 +17,18 @@
 #define DEVICE_NAME "char_dev"
 #define BUF_LEN 80
 
+enum {
+    CDEV_NOT_USED = 0,
+    CDEV_EXCLUSIVE_OPEN = 1,
+};
+
 /* Is the device open right now? Used to prevent concurrent access into
  * the same device
  */
-static atomic_t already_open = ATOMIC_INIT(0);
+static atomic_t already_open = ATOMIC_INIT(CDEV_NOT_USED);
 
 /* The message the device will give when asked */
 static char message[BUF_LEN];
-
-/* How far did the process reading the message get? Useful if the message
- * is larger than the size of the buffer we get to fill in device_read.
- */
-static char *message_ptr;
 
 static struct class *cls;
 
@@ -38,11 +38,9 @@ static int device_open(struct inode *inode, struct file *file)
     pr_info("device_open(%p)\n", file);
 
     /* We don't want to talk to two processes at the same time. */
-    if (atomic_cmpxchg(&already_open, 0, 1))
+    if (atomic_cmpxchg(&already_open, CDEV_NOT_USED, CDEV_EXCLUSIVE_OPEN))
         return -EBUSY;
 
-    /* Initialize the message */
-    message_ptr = message;
     try_module_get(THIS_MODULE);
     return SUCCESS;
 }
@@ -52,7 +50,7 @@ static int device_release(struct inode *inode, struct file *file)
     pr_info("device_release(%p,%p)\n", inode, file);
 
     /* We're now ready for our next caller */
-    atomic_set(&already_open, 0);
+    atomic_set(&already_open, CDEV_NOT_USED);
 
     module_put(THIS_MODULE);
     return SUCCESS;
@@ -68,12 +66,17 @@ static ssize_t device_read(struct file *file, /* see include/linux/fs.h   */
 {
     /* Number of bytes actually written to the buffer */
     int bytes_read = 0;
+    /* How far did the process reading the message get? Useful if the message
+     * is larger than the size of the buffer we get to fill in device_read.
+     */
+    const char *message_ptr = message;
 
-    pr_info("device_read(%p,%p,%ld)\n", file, buffer, length);
+    if (!*(message_ptr + *offset)) { /* we are at the end of message */
+        *offset = 0; /* reset the offset */
+        return 0; /* signify end of file */
+    }
 
-    /* If at the end of message, return 0 (which signifies end of file). */
-    if (*message_ptr == 0)
-        return 0;
+    message_ptr += *offset;
 
     /* Actually put the data into the buffer */
     while (length && *message_ptr) {
@@ -89,6 +92,8 @@ static ssize_t device_read(struct file *file, /* see include/linux/fs.h   */
 
     pr_info("Read %d bytes, %ld left\n", bytes_read, length);
 
+    *offset += bytes_read;
+
     /* Read functions are supposed to return the number of bytes actually
      * inserted into the buffer.
      */
@@ -101,12 +106,10 @@ static ssize_t device_write(struct file *file, const char __user *buffer,
 {
     int i;
 
-    pr_info("device_write(%p,%s,%ld)", file, buffer, length);
+    pr_info("device_write(%p,%p,%ld)", file, buffer, length);
 
     for (i = 0; i < length && i < BUF_LEN; i++)
         get_user(message[i], buffer + i);
-
-    message_ptr = message;
 
     /* Again, return the number of input characters used. */
     return i;
@@ -126,43 +129,44 @@ device_ioctl(struct file *file, /* ditto */
              unsigned long ioctl_param)
 {
     int i;
-    char *temp;
-    char ch;
 
     /* Switch according to the ioctl called */
     switch (ioctl_num) {
-    case IOCTL_SET_MSG:
+    case IOCTL_SET_MSG: {
         /* Receive a pointer to a message (in user space) and set that to
-         * be the device's message.  Get the parameter given to ioctl by
+         * be the device's message. Get the parameter given to ioctl by
          * the process.
          */
-        temp = (char *)ioctl_param;
+        char __user *tmp = (char __user *)ioctl_param;
+        char ch;
 
         /* Find the length of the message */
-        get_user(ch, (char __user *)temp);
-        for (i = 0; ch && i < BUF_LEN; i++, temp++)
-            get_user(ch, (char __user *)temp);
+        get_user(ch, tmp);
+        for (i = 0; ch && i < BUF_LEN; i++, tmp++)
+            get_user(ch, tmp);
 
         device_write(file, (char __user *)ioctl_param, i, NULL);
         break;
+    }
+    case IOCTL_GET_MSG: {
+        loff_t offset = 0;
 
-    case IOCTL_GET_MSG:
         /* Give the current message to the calling process - the parameter
          * we got is a pointer, fill it.
          */
-        i = device_read(file, (char __user *)ioctl_param, 99, NULL);
+        i = device_read(file, (char __user *)ioctl_param, 99, &offset);
 
         /* Put a zero at the end of the buffer, so it will be properly
          * terminated.
          */
         put_user('\0', (char __user *)ioctl_param + i);
         break;
-
+    }
     case IOCTL_GET_NTH_BYTE:
         /* This ioctl is both input (ioctl_param) and output (the return
          * value of this function).
          */
-        return message[ioctl_param];
+        return (long)message[ioctl_param];
         break;
     }
 
