@@ -835,6 +835,9 @@ The meaning is clear, and you should be aware that any member of the structure w
 
 An instance of \cpp|struct file_operations| containing pointers to functions that are used to implement \cpp|read|, \cpp|write|, \cpp|open|, \ldots{} system calls is commonly named \cpp|fops|.
 
+Since Linux v3.14, the read, write and seek operations are guaranteed for thread-safe by using the \cpp|f_pos| specific lock, which makes the file position update to become the mutual exclusion.
+So, we can safely implement those operations without unnecessary locking.
+
 Since Linux v5.6, the \cpp|proc_ops| structure was introduced to replace the use of the \cpp|file_operations| structure when registering proc handlers.
 
 \subsection{The file structure}
@@ -927,8 +930,8 @@ We simply read in the data and print a message acknowledging that we received it
 In the multiple-threaded environment, without any protection, concurrent access to the same memory may lead to the race condition, and will not preserve the performance.
 In the kernel module, this problem may happen due to multiple instances accessing the shared resources.
 Therefore, a solution is to enforce the exclusive access.
-We use atomic Compare-And-Swap (CAS), the single atomic operation, to determine whether the file is currently open by someone.
-CAS compares the contents of a memory loaction with the expected value and, only if they are the same, modifies the contents of that memory location to the desired value.
+We use atomic Compare-And-Swap (CAS) to maintain the states, \cpp|CDEV_NOT_USED| and \cpp|CDEV_EXCLUSIVE_OPEN|, to determine whether the file is currently opened by someone or not.
+CAS compares the contents of a memory location with the expected value and, only if they are the same, modifies the contents of that memory location to the desired value.
 See more concurrency details in the \ref{sec:synchronization} section.
 
 \samplec{examples/chardev.c}
