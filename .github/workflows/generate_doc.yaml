@@ -23,6 +23,7 @@ jobs:
         with:
           token: ${{ github.token }}
           fail-if-no-assets: false
+          fail-if-no-release: false
           tag: latest
           assets: |
             lkmpg.pdf
