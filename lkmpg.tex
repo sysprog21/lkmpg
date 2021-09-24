@@ -410,7 +410,7 @@ It takes two parameters: a variable name and a free form string describing that 
 \samplec{examples/hello-5.c}
 
 I would recommend playing around with this code:
-\begin{code}
+\begin{verbatim}
 $ sudo insmod hello-5.ko mystring="bebop" myintarray=-1
 $ dmesg -t | tail -7
 myshort is a short integer: 1
@@ -441,7 +441,7 @@ Goodbye, world 5
 
 $ sudo insmod hello-5.ko mylong=hello
 insmod: ERROR: could not insert module hello-5.ko: Invalid parameters
-\end{code}
+\end{verbatim}
 
 \subsection{Modules Spanning Multiple Files}
 \label{modfiles}
