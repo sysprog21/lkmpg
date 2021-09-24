@@ -412,7 +412,7 @@ It takes two parameters: a variable name and a free form string describing that 
 I would recommend playing around with this code:
 \begin{verbatim}
 $ sudo insmod hello-5.ko mystring="bebop" myintarray=-1
-$ dmesg -t | tail -7
+$ sudo dmesg -t | tail -7
 myshort is a short integer: 1
 myint is an integer: 420
 mylong is a long integer: 9999
@@ -422,11 +422,11 @@ myintarray[1] = 420
 got 1 arguments for myintarray.
 
 $ sudo rmmod hello-5
-$ dmesg -t | tail -1
+$ sudo dmesg -t | tail -1
 Goodbye, world 5
 
 $ sudo insmod hello-5.ko mystring="supercalifragilisticexpialidocious" myintarray=-1,-1
-$ dmesg -t | tail -7
+$ sudo dmesg -t | tail -7
 myshort is a short integer: 1
 myint is an integer: 420
 mylong is a long integer: 9999
@@ -436,7 +436,7 @@ myintarray[1] = -1
 got 2 arguments for myintarray.
 
 $ sudo rmmod hello-5
-$ dmesg -t | tail -1
+$ sudo dmesg -t | tail -1
 Goodbye, world 5
 
 $ sudo insmod hello-5.ko mylong=hello
@@ -1684,12 +1684,11 @@ Here is a demonstration of how to calculate a sha256 hash within a kernel module
 
 \samplec{examples/cryptosha256.c}
 
-Make and install the module:
+Install the module:
 
 \begin{codebash}
-make
 sudo insmod cryptosha256.ko
-dmesg
+sudo dmesg
 \end{codebash}
 
 And you should see that the hash was calculated for the test string.
