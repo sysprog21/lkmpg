@@ -686,7 +686,7 @@ parameters: a variable name and a free form string describing that variable.
 </p>
    <pre class='verbatim' id='verbatim-2'>
 $ sudo insmod hello-5.ko mystring="bebop" myintarray=-1
-$ dmesg -t | tail -7
+$ sudo dmesg -t | tail -7
 myshort is a short integer: 1
 myint is an integer: 420
 mylong is a long integer: 9999
@@ -696,11 +696,11 @@ myintarray[1] = 420
 got 1 arguments for myintarray.
 
 $ sudo rmmod hello-5
-$ dmesg -t | tail -1
+$ sudo dmesg -t | tail -1
 Goodbye, world 5
 
 $ sudo insmod hello-5.ko mystring="supercalifragilisticexpialidocious" myintarray=-1,-1
-$ dmesg -t | tail -7
+$ sudo dmesg -t | tail -7
 myshort is a short integer: 1
 myint is an integer: 420
 mylong is a long integer: 9999
@@ -710,7 +710,7 @@ myintarray[1] = -1
 got 2 arguments for myintarray.
 
 $ sudo rmmod hello-5
-$ dmesg -t | tail -1
+$ sudo dmesg -t | tail -1
 Goodbye, world 5
 
 $ sudo insmod hello-5.ko mylong=hello
@@ -5047,21 +5047,20 @@ demonstration of how to calculate a sha256 hash within a kernel module.
 <a id='x1-60124r62'></a><span class='ecrm-0500'>62</span> 
 <a id='x1-60126r63'></a><span class='ecrm-0500'>63</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2613'><span class='ectt-0800'>"sha256 hash test"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-60128r64'></a><span class='ecrm-0500'>64</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2614'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1687 --><p class='indent'>   Make and install the module:
+<!-- l. 1687 --><p class='indent'>   Install the module:
 </p><!-- l. 1 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb70'><a id='x1-60133r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>make</span> 
-<a id='x1-60135r2'></a><span class='ecrm-0500'>2</span><span class='ectt-1000'>sudo insmod cryptosha256.ko</span> 
-<a id='x1-60137r3'></a><span class='ecrm-0500'>3</span><span class='ectt-1000'>dmesg</span></pre>
-<!-- l. 1695 --><p class='indent'>   And you should see that the hash was calculated for the test string.
-</p><!-- l. 1697 --><p class='indent'>   Finally, remove the test module:
+   <pre class='fancyvrb' id='fancyvrb70'><a id='x1-60132r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>sudo insmod cryptosha256.ko</span> 
+<a id='x1-60134r2'></a><span class='ecrm-0500'>2</span><span class='ectt-1000'>sudo dmesg</span></pre>
+<!-- l. 1694 --><p class='indent'>   And you should see that the hash was calculated for the test string.
+</p><!-- l. 1696 --><p class='indent'>   Finally, remove the test module:
 </p><!-- l. 1 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb71'><a id='x1-60140r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>sudo rmmod cryptosha256</span></pre>
-<!-- l. 1703 --><p class='noindent'>
+   <pre class='fancyvrb' id='fancyvrb71'><a id='x1-60137r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>sudo rmmod cryptosha256</span></pre>
+<!-- l. 1702 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='symmetric-key-encryption'><span class='titlemark'>16.2   </span> <a id='x1-6100016.2'></a>Symmetric key encryption</h4>
-<!-- l. 1705 --><p class='noindent'>Here is an example of symmetrically encrypting a string using the AES algorithm
+<!-- l. 1704 --><p class='noindent'>Here is an example of symmetrically encrypting a string using the AES algorithm
 and a password.
 </p><!-- l. 1 --><p class='indent'>
                                                                   
@@ -5266,10 +5265,10 @@ and a password.
 <a id='x1-61392r196'></a><span class='ecrm-0500'>196</span> 
 <a id='x1-61394r197'></a><span class='ecrm-0500'>197</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2766'><span class='ectt-0800'>"Symmetric key encryption example"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-61396r198'></a><span class='ecrm-0500'>198</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2767'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1709 --><p class='noindent'>
+<!-- l. 1708 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='standardizing-the-interfaces-the-device-model'><span class='titlemark'>17   </span> <a id='x1-6200017'></a>Standardizing the interfaces: The Device Model</h3>
-<!-- l. 1711 --><p class='noindent'>Up to this point we have seen all kinds of modules doing all kinds of things, but there
+<!-- l. 1710 --><p class='noindent'>Up to this point we have seen all kinds of modules doing all kinds of things, but there
 was no consistency in their interfaces with the rest of the kernel. To impose some
 consistency such that there is at minimum a standardized way to start, suspend and
 resume a device a device model was added. An example is shown below, and you can
@@ -5376,13 +5375,13 @@ functions.
 <a id='x1-62194r97'></a><span class='ecrm-0500'>97</span> 
 <a id='x1-62196r98'></a><span class='ecrm-0500'>98</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2842'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-62198r99'></a><span class='ecrm-0500'>99</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2843'><span class='ectt-0800'>"Linux Device Model example"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1717 --><p class='noindent'>
+<!-- l. 1716 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='optimizations'><span class='titlemark'>18   </span> <a id='x1-6300018'></a>Optimizations</h3>
-<!-- l. 1719 --><p class='noindent'>
+<!-- l. 1718 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='likely-and-unlikely-conditions'><span class='titlemark'>18.1   </span> <a id='x1-6400018.1'></a>Likely and Unlikely conditions</h4>
-<!-- l. 1721 --><p class='noindent'>Sometimes you might want your code to run as quickly as possible,
+<!-- l. 1720 --><p class='noindent'>Sometimes you might want your code to run as quickly as possible,
 especially if it is handling an interrupt or doing something which might
 cause noticeable latency. If your code contains boolean conditions and if
 you know that the conditions are almost always likely to evaluate as either
@@ -5404,35 +5403,35 @@ to succeed.
                                                                   
 
                                                                   
-<!-- l. 1735 --><p class='indent'>   When the <code>  <span class='ectt-1000'>unlikely</span>
+<!-- l. 1734 --><p class='indent'>   When the <code>  <span class='ectt-1000'>unlikely</span>
 </code> macro is used, the compiler alters its machine instruction output, so that it
 continues along the false branch and only jumps if the condition is true. That
 avoids flushing the processor pipeline. The opposite happens if you use the
 <code> <span class='ectt-1000'>likely</span>
 </code> macro.
-</p><!-- l. 1739 --><p class='noindent'>
+</p><!-- l. 1738 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='common-pitfalls'><span class='titlemark'>19   </span> <a id='x1-6500019'></a>Common Pitfalls</h3>
-<!-- l. 1742 --><p class='noindent'>
+<!-- l. 1741 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='using-standard-libraries'><span class='titlemark'>19.1   </span> <a id='x1-6600019.1'></a>Using standard libraries</h4>
-<!-- l. 1744 --><p class='noindent'>You can not do that. In a kernel module, you can only use kernel functions which are
+<!-- l. 1743 --><p class='noindent'>You can not do that. In a kernel module, you can only use kernel functions which are
 the functions you can see in <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/kallsyms</span></span></span>.
-</p><!-- l. 1747 --><p class='noindent'>
+</p><!-- l. 1746 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='disabling-interrupts'><span class='titlemark'>19.2   </span> <a id='x1-6700019.2'></a>Disabling interrupts</h4>
-<!-- l. 1749 --><p class='noindent'>You might need to do this for a short time and that is OK, but if you do not enable
+<!-- l. 1748 --><p class='noindent'>You might need to do this for a short time and that is OK, but if you do not enable
 them afterwards, your system will be stuck and you will have to power it
 off.
-</p><!-- l. 1751 --><p class='noindent'>
+</p><!-- l. 1750 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='where-to-go-from-here'><span class='titlemark'>20   </span> <a id='x1-6800020'></a>Where To Go From Here?</h3>
-<!-- l. 1753 --><p class='noindent'>For people seriously interested in kernel programming, I recommend <a href='https://kernelnewbies.org'>kernelnewbies.org</a>
+<!-- l. 1752 --><p class='noindent'>For people seriously interested in kernel programming, I recommend <a href='https://kernelnewbies.org'>kernelnewbies.org</a>
 and the <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/Documentation'>Documentation</a> subdirectory within the kernel source code which is not
 always easy to understand but can be a starting point for further investigation. Also,
 as Linus Torvalds said, the best way to learn the kernel is to read the source code
 yourself.
-</p><!-- l. 1756 --><p class='indent'>   If you are interested in more examples of short kernel modules then searching on
+</p><!-- l. 1755 --><p class='indent'>   If you are interested in more examples of short kernel modules then searching on
 sites such as Github and Gitlab is a good way to start, although there is a lot of
 duplication of older LKMPG examples which may not compile with newer kernel
 versions. You will also be able to find examples of the use of kernel modules to attack
@@ -5442,12 +5441,12 @@ kernel.
                                                                   
 
                                                                   
-</p><!-- l. 1759 --><p class='indent'>   I hope I have helped you in your quest to become a better programmer, or at
+</p><!-- l. 1758 --><p class='indent'>   I hope I have helped you in your quest to become a better programmer, or at
 least to have fun through technology. And, if you do write useful kernel modules, I
 hope you publish them under the GPL, so I can use them too.
-</p><!-- l. 1762 --><p class='indent'>   If you would like to contribute to this guide or notice anything glaringly wrong,
+</p><!-- l. 1761 --><p class='indent'>   If you would like to contribute to this guide or notice anything glaringly wrong,
 please create an issue at <a class='url' href='https://github.com/sysprog21/lkmpg'><span class='ectt-1000'>https://github.com/sysprog21/lkmpg</span></a>.
-</p><!-- l. 1764 --><p class='indent'>   Happy hacking!
+</p><!-- l. 1763 --><p class='indent'>   Happy hacking!
 </p>
    <div class='footnotes'><!-- l. 1593 --><p class='indent'>     <span class='footnote-mark'><a href='#fn1x0-bk' id='fn1x0'><sup class='textsuperscript'>1</sup></a></span><span class='ecrm-0800'>The goal of threaded interrupts is to push more of the work to separate threads, so that the
 </span><span class='ecrm-0800'>minimum needed for acknowledging an interrupt is reduced, and therefore the time spent handling
