@@ -959,7 +959,7 @@ Originally designed to allow easy access to information about processes (hence t
 The method to use the proc file system is very similar to the one used with device drivers --- a structure is created with all the information needed for the \verb|/proc| file, including pointers to any handler functions (in our case there is only one, the one called when somebody attempts to read from the \verb|/proc| file).
 Then, \cpp|init_module| registers the structure with the kernel and \cpp|cleanup_module| unregisters it.
 
-Normal file systems are located on a disk, rather than just in memory (which is where \verb|/proc| is), and in that case the inode number is a pointer to a disk location where the file's index-node (inode for short) is located.
+Normal file systems are located on a disk, rather than just in memory (which is where \verb|/proc| is), and in that case the index-node (inode for short) number is a pointer to a disk location where the file's inode is located.
 The inode contains information about the file, for example the file's permissions, together with a pointer to the disk location or locations where the file's data can be found.
 
 Because we don't get called when the file is opened or closed, there's nowhere for us to put \cpp|try_module_get| and \cpp|module_put| in this module, and if the file is opened and then the module is removed, there's no way to avoid the consequences.
