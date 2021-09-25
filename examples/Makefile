@@ -28,6 +28,7 @@ obj-m += example_rwlock.o
 obj-m += example_atomic.o
 obj-m += example_mutex.o
 obj-m += bottomhalf.o
+obj-m += bh_threaded.o
 obj-m += ioctl.o
 
 PWD := $(CURDIR)

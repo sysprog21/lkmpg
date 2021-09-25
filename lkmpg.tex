@@ -1570,6 +1570,10 @@ There are two main ways of running tasks: tasklets and work queues.
 Tasklets are a quick and easy way of scheduling a single function to be run.
 For example, when triggered from an interrupt, whereas work queues are more complicated but also better suited to running multiple things in a sequence.
 
+It is possible that in future tasklets may be replaced by \textit{threaded irqs}.
+However, discussion about that has been ongoing since 2007 (\href{https://lwn.net/Articles/239633}{Eliminating tasklets}), so do not hold your breath.
+See the section \ref{sec:irq} if you wish to avoid the tasklet debate.
+
 \subsection{Tasklets}
 \label{sec:tasklet}
 Here is an example tasklet module.
@@ -1668,6 +1672,11 @@ This pushes the bulk of the work off into the scheduler.
 The example below modifies the previous example to also run an additional task when an interrupt is triggered.
 
 \samplec{examples/bottomhalf.c}
+
+It is expected that at some unspecified point in the future tasklets may eventually be deprecated, to be replaced by \textit{threaded irqs} instead.
+Here is an example of how to do the same thing as before, with top and bottom halves, but using threads.
+
+\samplec{examples/bh_threaded.c}
 
 \section{Crypto}
 \label{sec:crypto}
