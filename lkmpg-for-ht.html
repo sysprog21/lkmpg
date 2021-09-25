@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>September 24, 2021</span></div>
+<div class='date'><span class='ecrm-1200'>September 25, 2021</span></div>
                                                                   
 
                                                                   
@@ -5431,23 +5431,14 @@ and the <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.gi
 always easy to understand but can be a starting point for further investigation. Also,
 as Linus Torvalds said, the best way to learn the kernel is to read the source code
 yourself.
-</p><!-- l. 1755 --><p class='indent'>   If you are interested in more examples of short kernel modules then searching on
-sites such as Github and Gitlab is a good way to start, although there is a lot of
-duplication of older LKMPG examples which may not compile with newer kernel
-versions. You will also be able to find examples of the use of kernel modules to attack
-or compromise systems or exfiltrate data and those can be useful for thinking about
-how to defend systems and learning about existing security mechanisms within the
-kernel.
+</p><!-- l. 1755 --><p class='indent'>   If you would like to contribute to this guide or notice anything glaringly wrong,
+please create an issue at <a class='url' href='https://github.com/sysprog21/lkmpg'><span class='ectt-1000'>https://github.com/sysprog21/lkmpg</span></a>. Your pull requests
+will be appreciated.
+</p><!-- l. 1758 --><p class='indent'>   Happy hacking!
+</p>
                                                                   
 
                                                                   
-</p><!-- l. 1758 --><p class='indent'>   I hope I have helped you in your quest to become a better programmer, or at
-least to have fun through technology. And, if you do write useful kernel modules, I
-hope you publish them under the GPL, so I can use them too.
-</p><!-- l. 1761 --><p class='indent'>   If you would like to contribute to this guide or notice anything glaringly wrong,
-please create an issue at <a class='url' href='https://github.com/sysprog21/lkmpg'><span class='ectt-1000'>https://github.com/sysprog21/lkmpg</span></a>.
-</p><!-- l. 1763 --><p class='indent'>   Happy hacking!
-</p>
    <div class='footnotes'><!-- l. 1593 --><p class='indent'>     <span class='footnote-mark'><a href='#fn1x0-bk' id='fn1x0'><sup class='textsuperscript'>1</sup></a></span><span class='ecrm-0800'>The goal of threaded interrupts is to push more of the work to separate threads, so that the
 </span><span class='ecrm-0800'>minimum needed for acknowledging an interrupt is reduced, and therefore the time spent handling
 </span><span class='ecrm-0800'>the interrupt (where it can’t handle any other interrupts at the same time) is reduced. See</span>
