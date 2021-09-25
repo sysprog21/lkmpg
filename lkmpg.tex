@@ -1818,6 +1818,10 @@ There are two main ways of running tasks: tasklets and work queues.
 Tasklets are a quick and easy way of scheduling a single function to be run.
 For example, when triggered from an interrupt, whereas work queues are more complicated but also better suited to running multiple things in a sequence.
 
+It is possible that in future tasklets may be replaced by \textit{threaded irqs}.
+However, discussion about that has been ongoing since 2007 (\href{https://lwn.net/Articles/239633}{Eliminating tasklets}), so do not hold your breath.
+See the section \ref{sec:irq} if you wish to avoid the tasklet debate.
+
 \subsection{Tasklets}
 \label{sec:tasklet}
 Here is an example tasklet module.
@@ -1924,6 +1928,37 @@ This pushes the bulk of the work off into the scheduler.
 The example below modifies the previous example to also run an additional task when an interrupt is triggered.
 
 \samplec{examples/bottomhalf.c}
+
+\subsection{Threaded IRQ}
+
+Threaded IRQ is a mechanism to handle both top-half and bottom-half of an IRQ at once.
+A threaded IRQ splits one handler into two: one for the top-half, the other for the bottom-half.
+Those two handlers are registered at once by \cpp|request_threaded_irq()|.
+
+The top-half handler runs in interrupt context.
+It's the equivalence of the handler passed to the \cpp|request_irq()|.
+The bottom-half handler on the other hand runs in its own thread.
+This thread is created on registration of a threaded IRQ. Its sole purpose is to run this bottom-half handler.
+This is where a threaded IRQ is ``threaded''.
+
+Whether the bottom-half handler will be invoked is determined by the return value of the top-half handler.
+If \cpp|IRQ_WAKE_THREAD| is returned, that bottom-half serving thread will wake up.
+The thread then runs the bottom-half handler.
+
+Here is an example of how to do the same thing as before, with top and bottom halves, but using threads.
+
+\samplec{examples/bh_threaded.c}
+
+\cpp|request_threaded_irq()| only takes one additional parameter than the \cpp|request_irq()| -- the bottom-half handling function that runs in its own thread.
+In this example it is the \cpp|button_bottom_half()|.
+Usage of other parameters are the same as \cpp|request_irq()|.
+
+Presence of both handlers is not mandatory.
+If either of them is not needed, pass the \cpp|NULL| instead.
+A \cpp|NULL| top-half handler implicitly means doing nothing but waking up the bottom-half serving thread; A \cpp|NULL| bottom-half handler will have the same effect as \cpp|request_irq()|.
+In fact, this is how \cpp|request_irq()| is implemented.
+
+Note that passing \cpp|NULL| as both handlers is considered an error and will make registration fail.
 
 \section{Virtual Input Device Driver}
 \label{sec:vinput}
