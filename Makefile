@@ -14,6 +14,10 @@ html: lkmpg.tex html.cfg
 	rm -f  lkmpg-for-ht.tex lkmpg-for-ht.xref lkmpg-for-ht.tmp lkmpg-for-ht.html lkmpg-for-ht.css lkmpg-for-ht.4ct lkmpg-for-ht.4tc lkmpg-for-ht.dvi lkmpg-for-ht.lg lkmpg-for-ht.idv lkmpg*.svg lkmpg-for-ht.log lkmpg-for-ht.aux
 	rm -rf _minted-$(PROJ) _minted-lkmpg-for-ht
 
+font: Manrope_variable.ttf
+	ln -sf Manrope_variable.ttf html/Manrope_variable.ttf
+	rm -rf Manrope_variable.ttf
+
 indent:
 	(cd examples; find . -name '*.[ch]' | xargs clang-format -i)
 
