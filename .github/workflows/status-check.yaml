@@ -18,6 +18,7 @@ jobs:
         run: |
             sudo apt-get install -q -y clang-format-11
             sudo apt-get install -q -y cppcheck
+            sudo apt-get install -q -y gcc-10
             .ci/check-format.sh
             .ci/static-analysis.sh
             .ci/build-n-run.sh
