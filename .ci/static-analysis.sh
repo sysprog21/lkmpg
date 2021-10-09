@@ -60,6 +60,28 @@ function do_sparse()
     make -C examples clean
 }
 
+function do_gcc()
+{
+    local GCC=$(which gcc-10)
+    if [ $? -ne 0 ]; then
+        echo "[!] gcc-10 is not installed. Failed to run static analysis with GCC." >&2
+        exit 1
+    fi
+
+    make -C examples CONFIG_STATUS_CHECK_GCC=y STATUS_CHECK_GCC=$GCC 2> gcc.log
+
+    local WARNING_COUNT=$(cat gcc.log | egrep -c " warning:" )
+    local ERROR_COUNT=$(cat gcc.log | egrep -c " error:" )
+    local COUNT=`expr $WARNING_COUNT + $ERROR_COUNT`
+    if [ $COUNT -gt 0 ]; then
+        echo "gcc failed: $WARNING_COUNT warning(s), $ERROR_COUNT error(s)"
+        cat gcc.log
+        exit 1
+    fi
+    make -C examples CONFIG_STATUS_CHECK_GCC=y STATUS_CHECK_GCC=$GCC clean
+}
+
 do_cppcheck
 do_sparse
+do_gcc
 exit 0
