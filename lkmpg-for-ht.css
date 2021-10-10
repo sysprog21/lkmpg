@@ -181,9 +181,10 @@ div.verbatiminput {font-family: monospace,monospace; white-space: nowrap; }
 pre.fancyvrb {white-space: pre-wrap; margin:0em;font-family:monospace,monospace;}
 .framedenv{border: 1px solid black;}
 html { width: 100vw; overflow-x: hidden; }
+@font-face { font-family: Manrope; src: url(Manrope_variable.ttf); }
 body { max-width: 55rem; box-sizing: border-box; padding: 1rem; margin: 0 auto; overflow-x: hidden; background-color: #F4ECD8; color: #5B464B; line-height: 1.5; }
 a { color: #0060DF; }
-p, a { font-size: 1.2rem; }
+p, a { font-size: 1.2rem; font-family: Manrope; }
 p + pre { font-size: 1.1em; }
 div.author { white-space: normal; }
 img.math { height: 1rem; vertical-align: top; }
