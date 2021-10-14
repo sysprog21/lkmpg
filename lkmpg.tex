@@ -1338,11 +1338,6 @@ Unfortunately, \cpp|B_open| will still try to call \cpp|A_open| which is no long
 Note that all the related problems make syscall stealing unfeasible for production use.
 In order to keep people from doing potential harmful things \cpp|sys_call_table| is no longer exported.
 This means, if you want to do something more than a mere dry run of this example, you will have to patch your current kernel in order to have \cpp|sys_call_table| exported.
-In the example directory you will find a README and the patch.
-As you can imagine, such modifications are not to be taken lightly.
-Do not try this on valuable systems (ie systems that you do not own - or cannot restore easily).
-You will need to get the complete sourcecode of this guide as a tarball in order to get the patch and the README.
-Depending on your kernel version, you might even need to hand apply the patch.
 
 \samplec{examples/syscall.c}
 
