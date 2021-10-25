@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>October 14, 2021</span></div>
+<div class='date'><span class='ecrm-1200'>October 25, 2021</span></div>
                                                                   
 
                                                                   
@@ -1637,8 +1637,8 @@ one called when somebody attempts to read from the <span class='obeylines-h'><sp
                                                                   
 </code> unregisters it.
 </p><!-- l. 962 --><p class='indent'>   Normal file systems are located on a disk, rather than just in memory (which is
-where <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> is), and in that case the inode number is a pointer to a disk
-location where the file’s index-node (inode for short) is located. The inode
+where <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> is), and in that case the index-node (inode for short) number
+is a pointer to a disk location where the file’s inode is located. The inode
 contains information about the file, for example the file’s permissions, together
 with a pointer to the disk location or locations where the file’s data can be
 found.
