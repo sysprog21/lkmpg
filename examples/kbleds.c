@@ -55,8 +55,8 @@ static int __init kbleds_init(void)
     for (i = 0; i < MAX_NR_CONSOLES; i++) {
         if (!vc_cons[i].d)
             break;
-        pr_info("poet_atkm: console[%i/%i] #%i, tty %lx\n", i, MAX_NR_CONSOLES,
-                vc_cons[i].d->vc_num, (unsigned long)vc_cons[i].d->port.tty);
+        pr_info("poet_atkm: console[%i/%i] #%i, tty %p\n", i, MAX_NR_CONSOLES,
+                vc_cons[i].d->vc_num, (void *)vc_cons[i].d->port.tty);
     }
     pr_info("kbleds: finished scanning consoles\n");
 
