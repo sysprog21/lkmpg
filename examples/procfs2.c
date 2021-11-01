@@ -54,7 +54,9 @@ static ssize_t procfile_write(struct file *file, const char __user *buff,
     if (copy_from_user(procfs_buffer, buff, procfs_buffer_size))
         return -EFAULT;
 
-    procfs_buffer[procfs_buffer_size] = '\0';
+    procfs_buffer[procfs_buffer_size & (PROCFS_MAX_SIZE - 1)] = '\0';
+    pr_info("procfile write %s\n", procfs_buffer);
+
     return procfs_buffer_size;
 }
 
