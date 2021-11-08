@@ -24,7 +24,7 @@ $ git clone https://github.com/sysprog21/lkmpg.git && cd lkmpg
 
 ### Step 2: Install the prerequisites
 
-To gernate the book from source, [TeXLive](https://www.tug.org/texlive/) ([MacTeX](https://www.tug.org/mactex/)) is required.
+To generate the book from source, [TeXLive](https://www.tug.org/texlive/) ([MacTeX](https://www.tug.org/mactex/)) is required.
 
 For Ubuntu Linux, macOS, and other Unix-like systems, run the following command(s):
 
