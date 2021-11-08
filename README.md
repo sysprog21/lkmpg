@@ -40,7 +40,7 @@ $ brew install --cask mactex
 $ sudo tlmgr update --self
 ```
 
-Alternatively, using [Docker](https://docs.docker.com/) is recommended, as it guarantees the same dependencies with our GitHub Actions wokrflow.
+Alternatively, using [Docker](https://docs.docker.com/) is recommended, as it guarantees the same dependencies with our GitHub Actions workflow.
 After install [docker engine](https://docs.docker.com/engine/install/) on your machine, pull the docker image [twtug/lkmpg](https://hub.docker.com/r/twtug/lkmpg) and run in isolated containers.
 
 ```shell
