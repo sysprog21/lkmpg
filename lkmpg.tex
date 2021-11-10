@@ -220,10 +220,10 @@ Now you will need a \verb|Makefile|. If you copy and paste this, change the inde
 obj-m += hello-1.o
 
 all:
-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+	make -C /lib/modules/$(shell uname -r)/build M=$(shell pwd) modules
 
 clean:
-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
+	make -C /lib/modules/$(shell uname -r)/build M=$(shell pwd) clean
 \end{code}
 
 And finally just:
@@ -328,10 +328,10 @@ obj-m += hello-1.o
 obj-m += hello-2.o
 
 all:
-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+	make -C /lib/modules/$(shell uname -r)/build M=$(shell pwd) modules
 
 clean:
-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
+	make -C /lib/modules/$(shell uname -r)/build M=$(shell pwd) clean
 \end{code}
 
 Now have a look at \src{drivers/char/Makefile} for a real world example.
@@ -469,10 +469,10 @@ obj-m += startstop.o
 startstop-objs := start.o stop.o
 
 all:
-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+	make -C /lib/modules/$(shell uname -r)/build M=$(shell pwd) modules
 
 clean:
-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
+	make -C /lib/modules/$(shell uname -r)/build M=$(shell pwd) clean
 \end{code}
 
 This is the complete makefile for all the examples we have seen so far.
