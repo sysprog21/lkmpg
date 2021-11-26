@@ -226,10 +226,42 @@ clean:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
 \end{code}
 
-And finally just:
+And finally just run \verb|make| directly.
 \begin{codebash}
 make
 \end{codebash}
+
+Note that using \verb|sudo make| might not compile. Because the \verb|sudo| will fork the process. According to the Process Model section in \verb|sudo| manual, some of the environment variables won't be inherited. Here is the \verb|PWD| variable which will be passed to the kernel Makefile. For example, here is the simple Makefile:
+
+\begin{code}
+all:
+	echo $(PWD)
+\end{code}
+
+Then, we can use \verb|-p| flag to print out the environment variable values from the Makefile.
+
+\begin{codebash}
+$ make -p | grep PWD
+PWD = /home/ubuntu/temp
+OLDPWD = /home/ubuntu
+	echo $(PWD)
+\end{codebash}
+
+The \verb|PWD| variable won't be inherited with \verb|sudo|.
+
+\begin{codebash}
+$ sudo make -p | grep PWD
+	echo $(PWD)
+\end{codebash}
+
+However, you can use the \verb|-E| flag to preserve them.
+
+\begin{codebash}
+$ sudo -E make -p | grep PWD
+PWD = /home/ubuntu/temp
+OLDPWD = /home/ubuntu
+	echo $(PWD)
+\begin{codebash}
 
 If all goes smoothly you should then find that you have a compiled \verb|hello-1.ko| module.
 You can find info on it with the command:
