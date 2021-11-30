@@ -219,6 +219,8 @@ Now you will need a \verb|Makefile|. If you copy and paste this, change the inde
 \begin{code}
 obj-m += hello-1.o
 
+PWD := $(CURDIR)
+
 all:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
 
@@ -231,7 +233,7 @@ And finally just run \verb|make| directly.
 make
 \end{codebash}
 
-Note that using \verb|sudo make| might not compile. Because the \verb|sudo| will fork the process. According to the Process Model section in \verb|sudo| manual, some of the environment variables won't be inherited. Here is the \verb|PWD| variable which will be passed to the kernel Makefile. For example, here is the simple Makefile:
+If there is no \verb|PWD := $(CURDIR)| statement in Makefile, note that using \verb|sudo make| might not compile. Because the \verb|sudo| will fork the process. According to the Process Model section in \verb|sudo| manual, some of the environment variables won't be inherited. Here is the \verb|PWD| variable which will be passed to the kernel Makefile. For example, here is the simple Makefile:
 
 \begin{code}
 all:
@@ -358,6 +360,8 @@ So now we have two real kernel modules under our belt. Adding another module is 
 \begin{code}
 obj-m += hello-1.o
 obj-m += hello-2.o
+
+PWD := $(CURDIR)
 
 all:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
@@ -499,6 +503,8 @@ obj-m += hello-4.o
 obj-m += hello-5.o
 obj-m += startstop.o
 startstop-objs := start.o stop.o
+
+PWD := $(CURDIR)
 
 all:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
