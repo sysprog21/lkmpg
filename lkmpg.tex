@@ -896,6 +896,43 @@ First, the driver itself can print the newly assigned number and we can make the
 Second, the newly registered device will have an entry in \verb|/proc/devices|, and we can either make the device file by hand or write a shell script to read the file in and make the device file.
 The third method is that we can have our driver make the device file using the \cpp|device_create| function after a successful registration and \cpp|device_destroy| during the call to \cpp|cleanup_module|.
 
+However, \cpp|register_chrdev()| would occupy a range of minor numbers associated with the given major.
+The recommended way to reduce waste for char device registration is using cdev interface.
+
+The newer interface completes the char device registration in two distinct steps.
+First, we should register a range of device numbers, which can be completed with \cpp|register_chrdev_region| or \cpp|alloc_chrdev_region|.
+
+\begin{code}
+int register_chrdev_region(dev_t from, unsigned count, const char *name);
+int alloc_chrdev_region(dev_t *dev, unsigned baseminor, unsigned count, const char *name);
+\end{code}
+
+The choose of two different functions depend on whether you know the major numbers for your device.
+Using \cpp|register_chrdev_region| if you know the device major number and \cpp|alloc_chrdev_region| if you would like to allocate a dynamicly-allocated major number.
+
+Second, we should initialize the data structure \cpp|struct cdev| for our char device and associate it with the device numbers.
+To initialize the \cpp|struct cdev|, we can achieve by the similar sequence of the following codes.
+
+\begin{code}
+struct cdev *my_dev = cdev_alloc();
+my_cdev->ops = &my_fops;
+\end{code}
+
+However, the common usage pattern will embed the \cpp|struct cdev| within a device-specific structure of your own.
+In this case, we'll need \cpp|cdev_init| for the initialization.
+
+\begin{code}
+void cdev_init(struct cdev *cdev, const struct file_operations *fops);
+\end{code}
+
+Once we finish the initialization, we can add the char device to the system by using the \cpp|cdev_add|.
+
+\begin{code}
+int cdev_add(struct cdev *p, dev_t dev, unsigned count);
+\end{code}
+
+To find a example using the interface, you can see \verb|ioctl.c| described in section \ref{sec:device_files}.
+
 \subsection{Unregistering A Device}
 \label{sec:unregister_device}
 We can not allow the kernel module to be \sh|rmmod|'ed whenever root feels like it.
