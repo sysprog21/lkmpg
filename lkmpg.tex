@@ -237,7 +237,7 @@ And finally, just run \verb|make| directly.
 make
 \end{codebash}
 
-If there is no \verb|PWD := $(CURDIR)| statement in Makefile, note that using \verb|sudo make| might not compile correctly. 
+If there is no \verb|PWD := $(CURDIR)| statement in Makefile, then it may not compile correctly with \verb|sudo make|.
 Because some environment variables are specified by the security policy, they can't be inherited.
 The default security policy is \verb|sudoers|.
 In the \verb|sudoers| security policy, \verb|env_reset| is enabled by default, which restricts environment variables. 
