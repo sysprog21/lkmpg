@@ -219,6 +219,8 @@ Now you will need a \verb|Makefile|. If you copy and paste this, change the inde
 \begin{code}
 obj-m += hello-1.o
 
+PWD := $(CURDIR)
+
 all:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
 
@@ -226,10 +228,106 @@ clean:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
 \end{code}
 
-And finally just:
+In \verb|Makefile|, \verb|$(CURDIR)| can set to the absolute pathname of the current working directory(after all \verb|-C| options are processed, if any). 
+See more about \verb|CURDIR| in \href{https://www.gnu.org/software/make/manual/make.html}{GNU make manual}.
+
+And finally, just run \verb|make| directly.
+
 \begin{codebash}
 make
 \end{codebash}
+
+If there is no \verb|PWD := $(CURDIR)| statement in Makefile, then it may not compile correctly with \verb|sudo make|.
+Because some environment variables are specified by the security policy, they can't be inherited.
+The default security policy is \verb|sudoers|.
+In the \verb|sudoers| security policy, \verb|env_reset| is enabled by default, which restricts environment variables. 
+Specifically, path variables are not retained from the user environment, they are set to default values (For more information see: \href{https://www.sudo.ws/docs/man/sudoers.man/}{sudoers manual}).
+You can see the environment variable settings by:
+
+\begin{verbatim}
+$ sudo -s
+# sudo -V
+\end{verbatim}
+
+Here is a simple Makefile as an example to demonstrate the problem mentioned above.
+
+\begin{code}
+all:
+	echo $(PWD)
+\end{code}
+
+Then, we can use \verb|-p| flag to print out the environment variable values from the Makefile.
+
+\begin{verbatim}
+$ make -p | grep PWD
+PWD = /home/ubuntu/temp
+OLDPWD = /home/ubuntu
+	echo $(PWD)
+\end{verbatim}
+
+The \verb|PWD| variable won't be inherited with \verb|sudo|.
+
+\begin{verbatim}
+$ sudo make -p | grep PWD
+	echo $(PWD)
+\end{verbatim}
+
+However, there are three ways to solve this problem.
+
+\begin{enumerate}
+  \item {
+  You can use the \verb|-E| flag to temporarily preserve them.
+  
+  \begin{codebash}
+    $ sudo -E make -p | grep PWD
+    PWD = /home/ubuntu/temp
+    OLDPWD = /home/ubuntu
+    echo $(PWD)
+  \end{codebash}
+  }
+
+  \item {
+  You can set the \verb|env_reset| disabled by editing the \verb|/etc/sudoers| with root and \verb|visudo|. 
+
+  \begin{code}
+  ## sudoers file.
+  ## 
+  ...
+  Defaults env_reset
+  ## Change env_reset to !env_reset in previous line to keep all environment variables
+  \end{code}
+
+  Then execute \verb|env| and \verb|sudo env| individually.
+
+  \begin{codebash}
+    # disable the env_reset
+    echo "user:" > non-env_reset.log; env >> non-env_reset.log
+    echo "root:" >> non-env_reset.log; sudo env >> non-env_reset.log
+    # enable the env_reset
+    echo "user:" > env_reset.log; env >> env_reset.log
+    echo "root:" >> env_reset.log; sudo env >> env_reset.log
+  \end{codebash}
+
+  You can view and compare these logs to find differences between \verb|env_reset| and \verb|!env_reset|. 
+  }
+
+  \item {You can preserve environment variables by appending them to \verb|env_keep| in \verb|/etc/sudoers|. 
+  
+  \begin{code}
+  ## sudoers file.
+  ##
+  ...
+  Defaults env_keep += ``ftp_proxy http_proxy https_proxy no_proxy PWD''
+  \end{code}
+
+  After finishing setting modification, you can check the environment variable settings by:
+
+  \begin{verbatim}
+    $ sudo -s
+    # sudo -V
+  \end{verbatim}
+  }
+\end{enumerate}
 
 If all goes smoothly you should then find that you have a compiled \verb|hello-1.ko| module.
 You can find info on it with the command:
@@ -326,6 +424,8 @@ So now we have two real kernel modules under our belt. Adding another module is 
 \begin{code}
 obj-m += hello-1.o
 obj-m += hello-2.o
+
+PWD := $(CURDIR)
 
 all:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
@@ -467,6 +567,8 @@ obj-m += hello-4.o
 obj-m += hello-5.o
 obj-m += startstop.o
 startstop-objs := start.o stop.o
+
+PWD := $(CURDIR)
 
 all:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
