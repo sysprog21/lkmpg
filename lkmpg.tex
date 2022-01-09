@@ -6,6 +6,7 @@
 \usepackage{fancyhdr}
 \usepackage{xparse}
 \usepackage{ifthen}
+\usepackage{pdfpages}
 
 % tikz settings
 \usepackage{tikz}
@@ -46,8 +47,16 @@
 
 \maketitle
 \ifdefined\HCode
+\includegraphics{assets/cover-with-names.png}
 % turn off TOC
 \else
+\pagestyle{empty}
+\begin{tikzpicture}[remember picture, overlay]
+  \node at (current page.center) {\includegraphics[width=\paperwidth, height=\paperheight]{assets/cover.png}}; \\
+  \node at (11, -9.5) {\Large \textbf{Peter Jay Salzman, Michael Burian,}}; \\
+  \node at (11, -10.5) {\Large \textbf{Ori Pomerantz, Bob Mottram,}}; \\
+  \node at (11, -11.5) {\Large \textbf{Jim Huang}};
+\end{tikzpicture}
 \tableofcontents
 \fi
 
