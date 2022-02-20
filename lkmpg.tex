@@ -1314,11 +1314,16 @@ Notice here the roles of read and write are reversed again, so in ioctl's read i
 
 The ioctl function is called with three parameters: the file descriptor of the appropriate device file, the ioctl number, and a parameter, which is of type long so you can use a cast to use it to pass anything.
 You will not be able to pass a structure this way, but you will be able to pass a pointer to the structure.
+Here is an example:
 
+\samplec{examples/ioctl.c}
+
+You can see there is an argument called \cpp|cmd| in \cpp|test_ioctl_ioctl()| function.
+It is the ioctl number.
 The ioctl number encodes the major device number, the type of the ioctl, the command, and the type of the parameter.
 This ioctl number is usually created by a macro call (\cpp|_IO|, \cpp|_IOR|, \cpp|_IOW| or \cpp|_IOWR| --- depending on the type) in a header file.
 This header file should then be included both by the programs which will use ioctl (so they can generate the appropriate ioctl's) and by the kernel module (so it can understand it).
-In the example below, the header file is chardev.h and the program which uses it is ioctl.c.
+In the example below, the header file is \verb|chardev.h| and the program which uses it is \verb|userspace_ioctl.c|.
 
 If you want to use ioctls in your own kernel modules, it is best to receive an official ioctl assignment, so if you accidentally get somebody else's ioctls, or if they get yours, you'll know something is wrong.
 For more information, consult the kernel source tree at \src{Documentation/userspace-api/ioctl/ioctl-number.rst}.
@@ -1330,7 +1335,7 @@ The solution is using atomic Compare-And-Swap (CAS), which we mentioned at \ref{
 
 \samplec{examples/chardev.h}
 
-\samplec{examples/ioctl.c}
+\samplec{examples/other/userspace_ioctl.c}
 
 \section{System Calls}
 \label{sec:syscall}
