@@ -2699,8 +2699,8 @@ example:
 <a id='x1-39301r149'></a><span class='ecrm-0500'>149</span><span id='textcolor1114'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1115'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> ioctl_init(</span><span id='textcolor1116'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
 <a id='x1-39303r150'></a><span class='ecrm-0500'>150</span><span class='ectt-0800'>{</span> 
 <a id='x1-39305r151'></a><span class='ecrm-0500'>151</span><span class='ectt-0800'>    </span><span id='textcolor1117'><span class='ectt-0800'>dev_t</span></span><span class='ectt-0800'> dev;</span> 
-<a id='x1-39307r152'></a><span class='ecrm-0500'>152</span><span class='ectt-0800'>    </span><span id='textcolor1118'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> alloc_ret = 0;</span> 
-<a id='x1-39309r153'></a><span class='ecrm-0500'>153</span><span class='ectt-0800'>    </span><span id='textcolor1119'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> cdev_ret = 0;</span> 
+<a id='x1-39307r152'></a><span class='ecrm-0500'>152</span><span class='ectt-0800'>    </span><span id='textcolor1118'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> alloc_ret = -1;</span> 
+<a id='x1-39309r153'></a><span class='ecrm-0500'>153</span><span class='ectt-0800'>    </span><span id='textcolor1119'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> cdev_ret = -1;</span> 
 <a id='x1-39311r154'></a><span class='ecrm-0500'>154</span><span class='ectt-0800'>    alloc_ret = alloc_chrdev_region(&amp;dev, 0, num_of_dev, DRIVER_NAME);</span> 
 <a id='x1-39313r155'></a><span class='ecrm-0500'>155</span> 
 <a id='x1-39315r156'></a><span class='ecrm-0500'>156</span><span class='ectt-0800'>    </span><span id='textcolor1120'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (alloc_ret)</span> 
