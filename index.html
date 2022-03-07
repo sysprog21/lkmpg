@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>February 20, 2022</span></div>
+<div class='date'><span class='ecrm-1200'>March 7, 2022</span></div>
                                                                   
 
                                                                   
@@ -1712,7 +1712,7 @@ concurrency details in the <a href='#avoiding-collisions-and-deadlocks'>12<!-- t
 <a id='x1-31206r100'></a><span class='ecrm-0500'>100</span><span class='ectt-0800'>    atomic_set(&amp;already_open, CDEV_NOT_USED);</span> 
 <a id='x1-31208r101'></a><span class='ecrm-0500'>101</span> 
 <a id='x1-31210r102'></a><span class='ecrm-0500'>102</span><span class='ectt-0800'>    </span><span id='textcolor529'><span class='ectt-0800'>/* Decrement the usage count, or else once you opened the file, you will</span></span> 
-<a id='x1-31212r103'></a><span class='ecrm-0500'>103</span><span id='textcolor530'><span class='ectt-0800'>     * never get get rid of the module.</span></span> 
+<a id='x1-31212r103'></a><span class='ecrm-0500'>103</span><span id='textcolor530'><span class='ectt-0800'>     * never get rid of the module.</span></span> 
 <a id='x1-31214r104'></a><span class='ecrm-0500'>104</span><span id='textcolor531'><span class='ectt-0800'>     */</span></span> 
 <a id='x1-31216r105'></a><span class='ecrm-0500'>105</span><span class='ectt-0800'>    module_put(THIS_MODULE);</span> 
 <a id='x1-31218r106'></a><span class='ecrm-0500'>106</span> 
@@ -4501,7 +4501,7 @@ tty.
 <a id='x1-51100r50'></a><span class='ecrm-0500'>50</span><span id='textcolor2240'><span class='ectt-0800'>         *</span></span> 
 <a id='x1-51102r51'></a><span class='ecrm-0500'>51</span><span id='textcolor2241'><span class='ectt-0800'>         * This is why text files are different between Unix and MS Windows.</span></span> 
 <a id='x1-51104r52'></a><span class='ecrm-0500'>52</span><span id='textcolor2242'><span class='ectt-0800'>         * In CP/M and derivatives, like MS-DOS and MS Windows, the ASCII</span></span> 
-<a id='x1-51106r53'></a><span class='ecrm-0500'>53</span><span id='textcolor2243'><span class='ectt-0800'>         * standard was strictly adhered to, and therefore a newline requirs</span></span> 
+<a id='x1-51106r53'></a><span class='ecrm-0500'>53</span><span id='textcolor2243'><span class='ectt-0800'>         * standard was strictly adhered to, and therefore a newline requires</span></span> 
 <a id='x1-51108r54'></a><span class='ecrm-0500'>54</span><span id='textcolor2244'><span class='ectt-0800'>         * both a LF and a CR.</span></span> 
 <a id='x1-51110r55'></a><span class='ecrm-0500'>55</span><span id='textcolor2245'><span class='ectt-0800'>         */</span></span> 
 <a id='x1-51112r56'></a><span class='ecrm-0500'>56</span><span class='ectt-0800'>        (ttyops-&gt;write)(my_tty, </span><span id='textcolor2246'><span class='ectt-0800'>"</span></span><span id='textcolor2247'><span class='ectt-0800'>\015\012</span></span><span id='textcolor2248'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, 2);</span> 
@@ -4731,7 +4731,7 @@ better suited to running multiple things in a sequence.
 <a id='x1-54014r6'></a><span class='ecrm-0500'>6</span><span id='textcolor2381'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor2382'><span class='ectt-0800'>&lt;linux/kernel.h&gt;</span></span> 
 <a id='x1-54016r7'></a><span class='ecrm-0500'>7</span><span id='textcolor2383'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor2384'><span class='ectt-0800'>&lt;linux/module.h&gt;</span></span> 
 <a id='x1-54018r8'></a><span class='ecrm-0500'>8</span> 
-<a id='x1-54020r9'></a><span class='ecrm-0500'>9</span><span id='textcolor2385'><span class='ectt-0800'>/* Macro DECLARE_TASKLET_OLD exists for compatibiity.</span></span> 
+<a id='x1-54020r9'></a><span class='ecrm-0500'>9</span><span id='textcolor2385'><span class='ectt-0800'>/* Macro DECLARE_TASKLET_OLD exists for compatibility.</span></span> 
 <a id='x1-54022r10'></a><span class='ecrm-0500'>10</span><span id='textcolor2386'><span class='ectt-0800'> * See https://lwn.net/Articles/830964/</span></span> 
 <a id='x1-54024r11'></a><span class='ecrm-0500'>11</span><span id='textcolor2387'><span class='ectt-0800'> */</span></span> 
 <a id='x1-54026r12'></a><span class='ecrm-0500'>12</span><span id='textcolor2388'><span class='ectt-0800'>#ifndef DECLARE_TASKLET_OLD</span></span> 
@@ -5082,7 +5082,7 @@ when an interrupt is triggered.
 <a id='x1-59010r5'></a><span class='ecrm-0500'>5</span><span id='textcolor2561'><span class='ectt-0800'> * from:</span></span> 
 <a id='x1-59012r6'></a><span class='ecrm-0500'>6</span><span id='textcolor2562'><span class='ectt-0800'> *    https://github.com/wendlers/rpi-kmod-samples</span></span> 
 <a id='x1-59014r7'></a><span class='ecrm-0500'>7</span><span id='textcolor2563'><span class='ectt-0800'> *</span></span> 
-<a id='x1-59016r8'></a><span class='ecrm-0500'>8</span><span id='textcolor2564'><span class='ectt-0800'> * Press one button to turn on a LED and another to turn it off</span></span> 
+<a id='x1-59016r8'></a><span class='ecrm-0500'>8</span><span id='textcolor2564'><span class='ectt-0800'> * Press one button to turn on an LED and another to turn it off</span></span> 
 <a id='x1-59018r9'></a><span class='ecrm-0500'>9</span><span id='textcolor2565'><span class='ectt-0800'> */</span></span> 
 <a id='x1-59020r10'></a><span class='ecrm-0500'>10</span> 
 <a id='x1-59022r11'></a><span class='ecrm-0500'>11</span><span id='textcolor2566'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor2567'><span class='ectt-0800'>&lt;linux/delay.h&gt;</span></span> 
