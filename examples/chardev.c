@@ -100,7 +100,7 @@ static int device_release(struct inode *inode, struct file *file)
     atomic_set(&already_open, CDEV_NOT_USED);
 
     /* Decrement the usage count, or else once you opened the file, you will
-     * never get get rid of the module.
+     * never get rid of the module.
      */
     module_put(THIS_MODULE);
 
