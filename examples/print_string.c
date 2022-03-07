@@ -50,7 +50,7 @@ static void print_string(char *str)
          *
          * This is why text files are different between Unix and MS Windows.
          * In CP/M and derivatives, like MS-DOS and MS Windows, the ASCII
-         * standard was strictly adhered to, and therefore a newline requirs
+         * standard was strictly adhered to, and therefore a newline requires
          * both a LF and a CR.
          */
         (ttyops->write)(my_tty, "\015\012", 2);

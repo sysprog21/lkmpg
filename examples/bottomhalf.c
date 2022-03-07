@@ -5,7 +5,7 @@
  * from:
  *    https://github.com/wendlers/rpi-kmod-samples
  *
- * Press one button to turn on a LED and another to turn it off
+ * Press one button to turn on an LED and another to turn it off
  */
 
 #include <linux/delay.h>
