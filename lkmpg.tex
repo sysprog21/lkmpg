@@ -513,7 +513,7 @@ int count;
 module_param_array(myshortarray, short, &count, 0); /* put count into "count" variable */
 \end{code}
 
-A good use for this is to have the module variable's default values set, like an port or IO address.
+A good use for this is to have the module variable's default values set, like a port or IO address.
 If the variables contain the default values, then perform autodetection (explained elsewhere). Otherwise, keep the current value.
 This will be made clear later on.
 
@@ -642,7 +642,7 @@ You may just want to copy it to your kernel source tree: \sh|cp /boot/config-`un
 Let's focus again on the previous error message: a closer look at the version magic strings suggests that, even with two configuration files which are exactly the same, a slight difference in the version magic could be possible, and it is sufficient to prevent insertion of the module into the kernel.
 That slight difference, namely the custom string which appears in the module's version magic and not in the kernel's one, is due to a modification with respect to the original, in the makefile that some distributions include.
 Then, examine your \verb|Makefile|, and make sure that the specified version information matches exactly the one used for your current kernel.
-For example, you makefile could start as follows:
+For example, your makefile could start as follows:
 
 \begin{verbatim}
 VERSION = 5
@@ -756,7 +756,7 @@ The Intel 80386 architecture had 4 of these modes, which were called rings. Unix
 Recall the discussion about library functions vs system calls.
 Typically, you use a library function in user mode.
 The library function calls one or more system calls, and these system calls execute on the library function's behalf, but do so in supervisor mode since they are part of the kernel itself.
-Once the system call completes its task, it returns and execution gets transfered back to user mode.
+Once the system call completes its task, it returns and execution gets transferred back to user mode.
 
 \subsection{Name Space}
 \label{sec:namespace}
