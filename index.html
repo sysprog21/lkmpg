@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>March 7, 2022</span></div>
+<div class='date'><span class='ecrm-1200'>March 9, 2022</span></div>
                                                                   
 
                                                                   
@@ -726,7 +726,7 @@ pass <code>  <span class='ectt-1000'>NULL</span>
 <a id='x1-16027r4'></a><span class='ecrm-0500'>4</span><span id='textcolor129'><span class='ectt-0800'>short</span></span><span class='ectt-0800'> myshortarray[4];</span> 
 <a id='x1-16029r5'></a><span class='ecrm-0500'>5</span><span id='textcolor130'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> count;</span> 
 <a id='x1-16031r6'></a><span class='ecrm-0500'>6</span><span class='ectt-0800'>module_param_array(myshortarray, </span><span id='textcolor131'><span class='ectt-0800'>short</span></span><span class='ectt-0800'>, &amp;count, 0); </span><span id='textcolor132'><span class='ectt-0800'>/* put count into "count" variable */</span></span></pre>
-<!-- l. 516 --><p class='indent'>   A good use for this is to have the module variable’s default values set, like an port
+<!-- l. 516 --><p class='indent'>   A good use for this is to have the module variable’s default values set, like a port
 or IO address. If the variables contain the default values, then perform autodetection
 (explained elsewhere). Otherwise, keep the current value. This will be made clear
 later on.
@@ -771,7 +771,7 @@ parameters: a variable name and a free form string describing that variable.
 <a id='x1-16100r34'></a><span class='ecrm-0500'>34</span><span id='textcolor175'><span class='ectt-0800'>/* module_param_array(name, type, num, perm);</span></span> 
 <a id='x1-16102r35'></a><span class='ecrm-0500'>35</span><span id='textcolor176'><span class='ectt-0800'> * The first param is the parameter</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s (in this case the array</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s) name.</span></span> 
 <a id='x1-16104r36'></a><span class='ecrm-0500'>36</span><span id='textcolor177'><span class='ectt-0800'> * The second param is the data type of the elements of the array.</span></span> 
-<a id='x1-16106r37'></a><span class='ecrm-0500'>37</span><span id='textcolor178'><span class='ectt-0800'> * The third argument is a pointer to the variable that will store the number.</span></span> 
+<a id='x1-16106r37'></a><span class='ecrm-0500'>37</span><span id='textcolor178'><span class='ectt-0800'> * The third argument is a pointer to the variable that will store the number</span></span> 
 <a id='x1-16108r38'></a><span class='ecrm-0500'>38</span><span id='textcolor179'><span class='ectt-0800'> * of elements of the array initialized by the user at module loading time.</span></span> 
 <a id='x1-16110r39'></a><span class='ecrm-0500'>39</span><span id='textcolor180'><span class='ectt-0800'> * The fourth argument is the permission bits.</span></span> 
 <a id='x1-16112r40'></a><span class='ecrm-0500'>40</span><span id='textcolor181'><span class='ectt-0800'> */</span></span> 
@@ -987,7 +987,7 @@ custom string which appears in the module’s version magic and not in the
 kernel’s one, is due to a modification with respect to the original, in the
 makefile that some distributions include. Then, examine your <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>Makefile</span></span></span>,
 and make sure that the specified version information matches exactly the
-one used for your current kernel. For example, you makefile could start as
+one used for your current kernel. For example, your makefile could start as
 follows:
                                                                   
 
@@ -1156,7 +1156,7 @@ mode”.
 library function in user mode. The library function calls one or more system calls,
 and these system calls execute on the library function’s behalf, but do so in
 supervisor mode since they are part of the kernel itself. Once the system call
-completes its task, it returns and execution gets transfered back to user
+completes its task, it returns and execution gets transferred back to user
 mode.
 </p><!-- l. 761 --><p class='noindent'>
 </p>
