@@ -34,7 +34,7 @@ MODULE_PARM_DESC(mystring, "A character string");
 /* module_param_array(name, type, num, perm);
  * The first param is the parameter's (in this case the array's) name.
  * The second param is the data type of the elements of the array.
- * The third argument is a pointer to the variable that will store the number.
+ * The third argument is a pointer to the variable that will store the number
  * of elements of the array initialized by the user at module loading time.
  * The fourth argument is the permission bits.
  */
