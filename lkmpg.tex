@@ -704,7 +704,7 @@ You use these library functions which are provided by the standard C library, li
 The definitions for these functions do not actually enter your program until the linking stage, which insures that the code (for \cpp|printf()| for example) is available, and fixes the call instruction to point to that code.
 
 Kernel modules are different here, too. In the hello world example, you might have noticed that we used a function, \cpp|pr_info()| but did not include a standard I/O library.
-That is because modules are object files whose symbols get resolved upon \sh|insmod|'ing.
+That is because modules are object files whose symbols get resolved upon running \sh|insmod| or \sh|modprobe|.
 The definition for the symbols comes from the kernel itself; the only external functions you can use are the ones provided by the kernel.
 If you're curious about what symbols have been exported by your kernel, take a look at \verb|/proc/kallsyms|.
 
