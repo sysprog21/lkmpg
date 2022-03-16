@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>March 9, 2022</span></div>
+<div class='date'><span class='ecrm-1200'>March 16, 2022</span></div>
                                                                   
 
                                                                   
@@ -1079,12 +1079,13 @@ code.
 </p><!-- l. 706 --><p class='indent'>   Kernel modules are different here, too. In the hello world
 example, you might have noticed that we used a function,
 <code> <span class='ectt-1000'>pr_info()</span>
-</code> but did not include a standard I/O library. That is because modules are object files whose symbols
-get resolved upon <code>  <span class='ectt-1000'>insmod</span>
-</code>’ing. The definition for the symbols comes from the kernel itself; the only
-external functions you can use are the ones provided by the kernel. If you’re
-curious about what symbols have been exported by your kernel, take a look at
-<span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/kallsyms</span></span></span>.
+</code> but did not include a standard I/O library. That is because
+modules are object files whose symbols get resolved upon running
+<code> <span class='ectt-1000'>insmod</span>
+</code> or <code>  <span class='ectt-1000'>modprobe</span>
+</code>. The definition for the symbols comes from the kernel itself; the only external
+functions you can use are the ones provided by the kernel. If you’re curious about
+what symbols have been exported by your kernel, take a look at <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/kallsyms</span></span></span>.
 </p><!-- l. 711 --><p class='indent'>   One point to keep in mind is the difference between library functions and system
 calls. Library functions are higher level, run completely in user space and
 provide a more convenient interface for the programmer to the functions
@@ -1103,13 +1104,13 @@ data into strings and write the string data using the low-level system call
 </code>? It is easy! Compile the following program:
 </p><!-- l. 1 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb35'><a id='x1-21016r1'></a><span class='ecrm-0500'>1</span><span id='textcolor259'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor260'><span class='ectt-0800'>&lt;stdio.h&gt;</span></span> 
-<a id='x1-21018r2'></a><span class='ecrm-0500'>2</span> 
-<a id='x1-21020r3'></a><span class='ecrm-0500'>3</span><span id='textcolor261'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> main(</span><span id='textcolor262'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
-<a id='x1-21022r4'></a><span class='ecrm-0500'>4</span><span class='ectt-0800'>{</span> 
-<a id='x1-21024r5'></a><span class='ecrm-0500'>5</span><span class='ectt-0800'>    printf(</span><span id='textcolor263'><span class='ectt-0800'>"hello"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-21026r6'></a><span class='ecrm-0500'>6</span><span class='ectt-0800'>    </span><span id='textcolor264'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
-<a id='x1-21028r7'></a><span class='ecrm-0500'>7</span><span class='ectt-0800'>}</span></pre>
+   <pre class='fancyvrb' id='fancyvrb35'><a id='x1-21017r1'></a><span class='ecrm-0500'>1</span><span id='textcolor259'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor260'><span class='ectt-0800'>&lt;stdio.h&gt;</span></span> 
+<a id='x1-21019r2'></a><span class='ecrm-0500'>2</span> 
+<a id='x1-21021r3'></a><span class='ecrm-0500'>3</span><span id='textcolor261'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> main(</span><span id='textcolor262'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-21023r4'></a><span class='ecrm-0500'>4</span><span class='ectt-0800'>{</span> 
+<a id='x1-21025r5'></a><span class='ecrm-0500'>5</span><span class='ectt-0800'>    printf(</span><span id='textcolor263'><span class='ectt-0800'>"hello"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-21027r6'></a><span class='ecrm-0500'>6</span><span class='ectt-0800'>    </span><span id='textcolor264'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
+<a id='x1-21029r7'></a><span class='ecrm-0500'>7</span><span class='ectt-0800'>}</span></pre>
 <!-- l. 729 --><p class='indent'>   with <code>  <span class='ectt-1000'>gcc -Wall -o hello hello.c</span>
 </code>. Run the executable with <code>  <span class='ectt-1000'>strace ./hello</span>
 </code>. Are you impressed? Every line you see corresponds to a system call. <a href='https://strace.io/'>strace</a> is a
