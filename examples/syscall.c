@@ -24,9 +24,9 @@
 #include <linux/uaccess.h>
 
 /* The way we access "sys_call_table" varies as kernel internal changes.
- * - ver <= 5.4 : manual symbol lookup
- * - 5.4 < ver < 5.7 : kallsyms_lookup_name
- * - 5.7 <= ver : Kprobes or specific kernel module parameter
+ * - Prior to v5.4 : manual symbol lookup
+ * - v5.5 to v5.6  : use kallsyms_lookup_name()
+ * - v5.7+         : Kprobes or specific kernel module parameter
  */
 
 /* The in-kernel calls to the ksys_close() syscall were removed in Linux v5.11+.
