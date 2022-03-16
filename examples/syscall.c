@@ -26,7 +26,7 @@
 /* The way we access "sys_call_table" varies as kernel internal changes.
  * - ver <= 5.4 : manual symbol lookup
  * - 5.4 < ver < 5.7 : kallsyms_lookup_name
- * - 5.7 <= ver : Kprobes or specific kernel module parameter
+ * - 5.7 >= ver : Kprobes or specific kernel module parameter
  */
 
 /* The in-kernel calls to the ksys_close() syscall were removed in Linux v5.11+.
