@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>March 16, 2022</span></div>
+<div class='date'><span class='ecrm-1200'>March 17, 2022</span></div>
                                                                   
 
                                                                   
@@ -3434,9 +3434,9 @@ dry run of this example, you will have to patch your current kernel in order to 
 <a id='x1-41090r24'></a><span class='ecrm-0500'>24</span><span id='textcolor1479'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1480'><span class='ectt-0800'>&lt;linux/uaccess.h&gt;</span></span> 
 <a id='x1-41092r25'></a><span class='ecrm-0500'>25</span> 
 <a id='x1-41094r26'></a><span class='ecrm-0500'>26</span><span id='textcolor1481'><span class='ectt-0800'>/* The way we access "sys_call_table" varies as kernel internal changes.</span></span> 
-<a id='x1-41096r27'></a><span class='ecrm-0500'>27</span><span id='textcolor1482'><span class='ectt-0800'> * - ver &lt;= 5.4 : manual symbol lookup</span></span> 
-<a id='x1-41098r28'></a><span class='ecrm-0500'>28</span><span id='textcolor1483'><span class='ectt-0800'> * - 5.4 &lt; ver &lt; 5.7 : kallsyms_lookup_name</span></span> 
-<a id='x1-41100r29'></a><span class='ecrm-0500'>29</span><span id='textcolor1484'><span class='ectt-0800'> * - 5.7 &lt;= ver : Kprobes or specific kernel module parameter</span></span> 
+<a id='x1-41096r27'></a><span class='ecrm-0500'>27</span><span id='textcolor1482'><span class='ectt-0800'> * - Prior to v5.4 : manual symbol lookup</span></span> 
+<a id='x1-41098r28'></a><span class='ecrm-0500'>28</span><span id='textcolor1483'><span class='ectt-0800'> * - v5.5 to v5.6  : use kallsyms_lookup_name()</span></span> 
+<a id='x1-41100r29'></a><span class='ecrm-0500'>29</span><span id='textcolor1484'><span class='ectt-0800'> * - v5.7+         : Kprobes or specific kernel module parameter</span></span> 
 <a id='x1-41102r30'></a><span class='ecrm-0500'>30</span><span id='textcolor1485'><span class='ectt-0800'> */</span></span> 
 <a id='x1-41104r31'></a><span class='ecrm-0500'>31</span> 
 <a id='x1-41106r32'></a><span class='ecrm-0500'>32</span><span id='textcolor1486'><span class='ectt-0800'>/* The in-kernel calls to the ksys_close() syscall were removed in Linux v5.11+.</span></span> 
