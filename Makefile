@@ -2,10 +2,8 @@ PROJ = lkmpg
 all: $(PROJ).pdf
 
 $(PROJ).pdf: lkmpg.tex
-	pdflatex -shell-escap $<
-	bibtex $(PROJ) >/dev/null || echo
-	pdflatex -shell-escape $< 2>/dev/null >/dev/null
 	rm -rf _minted-$(PROJ)
+	latexmk -shell-escape lkmpg.tex -pdf
 
 html: lkmpg.tex html.cfg assets/Manrope_variable.ttf
 	sed $ 's/\t/    /g' lkmpg.tex > lkmpg-for-ht.tex
@@ -19,7 +17,7 @@ indent:
 	(cd examples; find . -name '*.[ch]' | xargs clang-format -i)
 
 clean:
-	rm -f *.dvi *.aux *.log *.ps *.pdf *.out lkmpg.bbl lkmpg.blg lkmpg.lof lkmpg.toc
+	rm -f *.dvi *.aux *.log *.ps *.pdf *.out lkmpg.bbl lkmpg.blg lkmpg.lof lkmpg.toc lkmpg.fdb_latexmk lkmpg.fls
 	rm -rf html
 
 .PHONY: html
