@@ -2,6 +2,7 @@ PROJ = lkmpg
 all: $(PROJ).pdf
 
 $(PROJ).pdf: lkmpg.tex
+	@if ! hash latexmk; then echo "No Latexmk found. See https://mg.readthedocs.io/latexmk.html for installation."; exit 1; fi
 	rm -rf _minted-$(PROJ)
 	latexmk -shell-escape lkmpg.tex -pdf
 
