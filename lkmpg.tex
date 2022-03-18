@@ -323,13 +323,10 @@ However, there are three ways to solve this problem.
   \item {You can preserve environment variables by appending them to \verb|env_keep| in \verb|/etc/sudoers|. 
   
   \begin{code}
-  ## sudoers file.
-  ##
-  ...
-  Defaults env_keep += ``ftp_proxy http_proxy https_proxy no_proxy PWD''
+  Defaults env_keep += "PWD"
   \end{code}
 
-  After finishing setting modification, you can check the environment variable settings by:
+  After applying the above change, you can check the environment variable settings by:
 
   \begin{verbatim}
     $ sudo -s
