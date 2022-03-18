@@ -18,6 +18,8 @@ lkmpg.pdf
 *.toc
 *.bbl
 *.blg
+*.fdb_latexmk 
+*.fls
 
 # make4ht
 *.html
