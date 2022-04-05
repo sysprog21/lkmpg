@@ -1857,6 +1857,88 @@ Here is an example of symmetrically encrypting a string using the AES algorithm 
 
 \samplec{examples/cryptosk.c}
 
+\section{Virtual Input Device Driver}
+\label{sec:vinput}
+The input device driver is a module that provides a way to communicate with the interaction device via the event.
+For example, the keyboard can send the press or release event to tell the kernel what we want to do.
+The input device driver will allocate a new input structure with \cpp|input_allocate_device()| and sets up input bitfields, device id, version, etc.
+After that, registers it by calling \cpp|input_register_device()|.
+
+Here is an example, vinput,
+It is an API to allow easy development of virtual input drivers.
+The drivers needs to export a \cpp|vinput_device()| that contains the virtual device name and \cpp|vinput_ops| structure that describes:
+
+\begin{itemize}
+    \item the init function: \cpp|init()|
+    \item the input event injection function: \cpp|send()|
+    \item the readback function: \cpp|read()|
+\end{itemize}
+
+Then using \cpp|vinput_register_device()| and \cpp|vinput_unregister_device()| will add a new device to the list of support virtual input devices.
+
+\begin{code}
+int init(struct vinput *);
+\end{code}
+
+This function is passed a \cpp|struct vinput| already initialized with an allocated \cpp|struct input_dev|.
+The \cpp|init()| function is responsible for initializing the capabilities of the input device and register it.
+
+\begin{code}
+int send(struct vinput *, char *, int);
+\end{code}
+
+This function will receive a user string to interpret and inject the event using the \cpp|input_report_XXXX| or \cpp|input_event| call.
+The string is already copied from user.
+
+\begin{code}
+int read(struct vinput *, char *, int);
+\end{code}
+
+This function is used for debugging and should fill the buffer parameter with the last event sent in the virtual input device format.
+The buffer will then be copied to user.
+
+vinput devices are created and destroyed using sysfs.
+And, event injection is done through a \verb|/dev| node.
+The device name will be used by the userland to export a new virtual input device.
+To create a \verb|vinputX| sysfs entry and \verb|/dev| node.
+
+\begin{codebash}
+echo "vkbd" | sudo tee /sys/class/vinput/export
+\end{codebash}
+
+To unexport the device, just echo its id in unexport:
+
+\begin{codebash}
+echo "0" | sudo tee /sys/class/vinput/unexport
+\end{codebash}
+
+\samplec{examples/vinput.h}
+\samplec{examples/vinput.c}
+
+Here the virtual keyboard is one of example to use vinput.
+It supports all \cpp|KEY_MAX| keycodes.
+The injection format is the \cpp|KEY_CODE| such as defined in \src{include/linux/input.h}.
+A positive value means \cpp|KEY_PRESS| while a negative value is a \cpp|KEY_RELEASE|.
+The keyboard supports repetition when the key stays pressed for too long.
+The following demonstrates how simulation work.
+
+Simulate a key press on "g" (\cpp|KEY_G| = 34):
+
+\begin{codebash}
+echo "+34" | sudo tee /dev/vinput0
+\end{codebash}
+
+Simulate a key release on "g" (\cpp|KEY_G| = 34:)
+
+\begin{codebash}
+echo "-34" | sudo tee /dev/vinput0
+\end{codebash}
+
+\samplec{examples/vkbd.c}
+
+% TODO: Add description of attribute
+% TODO: Add vts.c and vmouse.c example
+
 \section{Standardizing the interfaces: The Device Model}
 \label{sec:device_model}
 Up to this point we have seen all kinds of modules doing all kinds of things, but there was no consistency in their interfaces with the rest of the kernel.

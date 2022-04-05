@@ -56,6 +56,10 @@ DisableFormat: false
 ExperimentalAutoDetectBinPacking: false
 FixNamespaceComments: false
 
+ForEachMacros:
+  - 'list_for_each'
+  - 'list_for_each_safe'
+
 IncludeBlocks: Preserve
 IncludeCategories:
   - Regex: '.*'
