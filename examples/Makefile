@@ -47,5 +47,5 @@ clean:
 	$(RM) other/cat_noblock *.plist
 
 indent:
-	clang-format -i *[.ch]
-	clang-format -i other/*[.ch]
+	clang-format -i *.[ch]
+	clang-format -i other/*.[ch]
