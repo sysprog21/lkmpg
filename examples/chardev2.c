@@ -37,10 +37,6 @@ static int device_open(struct inode *inode, struct file *file)
 {
     pr_info("device_open(%p)\n", file);
 
-    /* We don't want to talk to two processes at the same time. */
-    if (atomic_cmpxchg(&already_open, CDEV_NOT_USED, CDEV_EXCLUSIVE_OPEN))
-        return -EBUSY;
-
     try_module_get(THIS_MODULE);
     return SUCCESS;
 }
@@ -48,9 +44,6 @@ static int device_open(struct inode *inode, struct file *file)
 static int device_release(struct inode *inode, struct file *file)
 {
     pr_info("device_release(%p,%p)\n", inode, file);
-
-    /* We're now ready for our next caller */
-    atomic_set(&already_open, CDEV_NOT_USED);
 
     module_put(THIS_MODULE);
     return SUCCESS;
@@ -129,6 +122,11 @@ device_ioctl(struct file *file, /* ditto */
              unsigned long ioctl_param)
 {
     int i;
+    long ret = SUCCESS;
+
+    /* We don't want to talk to two processes at the same time. */
+    if (atomic_cmpxchg(&already_open, CDEV_NOT_USED, CDEV_EXCLUSIVE_OPEN))
+        return -EBUSY;
 
     /* Switch according to the ioctl called */
     switch (ioctl_num) {
@@ -166,11 +164,14 @@ device_ioctl(struct file *file, /* ditto */
         /* This ioctl is both input (ioctl_param) and output (the return
          * value of this function).
          */
-        return (long)message[ioctl_param];
+        ret = (long)message[ioctl_param];
         break;
     }
 
-    return SUCCESS;
+    /* We're now ready for our next caller */
+    atomic_set(&already_open, CDEV_NOT_USED);
+
+    return ret;
 }
 
 /* Module Declarations */
