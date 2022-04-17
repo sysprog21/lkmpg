@@ -1257,6 +1257,40 @@ You can find sysfs directories and files under the \verb|/sys| directory on your
 ls -l /sys
 \end{codebash}
 
+Attributes can be exported for kobjects in the form of regular files in the filesystem.
+Sysfs forwards file I/O operations to methods defined for the attributes, providing a means to read and write kernel attributes.
+
+An attribute definition in simply:
+
+\begin{code}
+struct attribute {
+    char *name;
+    struct module *owner;
+    umode_t mode;
+};
+
+int sysfs_create_file(struct kobject * kobj, const struct attribute * attr);
+void sysfs_remove_file(struct kobject * kobj, const struct attribute * attr);
+\end{code}
+
+For example, the driver model defines \cpp|struct device_attribute| like:
+
+\begin{code}
+struct device_attribute {
+    struct attribute attr;
+    ssize_t (*show)(struct device *dev, struct device_attribute *attr,
+                    char *buf);
+    ssize_t (*store)(struct device *dev, struct device_attribute *attr,
+                    const char *buf, size_t count);
+};
+
+int device_create_file(struct device *, const struct device_attribute *);
+void device_remove_file(struct device *, const struct device_attribute *);
+\end{code}
+
+To read or write attributes, \cpp|show()| or \cpp|store()| method must be specified when declaring the attribute.
+For the common cases \src{include/linux/sysfs.h} provides convenience macros (\cpp|__ATTR|, \cpp|__ATTR_RO|, \cpp|__ATTR_WO|, etc.) to make defining attributes easier as well as making code more concise and readable.
+
 An example of a hello world module which includes the creation of a variable accessible via sysfs is given below.
 
 \samplec{examples/hello-sysfs.c}
@@ -1292,6 +1326,12 @@ Finally, remove the test module:
 \begin{codebash}
 sudo rmmod hello_sysfs
 \end{codebash}
+
+In the above case, we use a simple kobject to create a directory under sysfs, and communicate with its attributes.
+Since Linux v2.6.0, the \cpp|kobject| structure made its appearance.
+It was initially meant as a simple way of unifying kernel code which manages reference counted objects.
+After a bit of mission creep, it is now the glue that holds much of the device model and its sysfs interface together.
+For more information about kobject and sysfs, see \src{Documentation/driver-api/driver-model/driver.rst} and \url{https://lwn.net/Articles/51437/}.
 
 \section{Talking To Device Files}
 \label{sec:device_files}
@@ -1897,6 +1937,23 @@ The buffer will then be copied to user.
 vinput devices are created and destroyed using sysfs.
 And, event injection is done through a \verb|/dev| node.
 The device name will be used by the userland to export a new virtual input device.
+
+The \cpp|class_attribute| structure is similar to other attribute types we talked about in section \ref{sec:sysfs}:
+
+\begin{code}
+struct class_attribute {
+    struct attribute attr;
+    ssize_t (*show)(struct class *class, struct class_attribute *attr,
+                    char *buf);
+    ssize_t (*store)(struct class *class, struct class_attribute *attr,
+                    const char *buf, size_t count);
+};
+\end{code}
+
+In \verb|vinput.c|, the macro \cpp|CLASS_ATTR_WO(export/unexport)| defined in \src{include/linux/device.h} (in this case, \verb|device.h| is included in \src{include/linux/input.h}) will generate the \cpp|class_attribute| structures which are named \verb|class_attr_export/unexport|.
+Then, put them into \cpp|vinput_class_attrs| array and the macro \cpp|ATTRIBUTE_GROUPS(vinput_class)| will generate the \cpp|struct attribute_group vinput_class_group| that should be assigned in \cpp|vinput_class|.
+Finally, call \cpp|class_register(&vinput_class)| to create attributes in sysfs.
+
 To create a \verb|vinputX| sysfs entry and \verb|/dev| node.
 
 \begin{codebash}
@@ -1933,7 +1990,6 @@ echo "-34" | sudo tee /dev/vinput0
 
 \samplec{examples/vkbd.c}
 
-% TODO: Add description of attribute
 % TODO: Add vts.c and vmouse.c example
 
 \section{Standardizing the interfaces: The Device Model}
