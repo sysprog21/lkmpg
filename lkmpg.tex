@@ -729,7 +729,7 @@ Are you impressed?
 Every line you see corresponds to a system call.
 \href{https://strace.io/}{strace} is a handy program that gives you details about what system calls a program is making, including which call is made, what its arguments are and what it returns.
 It is an invaluable tool for figuring out things like what files a program is trying to access.
-Towards the end, you will see a line which looks like \cpp|write(1, "hello", 5hello)|.
+Towards the end, you will see a line which looks like \cpp|write(1, "hello", 5)|.
 There it is.
 The face behind the \cpp|printf()| mask.
 You may not be familiar with write, since most people use library functions for file I/O (like \cpp|fopen|, \cpp|fputs|, \cpp|fclose|).
