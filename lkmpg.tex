@@ -419,7 +419,7 @@ What happens?
 \subsection{Hello and Goodbye}
 \label{hello_n_goodbye}
 In early kernel versions you had to use the \cpp|init_module| and \cpp|cleanup_module| functions, as in the first hello world example, but these days you can name those anything you want by using the \cpp|module_init| and \cpp|module_exit| macros.
-These macros are defined in \src{include/linux/init.h}.
+These macros are defined in \src{include/linux/module.h}.
 The only requirement is that your init and cleanup functions must be defined before calling the those macros, otherwise you'll get compilation errors.
 Here is an example of this technique:
 
