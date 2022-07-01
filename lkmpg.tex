@@ -1700,10 +1700,11 @@ Keyboard LEDs are present on every hardware, they are always visible, they do no
 From v4.14 to v4.15, the timer API made a series of changes to improve memory safety.
 A buffer overflow in the area of a \cpp|timer_list| structure may be able to overwrite the \cpp|function| and \cpp|data| fields, providing the attacker with a way to use return-object programming (ROP) to call arbitrary functions within the kernel.
 Also, the function prototype of the callback, containing a \cpp|unsigned long| argument, will prevent work from any type checking.
-Furthermore, the function prototype with \cpp|unsigned long| argument may be an obstacle to the \textit{control-flow integrity}.
+Furthermore, the function prototype with \cpp|unsigned long| argument may be an obstacle to the forward-edge protection of \textit{control-flow integrity}.
 Thus, it is better to use a unique prototype to separate from the cluster that takes an \cpp|unsigned long| argument.
 The timer callback should be passed a pointer to the \cpp|timer_list| structure rather than an \cpp|unsigned long| argument.
 Then, it wraps all the information the callback needs, including the \cpp|timer_list| structure, into a larger structure, and it can use the \cpp|container_of| macro instead of the \cpp|unsigned long| value.
+For more information see: \href{https://lwn.net/Articles/735887/}{Improving the kernel timers API}.
 
 Before Linux v4.14, \cpp|setup_timer| was used to initialize the timer and the \cpp|timer_list| structure looked like:
 \begin{code}
