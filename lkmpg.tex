@@ -1763,7 +1763,8 @@ For example, when triggered from an interrupt, whereas work queues are more comp
 \subsection{Tasklets}
 \label{sec:tasklet}
 Here is an example tasklet module.
-The \cpp|tasklet_fn| function runs for a few seconds and in the mean time execution of the \cpp|example_tasklet_init| function continues to the exit point.
+The \cpp|tasklet_fn| function runs for a few seconds.
+In the meantime, execution of the \cpp|example_tasklet_init| function may continue to the exit point, depending on whether it is interrupted by \textbf{softirq}.
 
 \samplec{examples/example_tasklet.c}
 
