@@ -42,7 +42,7 @@ $ sudo tlmgr update --self
 
 Note that `latexmk` is required to generated PDF, and it probably has been installed on your OS already. If not, please follow the [installation guide](https://mg.readthedocs.io/latexmk.html#installation).
 
-In macOS systems, package `Pygments` may not be pre-install. If not, please refer to the [installation guide](https://pygments.org/download/) before generate documents.
+In macOS systems, package `Pygments` may not be pre-installed. If not, please refer to the [installation guide](https://pygments.org/download/) before generate documents.
 
 Alternatively, using [Docker](https://docs.docker.com/) is recommended, as it guarantees the same dependencies with our GitHub Actions workflow.
 After install [docker engine](https://docs.docker.com/engine/install/) on your machine, pull the docker image [twtug/lkmpg](https://hub.docker.com/r/twtug/lkmpg) and run in isolated containers.
