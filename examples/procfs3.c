@@ -8,12 +8,13 @@
 #include <linux/sched.h>
 #include <linux/uaccess.h>
 #include <linux/version.h>
+#include <linux/minmax.h>
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 6, 0)
 #define HAVE_PROC_OPS
 #endif
 
-#define PROCFS_MAX_SIZE 2048
+#define PROCFS_MAX_SIZE 2048UL
 #define PROCFS_ENTRY_FILENAME "buffer2k"
 
 static struct proc_dir_entry *our_proc_file;
@@ -23,17 +24,15 @@ static unsigned long procfs_buffer_size = 0;
 static ssize_t procfs_read(struct file *filp, char __user *buffer,
                            size_t length, loff_t *offset)
 {
-    static int finished = 0;
-
-    if (finished) {
+    if (*offset || procfs_buffer_size == 0) {
         pr_debug("procfs_read: END\n");
-        finished = 0;
+        *offset = 0;
         return 0;
     }
-    finished = 1;
-
+    procfs_buffer_size = min(procfs_buffer_size, length);
     if (copy_to_user(buffer, procfs_buffer, procfs_buffer_size))
         return -EFAULT;
+    *offset += procfs_buffer_size;
 
     pr_debug("procfs_read: read %lu bytes\n", procfs_buffer_size);
     return procfs_buffer_size;
@@ -41,12 +40,10 @@ static ssize_t procfs_read(struct file *filp, char __user *buffer,
 static ssize_t procfs_write(struct file *file, const char __user *buffer,
                             size_t len, loff_t *off)
 {
-    if (len > PROCFS_MAX_SIZE)
-        procfs_buffer_size = PROCFS_MAX_SIZE;
-    else
-        procfs_buffer_size = len;
+    procfs_buffer_size = min(PROCFS_MAX_SIZE, len);
     if (copy_from_user(procfs_buffer, buffer, procfs_buffer_size))
         return -EFAULT;
+    *off += procfs_buffer_size;
 
     pr_debug("procfs_write: write %lu bytes\n", procfs_buffer_size);
     return procfs_buffer_size;
