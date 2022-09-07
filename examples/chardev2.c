@@ -28,7 +28,7 @@ enum {
 static atomic_t already_open = ATOMIC_INIT(CDEV_NOT_USED);
 
 /* The message the device will give when asked */
-static char message[BUF_LEN];
+static char message[BUF_LEN + 1];
 
 static struct class *cls;
 
