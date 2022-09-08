@@ -954,7 +954,8 @@ An instance of \cpp|struct file_operations| containing pointers to functions tha
 Since Linux v3.14, the read, write and seek operations are guaranteed for thread-safe by using the \cpp|f_pos| specific lock, which makes the file position update to become the mutual exclusion.
 So, we can safely implement those operations without unnecessary locking.
 
-Since Linux v5.6, the \cpp|proc_ops| structure was introduced to replace the use of the \cpp|file_operations| structure when registering proc handlers.
+Additionally, since Linux v5.6, the \cpp|proc_ops| structure was introduced to replace the use of the \cpp|file_operations| structure when registering proc handlers.
+See more information in the \ref{sec:proc_ops} section.
 
 \subsection{The file structure}
 \label{sec:file_struct}
