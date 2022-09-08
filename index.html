@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>August 27, 2022</span></div>
+<div class='date'><span class='ecrm-1200'>September 8, 2022</span></div>
                                                                   
 
                                                                   
@@ -1648,7 +1648,7 @@ concurrency details in the <a href='#avoiding-collisions-and-deadlocks'>12<!-- t
 <a id='x1-31078r36'></a><span class='ecrm-0500'>36</span><span id='textcolor476'><span class='ectt-0800'>/* Is device open? Used to prevent multiple access to device */</span></span> 
 <a id='x1-31080r37'></a><span class='ecrm-0500'>37</span><span id='textcolor477'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> atomic_t already_open = ATOMIC_INIT(CDEV_NOT_USED);</span> 
 <a id='x1-31082r38'></a><span class='ecrm-0500'>38</span> 
-<a id='x1-31084r39'></a><span class='ecrm-0500'>39</span><span id='textcolor478'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor479'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> msg[BUF_LEN]; </span><span id='textcolor480'><span class='ectt-0800'>/* The msg the device will give when asked */</span></span> 
+<a id='x1-31084r39'></a><span class='ecrm-0500'>39</span><span id='textcolor478'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor479'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> msg[BUF_LEN + 1]; </span><span id='textcolor480'><span class='ectt-0800'>/* The msg the device will give when asked */</span></span> 
 <a id='x1-31086r40'></a><span class='ecrm-0500'>40</span> 
 <a id='x1-31088r41'></a><span class='ecrm-0500'>41</span><span id='textcolor481'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor482'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> class *cls;</span> 
 <a id='x1-31090r42'></a><span class='ecrm-0500'>42</span> 
@@ -2842,7 +2842,7 @@ which we mentioned at <a href='#chardevc'>6.5<!-- tex4ht:ref: sec:chardev_c  -->
 <a id='x1-39445r28'></a><span class='ecrm-0500'>28</span><span id='textcolor1199'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> atomic_t already_open = ATOMIC_INIT(CDEV_NOT_USED);</span> 
 <a id='x1-39447r29'></a><span class='ecrm-0500'>29</span> 
 <a id='x1-39449r30'></a><span class='ecrm-0500'>30</span><span id='textcolor1200'><span class='ectt-0800'>/* The message the device will give when asked */</span></span> 
-<a id='x1-39451r31'></a><span class='ecrm-0500'>31</span><span id='textcolor1201'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1202'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> message[BUF_LEN];</span> 
+<a id='x1-39451r31'></a><span class='ecrm-0500'>31</span><span id='textcolor1201'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1202'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> message[BUF_LEN + 1];</span> 
 <a id='x1-39453r32'></a><span class='ecrm-0500'>32</span> 
 <a id='x1-39455r33'></a><span class='ecrm-0500'>33</span><span id='textcolor1203'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1204'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> class *cls;</span> 
 <a id='x1-39457r34'></a><span class='ecrm-0500'>34</span> 
