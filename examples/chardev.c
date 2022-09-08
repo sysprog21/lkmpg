@@ -36,7 +36,7 @@ enum {
 /* Is device open? Used to prevent multiple access to device */
 static atomic_t already_open = ATOMIC_INIT(CDEV_NOT_USED);
 
-static char msg[BUF_LEN]; /* The msg the device will give when asked */
+static char msg[BUF_LEN + 1]; /* The msg the device will give when asked */
 
 static struct class *cls;
 
