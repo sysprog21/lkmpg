@@ -174,6 +174,20 @@ Rest assured, after you get over the initial hurdle of doing it for the first ti
         You will not see it unless you look through your \sh|journalctl| .
         See \ref{sec:helloworld} for details.
         To have immediate access to this information, do all your work from the console.
+
+  \item SecureBoot.
+        The modern laptop or PC are shipped with UEFI that has enabled the SecureBoot by default. And some Linux distributions are shipped with kernels that require the kernel modules to be signed with some security keys. If you cannot inssert the kernel module with inmod:
+
+\begin{codebash}
+insmod ./hello-1.ko
+insmod: ERROR: could not insert module ./hello-1.ko: Operation not permitted
+\end{codebash}
+	, and find the following message in dmesg:
+\begin{codebash}
+Lockdown: insmod: unsigned module loading is restricted; see man kernel lockdown.7
+\end{codebash}
+	You can disable the UEFI secure boot to have your "hello world" go. Of course you can try to sign your kernel module but this needs more complicated steps and we would cover it later in this book.
+
 \end{enumerate}
 
 \section{Headers}
