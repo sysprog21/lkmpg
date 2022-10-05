@@ -169,6 +169,7 @@ static const struct proc_ops file_ops_4_our_proc_file = {
     .proc_write = module_input, /* "write" to the file */
     .proc_open = module_open, /* called when the /proc file is opened */
     .proc_release = module_close, /* called when it's closed */
+    .proc_lseek = noop_llseek, /* return file->f_pos */
 };
 #else
 static const struct file_operations file_ops_4_our_proc_file = {
@@ -176,6 +177,7 @@ static const struct file_operations file_ops_4_our_proc_file = {
     .write = module_input,
     .open = module_open,
     .release = module_close,
+    .llseek = noop_llseek,
 };
 #endif
 
