@@ -179,6 +179,7 @@ Rest assured, after you get over the initial hurdle of doing it for the first ti
         It is a security standard that can make sure the device boots using only software that is trusted by original equipment manufacturer.
         The default Linux kernel from some distributions have also enabled the SecureBoot.
         For such distributions, the kernel module has to be signed with the security key or you would get the "\emph{ERROR: could not insert module}" when you insert your first hello world module:
+
 \begin{codebash}
 insmod ./hello-1.ko
 \end{codebash}
@@ -187,7 +188,7 @@ insmod ./hello-1.ko
            \emph{Lockdown: insmod: unsigned module loading is restricted;
                  see man kernel lockdown.7}
 
-        If you got this message, the simplest way is to disable the UEFI SecureBoot from the PC/laptop boot menu to have your "hello world" to be inserted.
+        If you got this message, the simplest way is to disable the UEFI SecureBoot from the PC/laptop boot menu to have your "hello-1" to be inserted.
         Of course you can go through complicated steps to generate keys, install keys to your system, and finally sign your module to make it work.
         However, this needs another chapter for the advanced users but not suitable for beginners.
 
