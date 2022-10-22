@@ -64,7 +64,7 @@
 \label{sec:introduction}
 The Linux Kernel Module Programming Guide is a free book; you may reproduce and/or modify it under the terms of the \href{https://opensource.org/licenses/OSL-3.0}{Open Software License}, version 3.0.
 
-This book is distributed in the hope it will be useful, but without any warranty, without even the implied warranty of merchantability or fitness for a particular purpose.
+This book is distributed in the hope that it would be useful, but without any warranty, without even the implied warranty of merchantability or fitness for a particular purpose.
 
 The author encourages wide distribution of this book for personal or commercial use, provided the above copyright notice remains intact and the method adheres to the provisions of the \href{https://opensource.org/licenses/OSL-3.0}{Open Software License}.
 In summary, you may copy and distribute this book free of charge or for a profit. No explicit permission is required from the author for reproduction of this book in any medium, physical or electronic.
@@ -441,9 +441,9 @@ clean:
 \end{code}
 
 Now have a look at \src{drivers/char/Makefile} for a real world example.
-As you can see, some things get hardwired into the kernel (\verb|obj-y|) but where are all those \verb|obj-m| gone?
+As you can see, some things got hardwired into the kernel (\verb|obj-y|) but where have all those \verb|obj-m| gone?
 Those familiar with shell scripts will easily be able to spot them.
-For those not, the \verb|obj-$(CONFIG_FOO)| entries you see everywhere expand into \verb|obj-y| or \verb|obj-m|, depending on whether the \verb|CONFIG_FOO| variable has been set to \verb|y| or \verb|m|.
+For those who are not, the \verb|obj-$(CONFIG_FOO)| entries you see everywhere expand into \verb|obj-y| or \verb|obj-m|, depending on whether the \verb|CONFIG_FOO| variable has been set to \verb|y| or \verb|m|.
 While we are at it, those were exactly the kind of variables that you have set in the \verb|.config| file in the top-level directory of Linux kernel source tree, the last time when you said \sh|make menuconfig| or something like that.
 
 \subsection{The \_\_init and \_\_exit Macros}
