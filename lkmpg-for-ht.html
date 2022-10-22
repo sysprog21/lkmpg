@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>October 21, 2022</span></div>
+<div class='date'><span class='ecrm-1200'>October 22, 2022</span></div>
                                                                   
 
                                                                   
@@ -101,9 +101,9 @@
 <!-- l. 65 --><p class='noindent'>The Linux Kernel Module Programming Guide is a free book; you may reproduce
 and/or modify it under the terms of the <a href='https://opensource.org/licenses/OSL-3.0'>Open Software License</a>, version
 3.0.
-</p><!-- l. 67 --><p class='indent'>   This book is distributed in the hope it will be useful, but without any warranty,
-without even the implied warranty of merchantability or fitness for a particular
-purpose.
+</p><!-- l. 67 --><p class='indent'>   This book is distributed in the hope that it would be useful, but without any
+warranty, without even the implied warranty of merchantability or fitness for a
+particular purpose.
 </p><!-- l. 69 --><p class='indent'>   The author encourages wide distribution of this book for personal or commercial
 use, provided the above copyright notice remains intact and the method adheres to
 the provisions of the <a href='https://opensource.org/licenses/OSL-3.0'>Open Software License</a>. In summary, you may copy and
@@ -577,13 +577,14 @@ is as simple as this:
 <a id='x1-13076r8'></a><span class='ecrm-0500'>8</span> 
 <a id='x1-13078r9'></a><span class='ecrm-0500'>9</span><span class='ectt-0800'>clean:</span> 
 <a id='x1-13080r10'></a><span class='ecrm-0500'>10</span><span class='ectt-0800'>    make -C /lib/modules/</span><span class='colorbox' id='colorbox69'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(shell uname -r)/build M=</span><span class='colorbox' id='colorbox70'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(PWD) clean</span></pre>
-<!-- l. 443 --><p class='indent'>   Now have a look at <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/char/Makefile'>drivers/char/Makefile</a> for a real world example. As you can
-see, some things get hardwired into the kernel (<span class='obeylines-h'><span class='verb'><span class='ectt-1000'>obj-y</span></span></span>) but where are all those <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>obj-m</span></span></span>
-gone? Those familiar with shell scripts will easily be able to spot them. For those not,
-the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>obj-$(CONFIG_FOO)</span></span></span> entries you see everywhere expand into <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>obj-y</span></span></span> or <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>obj-m</span></span></span>,
-depending on whether the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>CONFIG_FOO</span></span></span> variable has been set to <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>y</span></span></span> or <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>m</span></span></span>. While we are
-at it, those were exactly the kind of variables that you have set in the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>.config</span></span></span> file in
-the top-level directory of Linux kernel source tree, the last time when you said
+<!-- l. 443 --><p class='indent'>   Now have a look at <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/char/Makefile'>drivers/char/Makefile</a> for a real world example. As
+you can see, some things got hardwired into the kernel (<span class='obeylines-h'><span class='verb'><span class='ectt-1000'>obj-y</span></span></span>) but where
+have all those <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>obj-m</span></span></span> gone? Those familiar with shell scripts will easily be
+able to spot them. For those who are not, the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>obj-$(CONFIG_FOO)</span></span></span> entries
+you see everywhere expand into <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>obj-y</span></span></span> or <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>obj-m</span></span></span>, depending on whether the
+<span class='obeylines-h'><span class='verb'><span class='ectt-1000'>CONFIG_FOO</span></span></span> variable has been set to <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>y</span></span></span> or <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>m</span></span></span>. While we are at it, those were
+exactly the kind of variables that you have set in the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>.config</span></span></span> file in the
+top-level directory of Linux kernel source tree, the last time when you said
 <code> <span class='ectt-1000'>make menuconfig</span>
 </code> or something like that.
 </p><!-- l. 449 --><p class='noindent'>
@@ -601,10 +602,10 @@ when the init function is invoked, this makes perfect sense.
 like <code>  <span class='ectt-1000'>__init</span>
 </code>, has no effect for loadable modules. Again, if you consider when the cleanup function
 runs, this makes complete sense; built-in drivers do not need a cleanup function,
-while loadable modules do.
                                                                   
 
                                                                   
+while loadable modules do.
 </p><!-- l. 459 --><p class='indent'>   These macros are defined in <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/init.h'>include/linux/init.h</a> and serve to free up kernel
 memory. When you boot your kernel and see something like Freeing unused kernel
 memory: 236k freed, this is precisely what the kernel is freeing.
