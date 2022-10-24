@@ -1016,7 +1016,7 @@ int register_chrdev_region(dev_t from, unsigned count, const char *name);
 int alloc_chrdev_region(dev_t *dev, unsigned baseminor, unsigned count, const char *name);
 \end{code}
 
-The choose of two different functions depend on whether you know the major numbers for your device.
+The choice of two different functions depend on whether you know the major numbers for your device.
 Using \cpp|register_chrdev_region| if you know the device major number and \cpp|alloc_chrdev_region| if you would like to allocate a dynamicly-allocated major number.
 
 Second, we should initialize the data structure \cpp|struct cdev| for our char device and associate it with the device numbers.
