@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>October 22, 2022</span></div>
+<div class='date'><span class='ecrm-1200'>October 24, 2022</span></div>
                                                                   
 
                                                                   
@@ -1505,8 +1505,9 @@ First, we should register a range of device numbers, which can be completed with
 </p>
    <pre class='fancyvrb' id='fancyvrb40'><a id='x1-29019r1'></a><span class='ecrm-0500'>1</span><span id='textcolor400'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> register_chrdev_region(</span><span id='textcolor401'><span class='ectt-0800'>dev_t</span></span><span class='ectt-0800'> from, </span><span id='textcolor402'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> count, </span><span id='textcolor403'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor404'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *name);</span> 
 <a id='x1-29021r2'></a><span class='ecrm-0500'>2</span><span id='textcolor405'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> alloc_chrdev_region(</span><span id='textcolor406'><span class='ectt-0800'>dev_t</span></span><span class='ectt-0800'> *dev, </span><span id='textcolor407'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> baseminor, </span><span id='textcolor408'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> count, </span><span id='textcolor409'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor410'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *name);</span></pre>
-<!-- l. 1019 --><p class='indent'>   The choose of two different functions depend on whether you know the major numbers for your
-device. Using <code>  <span class='ectt-1000'>register_chrdev_region</span>
+<!-- l. 1019 --><p class='indent'>   The choice between two different functions depends on
+whether you know the major numbers for your device. Using
+<code> <span class='ectt-1000'>register_chrdev_region</span>
 </code> if you know the device major number and
 <code> <span class='ectt-1000'>alloc_chrdev_region</span>
 </code> if you would like to allocate a dynamicly-allocated major number.
