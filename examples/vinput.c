@@ -369,6 +369,7 @@ static int __init vinput_init(void)
     vinput_dev = register_chrdev(0, DRIVER_NAME, &vinput_fops);
     if (vinput_dev < 0) {
         pr_err("vinput: Unable to allocate char dev region\n");
+        err = vinput_dev;
         goto failed_alloc;
     }
 
