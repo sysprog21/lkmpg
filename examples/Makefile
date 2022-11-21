@@ -17,6 +17,7 @@ obj-m += kbleds.o
 obj-m += sched.o
 obj-m += chardev2.o
 obj-m += syscall.o
+obj-m += syscall-ftrace.o
 obj-m += intrpt.o
 obj-m += cryptosha256.o
 obj-m += cryptosk.o
