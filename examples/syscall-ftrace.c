@@ -48,12 +48,14 @@ typedef struct ftrace_hook {
     struct ftrace_ops ops; // ftrace structure
 } ftrace_hook_t;
 
+// clang-format off
 #define PREPARE_HOOK(_nr, _hook, _orig)              \
     {                                                \
         .nr = (_nr), .new = (_hook), .orig = (_orig) \
     }
 
 unsigned long **sys_call_table;
+// clang-format on
 
 /**
  * For the sake of simplicity, only the kprobe method is included.
@@ -184,10 +186,12 @@ static asmlinkage long our_sys_openat(struct pt_regs *regs)
      * Change regs->si to appropriate registers
      * if you are trying on different architecture.
      */
+    // clang-format off
     if (copy_from_user(kfilename, (char __user *)regs->si, MAX_FILENAME_SIZE) < 0) {
         kfree(kfilename);
         return original_call(regs);
     }
+    // clang-format on
 
     pr_info("[syscall-ftrace] File opened by UID %d: %s\n", uid, kfilename);
     kfree(kfilename);
