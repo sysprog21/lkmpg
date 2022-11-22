@@ -1554,6 +1554,97 @@ This means, if you want to do something more than a mere dry run of this example
 
 \samplec{examples/syscall.c}
 
+Another technique we can utilize to control the flow of execution of a syscall is \verb|ftrace|.
+It is an internal tracer designed to help out developers and designers of systems to find what is going on inside the kernel.
+It can be used for debugging or analyzing latencies and performance issues that take place outside of user-space.
+It is usually used as an event tracer by attaching callbacks to the beginning of functions in order to record and trace the flow of the kernel.
+
+The basic prototype of the callback function is
+\begin{verbatim}
+struct ftrace_ops {
+  ftrace_func_t func; // callback function
+  unsigned long flags; // ftrace flags
+  void* private; // any private data
+};
+void callback_func(unsigned long ip, unsigned long parent_ip,
+                   struct ftrace_ops *ops, struct pt_regs *regs);
+\end{verbatim}
+
+where
+
+\begin{itemize}
+  \item \cpp|ip|: The instruction pointer of the function being traced.
+  \item \cpp|parent_ip|: The instruction pointer of the caller of the traced function.
+  \item \cpp|ops|: A pointer to \cpp|ftrace_ops| that was used to register the callback.
+  \item \cpp|regs|: If \cpp|FTRACE_OPS_FL_SAVE_REGS| or \cpp|FTRACE_OPS_FL_SAVE_REGS_IF_SUPPORTED| are set in the \cpp|ftrace_ops| structure, then this will be pointing to the \cpp|pt_regs| structure like it would be if an breakpoint was placed at the start of the function where \verb|ftrace| was tracing for CPU register access. Otherwise it either contains garbage, or \cpp|NULL|. Do notice that in kernel version later than v5.11, this is replaced with \cpp|struct ftrace_regs *fregs|, with the original \cpp|pt_regs| accessible by \cpp|fregs->regs|.
+\end{itemize}
+
+Internally, there's a 5-byte \cpp|call| to \cpp|__fentry__| at the beginning (BEFORE function prologue) of a traceable kernel function, which is converted to \cpp|nop| during boot to prevent overhead. When a trace is registered, it is changed back to \cpp|__fentry__| and the registered callback will be executed accordingly.
+
+But callbacks can do more.
+Since it's called at the start of a function,
+and we have access to CPU registers,
+maybe we can ``hijack'' the traced function by modifying the instruction pointer?
+Yes, this is possible by enabling \cpp|FTRACE_OPS_FL_IPMODIFY| flag when registering a trace.
+It will allow us to modify the instruction pointer register, which will become an unconditional jump after the \verb|ftrace| function.
+Note that while there can be multiple tracers on one function, only one tracer that changes \cpp|ip| can be registered at the same time.
+
+Figure~\ref{img:ftrace-hooking-example} gives an example of auditing \cpp|sys_execve| by hooking it using \verb|ftrace|.
+The callback function (\cpp|fh_ftrace_thunk|) checks whether the call is from the kernel or the module,
+and passes control accordingly.
+If the call is from the kernel, our auditing function is called.
+Otherwise, nothing happens.
+The check is important because we're only ``decorating'' the original syscall.
+Our auditing function contains call to the original \cpp|sys_execve|,
+which will trigger the callback function again.
+It'll be an infinite loop if there's no check performed.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{assets/syscall/flow.jpg}
+  \caption{Linux kernel hooking with ftrace \href{https://www.apriorit.com/dev-blog/546-hooking-linux-functions-2}{Source}}
+  \label{img:ftrace-hooking-example}
+\end{figure}
+
+In fact, this is what live kernel patches uses.
+By redirecting the flow of execution,
+end users can use patched functions instead of vulnerable ones without reboot, as figure~\ref{img:kernel-livepatching} shows.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{assets/syscall/kernel-livepatching1.png}\\
+  \vspace{1cm}
+  \includegraphics[width=\textwidth]{assets/syscall/kernel-livepatching2.png}
+  \caption{How live kernel patching works. \href{https://ubuntu.com/blog/an-overview-of-live-kernel-patching}{Source}}
+  \label{img:kernel-livepatching}
+\end{figure}
+
+For more information regarding \cpp|ftrace|, check out \href{https://www.kernel.org/doc/html/latest/trace/ftrace.html}{the kernel documentation} and \href{https://youtu.be/93uE_kWWQjs}{this talk from Steven Rostedt}.
+
+Before getting our hands dirty, here are some functions we need to know.
+
+\begin{itemize}
+  \item \cpp|register_ftrace_function(struct ftrace_ops *ops)|: Enable tracing call defined by \cpp|ops|
+  \item \cpp|unregister_ftrace_function(struct ftrace_ops *ops)|: Disable tracing call defined by \cpp|ops|
+  \item \cpp|ftrace_set_filter(struct ftrace_ops *ops, unsigned char *buf, int len, int reset)|: Denote which function should be enabled for tracing by its name. If \cpp|buf| is \cpp|NULL|, all functions will be enabled.
+  \item \cpp|ftrace_set_filter_ip(struct ftrace_ops *ops, unsigned long ip, int remove, int reset)|: Denote which function should be enabled for tracing by its address. \cpp|remove| should be \cpp|0| when adding a trace, and \cpp|1| when removing one. Note that \cpp|ip| must be the address where the call to \cpp|__fentry__| is located in the function.
+\end{itemize}
+
+Alright let's write some code.
+Below is the source code of the example from above, but rewritten using \verb|ftrace|.
+The main difference is the \cpp|install_hook| function,
+which prepares our tracee function (\cpp|sys_openat|),
+and the callback function (\cpp|ftrace_thunk|).
+We need both \cpp|FTRACE_OPS_FL_SAVE_REGS| and \cpp|FTRACE_OPS_FL_IPMODIFY| because we're modifying \cpp|ip|.
+Inside \cpp|ftrace_thunk| is what the magic happens.
+We check if it is called from within the module,
+if not then it modifies the instruction pointer to our ``spying'' function.
+The check is performed by checking whether \cpp|parent_ip| is within this module.
+During the first call, \cpp|parent_ip| points to somewhere within the kernel,
+while during the second call it points to somewhere in our ``spying'' function, which is within the module.
+
+\samplec{examples/syscall-ftrace.c}
+
 \section{Blocking Processes and threads}
 \label{sec:blocking_process_thread}
 \subsection{Sleep}
