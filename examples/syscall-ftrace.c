@@ -20,12 +20,14 @@
 #include <linux/sched.h>
 #include <linux/uaccess.h>
 #include <linux/slab.h>
-/** This is what we're using here. */
 #include <linux/ftrace.h>
 
 MODULE_LICENSE("GPL");
 
 #define MAX_FILENAME_SIZE 200
+
+#undef pr_fmt
+#define pr_fmt(fmt) "[syscall-ftrace] " fmt
 
 /* UID we want to spy on - will be filled from the command line. */
 static int uid = 0;
@@ -40,7 +42,7 @@ module_param(uid, int, 0644);
  *      PREPARE_HOOK(__NR_clone, my_sys_clone, &orig_sys_clone)
  */
 typedef struct ftrace_hook {
-    unsigned long nr; // syscall name
+    unsigned long nr; // syscall number from unistd.h
     void *new; // hook function
     void *orig; // original function
 
@@ -48,14 +50,12 @@ typedef struct ftrace_hook {
     struct ftrace_ops ops; // ftrace structure
 } ftrace_hook_t;
 
-// clang-format off
-#define PREPARE_HOOK(_nr, _hook, _orig)              \
-    {                                                \
-        .nr = (_nr), .new = (_hook), .orig = (_orig) \
+#define PREPARE_HOOK(_nr, _hook, _orig)                                        \
+    {                                                                          \
+        .nr = (_nr), .new = (_hook), .orig = (_orig)                           \
     }
 
-unsigned long **sys_call_table;
-// clang-format on
+static unsigned long **sys_call_table;
 
 /**
  * For the sake of simplicity, only the kprobe method is included.
@@ -71,19 +71,19 @@ static int resolve_address(ftrace_hook_t *hook)
     unregister_kprobe(&kp);
 
     if (kallsyms_lookup_name)
-        pr_info("[syscall-ftrace] kallsyms_lookup_name is found at 0x%lx\n",
+        pr_info("kallsyms_lookup_name is found at 0x%lx\n",
                 (unsigned long)kallsyms_lookup_name);
     else {
-        pr_err("[syscall-ftrace] kallsyms_lookup_name is not found!\n");
+        pr_err("kallsyms_lookup_name is not found!\n");
         return -1;
     }
 
     sys_call_table = (unsigned long **)kallsyms_lookup_name("sys_call_table");
     if (sys_call_table)
-        pr_info("[syscall-ftrace] sys_call_table is found at 0x%lx\n",
+        pr_info("sys_call_table is found at 0x%lx\n",
                 (unsigned long)sys_call_table);
     else {
-        pr_err("[syscall-ftrace] sys_call_table is not found!\n");
+        pr_err("sys_call_table is not found!\n");
         return -1;
     }
 
@@ -127,7 +127,7 @@ static void notrace ftrace_thunk(unsigned long ip, unsigned long parent_ip,
 
 #endif /** Version >= v5.11 */
 
-int install_hook(ftrace_hook_t *hook)
+static int install_hook(ftrace_hook_t *hook)
 {
     int err;
     err = resolve_address(hook);
@@ -141,31 +141,30 @@ int install_hook(ftrace_hook_t *hook)
     /** Only sys_openat should be traced */
     err = ftrace_set_filter_ip(&hook->ops, hook->address, 0, 0);
     if (err) {
-        pr_err("[syscall-ftrace] ftrace_set_filter_ip() failed: %d\n", err);
+        pr_err("ftrace_set_filter_ip() failed: %d\n", err);
         return err;
     }
 
     err = register_ftrace_function(&hook->ops);
     if (err) {
-        pr_err("[syscall-ftrace] register_ftrace_function() failed: %d\n", err);
+        pr_err("register_ftrace_function() failed: %d\n", err);
         return err;
     }
 
     return 0;
 }
 
-void remove_hook(ftrace_hook_t *hook)
+static void remove_hook(ftrace_hook_t *hook)
 {
     int err;
     err = unregister_ftrace_function(&hook->ops);
     if (err)
-        pr_err("[syscall-ftrace] unregister_ftrace_function() failed: %d\n",
-               err);
+        pr_err("unregister_ftrace_function() failed: %d\n", err);
 
     /** Disable the trace by setting remove to 1 */
     err = ftrace_set_filter_ip(&hook->ops, hook->address, 1, 0);
     if (err)
-        pr_err("[syscall-ftrace] ftrace_set_filter_ip() failed: %d\n", err);
+        pr_err("ftrace_set_filter_ip() failed: %d\n", err);
 }
 
 /** For some reason the kernel segfaults when the parameters are expanded. */
@@ -173,6 +172,7 @@ static asmlinkage long (*original_call)(struct pt_regs *regs);
 static asmlinkage long our_sys_openat(struct pt_regs *regs)
 {
     char *kfilename;
+    int errcode = 0;
     if (current->cred->uid.val != uid)
         return original_call(regs);
     kfilename = kmalloc(GFP_KERNEL, MAX_FILENAME_SIZE * sizeof(char));
@@ -186,14 +186,14 @@ static asmlinkage long our_sys_openat(struct pt_regs *regs)
      * Change regs->si to appropriate registers
      * if you are trying on different architecture.
      */
-    // clang-format off
-    if (copy_from_user(kfilename, (char __user *)regs->si, MAX_FILENAME_SIZE) < 0) {
+    errcode =
+        copy_from_user(kfilename, (char __user *)regs->si, MAX_FILENAME_SIZE);
+    if (errcode < 0) {
         kfree(kfilename);
         return original_call(regs);
     }
-    // clang-format on
 
-    pr_info("[syscall-ftrace] File opened by UID %d: %s\n", uid, kfilename);
+    pr_info("File opened by UID %d: %s\n", uid, kfilename);
     kfree(kfilename);
 
     return original_call(regs);
@@ -208,14 +208,14 @@ static int __init syscall_ftrace_start(void)
     err = install_hook(&sys_openat_hook);
     if (err)
         return err;
-    pr_info("[syscall-ftrace] hooked, spying on uid %d\n", uid);
+    pr_info("hooked, spying on uid %d\n", uid);
     return 0;
 }
 
 static void __exit syscall_ftrace_end(void)
 {
     remove_hook(&sys_openat_hook);
-    pr_info("[syscall-ftrace] removed\n");
+    pr_info("removed\n");
 }
 
 module_init(syscall_ftrace_start);
