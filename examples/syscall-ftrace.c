@@ -70,22 +70,20 @@ static int resolve_address(ftrace_hook_t *hook)
     kallsyms_lookup_name = (unsigned long (*)(const char *))kp.addr;
     unregister_kprobe(&kp);
 
-    if (kallsyms_lookup_name)
-        pr_info("kallsyms_lookup_name is found at 0x%lx\n",
-                (unsigned long)kallsyms_lookup_name);
-    else {
+    if (!kallsyms_lookup_name) {
         pr_err("kallsyms_lookup_name is not found!\n");
         return -1;
     }
+    pr_info("kallsyms_lookup_name is found at 0x%lx\n",
+            (unsigned long)kallsyms_lookup_name);
 
     sys_call_table = (unsigned long **)kallsyms_lookup_name("sys_call_table");
-    if (sys_call_table)
-        pr_info("sys_call_table is found at 0x%lx\n",
-                (unsigned long)sys_call_table);
-    else {
+    if (!sys_call_table) {
         pr_err("sys_call_table is not found!\n");
         return -1;
     }
+    pr_info("sys_call_table is found at 0x%lx\n",
+            (unsigned long)sys_call_table);
 
     hook->address = (unsigned long)sys_call_table[hook->nr];
     *((unsigned long *)hook->orig) = hook->address;
@@ -208,7 +206,7 @@ static int __init syscall_ftrace_start(void)
     err = install_hook(&sys_openat_hook);
     if (err)
         return err;
-    pr_info("hooked, spying on uid %d\n", uid);
+    pr_info("hooked, spying on UID %d\n", uid);
     return 0;
 }
 
