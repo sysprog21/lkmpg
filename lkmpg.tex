@@ -1575,7 +1575,10 @@ Above is the basic structure of the callback function, where the parameters are
   \item \cpp|ip|: The instruction pointer of the function being traced.
   \item \cpp|parent_ip|: The instruction pointer of the caller of the traced function.
   \item \cpp|ops|: A pointer to \cpp|ftrace_ops| that was used to register the callback.
-  \item \cpp|regs|: If \cpp|FTRACE_OPS_FL_SAVE_REGS| or \cpp|FTRACE_OPS_FL_SAVE_REGS_IF_SUPPORTED| are set in the \cpp|ftrace_ops| structure, then this will be pointing to the \cpp|pt_regs| structure like it would be if an breakpoint was placed at the start of the function where \verb|ftrace| was tracing for CPU register access. Otherwise it either contains garbage, or \cpp|NULL|. Do notice that in kernel version later than v5.11, this is replaced with \cpp|struct ftrace_regs *fregs|, with the original \cpp|pt_regs| accessible by \cpp|fregs->regs|.
+  \item \cpp|regs|: If \cpp|FTRACE_OPS_FL_SAVE_REGS| or \cpp|FTRACE_OPS_FL_SAVE_REGS_IF_SUPPORTED| are set in the \cpp|ftrace_ops| structure,
+  then this will be pointing to the \cpp|pt_regs| structure like it would be if an breakpoint was placed at the start of the function where \verb|ftrace| was tracing for CPU register access.
+  Otherwise it either contains garbage, or \cpp|NULL|.
+  Do notice that in kernel version later than v5.11, this is replaced with \cpp|struct ftrace_regs *fregs|, with the original \cpp|pt_regs| accessible by \cpp|fregs->regs|.
 \end{itemize}
 
 Internally, there's a 5-byte \cpp|call| to \cpp|__fentry__| at the beginning (BEFORE function prologue) of a traceable kernel function, which is converted to \cpp|nop| during boot to prevent overhead. When a trace is registered, it is changed back to \cpp|__fentry__| and the registered callback will be executed accordingly.
