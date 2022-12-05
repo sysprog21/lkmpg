@@ -1645,6 +1645,9 @@ The check is performed by checking whether \cpp|parent_ip| is within this module
 During the first call, \cpp|parent_ip| points to somewhere within the kernel,
 while during the second call it points to somewhere in our ``spying'' function, which is within the module.
 
+When inserting the module, you should provide the uid you want to spy on as an parameter.
+For example, you can spy on yourself by \verb|sudo insmod syscall-ftrace.ko uid=$UID|.
+
 \samplec{examples/syscall-ftrace.c}
 
 \section{Blocking Processes and threads}
