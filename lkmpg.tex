@@ -1559,8 +1559,7 @@ It is an internal tracer designed to help out developers and designers of system
 It can be used for debugging or analyzing latencies and performance issues that take place outside of user-space.
 It is usually used as an event tracer by attaching callbacks to the beginning of functions in order to record and trace the flow of the kernel.
 
-The basic prototype of the callback function is
-\begin{verbatim}
+\begin{code}
 struct ftrace_ops {
   ftrace_func_t func; // callback function
   unsigned long flags; // ftrace flags
@@ -1568,9 +1567,9 @@ struct ftrace_ops {
 };
 void callback_func(unsigned long ip, unsigned long parent_ip,
                    struct ftrace_ops *ops, struct pt_regs *regs);
-\end{verbatim}
+\end{code}
 
-where
+Above is the basic structure of the callback function, where the parameters are
 
 \begin{itemize}
   \item \cpp|ip|: The instruction pointer of the function being traced.
