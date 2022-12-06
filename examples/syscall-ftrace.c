@@ -29,7 +29,7 @@ MODULE_LICENSE("GPL");
 #undef pr_fmt
 #define pr_fmt(fmt) "[syscall-ftrace] " fmt
 
-/* UID we want to spy on - will be filled from the command line. */
+/** UID we want to spy on - will be filled from the command line. */
 static int uid = 0;
 module_param(uid, int, 0644);
 
@@ -66,6 +66,7 @@ static int resolve_address(ftrace_hook_t *hook)
 {
     static struct kprobe kp = { .symbol_name = "kallsyms_lookup_name" };
     unsigned long (*kallsyms_lookup_name)(const char *name);
+
     register_kprobe(&kp);
     kallsyms_lookup_name = (unsigned long (*)(const char *))kp.addr;
     unregister_kprobe(&kp);
@@ -110,6 +111,7 @@ static void notrace ftrace_thunk(unsigned long ip, unsigned long parent_ip,
                                  struct ftrace_regs *fregs)
 {
     ftrace_hook_t *hook = container_of(ops, ftrace_hook_t, ops);
+
     if (!within_module(parent_ip, THIS_MODULE))
         fregs->regs.ip = (unsigned long)hook->new;
 }
@@ -119,6 +121,7 @@ static void notrace ftrace_thunk(unsigned long ip, unsigned long parent_ip,
                                  struct ftrace_ops *ops, struct pt_regs *regs)
 {
     ftrace_hook_t *hook = container_of(ops, ftrace_hook_t, ops);
+
     if (!within_module(parent_ip, THIS_MODULE))
         regs->ip = (unsigned long)hook->new;
 }
@@ -128,6 +131,7 @@ static void notrace ftrace_thunk(unsigned long ip, unsigned long parent_ip,
 static int install_hook(ftrace_hook_t *hook)
 {
     int err;
+
     err = resolve_address(hook);
     if (err)
         return err;
@@ -155,6 +159,7 @@ static int install_hook(ftrace_hook_t *hook)
 static void remove_hook(ftrace_hook_t *hook)
 {
     int err;
+
     err = unregister_ftrace_function(&hook->ops);
     if (err)
         pr_err("unregister_ftrace_function() failed: %d\n", err);
@@ -171,9 +176,10 @@ static asmlinkage long our_sys_openat(struct pt_regs *regs)
 {
     char *kfilename;
     int errcode = 0;
+
     if (current->cred->uid.val != uid)
         return original_call(regs);
-    kfilename = kmalloc(GFP_KERNEL, MAX_FILENAME_SIZE * sizeof(char));
+    kfilename = kmalloc(MAX_FILENAME_SIZE * sizeof(char), GFP_KERNEL);
     if (!kfilename)
         return original_call(regs);
 
@@ -203,6 +209,7 @@ static ftrace_hook_t sys_openat_hook =
 static int __init syscall_ftrace_start(void)
 {
     int err;
+
     err = install_hook(&sys_openat_hook);
     if (err)
         return err;
