@@ -10,15 +10,15 @@ on:
 
 jobs:
   validate:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: checkout code
         uses: actions/checkout@v3.1.0
       - name: validate coding style and functionality
         run: |
-            sudo apt-get install -q -y clang-format-11
+            sudo apt-get install -q -y clang-format-12
             sudo apt-get install -q -y cppcheck
-            sudo apt-get install -q -y gcc-10
+            sudo apt-get install -q -y gcc-11
             .ci/check-format.sh
             .ci/static-analysis.sh
             .ci/build-n-run.sh
