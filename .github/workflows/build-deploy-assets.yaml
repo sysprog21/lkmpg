@@ -12,7 +12,7 @@ jobs:
     container: twtug/lkmpg
 
     steps:
-      - uses: actions/checkout@v3.0.2
+      - uses: actions/checkout@v3.1.0
       - name: Build
         run: |
           make all
@@ -29,7 +29,7 @@ jobs:
             lkmpg.pdf
             lkmpg-html.tar.gz
       - name: Release
-        uses: softprops/action-gh-release@v0.1.14
+        uses: softprops/action-gh-release@v0.1.15
         with:
           files: |
             lkmpg.pdf
