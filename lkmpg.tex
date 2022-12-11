@@ -1846,7 +1846,7 @@ The way to implement this is to call \cpp|request_irq()| to get your interrupt h
 In practice IRQ handling can be a bit more complex.
 Hardware is often designed in a way that chains two interrupt controllers, so that all the IRQs from interrupt controller B are cascaded to a certain IRQ from interrupt controller A.
 Of course, that requires that the kernel finds out which IRQ it really was afterwards and that adds overhead. Other architectures offer some special, very low overhead, so called "fast IRQ" or FIQs.
-To take advantage of them requires handlers to be written in assembler, so they do not really fit into the kernel.
+To take advantage of them requires handlers to be written in assembly language, so they do not really fit into the kernel.
 They can be made to work similar to the others, but after that procedure, they are no longer any faster than "common" IRQs.
 SMP enabled kernels running on systems with more than one processor need to solve another truckload of problems.
 It is not enough to know if a certain IRQs has happened, it's also important to know what CPU(s) it was for.
