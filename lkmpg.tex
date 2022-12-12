@@ -1891,6 +1891,7 @@ To handle crypto stuff, the kernel has its own API enabling common methods of en
 
 Calculating and checking the hashes of things is a common operation.
 Here is a demonstration of how to calculate a sha256 hash within a kernel module.
+To provide the sha256 algorithm support, make sure \cpp|CONFIG_CRYPTO_SHA256| is enabled in kernel.
 
 \samplec{examples/cryptosha256.c}
 
