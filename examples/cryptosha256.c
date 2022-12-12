@@ -26,8 +26,12 @@ static int cryptosha256_init(void)
     struct shash_desc *shash;
 
     sha256 = crypto_alloc_shash("sha256", 0, 0);
-    if (IS_ERR(sha256))
+    if (IS_ERR(sha256)) {
+        pr_err(
+            "%s(): Failed to allocate sha256 algorithm, enable CONFIG_CRYPTO_SHA256 and try again.\n",
+            __func__);
         return -1;
+    }
 
     shash = kmalloc(sizeof(struct shash_desc) + crypto_shash_descsize(sha256),
                     GFP_KERNEL);
