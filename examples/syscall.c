@@ -15,6 +15,8 @@
 #include <linux/module.h>
 #include <linux/moduleparam.h> /* which will have params */
 #include <linux/unistd.h> /* The list of system calls */
+#include <linux/cred.h> /* For current_uid() */
+#include <linux/uidgid.h> /* For __kuid_val() */
 #include <linux/version.h>
 
 /* For the current (process) structure, we need this to know who the
@@ -62,22 +64,26 @@ module_param(sym, ulong, 0644);
 static unsigned long **sys_call_table;
 
 /* UID we want to spy on - will be filled from the command line. */
-static int uid;
+static uid_t uid = -1;
 module_param(uid, int, 0644);
 
 /* A pointer to the original system call. The reason we keep this, rather
- * than call the original function (sys_open), is because somebody else
+ * than call the original function (sys_openat), is because somebody else
  * might have replaced the system call before us. Note that this is not
- * 100% safe, because if another module replaced sys_open before us,
+ * 100% safe, because if another module replaced sys_openat before us,
  * then when we are inserted, we will call the function in that module -
  * and it might be removed before we are.
  *
- * Another reason for this is that we can not get sys_open.
+ * Another reason for this is that we can not get sys_openat.
  * It is a static variable, so it is not exported.
  */
-static asmlinkage int (*original_call)(const char __user *, int, umode_t);
+#ifdef CONFIG_ARCH_HAS_SYSCALL_WRAPPER
+static asmlinkage long (*original_call)(const struct pt_regs *);
+#else
+static asmlinkage long (*original_call)(int, const char __user *, int, umode_t);
+#endif
 
-/* The function we will replace sys_open (the function called when you
+/* The function we will replace sys_openat (the function called when you
  * call the open system call) with. To find the exact prototype, with
  * the number and type of arguments, we find the original function first
  * (it is at fs/open.c).
@@ -87,25 +93,41 @@ static asmlinkage int (*original_call)(const char __user *, int, umode_t);
  * wreck havoc and require programs to be recompiled, since the system
  * calls are the interface between the kernel and the processes).
  */
-static asmlinkage int our_sys_open(const char __user *filename, int flags,
-                                   umode_t mode)
+#ifdef CONFIG_ARCH_HAS_SYSCALL_WRAPPER
+static asmlinkage long our_sys_openat(const struct pt_regs *regs)
+#else
+static asmlinkage long our_sys_openat(int dfd, const char __user *filename,
+                                      int flags, umode_t mode)
+#endif
 {
     int i = 0;
     char ch;
 
+    if (__kuid_val(current_uid()) != uid)
+        goto orig_call;
+
     /* Report the file, if relevant */
     pr_info("Opened file by %d: ", uid);
     do {
+#ifdef CONFIG_ARCH_HAS_SYSCALL_WRAPPER
+        get_user(ch, (char __user *)regs->si + i);
+#else
         get_user(ch, (char __user *)filename + i);
+#endif
         i++;
         pr_info("%c", ch);
     } while (ch != 0);
     pr_info("\n");
 
-    /* Call the original sys_open - otherwise, we lose the ability to
+orig_call:
+    /* Call the original sys_openat - otherwise, we lose the ability to
      * open files.
      */
-    return original_call(filename, flags, mode);
+#ifdef CONFIG_ARCH_HAS_SYSCALL_WRAPPER
+    return original_call(regs);
+#else
+    return original_call(dfd, filename, flags, mode);
+#endif
 }
 
 static unsigned long **acquire_sys_call_table(void)
@@ -192,10 +214,10 @@ static int __init syscall_start(void)
     disable_write_protection();
 
     /* keep track of the original open function */
-    original_call = (void *)sys_call_table[__NR_open];
+    original_call = (void *)sys_call_table[__NR_openat];
 
-    /* use our open function instead */
-    sys_call_table[__NR_open] = (unsigned long *)our_sys_open;
+    /* use our openat function instead */
+    sys_call_table[__NR_openat] = (unsigned long *)our_sys_openat;
 
     enable_write_protection();
 
@@ -210,7 +232,7 @@ static void __exit syscall_end(void)
         return;
 
     /* Return the system call back to normal */
-    if (sys_call_table[__NR_open] != (unsigned long *)our_sys_open) {
+    if (sys_call_table[__NR_openat] != (unsigned long *)our_sys_openat) {
         pr_alert("Somebody else also played with the ");
         pr_alert("open system call\n");
         pr_alert("The system may be left in ");
@@ -218,7 +240,7 @@ static void __exit syscall_end(void)
     }
 
     disable_write_protection();
-    sys_call_table[__NR_open] = (unsigned long *)original_call;
+    sys_call_table[__NR_openat] = (unsigned long *)original_call;
     enable_write_protection();
 
     msleep(2000);
