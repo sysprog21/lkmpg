@@ -75,7 +75,7 @@ module_param(uid, int, 0644);
  * Another reason for this is that we can not get sys_open.
  * It is a static variable, so it is not exported.
  */
-static asmlinkage int (*original_call)(const char *, int, int);
+static asmlinkage int (*original_call)(const char __user *, int, umode_t);
 
 /* The function we will replace sys_open (the function called when you
  * call the open system call) with. To find the exact prototype, with
@@ -87,7 +87,8 @@ static asmlinkage int (*original_call)(const char *, int, int);
  * wreck havoc and require programs to be recompiled, since the system
  * calls are the interface between the kernel and the processes).
  */
-static asmlinkage int our_sys_open(const char *filename, int flags, int mode)
+static asmlinkage int our_sys_open(const char __user *filename, int flags,
+                                   umode_t mode)
 {
     int i = 0;
     char ch;
@@ -107,7 +108,7 @@ static asmlinkage int our_sys_open(const char *filename, int flags, int mode)
     return original_call(filename, flags, mode);
 }
 
-static unsigned long **aquire_sys_call_table(void)
+static unsigned long **acquire_sys_call_table(void)
 {
 #ifdef HAVE_KSYS_CLOSE
     unsigned long int offset = PAGE_OFFSET;
@@ -185,7 +186,7 @@ static void disable_write_protection(void)
 
 static int __init syscall_start(void)
 {
-    if (!(sys_call_table = aquire_sys_call_table()))
+    if (!(sys_call_table = acquire_sys_call_table()))
         return -1;
 
     disable_write_protection();
