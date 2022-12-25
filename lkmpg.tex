@@ -1529,24 +1529,24 @@ For more information, check out the following:
 
 The source code here is an example of such a kernel module.
 We want to ``spy'' on a certain user, and to \cpp|pr_info()| a message whenever that user opens a file.
-Towards this end, we replace the system call to open a file with our own function, called \cpp|our_sys_open|.
+Towards this end, we replace the system call to open a file with our own function, called \cpp|our_sys_openat|.
 This function checks the uid (user's id) of the current process, and if it is equal to the uid we spy on, it calls \cpp|pr_info()| to display the name of the file to be opened.
-Then, either way, it calls the original \cpp|open()| function with the same parameters, to actually open the file.
+Then, either way, it calls the original \cpp|openat()| function with the same parameters, to actually open the file.
 
 The \cpp|init_module| function replaces the appropriate location in \cpp|sys_call_table| and keeps the original pointer in a variable.
 The \cpp|cleanup_module| function uses that variable to restore everything back to normal.
 This approach is dangerous, because of the possibility of two kernel modules changing the same system call.
-Imagine we have two kernel modules, A and B. A's open system call will be \cpp|A_open| and B's will be \cpp|B_open|.
-Now, when A is inserted into the kernel, the system call is replaced with \cpp|A_open|, which will call the original \cpp|sys_open| when it is done.
-Next, B is inserted into the kernel, which replaces the system call with \cpp|B_open|, which will call what it thinks is the original system call, \cpp|A_open|, when it's done.
+Imagine we have two kernel modules, A and B. A's openat system call will be \cpp|A_openat| and B's will be \cpp|B_openat|.
+Now, when A is inserted into the kernel, the system call is replaced with \cpp|A_openat|, which will call the original \cpp|sys_openat| when it is done.
+Next, B is inserted into the kernel, which replaces the system call with \cpp|B_openat|, which will call what it thinks is the original system call, \cpp|A_openat|, when it's done.
 
-Now, if B is removed first, everything will be well --- it will simply restore the system call to \cpp|A_open|, which calls the original.
+Now, if B is removed first, everything will be well --- it will simply restore the system call to \cpp|A_openat|, which calls the original.
 However, if A is removed and then B is removed, the system will crash.
-A's removal will restore the system call to the original, \cpp|sys_open|, cutting B out of the loop.
-Then, when B is removed, it will restore the system call to what it thinks is the original, \cpp|A_open|, which is no longer in memory.
+A's removal will restore the system call to the original, \cpp|sys_openat|, cutting B out of the loop.
+Then, when B is removed, it will restore the system call to what it thinks is the original, \cpp|A_openat|, which is no longer in memory.
 At first glance, it appears we could solve this particular problem by checking if the system call is equal to our open function and if so not changing it at all (so that B won't change the system call when it is removed), but that will cause an even worse problem.
-When A is removed, it sees that the system call was changed to \cpp|B_open| so that it is no longer pointing to \cpp|A_open|, so it will not restore it to \cpp|sys_open| before it is removed from memory.
-Unfortunately, \cpp|B_open| will still try to call \cpp|A_open| which is no longer there, so that even without removing B the system would crash.
+When A is removed, it sees that the system call was changed to \cpp|B_openat| so that it is no longer pointing to \cpp|A_openat|, so it will not restore it to \cpp|sys_openat| before it is removed from memory.
+Unfortunately, \cpp|B_openat| will still try to call \cpp|A_openat| which is no longer there, so that even without removing B the system would crash.
 
 Note that all the related problems make syscall stealing unfeasible for production use.
 In order to keep people from doing potential harmful things \cpp|sys_call_table| is no longer exported.
