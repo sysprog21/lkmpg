@@ -63,7 +63,6 @@ static struct platform_driver devicemodel_driver = {
     .driver =
         {
             .name = "devicemodel_example",
-            .owner = THIS_MODULE,
             .pm = &devicemodel_pm_ops,
         },
     .probe = devicemodel_probe,
