@@ -2,15 +2,17 @@
  * chardev2.c - Create an input/output character device
  */
 
+#include <linux/atomic.h>
 #include <linux/cdev.h>
 #include <linux/delay.h>
 #include <linux/device.h>
 #include <linux/fs.h>
 #include <linux/init.h>
-#include <linux/irq.h>
-#include <linux/kernel.h> /* We are doing kernel work */
 #include <linux/module.h> /* Specifically, a module */
-#include <linux/poll.h>
+#include <linux/printk.h>
+#include <linux/types.h>
+
+#include <asm/errno.h>
 
 #include "chardev.h"
 #define SUCCESS 0

@@ -3,15 +3,19 @@
  * you have read from the dev file
  */
 
+#include <linux/atomic.h>
 #include <linux/cdev.h>
 #include <linux/delay.h>
 #include <linux/device.h>
 #include <linux/fs.h>
 #include <linux/init.h>
-#include <linux/irq.h>
-#include <linux/kernel.h>
+#include <linux/kernel.h> /* for sprintf() */
 #include <linux/module.h>
-#include <linux/poll.h>
+#include <linux/printk.h>
+#include <linux/types.h>
+#include <linux/uaccess.h> /* for get_user and put_user */
+
+#include <asm/errno.h>
 
 /*  Prototypes - this would normally go in a .h file */
 static int device_open(struct inode *, struct file *);

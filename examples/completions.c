@@ -2,6 +2,7 @@
  * completions.c
  */
 #include <linux/completion.h>
+#include <linux/err.h> /* for IS_ERR() */
 #include <linux/init.h>
 #include <linux/kernel.h>
 #include <linux/kthread.h>
