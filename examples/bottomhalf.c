@@ -11,8 +11,8 @@
 #include <linux/delay.h>
 #include <linux/gpio.h>
 #include <linux/interrupt.h>
-#include <linux/kernel.h>
 #include <linux/module.h>
+#include <linux/printk.h>
 
 /* Macro DECLARE_TASKLET_OLD exists for compatibiity.
  * See https://lwn.net/Articles/830964/

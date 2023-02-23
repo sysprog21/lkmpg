@@ -2,8 +2,8 @@
  * example_spinlock.c
  */
 #include <linux/init.h>
-#include <linux/kernel.h>
 #include <linux/module.h>
+#include <linux/printk.h>
 #include <linux/spinlock.h>
 
 static DEFINE_SPINLOCK(sl_static);

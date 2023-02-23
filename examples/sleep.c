@@ -5,8 +5,9 @@
 
 #include <linux/atomic.h>
 #include <linux/fs.h>
-#include <linux/kernel.h> /* We're doing kernel work */
+#include <linux/kernel.h> /* for sprintf() */
 #include <linux/module.h> /* Specifically, a module */
+#include <linux/printk.h>
 #include <linux/proc_fs.h> /* Necessary because we use proc fs */
 #include <linux/types.h>
 #include <linux/uaccess.h> /* for get_user and put_user */

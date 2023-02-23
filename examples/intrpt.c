@@ -10,8 +10,9 @@
 
 #include <linux/gpio.h>
 #include <linux/interrupt.h>
-#include <linux/kernel.h>
+#include <linux/kernel.h> /* for ARRAY_SIZE() */
 #include <linux/module.h>
+#include <linux/printk.h>
 
 static int button_irqs[] = { -1, -1 };
 

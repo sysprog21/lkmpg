@@ -401,7 +401,7 @@ The \cpp|cleanup_module()| function is supposed to undo whatever \cpp|init_modul
 
 Lastly, every kernel module needs to include \verb|<linux/module.h>|.
 % TODO: adjust the section anchor
-We needed to include \verb|<linux/kernel.h>| only for the macro expansion for the \cpp|pr_alert()| log level, which you'll learn about in Section \ref{sec:printk}.
+We needed to include \verb|<linux/printk.h>| only for the macro expansion for the \cpp|pr_alert()| log level, which you'll learn about in Section \ref{sec:printk}.
 
 \begin{enumerate}
   \item A point about coding style.
