@@ -2,9 +2,10 @@
  * hello-5.c - Demonstrates command line argument passing to a module.
  */
 #include <linux/init.h>
-#include <linux/kernel.h>
+#include <linux/kernel.h> /* for ARRAY_SIZE() */
 #include <linux/module.h>
 #include <linux/moduleparam.h>
+#include <linux/printk.h>
 #include <linux/stat.h>
 
 MODULE_LICENSE("GPL");

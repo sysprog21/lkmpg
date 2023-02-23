@@ -3,13 +3,20 @@
  * at the same time, put all but one to sleep.
  */
 
-#include <linux/kernel.h> /* We're doing kernel work */
+#include <linux/atomic.h>
+#include <linux/fs.h>
+#include <linux/kernel.h> /* for sprintf() */
 #include <linux/module.h> /* Specifically, a module */
+#include <linux/printk.h>
 #include <linux/proc_fs.h> /* Necessary because we use proc fs */
-#include <linux/sched.h> /* For putting processes to sleep and
-                                   waking them up */
+#include <linux/types.h>
 #include <linux/uaccess.h> /* for get_user and put_user */
 #include <linux/version.h>
+#include <linux/wait.h> /* For putting processes to sleep and
+                                   waking them up */
+
+#include <asm/current.h>
+#include <asm/errno.h>
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 6, 0)
 #define HAVE_PROC_OPS

@@ -1,9 +1,9 @@
 /*
  * example_rwlock.c
  */
-#include <linux/interrupt.h>
-#include <linux/kernel.h>
 #include <linux/module.h>
+#include <linux/printk.h>
+#include <linux/rwlock.h>
 
 static DEFINE_RWLOCK(myrwlock);
 

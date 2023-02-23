@@ -3,8 +3,8 @@
  * This is preferred over using init_module() and cleanup_module().
  */
 #include <linux/init.h> /* Needed for the macros */
-#include <linux/kernel.h> /* Needed for pr_info() */
 #include <linux/module.h> /* Needed by all modules */
+#include <linux/printk.h> /* Needed for pr_info() */
 
 static int __init hello_2_init(void)
 {

@@ -1,9 +1,10 @@
 /*
  * example_atomic.c
  */
-#include <linux/interrupt.h>
-#include <linux/kernel.h>
+#include <linux/atomic.h>
+#include <linux/bitops.h>
 #include <linux/module.h>
+#include <linux/printk.h>
 
 #define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
 #define BYTE_TO_BINARY(byte)                                                   \
