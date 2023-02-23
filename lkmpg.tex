@@ -204,15 +204,15 @@ sudo apt-get update
 apt-cache search linux-headers-`uname -r`
 \end{codebash}
 
-On Arch Linux:
-\begin{codebash}
-sudo pacman -S linux-headers
-\end{codebash}
-
 This will tell you what kernel header files are available.
 Then for example:
 \begin{codebash}
 sudo apt-get install kmod linux-headers-5.4.0-80-generic
+\end{codebash}
+
+On Arch Linux:
+\begin{codebash}
+sudo pacman -S linux-headers
 \end{codebash}
 
 \section{Examples}
