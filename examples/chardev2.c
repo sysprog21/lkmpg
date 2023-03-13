@@ -11,6 +11,7 @@
 #include <linux/module.h> /* Specifically, a module */
 #include <linux/printk.h>
 #include <linux/types.h>
+#include <linux/uaccess.h> /* for get_user and put_user */
 
 #include <asm/errno.h>
 
