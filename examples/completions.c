@@ -7,6 +7,7 @@
 #include <linux/kthread.h>
 #include <linux/module.h>
 #include <linux/printk.h>
+#include <linux/version.h>
 
 static struct {
     struct completion crank_comp;
@@ -18,7 +19,11 @@ static int machine_crank_thread(void *arg)
     pr_info("Turn the crank\n");
 
     complete_all(&machine.crank_comp);
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 17, 0)
+    kthread_complete_and_exit(&machine.crank_comp, 0);
+#else
     complete_and_exit(&machine.crank_comp, 0);
+#endif
 }
 
 static int machine_flywheel_spinup_thread(void *arg)
@@ -28,7 +33,11 @@ static int machine_flywheel_spinup_thread(void *arg)
     pr_info("Flywheel spins up\n");
 
     complete_all(&machine.flywheel_comp);
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 17, 0)
+    kthread_complete_and_exit(&machine.flywheel_comp, 0);
+#else
     complete_and_exit(&machine.flywheel_comp, 0);
+#endif
 }
 
 static int completions_init(void)
