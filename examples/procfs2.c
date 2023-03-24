@@ -25,7 +25,7 @@ static char procfs_buffer[PROCFS_MAX_SIZE];
 static unsigned long procfs_buffer_size = 0;
 
 /* This function is called then the /proc file is read */
-static ssize_t procfile_read(struct file *filePointer, char __user *buffer,
+static ssize_t procfile_read(struct file *file_pointer, char __user *buffer,
                              size_t buffer_length, loff_t *offset)
 {
     char s[13] = "HelloWorld!\n";
@@ -36,7 +36,7 @@ static ssize_t procfile_read(struct file *filePointer, char __user *buffer,
         pr_info("copy_to_user failed\n");
         ret = 0;
     } else {
-        pr_info("procfile read %s\n", filePointer->f_path.dentry->d_name.name);
+        pr_info("procfile read %s\n", file_pointer->f_path.dentry->d_name.name);
         *offset += len;
     }
 
