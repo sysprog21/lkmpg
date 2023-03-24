@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>March 14, 2023</span></div>
+<div class='date'><span class='ecrm-1200'>March 24, 2023</span></div>
                                                                   
 
                                                                   
@@ -1897,7 +1897,7 @@ HelloWorld!
 <a id='x1-33043r16'></a><span class='ecrm-0500'>16</span> 
 <a id='x1-33045r17'></a><span class='ecrm-0500'>17</span><span id='textcolor597'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor598'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> proc_dir_entry *our_proc_file;</span> 
 <a id='x1-33047r18'></a><span class='ecrm-0500'>18</span> 
-<a id='x1-33049r19'></a><span class='ecrm-0500'>19</span><span id='textcolor599'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor600'><span class='ectt-0800'>ssize_t</span></span><span class='ectt-0800'> procfile_read(</span><span id='textcolor601'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file *filePointer, </span><span id='textcolor602'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> __user *buffer,</span> 
+<a id='x1-33049r19'></a><span class='ecrm-0500'>19</span><span id='textcolor599'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor600'><span class='ectt-0800'>ssize_t</span></span><span class='ectt-0800'> procfile_read(</span><span id='textcolor601'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file *file_pointer, </span><span id='textcolor602'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> __user *buffer,</span> 
 <a id='x1-33051r20'></a><span class='ecrm-0500'>20</span><span class='ectt-0800'>                             </span><span id='textcolor603'><span class='ectt-0800'>size_t</span></span><span class='ectt-0800'> buffer_length, loff_t *offset)</span> 
 <a id='x1-33053r21'></a><span class='ecrm-0500'>21</span><span class='ectt-0800'>{</span> 
 <a id='x1-33055r22'></a><span class='ecrm-0500'>22</span><span class='ectt-0800'>    </span><span id='textcolor604'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> s[13] = </span><span id='textcolor605'><span class='ectt-0800'>"HelloWorld!</span></span><span id='textcolor606'><span class='ectt-0800'>\n</span></span><span id='textcolor607'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>;</span> 
@@ -1908,7 +1908,7 @@ HelloWorld!
 <a id='x1-33065r27'></a><span class='ecrm-0500'>27</span><span class='ectt-0800'>        pr_info(</span><span id='textcolor612'><span class='ectt-0800'>"copy_to_user failed</span></span><span id='textcolor613'><span class='ectt-0800'>\n</span></span><span id='textcolor614'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-33067r28'></a><span class='ecrm-0500'>28</span><span class='ectt-0800'>        ret = 0;</span> 
 <a id='x1-33069r29'></a><span class='ecrm-0500'>29</span><span class='ectt-0800'>    } </span><span id='textcolor615'><span class='ectt-0800'>else</span></span><span class='ectt-0800'> {</span> 
-<a id='x1-33071r30'></a><span class='ecrm-0500'>30</span><span class='ectt-0800'>        pr_info(</span><span id='textcolor616'><span class='ectt-0800'>"procfile read %s</span></span><span id='textcolor617'><span class='ectt-0800'>\n</span></span><span id='textcolor618'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, filePointer-&gt;f_path.dentry-&gt;d_name.name);</span> 
+<a id='x1-33071r30'></a><span class='ecrm-0500'>30</span><span class='ectt-0800'>        pr_info(</span><span id='textcolor616'><span class='ectt-0800'>"procfile read %s</span></span><span id='textcolor617'><span class='ectt-0800'>\n</span></span><span id='textcolor618'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, file_pointer-&gt;f_path.dentry-&gt;d_name.name);</span> 
 <a id='x1-33073r31'></a><span class='ecrm-0500'>31</span><span class='ectt-0800'>        *offset += len;</span> 
 <a id='x1-33075r32'></a><span class='ecrm-0500'>32</span><span class='ectt-0800'>    }</span> 
 <a id='x1-33077r33'></a><span class='ecrm-0500'>33</span> 
@@ -2030,7 +2030,7 @@ because data is already in kernel space.
 <a id='x1-35058r25'></a><span class='ecrm-0500'>25</span><span id='textcolor673'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor674'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor675'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> procfs_buffer_size = 0;</span> 
 <a id='x1-35060r26'></a><span class='ecrm-0500'>26</span> 
 <a id='x1-35062r27'></a><span class='ecrm-0500'>27</span><span id='textcolor676'><span class='ectt-0800'>/* This function is called then the /proc file is read */</span></span> 
-<a id='x1-35064r28'></a><span class='ecrm-0500'>28</span><span id='textcolor677'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor678'><span class='ectt-0800'>ssize_t</span></span><span class='ectt-0800'> procfile_read(</span><span id='textcolor679'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file *filePointer, </span><span id='textcolor680'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> __user *buffer,</span> 
+<a id='x1-35064r28'></a><span class='ecrm-0500'>28</span><span id='textcolor677'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor678'><span class='ectt-0800'>ssize_t</span></span><span class='ectt-0800'> procfile_read(</span><span id='textcolor679'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file *file_pointer, </span><span id='textcolor680'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> __user *buffer,</span> 
 <a id='x1-35066r29'></a><span class='ecrm-0500'>29</span><span class='ectt-0800'>                             </span><span id='textcolor681'><span class='ectt-0800'>size_t</span></span><span class='ectt-0800'> buffer_length, loff_t *offset)</span> 
 <a id='x1-35068r30'></a><span class='ecrm-0500'>30</span><span class='ectt-0800'>{</span> 
 <a id='x1-35070r31'></a><span class='ecrm-0500'>31</span><span class='ectt-0800'>    </span><span id='textcolor682'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> s[13] = </span><span id='textcolor683'><span class='ectt-0800'>"HelloWorld!</span></span><span id='textcolor684'><span class='ectt-0800'>\n</span></span><span id='textcolor685'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>;</span> 
@@ -2041,7 +2041,7 @@ because data is already in kernel space.
 <a id='x1-35080r36'></a><span class='ecrm-0500'>36</span><span class='ectt-0800'>        pr_info(</span><span id='textcolor690'><span class='ectt-0800'>"copy_to_user failed</span></span><span id='textcolor691'><span class='ectt-0800'>\n</span></span><span id='textcolor692'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-35082r37'></a><span class='ecrm-0500'>37</span><span class='ectt-0800'>        ret = 0;</span> 
 <a id='x1-35084r38'></a><span class='ecrm-0500'>38</span><span class='ectt-0800'>    } </span><span id='textcolor693'><span class='ectt-0800'>else</span></span><span class='ectt-0800'> {</span> 
-<a id='x1-35086r39'></a><span class='ecrm-0500'>39</span><span class='ectt-0800'>        pr_info(</span><span id='textcolor694'><span class='ectt-0800'>"procfile read %s</span></span><span id='textcolor695'><span class='ectt-0800'>\n</span></span><span id='textcolor696'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, filePointer-&gt;f_path.dentry-&gt;d_name.name);</span> 
+<a id='x1-35086r39'></a><span class='ecrm-0500'>39</span><span class='ectt-0800'>        pr_info(</span><span id='textcolor694'><span class='ectt-0800'>"procfile read %s</span></span><span id='textcolor695'><span class='ectt-0800'>\n</span></span><span id='textcolor696'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, file_pointer-&gt;f_path.dentry-&gt;d_name.name);</span> 
 <a id='x1-35088r40'></a><span class='ecrm-0500'>40</span><span class='ectt-0800'>        *offset += len;</span> 
 <a id='x1-35090r41'></a><span class='ecrm-0500'>41</span><span class='ectt-0800'>    }</span> 
 <a id='x1-35092r42'></a><span class='ecrm-0500'>42</span> 
