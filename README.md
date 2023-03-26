@@ -36,7 +36,7 @@ $ sudo apt install make texlive-full
 $ sudo pacman -S make texlive-most texlive-bin
 
 # macOS
-$ brew install --cask mactex
+$ brew install mactex
 $ sudo tlmgr update --self
 ```
 
