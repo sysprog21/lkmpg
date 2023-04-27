@@ -1582,7 +1582,7 @@ That function wakes up all the processes in the queue (there's no mechanism to o
 It then returns and the process which just closed the file can continue to run.
 In time, the scheduler decides that that process has had enough and gives control of the CPU to another process.
 Eventually, one of the processes which was in the queue will be given control of the CPU by the scheduler.
-It starts at the point right after the call to \cpp|module_interruptible_sleep_on|.
+It starts at the point right after the call to \cpp|wait_event_interruptible|.
 
 This means that the process is still in kernel mode - as far as the process is concerned, it issued the open system call and the system call has not returned yet.
 The process does not know somebody else used the CPU for most of the time between the moment it issued the call and the moment it returned.
@@ -1594,8 +1594,8 @@ So we will use \sh|tail -f| to keep the file open in the background, while tryin
 As soon as the first background process is killed with kill \%1 , the second is woken up, is able to access the file and finally terminates.
 
 To make our life more interesting, \cpp|module_close| does not have a monopoly on waking up the processes which wait to access the file.
-A signal, such as \emph{Ctrl +c} (\textbf{SIGINT}) can also wake up a process. This is because we used \cpp|module_interruptible_sleep_on|.
-We could have used \cpp|module_sleep_on| instead, but that would have resulted in extremely angry users whose \emph{Ctrl+c}'s are ignored.
+A signal, such as \emph{Ctrl +c} (\textbf{SIGINT}) can also wake up a process. This is because we used \cpp|wait_event_interruptible|.
+We could have used \cpp|wait_event| instead, but that would have resulted in extremely angry users whose \emph{Ctrl+c}'s are ignored.
 
 In that case, we want to return with \cpp|-EINTR| immediately. This is important so users can, for example, kill the process before it receives the file.
 
