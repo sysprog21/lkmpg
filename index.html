@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>March 26, 2023</span></div>
+<div class='date'><span class='ecrm-1200'>April 27, 2023</span></div>
                                                                   
 
                                                                   
@@ -3783,7 +3783,7 @@ closed the file can continue to run. In time, the scheduler decides that that
 process has had enough and gives control of the CPU to another process.
 Eventually, one of the processes which was in the queue will be given control
 of the CPU by the scheduler. It starts at the point right after the call to
-<code> <span class='ectt-1000'>module_interruptible_sleep_on</span>
+<code> <span class='ectt-1000'>wait_event_interruptible</span>
 </code>.
 </p><!-- l. 1587 --><p class='indent'>   This means that the process is still in kernel mode - as far as the process
 is concerned, it issued the open system call and the system call has not
@@ -3801,8 +3801,8 @@ able to access the file and finally terminates.
 </p><!-- l. 1596 --><p class='indent'>   To make our life more interesting, <code>  <span class='ectt-1000'>module_close</span>
 </code> does not have a monopoly on waking up the processes which wait to access the file.
 A signal, such as <span class='ecti-1000'>Ctrl +c </span>(<span class='ecbx-1000'>SIGINT</span>) can also wake up a process. This is because we
-used <code>  <span class='ectt-1000'>module_interruptible_sleep_on</span>
-</code>. We could have used <code>  <span class='ectt-1000'>module_sleep_on</span>
+used <code>  <span class='ectt-1000'>wait_event_interruptible</span>
+</code>. We could have used <code>  <span class='ectt-1000'>wait_event</span>
 </code> instead, but that would have resulted in extremely angry users whose <span class='ecti-1000'>Ctrl+c</span>’s are
 ignored.
 </p><!-- l. 1600 --><p class='indent'>   In that case, we want to return with
