@@ -84,13 +84,12 @@ function do_gcc()
 
 function do_smatch()
 {
-    wget -q https://repo.or.cz/smatch.git/snapshot/refs/heads/master.tar.gz
+    git clone https://github.com/error27/smatch.git --depth=1
     if [ $? -ne 0 ]; then
         echo "Failed to download smatch."
         exit 1
     fi
-    tar -xzf master.tar.gz
-    pushd smatch-master-*
+    pushd smatch
     make smatch || exit 1
     local SMATCH=$(pwd)/smatch
     popd
