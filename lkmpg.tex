@@ -2044,6 +2044,60 @@ When the \cpp|unlikely| macro is used, the compiler alters its machine instructi
 That avoids flushing the processor pipeline.
 The opposite happens if you use the \cpp|likely| macro.
 
+\subsection{Static keys}
+\label{sec:static_keys}
+Static keys allow us to enable or disable kernel code paths based on the runtime state of key. Its APIs have been available since 2010 (most architectures are already supported), use self-modifying code to eliminate the overhead of cache and branch prediction.
+The most typical use case of static keys is for performance-sensitive kernel code, such as tracepoints, context switching, networking, etc. These hot paths of the kernel often contain branches and can be optimized easily using this technique.
+Before we can use static keys in the kernel, we need to make sure that gcc supports \cpp|asm goto| inline assembly, and the following kernel configurations are set:
+
+\begin{code}
+CONFIG_JUMP_LABEL=y
+CONFIG_HAVE_ARCH_JUMP_LABEL=y
+CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE=y
+\end{code}
+
+To declare a static key, we need to define a global variable using the \cpp|DEFINE_STATIC_KEY_FALSE| or \cpp|DEFINE_STATIC_KEY_TRUE| macro defined in \src{include/linux/jump\_label.h}.
+This macro initializes the key with the given initial value, which is either false or true, respectively. For example, to declare a static key with an initial value of false, we can use the following code:
+
+\begin{code}
+DEFINE_STATIC_KEY_FALSE(fkey);
+\end{code}
+
+Once the static key has been declared, we need to add branching code to the module that uses the static key.
+For example, the code includes a fastpath, where a no-op instruction will be generated at compile time as the key is initialized to false and the branch is unlikely to be taken.
+
+\begin{code}
+pr_info("fastpath 1\n");
+if (static_branch_unlikely(&fkey))
+    pr_alert("do unlikely thing\n");
+pr_info("fastpath 2\n");
+\end{code}
+
+If the key is enabled at runtime by calling \cpp|static_branch_enable(&fkey)|, the fastpath will be patched with an unconditional jump instruction to the slowpath code \cpp|pr_alert|, so the branch will always be taken until the key is disabled again.
+
+The following kernel module derived from \verb|chardev.c|, demostrates how the static key works.
+
+\samplec{examples/static_key.c}
+
+To check the state of the static key, we can use the \verb|/dev/key_state| interface.
+
+\begin{codebash}
+cat /dev/key_state
+\end{codebash}
+
+This will display the current state of the key, which is disabled by default.
+
+To change the state of the static key, we can perform a write operation on the file:
+
+\begin{codebash}
+echo enable > /dev/key_state
+\end{codebash}
+
+This will enable the static key, causing the code path to switch from the fastpath to the slowpath.
+
+In some cases, the key is enabled or disabled at initialization and never changed, we can declare a static key as read-only, which means that it can only be toggled in the module init function. To declare a read-only static key, we can use the \cpp|DEFINE_STATIC_KEY_FALSE_RO| or \cpp|DEFINE_STATIC_KEY_TRUE_RO| macro instead. Attempts to change the key at runtime will result in a page fault.
+For more information, see \href{https://www.kernel.org/doc/Documentation/static-keys.txt}{Static keys}
+
 \section{Common Pitfalls}
 \label{sec:opitfall}
 

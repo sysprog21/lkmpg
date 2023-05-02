@@ -31,6 +31,7 @@ obj-m += bottomhalf.o
 obj-m += ioctl.o
 obj-m += vinput.o
 obj-m += vkbd.o
+obj-m += static_key.o
 
 PWD := $(CURDIR)
 
