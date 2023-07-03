@@ -18,6 +18,14 @@ jobs:
           make all
           make html
           tar zcvf lkmpg-html.tar.gz ./html
+      - name: Delete old release
+        uses: cb80/delrel@latest
+        with:
+          tag: latest
+      - name: Tag
+        run: |
+          git tag latest
+          git push -f --tags
       - name: Release
         uses: softprops/action-gh-release@v0.1.15
         with:
