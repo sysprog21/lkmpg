@@ -18,16 +18,14 @@ jobs:
           make all
           make html
           tar zcvf lkmpg-html.tar.gz ./html
-      - name: Delete old release asset
-        uses: mknejp/delete-release-assets@v1
+      - name: Delete old release
+        uses: cb80/delrel@latest
         with:
-          token: ${{ github.token }}
-          fail-if-no-assets: false
-          fail-if-no-release: false
           tag: latest
-          assets: |
-            lkmpg.pdf
-            lkmpg-html.tar.gz
+      - name: Tag
+        run: |
+          git tag latest
+          git push -f --tags
       - name: Release
         uses: softprops/action-gh-release@v0.1.15
         with:
