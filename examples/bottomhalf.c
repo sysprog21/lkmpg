@@ -13,6 +13,7 @@
 #include <linux/interrupt.h>
 #include <linux/module.h>
 #include <linux/printk.h>
+#include <linux/init.h>
 
 /* Macro DECLARE_TASKLET_OLD exists for compatibiity.
  * See https://lwn.net/Articles/830964/
