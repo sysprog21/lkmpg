@@ -10,6 +10,7 @@
 #include <linux/printk.h>
 #include <linux/types.h>
 #include <linux/uaccess.h> /* for get_user and put_user */
+#include <linux/jump_label.h> /* for static key macros */
 
 #include <asm/errno.h>
 
