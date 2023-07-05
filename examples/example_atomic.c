@@ -53,7 +53,7 @@ static void atomic_bitwise(void)
     pr_info("Bits 5: " BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(word));
 }
 
-static int example_atomic_init(void)
+static int __init example_atomic_init(void)
 {
     pr_info("example_atomic started\n");
 
@@ -63,7 +63,7 @@ static int example_atomic_init(void)
     return 0;
 }
 
-static void example_atomic_exit(void)
+static void __exit example_atomic_exit(void)
 {
     pr_info("example_atomic exit\n");
 }

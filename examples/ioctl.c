@@ -146,7 +146,7 @@ static struct file_operations fops = {
     .unlocked_ioctl = test_ioctl_ioctl,
 };
 
-static int ioctl_init(void)
+static int __init ioctl_init(void)
 {
     dev_t dev;
     int alloc_ret = -1;
@@ -174,7 +174,7 @@ error:
     return -1;
 }
 
-static void ioctl_exit(void)
+static void __exit ioctl_exit(void)
 {
     dev_t dev = MKDEV(test_ioctl_major, 0);
 

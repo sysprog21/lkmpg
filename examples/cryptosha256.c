@@ -18,7 +18,7 @@ static void show_hash_result(char *plaintext, char *hash_sha256)
     pr_info("%s\n", str);
 }
 
-static int cryptosha256_init(void)
+static int __init cryptosha256_init(void)
 {
     char *plaintext = "This is a test";
     char hash_sha256[SHA256_LENGTH];
@@ -57,7 +57,7 @@ static int cryptosha256_init(void)
     return 0;
 }
 
-static void cryptosha256_exit(void)
+static void __exit cryptosha256_exit(void)
 {
 }
 

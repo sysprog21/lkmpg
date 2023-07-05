@@ -40,7 +40,7 @@ static int machine_flywheel_spinup_thread(void *arg)
 #endif
 }
 
-static int completions_init(void)
+static int __init completions_init(void)
 {
     struct task_struct *crank_thread;
     struct task_struct *flywheel_thread;
@@ -71,7 +71,7 @@ ERROR_THREAD_1:
     return -1;
 }
 
-static void completions_exit(void)
+static void __exit completions_exit(void)
 {
     wait_for_completion(&machine.crank_comp);
     wait_for_completion(&machine.flywheel_comp);
