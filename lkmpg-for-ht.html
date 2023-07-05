@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>July 4, 2023</span></div>
+<div class='date'><span class='ecrm-1200'>July 5, 2023</span></div>
                                                                   
 
                                                                   
@@ -2778,7 +2778,7 @@ example:
 <a id='x1-39295r146'></a><span class='ecrm-0500'>146</span><span class='ectt-0800'>    .unlocked_ioctl = test_ioctl_ioctl,</span> 
 <a id='x1-39297r147'></a><span class='ecrm-0500'>147</span><span class='ectt-0800'>};</span> 
 <a id='x1-39299r148'></a><span class='ecrm-0500'>148</span> 
-<a id='x1-39301r149'></a><span class='ecrm-0500'>149</span><span id='textcolor1151'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1152'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> ioctl_init(</span><span id='textcolor1153'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-39301r149'></a><span class='ecrm-0500'>149</span><span id='textcolor1151'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1152'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> __init ioctl_init(</span><span id='textcolor1153'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
 <a id='x1-39303r150'></a><span class='ecrm-0500'>150</span><span class='ectt-0800'>{</span> 
 <a id='x1-39305r151'></a><span class='ecrm-0500'>151</span><span class='ectt-0800'>    </span><span id='textcolor1154'><span class='ectt-0800'>dev_t</span></span><span class='ectt-0800'> dev;</span> 
 <a id='x1-39307r152'></a><span class='ecrm-0500'>152</span><span class='ectt-0800'>    </span><span id='textcolor1155'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> alloc_ret = -1;</span> 
@@ -2806,7 +2806,7 @@ example:
 <a id='x1-39351r174'></a><span class='ecrm-0500'>174</span><span class='ectt-0800'>    </span><span id='textcolor1167'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> -1;</span> 
 <a id='x1-39353r175'></a><span class='ecrm-0500'>175</span><span class='ectt-0800'>}</span> 
 <a id='x1-39355r176'></a><span class='ecrm-0500'>176</span> 
-<a id='x1-39357r177'></a><span class='ecrm-0500'>177</span><span id='textcolor1168'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1169'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> ioctl_exit(</span><span id='textcolor1170'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-39357r177'></a><span class='ecrm-0500'>177</span><span id='textcolor1168'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1169'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit ioctl_exit(</span><span id='textcolor1170'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
 <a id='x1-39359r178'></a><span class='ecrm-0500'>178</span><span class='ectt-0800'>{</span> 
 <a id='x1-39361r179'></a><span class='ecrm-0500'>179</span><span class='ectt-0800'>    </span><span id='textcolor1171'><span class='ectt-0800'>dev_t</span></span><span class='ectt-0800'> dev = MKDEV(test_ioctl_major, 0);</span> 
 <a id='x1-39363r180'></a><span class='ecrm-0500'>180</span> 
@@ -4190,7 +4190,7 @@ another.
 <a id='x1-44081r40'></a><span class='ecrm-0500'>40</span><span id='textcolor2050'><span class='ectt-0800'>#endif</span></span> 
 <a id='x1-44083r41'></a><span class='ecrm-0500'>41</span><span class='ectt-0800'>}</span> 
 <a id='x1-44085r42'></a><span class='ecrm-0500'>42</span> 
-<a id='x1-44087r43'></a><span class='ecrm-0500'>43</span><span id='textcolor2051'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2052'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> completions_init(</span><span id='textcolor2053'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-44087r43'></a><span class='ecrm-0500'>43</span><span id='textcolor2051'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2052'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> __init completions_init(</span><span id='textcolor2053'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
 <a id='x1-44089r44'></a><span class='ecrm-0500'>44</span><span class='ectt-0800'>{</span> 
 <a id='x1-44091r45'></a><span class='ecrm-0500'>45</span><span class='ectt-0800'>    </span><span id='textcolor2054'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> task_struct *crank_thread;</span> 
 <a id='x1-44093r46'></a><span class='ecrm-0500'>46</span><span class='ectt-0800'>    </span><span id='textcolor2055'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> task_struct *flywheel_thread;</span> 
@@ -4221,7 +4221,7 @@ another.
 <a id='x1-44143r71'></a><span class='ecrm-0500'>71</span><span class='ectt-0800'>    </span><span id='textcolor2066'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> -1;</span> 
 <a id='x1-44145r72'></a><span class='ecrm-0500'>72</span><span class='ectt-0800'>}</span> 
 <a id='x1-44147r73'></a><span class='ecrm-0500'>73</span> 
-<a id='x1-44149r74'></a><span class='ecrm-0500'>74</span><span id='textcolor2067'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2068'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> completions_exit(</span><span id='textcolor2069'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-44149r74'></a><span class='ecrm-0500'>74</span><span id='textcolor2067'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2068'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit completions_exit(</span><span id='textcolor2069'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
 <a id='x1-44151r75'></a><span class='ecrm-0500'>75</span><span class='ectt-0800'>{</span> 
 <a id='x1-44153r76'></a><span class='ecrm-0500'>76</span><span class='ectt-0800'>    wait_for_completion(&amp;machine.crank_comp);</span> 
 <a id='x1-44155r77'></a><span class='ecrm-0500'>77</span><span class='ectt-0800'>    wait_for_completion(&amp;machine.flywheel_comp);</span> 
@@ -4272,7 +4272,7 @@ most cases.
 <a id='x1-46014r7'></a><span class='ecrm-0500'>7</span> 
 <a id='x1-46016r8'></a><span class='ecrm-0500'>8</span><span id='textcolor2084'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> DEFINE_MUTEX(mymutex);</span> 
 <a id='x1-46018r9'></a><span class='ecrm-0500'>9</span> 
-<a id='x1-46020r10'></a><span class='ecrm-0500'>10</span><span id='textcolor2085'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2086'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> example_mutex_init(</span><span id='textcolor2087'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-46020r10'></a><span class='ecrm-0500'>10</span><span id='textcolor2085'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2086'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> __init example_mutex_init(</span><span id='textcolor2087'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
 <a id='x1-46022r11'></a><span class='ecrm-0500'>11</span><span class='ectt-0800'>{</span> 
 <a id='x1-46024r12'></a><span class='ecrm-0500'>12</span><span class='ectt-0800'>    </span><span id='textcolor2088'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> ret;</span> 
 <a id='x1-46026r13'></a><span class='ecrm-0500'>13</span> 
@@ -4293,7 +4293,7 @@ most cases.
 <a id='x1-46056r28'></a><span class='ecrm-0500'>28</span><span class='ectt-0800'>    </span><span id='textcolor2107'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
 <a id='x1-46058r29'></a><span class='ecrm-0500'>29</span><span class='ectt-0800'>}</span> 
 <a id='x1-46060r30'></a><span class='ecrm-0500'>30</span> 
-<a id='x1-46062r31'></a><span class='ecrm-0500'>31</span><span id='textcolor2108'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2109'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> example_mutex_exit(</span><span id='textcolor2110'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-46062r31'></a><span class='ecrm-0500'>31</span><span id='textcolor2108'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2109'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit example_mutex_exit(</span><span id='textcolor2110'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
 <a id='x1-46064r32'></a><span class='ecrm-0500'>32</span><span class='ectt-0800'>{</span> 
 <a id='x1-46066r33'></a><span class='ecrm-0500'>33</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2111'><span class='ectt-0800'>"example_mutex exit</span></span><span id='textcolor2112'><span class='ectt-0800'>\n</span></span><span id='textcolor2113'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-46068r34'></a><span class='ecrm-0500'>34</span><span class='ectt-0800'>}</span> 
@@ -4362,7 +4362,7 @@ they will not be forgotten and will activate when the unlock happens, using the
 <a id='x1-47081r40'></a><span class='ecrm-0500'>40</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2154'><span class='ectt-0800'>"Unlocked dynamic spinlock</span></span><span id='textcolor2155'><span class='ectt-0800'>\n</span></span><span id='textcolor2156'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-47083r41'></a><span class='ecrm-0500'>41</span><span class='ectt-0800'>}</span> 
 <a id='x1-47085r42'></a><span class='ecrm-0500'>42</span> 
-<a id='x1-47087r43'></a><span class='ecrm-0500'>43</span><span id='textcolor2157'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2158'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> example_spinlock_init(</span><span id='textcolor2159'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-47087r43'></a><span class='ecrm-0500'>43</span><span id='textcolor2157'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2158'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> __init example_spinlock_init(</span><span id='textcolor2159'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
 <a id='x1-47089r44'></a><span class='ecrm-0500'>44</span><span class='ectt-0800'>{</span> 
 <a id='x1-47091r45'></a><span class='ecrm-0500'>45</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2160'><span class='ectt-0800'>"example spinlock started</span></span><span id='textcolor2161'><span class='ectt-0800'>\n</span></span><span id='textcolor2162'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-47093r46'></a><span class='ecrm-0500'>46</span> 
@@ -4372,7 +4372,7 @@ they will not be forgotten and will activate when the unlock happens, using the
 <a id='x1-47101r50'></a><span class='ecrm-0500'>50</span><span class='ectt-0800'>    </span><span id='textcolor2163'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
 <a id='x1-47103r51'></a><span class='ecrm-0500'>51</span><span class='ectt-0800'>}</span> 
 <a id='x1-47105r52'></a><span class='ecrm-0500'>52</span> 
-<a id='x1-47107r53'></a><span class='ecrm-0500'>53</span><span id='textcolor2164'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2165'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> example_spinlock_exit(</span><span id='textcolor2166'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-47107r53'></a><span class='ecrm-0500'>53</span><span id='textcolor2164'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2165'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit example_spinlock_exit(</span><span id='textcolor2166'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
 <a id='x1-47109r54'></a><span class='ecrm-0500'>54</span><span class='ectt-0800'>{</span> 
 <a id='x1-47111r55'></a><span class='ecrm-0500'>55</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2167'><span class='ectt-0800'>"example spinlock exit</span></span><span id='textcolor2168'><span class='ectt-0800'>\n</span></span><span id='textcolor2169'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-47113r56'></a><span class='ecrm-0500'>56</span><span class='ectt-0800'>}</span> 
@@ -4430,7 +4430,7 @@ module.
 <a id='x1-48066r33'></a><span class='ecrm-0500'>33</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2203'><span class='ectt-0800'>"Write Unlocked</span></span><span id='textcolor2204'><span class='ectt-0800'>\n</span></span><span id='textcolor2205'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-48068r34'></a><span class='ecrm-0500'>34</span><span class='ectt-0800'>}</span> 
 <a id='x1-48070r35'></a><span class='ecrm-0500'>35</span> 
-<a id='x1-48072r36'></a><span class='ecrm-0500'>36</span><span id='textcolor2206'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2207'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> example_rwlock_init(</span><span id='textcolor2208'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-48072r36'></a><span class='ecrm-0500'>36</span><span id='textcolor2206'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2207'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> __init example_rwlock_init(</span><span id='textcolor2208'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
 <a id='x1-48074r37'></a><span class='ecrm-0500'>37</span><span class='ectt-0800'>{</span> 
 <a id='x1-48076r38'></a><span class='ecrm-0500'>38</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2209'><span class='ectt-0800'>"example_rwlock started</span></span><span id='textcolor2210'><span class='ectt-0800'>\n</span></span><span id='textcolor2211'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-48078r39'></a><span class='ecrm-0500'>39</span> 
@@ -4440,7 +4440,7 @@ module.
 <a id='x1-48086r43'></a><span class='ecrm-0500'>43</span><span class='ectt-0800'>    </span><span id='textcolor2212'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
 <a id='x1-48088r44'></a><span class='ecrm-0500'>44</span><span class='ectt-0800'>}</span> 
 <a id='x1-48090r45'></a><span class='ecrm-0500'>45</span> 
-<a id='x1-48092r46'></a><span class='ecrm-0500'>46</span><span id='textcolor2213'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2214'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> example_rwlock_exit(</span><span id='textcolor2215'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-48092r46'></a><span class='ecrm-0500'>46</span><span id='textcolor2213'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2214'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit example_rwlock_exit(</span><span id='textcolor2215'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
 <a id='x1-48094r47'></a><span class='ecrm-0500'>47</span><span class='ectt-0800'>{</span> 
 <a id='x1-48096r48'></a><span class='ecrm-0500'>48</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2216'><span class='ectt-0800'>"example_rwlock exit</span></span><span id='textcolor2217'><span class='ectt-0800'>\n</span></span><span id='textcolor2218'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-48098r49'></a><span class='ecrm-0500'>49</span><span class='ectt-0800'>}</span> 
@@ -4520,7 +4520,7 @@ below.
 <a id='x1-49106r53'></a><span class='ecrm-0500'>53</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2260'><span class='ectt-0800'>"Bits 5: "</span></span><span class='ectt-0800'> BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(word));</span> 
 <a id='x1-49108r54'></a><span class='ecrm-0500'>54</span><span class='ectt-0800'>}</span> 
 <a id='x1-49110r55'></a><span class='ecrm-0500'>55</span> 
-<a id='x1-49112r56'></a><span class='ecrm-0500'>56</span><span id='textcolor2261'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2262'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> example_atomic_init(</span><span id='textcolor2263'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-49112r56'></a><span class='ecrm-0500'>56</span><span id='textcolor2261'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2262'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> __init example_atomic_init(</span><span id='textcolor2263'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
 <a id='x1-49114r57'></a><span class='ecrm-0500'>57</span><span class='ectt-0800'>{</span> 
 <a id='x1-49116r58'></a><span class='ecrm-0500'>58</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2264'><span class='ectt-0800'>"example_atomic started</span></span><span id='textcolor2265'><span class='ectt-0800'>\n</span></span><span id='textcolor2266'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-49118r59'></a><span class='ecrm-0500'>59</span> 
@@ -4530,7 +4530,7 @@ below.
 <a id='x1-49126r63'></a><span class='ecrm-0500'>63</span><span class='ectt-0800'>    </span><span id='textcolor2267'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
 <a id='x1-49128r64'></a><span class='ecrm-0500'>64</span><span class='ectt-0800'>}</span> 
 <a id='x1-49130r65'></a><span class='ecrm-0500'>65</span> 
-<a id='x1-49132r66'></a><span class='ecrm-0500'>66</span><span id='textcolor2268'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2269'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> example_atomic_exit(</span><span id='textcolor2270'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-49132r66'></a><span class='ecrm-0500'>66</span><span id='textcolor2268'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2269'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit example_atomic_exit(</span><span id='textcolor2270'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
 <a id='x1-49134r67'></a><span class='ecrm-0500'>67</span><span class='ectt-0800'>{</span> 
 <a id='x1-49136r68'></a><span class='ecrm-0500'>68</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2271'><span class='ectt-0800'>"example_atomic exit</span></span><span id='textcolor2272'><span class='ectt-0800'>\n</span></span><span id='textcolor2273'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-49138r69'></a><span class='ecrm-0500'>69</span><span class='ectt-0800'>}</span> 
@@ -4875,7 +4875,7 @@ better suited to running multiple things in a sequence.
 <a id='x1-54046r22'></a><span class='ecrm-0500'>22</span> 
 <a id='x1-54048r23'></a><span class='ecrm-0500'>23</span><span id='textcolor2490'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> DECLARE_TASKLET_OLD(mytask, tasklet_fn);</span> 
 <a id='x1-54050r24'></a><span class='ecrm-0500'>24</span> 
-<a id='x1-54052r25'></a><span class='ecrm-0500'>25</span><span id='textcolor2491'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2492'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> example_tasklet_init(</span><span id='textcolor2493'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-54052r25'></a><span class='ecrm-0500'>25</span><span id='textcolor2491'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2492'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> __init example_tasklet_init(</span><span id='textcolor2493'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
 <a id='x1-54054r26'></a><span class='ecrm-0500'>26</span><span class='ectt-0800'>{</span> 
 <a id='x1-54056r27'></a><span class='ecrm-0500'>27</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2494'><span class='ectt-0800'>"tasklet example init</span></span><span id='textcolor2495'><span class='ectt-0800'>\n</span></span><span id='textcolor2496'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-54058r28'></a><span class='ecrm-0500'>28</span><span class='ectt-0800'>    tasklet_schedule(&amp;mytask);</span> 
@@ -4884,7 +4884,7 @@ better suited to running multiple things in a sequence.
 <a id='x1-54064r31'></a><span class='ecrm-0500'>31</span><span class='ectt-0800'>    </span><span id='textcolor2500'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
 <a id='x1-54066r32'></a><span class='ecrm-0500'>32</span><span class='ectt-0800'>}</span> 
 <a id='x1-54068r33'></a><span class='ecrm-0500'>33</span> 
-<a id='x1-54070r34'></a><span class='ecrm-0500'>34</span><span id='textcolor2501'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2502'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> example_tasklet_exit(</span><span id='textcolor2503'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-54070r34'></a><span class='ecrm-0500'>34</span><span id='textcolor2501'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2502'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit example_tasklet_exit(</span><span id='textcolor2503'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
 <a id='x1-54072r35'></a><span class='ecrm-0500'>35</span><span class='ectt-0800'>{</span> 
 <a id='x1-54074r36'></a><span class='ecrm-0500'>36</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2504'><span class='ectt-0800'>"tasklet example exit</span></span><span id='textcolor2505'><span class='ectt-0800'>\n</span></span><span id='textcolor2506'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-54076r37'></a><span class='ecrm-0500'>37</span><span class='ectt-0800'>    tasklet_kill(&amp;mytask);</span> 
@@ -5411,7 +5411,7 @@ kernel module. To provide the sha256 algorithm support, make sure
 <a id='x1-61037r18'></a><span class='ecrm-0500'>18</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2802'><span class='ectt-0800'>"%s</span></span><span id='textcolor2803'><span class='ectt-0800'>\n</span></span><span id='textcolor2804'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, str);</span> 
 <a id='x1-61039r19'></a><span class='ecrm-0500'>19</span><span class='ectt-0800'>}</span> 
 <a id='x1-61041r20'></a><span class='ecrm-0500'>20</span> 
-<a id='x1-61043r21'></a><span class='ecrm-0500'>21</span><span id='textcolor2805'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2806'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> cryptosha256_init(</span><span id='textcolor2807'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-61043r21'></a><span class='ecrm-0500'>21</span><span id='textcolor2805'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2806'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> __init cryptosha256_init(</span><span id='textcolor2807'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
 <a id='x1-61045r22'></a><span class='ecrm-0500'>22</span><span class='ectt-0800'>{</span> 
 <a id='x1-61047r23'></a><span class='ecrm-0500'>23</span><span class='ectt-0800'>    </span><span id='textcolor2808'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *plaintext = </span><span id='textcolor2809'><span class='ectt-0800'>"This is a test"</span></span><span class='ectt-0800'>;</span> 
 <a id='x1-61049r24'></a><span class='ecrm-0500'>24</span><span class='ectt-0800'>    </span><span id='textcolor2810'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> hash_sha256[SHA256_LENGTH];</span> 
@@ -5450,7 +5450,7 @@ kernel module. To provide the sha256 algorithm support, make sure
 <a id='x1-61115r57'></a><span class='ecrm-0500'>57</span><span class='ectt-0800'>    </span><span id='textcolor2829'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
 <a id='x1-61117r58'></a><span class='ecrm-0500'>58</span><span class='ectt-0800'>}</span> 
 <a id='x1-61119r59'></a><span class='ecrm-0500'>59</span> 
-<a id='x1-61121r60'></a><span class='ecrm-0500'>60</span><span id='textcolor2830'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2831'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> cryptosha256_exit(</span><span id='textcolor2832'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-61121r60'></a><span class='ecrm-0500'>60</span><span id='textcolor2830'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2831'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit cryptosha256_exit(</span><span id='textcolor2832'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
 <a id='x1-61123r61'></a><span class='ecrm-0500'>61</span><span class='ectt-0800'>{</span> 
 <a id='x1-61125r62'></a><span class='ecrm-0500'>62</span><span class='ectt-0800'>}</span> 
 <a id='x1-61127r63'></a><span class='ecrm-0500'>63</span> 
@@ -5652,7 +5652,7 @@ and a password.
 <a id='x1-62342r171'></a><span class='ecrm-0500'>171</span><span class='ectt-0800'>    </span><span id='textcolor2974'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> ret;</span> 
 <a id='x1-62344r172'></a><span class='ecrm-0500'>172</span><span class='ectt-0800'>}</span> 
 <a id='x1-62346r173'></a><span class='ecrm-0500'>173</span> 
-<a id='x1-62348r174'></a><span class='ecrm-0500'>174</span><span id='textcolor2975'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2976'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> cryptoapi_init(</span><span id='textcolor2977'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-62348r174'></a><span class='ecrm-0500'>174</span><span id='textcolor2975'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2976'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> __init cryptoapi_init(</span><span id='textcolor2977'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
 <a id='x1-62350r175'></a><span class='ecrm-0500'>175</span><span class='ectt-0800'>{</span> 
 <a id='x1-62352r176'></a><span class='ecrm-0500'>176</span><span class='ectt-0800'>    </span><span id='textcolor2978'><span class='ectt-0800'>/* The world</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s favorite password */</span></span> 
 <a id='x1-62354r177'></a><span class='ecrm-0500'>177</span><span class='ectt-0800'>    </span><span id='textcolor2979'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *password = </span><span id='textcolor2980'><span class='ectt-0800'>"password123"</span></span><span class='ectt-0800'>;</span> 
@@ -5667,7 +5667,7 @@ and a password.
 <a id='x1-62372r186'></a><span class='ecrm-0500'>186</span><span class='ectt-0800'>    </span><span id='textcolor2982'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
 <a id='x1-62374r187'></a><span class='ecrm-0500'>187</span><span class='ectt-0800'>}</span> 
 <a id='x1-62376r188'></a><span class='ecrm-0500'>188</span> 
-<a id='x1-62378r189'></a><span class='ecrm-0500'>189</span><span id='textcolor2983'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2984'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> cryptoapi_exit(</span><span id='textcolor2985'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-62378r189'></a><span class='ecrm-0500'>189</span><span id='textcolor2983'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2984'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit cryptoapi_exit(</span><span id='textcolor2985'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
 <a id='x1-62380r190'></a><span class='ecrm-0500'>190</span><span class='ectt-0800'>{</span> 
 <a id='x1-62382r191'></a><span class='ecrm-0500'>191</span><span class='ectt-0800'>    test_skcipher_finish(&amp;sk);</span> 
 <a id='x1-62384r192'></a><span class='ecrm-0500'>192</span><span class='ectt-0800'>}</span> 
@@ -6437,7 +6437,7 @@ functions.
 <a id='x1-65138r69'></a><span class='ecrm-0500'>69</span><span class='ectt-0800'>    .remove = devicemodel_remove,</span> 
 <a id='x1-65140r70'></a><span class='ecrm-0500'>70</span><span class='ectt-0800'>};</span> 
 <a id='x1-65142r71'></a><span class='ecrm-0500'>71</span> 
-<a id='x1-65144r72'></a><span class='ecrm-0500'>72</span><span id='textcolor3451'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3452'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> devicemodel_init(</span><span id='textcolor3453'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-65144r72'></a><span class='ecrm-0500'>72</span><span id='textcolor3451'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3452'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> __init devicemodel_init(</span><span id='textcolor3453'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
 <a id='x1-65146r73'></a><span class='ecrm-0500'>73</span><span class='ectt-0800'>{</span> 
 <a id='x1-65148r74'></a><span class='ecrm-0500'>74</span><span class='ectt-0800'>    </span><span id='textcolor3454'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> ret;</span> 
 <a id='x1-65150r75'></a><span class='ecrm-0500'>75</span> 
@@ -6453,7 +6453,7 @@ functions.
 <a id='x1-65170r85'></a><span class='ecrm-0500'>85</span><span class='ectt-0800'>    </span><span id='textcolor3463'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
 <a id='x1-65172r86'></a><span class='ecrm-0500'>86</span><span class='ectt-0800'>}</span> 
 <a id='x1-65174r87'></a><span class='ecrm-0500'>87</span> 
-<a id='x1-65176r88'></a><span class='ecrm-0500'>88</span><span id='textcolor3464'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3465'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> devicemodel_exit(</span><span id='textcolor3466'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-65176r88'></a><span class='ecrm-0500'>88</span><span id='textcolor3464'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3465'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit devicemodel_exit(</span><span id='textcolor3466'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
 <a id='x1-65178r89'></a><span class='ecrm-0500'>89</span><span class='ectt-0800'>{</span> 
 <a id='x1-65180r90'></a><span class='ecrm-0500'>90</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor3467'><span class='ectt-0800'>"devicemodel exit</span></span><span id='textcolor3468'><span class='ectt-0800'>\n</span></span><span id='textcolor3469'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-65182r91'></a><span class='ecrm-0500'>91</span><span class='ectt-0800'>    platform_driver_unregister(&amp;devicemodel_driver);</span> 
