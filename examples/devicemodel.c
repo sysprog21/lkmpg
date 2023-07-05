@@ -69,7 +69,7 @@ static struct platform_driver devicemodel_driver = {
     .remove = devicemodel_remove,
 };
 
-static int devicemodel_init(void)
+static int __init devicemodel_init(void)
 {
     int ret;
 
@@ -85,7 +85,7 @@ static int devicemodel_init(void)
     return 0;
 }
 
-static void devicemodel_exit(void)
+static void __exit devicemodel_exit(void)
 {
     pr_info("devicemodel exit\n");
     platform_driver_unregister(&devicemodel_driver);

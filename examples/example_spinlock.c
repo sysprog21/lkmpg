@@ -40,7 +40,7 @@ static void example_spinlock_dynamic(void)
     pr_info("Unlocked dynamic spinlock\n");
 }
 
-static int example_spinlock_init(void)
+static int __init example_spinlock_init(void)
 {
     pr_info("example spinlock started\n");
 
@@ -50,7 +50,7 @@ static int example_spinlock_init(void)
     return 0;
 }
 
-static void example_spinlock_exit(void)
+static void __exit example_spinlock_exit(void)
 {
     pr_info("example spinlock exit\n");
 }
