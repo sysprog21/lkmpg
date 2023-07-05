@@ -10,6 +10,7 @@
 #include <linux/printk.h>
 #include <linux/types.h>
 #include <linux/uaccess.h> /* for get_user and put_user */
+#include <linux/jump_label.h> /* for static key macros */
 
 #include <asm/errno.h>
 
@@ -135,7 +136,7 @@ static ssize_t device_read(struct file *filp, /* see include/linux/fs.h */
 
     msg_ptr += *offset;
 
-    /* Actually put the date into the buffer */
+    /* Actually put the data into the buffer */
     while (length && *msg_ptr) {
         /**
          * The buffer is in the user data segment, not the kernel
