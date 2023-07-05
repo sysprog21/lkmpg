@@ -6556,181 +6556,182 @@ key works.
 <a id='x1-68049r10'></a><span class='ecrm-0500'>10</span><span id='textcolor3499'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor3500'><span class='ectt-0800'>&lt;linux/printk.h&gt;</span></span> 
 <a id='x1-68051r11'></a><span class='ecrm-0500'>11</span><span id='textcolor3501'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor3502'><span class='ectt-0800'>&lt;linux/types.h&gt;</span></span> 
 <a id='x1-68053r12'></a><span class='ecrm-0500'>12</span><span id='textcolor3503'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor3504'><span class='ectt-0800'>&lt;linux/uaccess.h&gt; /* for get_user and put_user */</span></span> 
-<a id='x1-68055r13'></a><span class='ecrm-0500'>13</span> 
-<a id='x1-68057r14'></a><span class='ecrm-0500'>14</span><span id='textcolor3505'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor3506'><span class='ectt-0800'>&lt;asm/errno.h&gt;</span></span> 
-<a id='x1-68059r15'></a><span class='ecrm-0500'>15</span> 
-<a id='x1-68061r16'></a><span class='ecrm-0500'>16</span><span id='textcolor3507'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3508'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> device_open(</span><span id='textcolor3509'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> inode *inode, </span><span id='textcolor3510'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file *file);</span> 
-<a id='x1-68063r17'></a><span class='ecrm-0500'>17</span><span id='textcolor3511'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3512'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> device_release(</span><span id='textcolor3513'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> inode *inode, </span><span id='textcolor3514'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file *file);</span> 
-<a id='x1-68065r18'></a><span class='ecrm-0500'>18</span><span id='textcolor3515'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3516'><span class='ectt-0800'>ssize_t</span></span><span class='ectt-0800'> device_read(</span><span id='textcolor3517'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file *file, </span><span id='textcolor3518'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> __user *buf, </span><span id='textcolor3519'><span class='ectt-0800'>size_t</span></span><span class='ectt-0800'> count,</span> 
-<a id='x1-68067r19'></a><span class='ecrm-0500'>19</span><span class='ectt-0800'>                           loff_t *ppos);</span> 
-<a id='x1-68069r20'></a><span class='ecrm-0500'>20</span><span id='textcolor3520'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3521'><span class='ectt-0800'>ssize_t</span></span><span class='ectt-0800'> device_write(</span><span id='textcolor3522'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file *file, </span><span id='textcolor3523'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor3524'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> __user *buf,</span> 
-<a id='x1-68071r21'></a><span class='ecrm-0500'>21</span><span class='ectt-0800'>                            </span><span id='textcolor3525'><span class='ectt-0800'>size_t</span></span><span class='ectt-0800'> count, loff_t *ppos);</span> 
-<a id='x1-68073r22'></a><span class='ecrm-0500'>22</span> 
-<a id='x1-68075r23'></a><span class='ecrm-0500'>23</span><span id='textcolor3526'><span class='ectt-0800'>#define SUCCESS 0</span></span> 
-<a id='x1-68077r24'></a><span class='ecrm-0500'>24</span><span id='textcolor3527'><span class='ectt-0800'>#define DEVICE_NAME "key_state"</span></span> 
-<a id='x1-68079r25'></a><span class='ecrm-0500'>25</span><span id='textcolor3528'><span class='ectt-0800'>#define BUF_LEN 10</span></span> 
-<a id='x1-68081r26'></a><span class='ecrm-0500'>26</span> 
-<a id='x1-68083r27'></a><span class='ecrm-0500'>27</span><span id='textcolor3529'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3530'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> major;</span> 
-<a id='x1-68085r28'></a><span class='ecrm-0500'>28</span> 
-<a id='x1-68087r29'></a><span class='ecrm-0500'>29</span><span id='textcolor3531'><span class='ectt-0800'>enum</span></span><span class='ectt-0800'> {</span> 
-<a id='x1-68089r30'></a><span class='ecrm-0500'>30</span><span class='ectt-0800'>    CDEV_NOT_USED = 0,</span> 
-<a id='x1-68091r31'></a><span class='ecrm-0500'>31</span><span class='ectt-0800'>    CDEV_EXCLUSIVE_OPEN = 1,</span> 
-<a id='x1-68093r32'></a><span class='ecrm-0500'>32</span><span class='ectt-0800'>};</span> 
-<a id='x1-68095r33'></a><span class='ecrm-0500'>33</span> 
-<a id='x1-68097r34'></a><span class='ecrm-0500'>34</span><span id='textcolor3532'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> atomic_t already_open = ATOMIC_INIT(CDEV_NOT_USED);</span> 
-<a id='x1-68099r35'></a><span class='ecrm-0500'>35</span> 
-<a id='x1-68101r36'></a><span class='ecrm-0500'>36</span><span id='textcolor3533'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3534'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> msg[BUF_LEN + 1];</span> 
-<a id='x1-68103r37'></a><span class='ecrm-0500'>37</span> 
-<a id='x1-68105r38'></a><span class='ecrm-0500'>38</span><span id='textcolor3535'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3536'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> class *cls;</span> 
-<a id='x1-68107r39'></a><span class='ecrm-0500'>39</span> 
-<a id='x1-68109r40'></a><span class='ecrm-0500'>40</span><span id='textcolor3537'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> DEFINE_STATIC_KEY_FALSE(fkey);</span> 
-<a id='x1-68111r41'></a><span class='ecrm-0500'>41</span> 
-<a id='x1-68113r42'></a><span class='ecrm-0500'>42</span><span id='textcolor3538'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3539'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file_operations chardev_fops = {</span> 
-<a id='x1-68115r43'></a><span class='ecrm-0500'>43</span><span class='ectt-0800'>    .owner = THIS_MODULE,</span> 
-<a id='x1-68117r44'></a><span class='ecrm-0500'>44</span><span class='ectt-0800'>    .open = device_open,</span> 
-<a id='x1-68119r45'></a><span class='ecrm-0500'>45</span><span class='ectt-0800'>    .release = device_release,</span> 
-<a id='x1-68121r46'></a><span class='ecrm-0500'>46</span><span class='ectt-0800'>    .read = device_read,</span> 
-<a id='x1-68123r47'></a><span class='ecrm-0500'>47</span><span class='ectt-0800'>    .write = device_write,</span> 
-<a id='x1-68125r48'></a><span class='ecrm-0500'>48</span><span class='ectt-0800'>};</span> 
-<a id='x1-68127r49'></a><span class='ecrm-0500'>49</span> 
-<a id='x1-68129r50'></a><span class='ecrm-0500'>50</span><span id='textcolor3540'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3541'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> __init chardev_init(</span><span id='textcolor3542'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
-<a id='x1-68131r51'></a><span class='ecrm-0500'>51</span><span class='ectt-0800'>{</span> 
-<a id='x1-68133r52'></a><span class='ecrm-0500'>52</span><span class='ectt-0800'>    major = register_chrdev(0, DEVICE_NAME, &amp;chardev_fops);</span> 
-<a id='x1-68135r53'></a><span class='ecrm-0500'>53</span><span class='ectt-0800'>    </span><span id='textcolor3543'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (major &lt; 0) {</span> 
-<a id='x1-68137r54'></a><span class='ecrm-0500'>54</span><span class='ectt-0800'>        pr_alert(</span><span id='textcolor3544'><span class='ectt-0800'>"Registering char device failed with %d</span></span><span id='textcolor3545'><span class='ectt-0800'>\n</span></span><span id='textcolor3546'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, major);</span> 
-<a id='x1-68139r55'></a><span class='ecrm-0500'>55</span><span class='ectt-0800'>        </span><span id='textcolor3547'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> major;</span> 
-<a id='x1-68141r56'></a><span class='ecrm-0500'>56</span><span class='ectt-0800'>    }</span> 
-<a id='x1-68143r57'></a><span class='ecrm-0500'>57</span> 
-<a id='x1-68145r58'></a><span class='ecrm-0500'>58</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor3548'><span class='ectt-0800'>"I was assigned major number %d</span></span><span id='textcolor3549'><span class='ectt-0800'>\n</span></span><span id='textcolor3550'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, major);</span> 
-<a id='x1-68147r59'></a><span class='ecrm-0500'>59</span> 
-<a id='x1-68149r60'></a><span class='ecrm-0500'>60</span><span class='ectt-0800'>    cls = class_create(THIS_MODULE, DEVICE_NAME);</span> 
-<a id='x1-68151r61'></a><span class='ecrm-0500'>61</span> 
-<a id='x1-68153r62'></a><span class='ecrm-0500'>62</span><span class='ectt-0800'>    device_create(cls, NULL, MKDEV(major, 0), NULL, DEVICE_NAME);</span> 
-<a id='x1-68155r63'></a><span class='ecrm-0500'>63</span> 
-<a id='x1-68157r64'></a><span class='ecrm-0500'>64</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor3551'><span class='ectt-0800'>"Device created on /dev/%s</span></span><span id='textcolor3552'><span class='ectt-0800'>\n</span></span><span id='textcolor3553'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, DEVICE_NAME);</span> 
-<a id='x1-68159r65'></a><span class='ecrm-0500'>65</span> 
-<a id='x1-68161r66'></a><span class='ecrm-0500'>66</span><span class='ectt-0800'>    </span><span id='textcolor3554'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> SUCCESS;</span> 
-<a id='x1-68163r67'></a><span class='ecrm-0500'>67</span><span class='ectt-0800'>}</span> 
-<a id='x1-68165r68'></a><span class='ecrm-0500'>68</span> 
-<a id='x1-68167r69'></a><span class='ecrm-0500'>69</span><span id='textcolor3555'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3556'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit chardev_exit(</span><span id='textcolor3557'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
-<a id='x1-68169r70'></a><span class='ecrm-0500'>70</span><span class='ectt-0800'>{</span> 
-<a id='x1-68171r71'></a><span class='ecrm-0500'>71</span><span class='ectt-0800'>    device_destroy(cls, MKDEV(major, 0));</span> 
-<a id='x1-68173r72'></a><span class='ecrm-0500'>72</span><span class='ectt-0800'>    class_destroy(cls);</span> 
-<a id='x1-68175r73'></a><span class='ecrm-0500'>73</span> 
-<a id='x1-68177r74'></a><span class='ecrm-0500'>74</span><span class='ectt-0800'>    </span><span id='textcolor3558'><span class='ectt-0800'>/* Unregister the device */</span></span> 
-<a id='x1-68179r75'></a><span class='ecrm-0500'>75</span><span class='ectt-0800'>    unregister_chrdev(major, DEVICE_NAME);</span> 
-<a id='x1-68181r76'></a><span class='ecrm-0500'>76</span><span class='ectt-0800'>}</span> 
-<a id='x1-68183r77'></a><span class='ecrm-0500'>77</span> 
-<a id='x1-68185r78'></a><span class='ecrm-0500'>78</span><span id='textcolor3559'><span class='ectt-0800'>/* Methods */</span></span> 
-<a id='x1-68187r79'></a><span class='ecrm-0500'>79</span> 
-<a id='x1-68189r80'></a><span class='ecrm-0500'>80</span><span id='textcolor3560'><span class='ectt-0800'>/**</span></span> 
-<a id='x1-68191r81'></a><span class='ecrm-0500'>81</span><span id='textcolor3561'><span class='ectt-0800'> * Called when a process tried to open the device file, like</span></span> 
-<a id='x1-68193r82'></a><span class='ecrm-0500'>82</span><span id='textcolor3562'><span class='ectt-0800'> * cat /dev/key_state</span></span> 
-<a id='x1-68195r83'></a><span class='ecrm-0500'>83</span><span id='textcolor3563'><span class='ectt-0800'> */</span></span> 
-<a id='x1-68197r84'></a><span class='ecrm-0500'>84</span><span id='textcolor3564'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3565'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> device_open(</span><span id='textcolor3566'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> inode *inode, </span><span id='textcolor3567'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file *file)</span> 
-<a id='x1-68199r85'></a><span class='ecrm-0500'>85</span><span class='ectt-0800'>{</span> 
-<a id='x1-68201r86'></a><span class='ecrm-0500'>86</span><span class='ectt-0800'>    </span><span id='textcolor3568'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (atomic_cmpxchg(&amp;already_open, CDEV_NOT_USED, CDEV_EXCLUSIVE_OPEN))</span> 
-<a id='x1-68203r87'></a><span class='ecrm-0500'>87</span><span class='ectt-0800'>        </span><span id='textcolor3569'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> -EBUSY;</span> 
-<a id='x1-68205r88'></a><span class='ecrm-0500'>88</span> 
-<a id='x1-68207r89'></a><span class='ecrm-0500'>89</span><span class='ectt-0800'>    sprintf(msg, static_key_enabled(&amp;fkey) ? </span><span id='textcolor3570'><span class='ectt-0800'>"enabled</span></span><span id='textcolor3571'><span class='ectt-0800'>\n</span></span><span id='textcolor3572'><span class='ectt-0800'>"</span></span><span class='ectt-0800'> : </span><span id='textcolor3573'><span class='ectt-0800'>"disabled</span></span><span id='textcolor3574'><span class='ectt-0800'>\n</span></span><span id='textcolor3575'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-68209r90'></a><span class='ecrm-0500'>90</span> 
-<a id='x1-68211r91'></a><span class='ecrm-0500'>91</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor3576'><span class='ectt-0800'>"fastpath 1</span></span><span id='textcolor3577'><span class='ectt-0800'>\n</span></span><span id='textcolor3578'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-68213r92'></a><span class='ecrm-0500'>92</span><span class='ectt-0800'>    </span><span id='textcolor3579'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (static_branch_unlikely(&amp;fkey))</span> 
-<a id='x1-68215r93'></a><span class='ecrm-0500'>93</span><span class='ectt-0800'>        pr_alert(</span><span id='textcolor3580'><span class='ectt-0800'>"do unlikely thing</span></span><span id='textcolor3581'><span class='ectt-0800'>\n</span></span><span id='textcolor3582'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-68217r94'></a><span class='ecrm-0500'>94</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor3583'><span class='ectt-0800'>"fastpath 2</span></span><span id='textcolor3584'><span class='ectt-0800'>\n</span></span><span id='textcolor3585'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-68219r95'></a><span class='ecrm-0500'>95</span> 
-<a id='x1-68221r96'></a><span class='ecrm-0500'>96</span><span class='ectt-0800'>    try_module_get(THIS_MODULE);</span> 
-<a id='x1-68223r97'></a><span class='ecrm-0500'>97</span> 
-<a id='x1-68225r98'></a><span class='ecrm-0500'>98</span><span class='ectt-0800'>    </span><span id='textcolor3586'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> SUCCESS;</span> 
-<a id='x1-68227r99'></a><span class='ecrm-0500'>99</span><span class='ectt-0800'>}</span> 
-<a id='x1-68229r100'></a><span class='ecrm-0500'>100</span> 
-<a id='x1-68231r101'></a><span class='ecrm-0500'>101</span><span id='textcolor3587'><span class='ectt-0800'>/**</span></span> 
-<a id='x1-68233r102'></a><span class='ecrm-0500'>102</span><span id='textcolor3588'><span class='ectt-0800'> * Called when a process closes the device file</span></span> 
-<a id='x1-68235r103'></a><span class='ecrm-0500'>103</span><span id='textcolor3589'><span class='ectt-0800'> */</span></span> 
-<a id='x1-68237r104'></a><span class='ecrm-0500'>104</span><span id='textcolor3590'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3591'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> device_release(</span><span id='textcolor3592'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> inode *inode, </span><span id='textcolor3593'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file *file)</span> 
-<a id='x1-68239r105'></a><span class='ecrm-0500'>105</span><span class='ectt-0800'>{</span> 
-<a id='x1-68241r106'></a><span class='ecrm-0500'>106</span><span class='ectt-0800'>    </span><span id='textcolor3594'><span class='ectt-0800'>/* We are now ready for our next caller. */</span></span> 
-<a id='x1-68243r107'></a><span class='ecrm-0500'>107</span><span class='ectt-0800'>    atomic_set(&amp;already_open, CDEV_NOT_USED);</span> 
-<a id='x1-68245r108'></a><span class='ecrm-0500'>108</span> 
-<a id='x1-68247r109'></a><span class='ecrm-0500'>109</span><span class='ectt-0800'>    </span><span id='textcolor3595'><span class='ectt-0800'>/**</span></span> 
-<a id='x1-68249r110'></a><span class='ecrm-0500'>110</span><span id='textcolor3596'><span class='ectt-0800'>     * Decrement the usage count, or else once you opened the file, you will</span></span> 
-<a id='x1-68251r111'></a><span class='ecrm-0500'>111</span><span id='textcolor3597'><span class='ectt-0800'>     * never get rid of the module.</span></span> 
-<a id='x1-68253r112'></a><span class='ecrm-0500'>112</span><span id='textcolor3598'><span class='ectt-0800'>     */</span></span> 
-<a id='x1-68255r113'></a><span class='ecrm-0500'>113</span><span class='ectt-0800'>    module_put(THIS_MODULE);</span> 
-<a id='x1-68257r114'></a><span class='ecrm-0500'>114</span> 
-<a id='x1-68259r115'></a><span class='ecrm-0500'>115</span><span class='ectt-0800'>    </span><span id='textcolor3599'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> SUCCESS;</span> 
-<a id='x1-68261r116'></a><span class='ecrm-0500'>116</span><span class='ectt-0800'>}</span> 
-<a id='x1-68263r117'></a><span class='ecrm-0500'>117</span> 
-<a id='x1-68265r118'></a><span class='ecrm-0500'>118</span><span id='textcolor3600'><span class='ectt-0800'>/**</span></span> 
-<a id='x1-68267r119'></a><span class='ecrm-0500'>119</span><span id='textcolor3601'><span class='ectt-0800'> * Called when a process, which already opened the dev file, attempts to</span></span> 
-<a id='x1-68269r120'></a><span class='ecrm-0500'>120</span><span id='textcolor3602'><span class='ectt-0800'> * read from it.</span></span> 
-<a id='x1-68271r121'></a><span class='ecrm-0500'>121</span><span id='textcolor3603'><span class='ectt-0800'> */</span></span> 
-<a id='x1-68273r122'></a><span class='ecrm-0500'>122</span><span id='textcolor3604'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3605'><span class='ectt-0800'>ssize_t</span></span><span class='ectt-0800'> device_read(</span><span id='textcolor3606'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file *filp, </span><span id='textcolor3607'><span class='ectt-0800'>/* see include/linux/fs.h */</span></span> 
-<a id='x1-68275r123'></a><span class='ecrm-0500'>123</span><span class='ectt-0800'>                           </span><span id='textcolor3608'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> __user *buffer, </span><span id='textcolor3609'><span class='ectt-0800'>/* buffer to fill with data */</span></span> 
-<a id='x1-68277r124'></a><span class='ecrm-0500'>124</span><span class='ectt-0800'>                           </span><span id='textcolor3610'><span class='ectt-0800'>size_t</span></span><span class='ectt-0800'> length, </span><span id='textcolor3611'><span class='ectt-0800'>/* length of the buffer */</span></span> 
-<a id='x1-68279r125'></a><span class='ecrm-0500'>125</span><span class='ectt-0800'>                           loff_t *offset)</span> 
-<a id='x1-68281r126'></a><span class='ecrm-0500'>126</span><span class='ectt-0800'>{</span> 
-<a id='x1-68283r127'></a><span class='ecrm-0500'>127</span><span class='ectt-0800'>    </span><span id='textcolor3612'><span class='ectt-0800'>/* Number of the bytes actually written to the buffer */</span></span> 
-<a id='x1-68285r128'></a><span class='ecrm-0500'>128</span><span class='ectt-0800'>    </span><span id='textcolor3613'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> bytes_read = 0;</span> 
-<a id='x1-68287r129'></a><span class='ecrm-0500'>129</span><span class='ectt-0800'>    </span><span id='textcolor3614'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor3615'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *msg_ptr = msg;</span> 
-<a id='x1-68289r130'></a><span class='ecrm-0500'>130</span> 
-<a id='x1-68291r131'></a><span class='ecrm-0500'>131</span><span class='ectt-0800'>    </span><span id='textcolor3616'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (!*(msg_ptr + *offset)) { </span><span id='textcolor3617'><span class='ectt-0800'>/* We are at the end of the message */</span></span> 
-<a id='x1-68293r132'></a><span class='ecrm-0500'>132</span><span class='ectt-0800'>        *offset = 0; </span><span id='textcolor3618'><span class='ectt-0800'>/* reset the offset */</span></span> 
-<a id='x1-68295r133'></a><span class='ecrm-0500'>133</span><span class='ectt-0800'>        </span><span id='textcolor3619'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0; </span><span id='textcolor3620'><span class='ectt-0800'>/* signify end of file */</span></span> 
-<a id='x1-68297r134'></a><span class='ecrm-0500'>134</span><span class='ectt-0800'>    }</span> 
-<a id='x1-68299r135'></a><span class='ecrm-0500'>135</span> 
-<a id='x1-68301r136'></a><span class='ecrm-0500'>136</span><span class='ectt-0800'>    msg_ptr += *offset;</span> 
-<a id='x1-68303r137'></a><span class='ecrm-0500'>137</span> 
-<a id='x1-68305r138'></a><span class='ecrm-0500'>138</span><span class='ectt-0800'>    </span><span id='textcolor3621'><span class='ectt-0800'>/* Actually put the date into the buffer */</span></span> 
-<a id='x1-68307r139'></a><span class='ecrm-0500'>139</span><span class='ectt-0800'>    </span><span id='textcolor3622'><span class='ectt-0800'>while</span></span><span class='ectt-0800'> (length &amp;&amp; *msg_ptr) {</span> 
-<a id='x1-68309r140'></a><span class='ecrm-0500'>140</span><span class='ectt-0800'>        </span><span id='textcolor3623'><span class='ectt-0800'>/**</span></span> 
-<a id='x1-68311r141'></a><span class='ecrm-0500'>141</span><span id='textcolor3624'><span class='ectt-0800'>         * The buffer is in the user data segment, not the kernel</span></span> 
-<a id='x1-68313r142'></a><span class='ecrm-0500'>142</span><span id='textcolor3625'><span class='ectt-0800'>         * segment so "*" assignment won</span><span class='tctt-0800'>'</span><span class='ectt-0800'>t work. We have to use</span></span> 
-<a id='x1-68315r143'></a><span class='ecrm-0500'>143</span><span id='textcolor3626'><span class='ectt-0800'>         * put_user which copies data from the kernel data segment to</span></span> 
-<a id='x1-68317r144'></a><span class='ecrm-0500'>144</span><span id='textcolor3627'><span class='ectt-0800'>         * the user data segment.</span></span> 
-<a id='x1-68319r145'></a><span class='ecrm-0500'>145</span><span id='textcolor3628'><span class='ectt-0800'>         */</span></span> 
-<a id='x1-68321r146'></a><span class='ecrm-0500'>146</span><span class='ectt-0800'>        put_user(*(msg_ptr++), buffer++);</span> 
-<a id='x1-68323r147'></a><span class='ecrm-0500'>147</span><span class='ectt-0800'>        length--;</span> 
-<a id='x1-68325r148'></a><span class='ecrm-0500'>148</span><span class='ectt-0800'>        bytes_read++;</span> 
-<a id='x1-68327r149'></a><span class='ecrm-0500'>149</span><span class='ectt-0800'>    }</span> 
-<a id='x1-68329r150'></a><span class='ecrm-0500'>150</span> 
-<a id='x1-68331r151'></a><span class='ecrm-0500'>151</span><span class='ectt-0800'>    *offset += bytes_read;</span> 
-<a id='x1-68333r152'></a><span class='ecrm-0500'>152</span> 
-<a id='x1-68335r153'></a><span class='ecrm-0500'>153</span><span class='ectt-0800'>    </span><span id='textcolor3629'><span class='ectt-0800'>/* Most read functions return the number of bytes put into the buffer. */</span></span> 
-<a id='x1-68337r154'></a><span class='ecrm-0500'>154</span><span class='ectt-0800'>    </span><span id='textcolor3630'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> bytes_read;</span> 
-<a id='x1-68339r155'></a><span class='ecrm-0500'>155</span><span class='ectt-0800'>}</span> 
-<a id='x1-68341r156'></a><span class='ecrm-0500'>156</span> 
-<a id='x1-68343r157'></a><span class='ecrm-0500'>157</span><span id='textcolor3631'><span class='ectt-0800'>/* Called when a process writes to dev file; echo "enable" &gt; /dev/key_state */</span></span> 
-<a id='x1-68345r158'></a><span class='ecrm-0500'>158</span><span id='textcolor3632'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3633'><span class='ectt-0800'>ssize_t</span></span><span class='ectt-0800'> device_write(</span><span id='textcolor3634'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file *filp, </span><span id='textcolor3635'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor3636'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> __user *buffer,</span> 
-<a id='x1-68347r159'></a><span class='ecrm-0500'>159</span><span class='ectt-0800'>                            </span><span id='textcolor3637'><span class='ectt-0800'>size_t</span></span><span class='ectt-0800'> length, loff_t *offset)</span> 
-<a id='x1-68349r160'></a><span class='ecrm-0500'>160</span><span class='ectt-0800'>{</span> 
-<a id='x1-68351r161'></a><span class='ecrm-0500'>161</span><span class='ectt-0800'>    </span><span id='textcolor3638'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> command[10];</span> 
-<a id='x1-68353r162'></a><span class='ecrm-0500'>162</span> 
-<a id='x1-68355r163'></a><span class='ecrm-0500'>163</span><span class='ectt-0800'>    </span><span id='textcolor3639'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (length &gt; 10) {</span> 
-<a id='x1-68357r164'></a><span class='ecrm-0500'>164</span><span class='ectt-0800'>        pr_err(</span><span id='textcolor3640'><span class='ectt-0800'>"command exceeded 10 char</span></span><span id='textcolor3641'><span class='ectt-0800'>\n</span></span><span id='textcolor3642'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-68359r165'></a><span class='ecrm-0500'>165</span><span class='ectt-0800'>        </span><span id='textcolor3643'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> -EINVAL;</span> 
-<a id='x1-68361r166'></a><span class='ecrm-0500'>166</span><span class='ectt-0800'>    }</span> 
-<a id='x1-68363r167'></a><span class='ecrm-0500'>167</span> 
-<a id='x1-68365r168'></a><span class='ecrm-0500'>168</span><span class='ectt-0800'>    </span><span id='textcolor3644'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (copy_from_user(command, buffer, length))</span> 
-<a id='x1-68367r169'></a><span class='ecrm-0500'>169</span><span class='ectt-0800'>        </span><span id='textcolor3645'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> -EFAULT;</span> 
-<a id='x1-68369r170'></a><span class='ecrm-0500'>170</span> 
-<a id='x1-68371r171'></a><span class='ecrm-0500'>171</span><span class='ectt-0800'>    </span><span id='textcolor3646'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (strncmp(command, </span><span id='textcolor3647'><span class='ectt-0800'>"enable"</span></span><span class='ectt-0800'>, strlen(</span><span id='textcolor3648'><span class='ectt-0800'>"enable"</span></span><span class='ectt-0800'>)) == 0)</span> 
-<a id='x1-68373r172'></a><span class='ecrm-0500'>172</span><span class='ectt-0800'>        static_branch_enable(&amp;fkey);</span> 
-<a id='x1-68375r173'></a><span class='ecrm-0500'>173</span><span class='ectt-0800'>    </span><span id='textcolor3649'><span class='ectt-0800'>else</span></span><span class='ectt-0800'> </span><span id='textcolor3650'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (strncmp(command, </span><span id='textcolor3651'><span class='ectt-0800'>"disable"</span></span><span class='ectt-0800'>, strlen(</span><span id='textcolor3652'><span class='ectt-0800'>"disable"</span></span><span class='ectt-0800'>)) == 0)</span> 
-<a id='x1-68377r174'></a><span class='ecrm-0500'>174</span><span class='ectt-0800'>        static_branch_disable(&amp;fkey);</span> 
-<a id='x1-68379r175'></a><span class='ecrm-0500'>175</span><span class='ectt-0800'>    </span><span id='textcolor3653'><span class='ectt-0800'>else</span></span><span class='ectt-0800'> {</span> 
-<a id='x1-68381r176'></a><span class='ecrm-0500'>176</span><span class='ectt-0800'>        pr_err(</span><span id='textcolor3654'><span class='ectt-0800'>"Invalid command: %s</span></span><span id='textcolor3655'><span class='ectt-0800'>\n</span></span><span id='textcolor3656'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, command);</span> 
-<a id='x1-68383r177'></a><span class='ecrm-0500'>177</span><span class='ectt-0800'>        </span><span id='textcolor3657'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> -EINVAL;</span> 
-<a id='x1-68385r178'></a><span class='ecrm-0500'>178</span><span class='ectt-0800'>    }</span> 
-<a id='x1-68387r179'></a><span class='ecrm-0500'>179</span> 
-<a id='x1-68389r180'></a><span class='ecrm-0500'>180</span><span class='ectt-0800'>    </span><span id='textcolor3658'><span class='ectt-0800'>/* Again, return the number of input characters used. */</span></span> 
-<a id='x1-68391r181'></a><span class='ecrm-0500'>181</span><span class='ectt-0800'>    </span><span id='textcolor3659'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> length;</span> 
-<a id='x1-68393r182'></a><span class='ecrm-0500'>182</span><span class='ectt-0800'>}</span> 
-<a id='x1-68395r183'></a><span class='ecrm-0500'>183</span> 
-<a id='x1-68397r184'></a><span class='ecrm-0500'>184</span><span class='ectt-0800'>module_init(chardev_init);</span> 
-<a id='x1-68399r185'></a><span class='ecrm-0500'>185</span><span class='ectt-0800'>module_exit(chardev_exit);</span> 
-<a id='x1-68401r186'></a><span class='ecrm-0500'>186</span> 
-<a id='x1-68403r187'></a><span class='ecrm-0500'>187</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor3660'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
+<a id='x1-68055r13'></a><span class='ecrm-0500'>13</span><span id='textcolor3505'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor3506'><span class='ectt-0800'>&lt;linux/jump_label.h&gt; /* for static key macros */</span></span> 
+<a id='x1-68057r14'></a><span class='ecrm-0500'>14</span> 
+<a id='x1-68059r15'></a><span class='ecrm-0500'>15</span><span id='textcolor3507'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor3508'><span class='ectt-0800'>&lt;asm/errno.h&gt;</span></span> 
+<a id='x1-68061r16'></a><span class='ecrm-0500'>16</span> 
+<a id='x1-68063r17'></a><span class='ecrm-0500'>17</span><span id='textcolor3509'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3510'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> device_open(</span><span id='textcolor3511'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> inode *inode, </span><span id='textcolor3512'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file *file);</span> 
+<a id='x1-68065r18'></a><span class='ecrm-0500'>18</span><span id='textcolor3513'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3514'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> device_release(</span><span id='textcolor3515'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> inode *inode, </span><span id='textcolor3516'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file *file);</span> 
+<a id='x1-68067r19'></a><span class='ecrm-0500'>19</span><span id='textcolor3517'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3518'><span class='ectt-0800'>ssize_t</span></span><span class='ectt-0800'> device_read(</span><span id='textcolor3519'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file *file, </span><span id='textcolor3520'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> __user *buf, </span><span id='textcolor3521'><span class='ectt-0800'>size_t</span></span><span class='ectt-0800'> count,</span> 
+<a id='x1-68069r20'></a><span class='ecrm-0500'>20</span><span class='ectt-0800'>                           loff_t *ppos);</span> 
+<a id='x1-68071r21'></a><span class='ecrm-0500'>21</span><span id='textcolor3522'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3523'><span class='ectt-0800'>ssize_t</span></span><span class='ectt-0800'> device_write(</span><span id='textcolor3524'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file *file, </span><span id='textcolor3525'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor3526'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> __user *buf,</span> 
+<a id='x1-68073r22'></a><span class='ecrm-0500'>22</span><span class='ectt-0800'>                            </span><span id='textcolor3527'><span class='ectt-0800'>size_t</span></span><span class='ectt-0800'> count, loff_t *ppos);</span> 
+<a id='x1-68075r23'></a><span class='ecrm-0500'>23</span> 
+<a id='x1-68077r24'></a><span class='ecrm-0500'>24</span><span id='textcolor3528'><span class='ectt-0800'>#define SUCCESS 0</span></span> 
+<a id='x1-68079r25'></a><span class='ecrm-0500'>25</span><span id='textcolor3529'><span class='ectt-0800'>#define DEVICE_NAME "key_state"</span></span> 
+<a id='x1-68081r26'></a><span class='ecrm-0500'>26</span><span id='textcolor3530'><span class='ectt-0800'>#define BUF_LEN 10</span></span> 
+<a id='x1-68083r27'></a><span class='ecrm-0500'>27</span> 
+<a id='x1-68085r28'></a><span class='ecrm-0500'>28</span><span id='textcolor3531'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3532'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> major;</span> 
+<a id='x1-68087r29'></a><span class='ecrm-0500'>29</span> 
+<a id='x1-68089r30'></a><span class='ecrm-0500'>30</span><span id='textcolor3533'><span class='ectt-0800'>enum</span></span><span class='ectt-0800'> {</span> 
+<a id='x1-68091r31'></a><span class='ecrm-0500'>31</span><span class='ectt-0800'>    CDEV_NOT_USED = 0,</span> 
+<a id='x1-68093r32'></a><span class='ecrm-0500'>32</span><span class='ectt-0800'>    CDEV_EXCLUSIVE_OPEN = 1,</span> 
+<a id='x1-68095r33'></a><span class='ecrm-0500'>33</span><span class='ectt-0800'>};</span> 
+<a id='x1-68097r34'></a><span class='ecrm-0500'>34</span> 
+<a id='x1-68099r35'></a><span class='ecrm-0500'>35</span><span id='textcolor3534'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> atomic_t already_open = ATOMIC_INIT(CDEV_NOT_USED);</span> 
+<a id='x1-68101r36'></a><span class='ecrm-0500'>36</span> 
+<a id='x1-68103r37'></a><span class='ecrm-0500'>37</span><span id='textcolor3535'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3536'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> msg[BUF_LEN + 1];</span> 
+<a id='x1-68105r38'></a><span class='ecrm-0500'>38</span> 
+<a id='x1-68107r39'></a><span class='ecrm-0500'>39</span><span id='textcolor3537'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3538'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> class *cls;</span> 
+<a id='x1-68109r40'></a><span class='ecrm-0500'>40</span> 
+<a id='x1-68111r41'></a><span class='ecrm-0500'>41</span><span id='textcolor3539'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> DEFINE_STATIC_KEY_FALSE(fkey);</span> 
+<a id='x1-68113r42'></a><span class='ecrm-0500'>42</span> 
+<a id='x1-68115r43'></a><span class='ecrm-0500'>43</span><span id='textcolor3540'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3541'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file_operations chardev_fops = {</span> 
+<a id='x1-68117r44'></a><span class='ecrm-0500'>44</span><span class='ectt-0800'>    .owner = THIS_MODULE,</span> 
+<a id='x1-68119r45'></a><span class='ecrm-0500'>45</span><span class='ectt-0800'>    .open = device_open,</span> 
+<a id='x1-68121r46'></a><span class='ecrm-0500'>46</span><span class='ectt-0800'>    .release = device_release,</span> 
+<a id='x1-68123r47'></a><span class='ecrm-0500'>47</span><span class='ectt-0800'>    .read = device_read,</span> 
+<a id='x1-68125r48'></a><span class='ecrm-0500'>48</span><span class='ectt-0800'>    .write = device_write,</span> 
+<a id='x1-68127r49'></a><span class='ecrm-0500'>49</span><span class='ectt-0800'>};</span> 
+<a id='x1-68129r50'></a><span class='ecrm-0500'>50</span> 
+<a id='x1-68131r51'></a><span class='ecrm-0500'>51</span><span id='textcolor3542'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3543'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> __init chardev_init(</span><span id='textcolor3544'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-68133r52'></a><span class='ecrm-0500'>52</span><span class='ectt-0800'>{</span> 
+<a id='x1-68135r53'></a><span class='ecrm-0500'>53</span><span class='ectt-0800'>    major = register_chrdev(0, DEVICE_NAME, &amp;chardev_fops);</span> 
+<a id='x1-68137r54'></a><span class='ecrm-0500'>54</span><span class='ectt-0800'>    </span><span id='textcolor3545'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (major &lt; 0) {</span> 
+<a id='x1-68139r55'></a><span class='ecrm-0500'>55</span><span class='ectt-0800'>        pr_alert(</span><span id='textcolor3546'><span class='ectt-0800'>"Registering char device failed with %d</span></span><span id='textcolor3547'><span class='ectt-0800'>\n</span></span><span id='textcolor3548'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, major);</span> 
+<a id='x1-68141r56'></a><span class='ecrm-0500'>56</span><span class='ectt-0800'>        </span><span id='textcolor3549'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> major;</span> 
+<a id='x1-68143r57'></a><span class='ecrm-0500'>57</span><span class='ectt-0800'>    }</span> 
+<a id='x1-68145r58'></a><span class='ecrm-0500'>58</span> 
+<a id='x1-68147r59'></a><span class='ecrm-0500'>59</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor3550'><span class='ectt-0800'>"I was assigned major number %d</span></span><span id='textcolor3551'><span class='ectt-0800'>\n</span></span><span id='textcolor3552'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, major);</span> 
+<a id='x1-68149r60'></a><span class='ecrm-0500'>60</span> 
+<a id='x1-68151r61'></a><span class='ecrm-0500'>61</span><span class='ectt-0800'>    cls = class_create(THIS_MODULE, DEVICE_NAME);</span> 
+<a id='x1-68153r62'></a><span class='ecrm-0500'>62</span> 
+<a id='x1-68155r63'></a><span class='ecrm-0500'>63</span><span class='ectt-0800'>    device_create(cls, NULL, MKDEV(major, 0), NULL, DEVICE_NAME);</span> 
+<a id='x1-68157r64'></a><span class='ecrm-0500'>64</span> 
+<a id='x1-68159r65'></a><span class='ecrm-0500'>65</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor3553'><span class='ectt-0800'>"Device created on /dev/%s</span></span><span id='textcolor3554'><span class='ectt-0800'>\n</span></span><span id='textcolor3555'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, DEVICE_NAME);</span> 
+<a id='x1-68161r66'></a><span class='ecrm-0500'>66</span> 
+<a id='x1-68163r67'></a><span class='ecrm-0500'>67</span><span class='ectt-0800'>    </span><span id='textcolor3556'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> SUCCESS;</span> 
+<a id='x1-68165r68'></a><span class='ecrm-0500'>68</span><span class='ectt-0800'>}</span> 
+<a id='x1-68167r69'></a><span class='ecrm-0500'>69</span> 
+<a id='x1-68169r70'></a><span class='ecrm-0500'>70</span><span id='textcolor3557'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3558'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit chardev_exit(</span><span id='textcolor3559'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-68171r71'></a><span class='ecrm-0500'>71</span><span class='ectt-0800'>{</span> 
+<a id='x1-68173r72'></a><span class='ecrm-0500'>72</span><span class='ectt-0800'>    device_destroy(cls, MKDEV(major, 0));</span> 
+<a id='x1-68175r73'></a><span class='ecrm-0500'>73</span><span class='ectt-0800'>    class_destroy(cls);</span> 
+<a id='x1-68177r74'></a><span class='ecrm-0500'>74</span> 
+<a id='x1-68179r75'></a><span class='ecrm-0500'>75</span><span class='ectt-0800'>    </span><span id='textcolor3560'><span class='ectt-0800'>/* Unregister the device */</span></span> 
+<a id='x1-68181r76'></a><span class='ecrm-0500'>76</span><span class='ectt-0800'>    unregister_chrdev(major, DEVICE_NAME);</span> 
+<a id='x1-68183r77'></a><span class='ecrm-0500'>77</span><span class='ectt-0800'>}</span> 
+<a id='x1-68185r78'></a><span class='ecrm-0500'>78</span> 
+<a id='x1-68187r79'></a><span class='ecrm-0500'>79</span><span id='textcolor3561'><span class='ectt-0800'>/* Methods */</span></span> 
+<a id='x1-68189r80'></a><span class='ecrm-0500'>80</span> 
+<a id='x1-68191r81'></a><span class='ecrm-0500'>81</span><span id='textcolor3562'><span class='ectt-0800'>/**</span></span> 
+<a id='x1-68193r82'></a><span class='ecrm-0500'>82</span><span id='textcolor3563'><span class='ectt-0800'> * Called when a process tried to open the device file, like</span></span> 
+<a id='x1-68195r83'></a><span class='ecrm-0500'>83</span><span id='textcolor3564'><span class='ectt-0800'> * cat /dev/key_state</span></span> 
+<a id='x1-68197r84'></a><span class='ecrm-0500'>84</span><span id='textcolor3565'><span class='ectt-0800'> */</span></span> 
+<a id='x1-68199r85'></a><span class='ecrm-0500'>85</span><span id='textcolor3566'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3567'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> device_open(</span><span id='textcolor3568'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> inode *inode, </span><span id='textcolor3569'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file *file)</span> 
+<a id='x1-68201r86'></a><span class='ecrm-0500'>86</span><span class='ectt-0800'>{</span> 
+<a id='x1-68203r87'></a><span class='ecrm-0500'>87</span><span class='ectt-0800'>    </span><span id='textcolor3570'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (atomic_cmpxchg(&amp;already_open, CDEV_NOT_USED, CDEV_EXCLUSIVE_OPEN))</span> 
+<a id='x1-68205r88'></a><span class='ecrm-0500'>88</span><span class='ectt-0800'>        </span><span id='textcolor3571'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> -EBUSY;</span> 
+<a id='x1-68207r89'></a><span class='ecrm-0500'>89</span> 
+<a id='x1-68209r90'></a><span class='ecrm-0500'>90</span><span class='ectt-0800'>    sprintf(msg, static_key_enabled(&amp;fkey) ? </span><span id='textcolor3572'><span class='ectt-0800'>"enabled</span></span><span id='textcolor3573'><span class='ectt-0800'>\n</span></span><span id='textcolor3574'><span class='ectt-0800'>"</span></span><span class='ectt-0800'> : </span><span id='textcolor3575'><span class='ectt-0800'>"disabled</span></span><span id='textcolor3576'><span class='ectt-0800'>\n</span></span><span id='textcolor3577'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-68211r91'></a><span class='ecrm-0500'>91</span> 
+<a id='x1-68213r92'></a><span class='ecrm-0500'>92</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor3578'><span class='ectt-0800'>"fastpath 1</span></span><span id='textcolor3579'><span class='ectt-0800'>\n</span></span><span id='textcolor3580'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-68215r93'></a><span class='ecrm-0500'>93</span><span class='ectt-0800'>    </span><span id='textcolor3581'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (static_branch_unlikely(&amp;fkey))</span> 
+<a id='x1-68217r94'></a><span class='ecrm-0500'>94</span><span class='ectt-0800'>        pr_alert(</span><span id='textcolor3582'><span class='ectt-0800'>"do unlikely thing</span></span><span id='textcolor3583'><span class='ectt-0800'>\n</span></span><span id='textcolor3584'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-68219r95'></a><span class='ecrm-0500'>95</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor3585'><span class='ectt-0800'>"fastpath 2</span></span><span id='textcolor3586'><span class='ectt-0800'>\n</span></span><span id='textcolor3587'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-68221r96'></a><span class='ecrm-0500'>96</span> 
+<a id='x1-68223r97'></a><span class='ecrm-0500'>97</span><span class='ectt-0800'>    try_module_get(THIS_MODULE);</span> 
+<a id='x1-68225r98'></a><span class='ecrm-0500'>98</span> 
+<a id='x1-68227r99'></a><span class='ecrm-0500'>99</span><span class='ectt-0800'>    </span><span id='textcolor3588'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> SUCCESS;</span> 
+<a id='x1-68229r100'></a><span class='ecrm-0500'>100</span><span class='ectt-0800'>}</span> 
+<a id='x1-68231r101'></a><span class='ecrm-0500'>101</span> 
+<a id='x1-68233r102'></a><span class='ecrm-0500'>102</span><span id='textcolor3589'><span class='ectt-0800'>/**</span></span> 
+<a id='x1-68235r103'></a><span class='ecrm-0500'>103</span><span id='textcolor3590'><span class='ectt-0800'> * Called when a process closes the device file</span></span> 
+<a id='x1-68237r104'></a><span class='ecrm-0500'>104</span><span id='textcolor3591'><span class='ectt-0800'> */</span></span> 
+<a id='x1-68239r105'></a><span class='ecrm-0500'>105</span><span id='textcolor3592'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3593'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> device_release(</span><span id='textcolor3594'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> inode *inode, </span><span id='textcolor3595'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file *file)</span> 
+<a id='x1-68241r106'></a><span class='ecrm-0500'>106</span><span class='ectt-0800'>{</span> 
+<a id='x1-68243r107'></a><span class='ecrm-0500'>107</span><span class='ectt-0800'>    </span><span id='textcolor3596'><span class='ectt-0800'>/* We are now ready for our next caller. */</span></span> 
+<a id='x1-68245r108'></a><span class='ecrm-0500'>108</span><span class='ectt-0800'>    atomic_set(&amp;already_open, CDEV_NOT_USED);</span> 
+<a id='x1-68247r109'></a><span class='ecrm-0500'>109</span> 
+<a id='x1-68249r110'></a><span class='ecrm-0500'>110</span><span class='ectt-0800'>    </span><span id='textcolor3597'><span class='ectt-0800'>/**</span></span> 
+<a id='x1-68251r111'></a><span class='ecrm-0500'>111</span><span id='textcolor3598'><span class='ectt-0800'>     * Decrement the usage count, or else once you opened the file, you will</span></span> 
+<a id='x1-68253r112'></a><span class='ecrm-0500'>112</span><span id='textcolor3599'><span class='ectt-0800'>     * never get rid of the module.</span></span> 
+<a id='x1-68255r113'></a><span class='ecrm-0500'>113</span><span id='textcolor3600'><span class='ectt-0800'>     */</span></span> 
+<a id='x1-68257r114'></a><span class='ecrm-0500'>114</span><span class='ectt-0800'>    module_put(THIS_MODULE);</span> 
+<a id='x1-68259r115'></a><span class='ecrm-0500'>115</span> 
+<a id='x1-68261r116'></a><span class='ecrm-0500'>116</span><span class='ectt-0800'>    </span><span id='textcolor3601'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> SUCCESS;</span> 
+<a id='x1-68263r117'></a><span class='ecrm-0500'>117</span><span class='ectt-0800'>}</span> 
+<a id='x1-68265r118'></a><span class='ecrm-0500'>118</span> 
+<a id='x1-68267r119'></a><span class='ecrm-0500'>119</span><span id='textcolor3602'><span class='ectt-0800'>/**</span></span> 
+<a id='x1-68269r120'></a><span class='ecrm-0500'>120</span><span id='textcolor3603'><span class='ectt-0800'> * Called when a process, which already opened the dev file, attempts to</span></span> 
+<a id='x1-68271r121'></a><span class='ecrm-0500'>121</span><span id='textcolor3604'><span class='ectt-0800'> * read from it.</span></span> 
+<a id='x1-68273r122'></a><span class='ecrm-0500'>122</span><span id='textcolor3605'><span class='ectt-0800'> */</span></span> 
+<a id='x1-68275r123'></a><span class='ecrm-0500'>123</span><span id='textcolor3606'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3607'><span class='ectt-0800'>ssize_t</span></span><span class='ectt-0800'> device_read(</span><span id='textcolor3608'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file *filp, </span><span id='textcolor3609'><span class='ectt-0800'>/* see include/linux/fs.h */</span></span> 
+<a id='x1-68277r124'></a><span class='ecrm-0500'>124</span><span class='ectt-0800'>                           </span><span id='textcolor3610'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> __user *buffer, </span><span id='textcolor3611'><span class='ectt-0800'>/* buffer to fill with data */</span></span> 
+<a id='x1-68279r125'></a><span class='ecrm-0500'>125</span><span class='ectt-0800'>                           </span><span id='textcolor3612'><span class='ectt-0800'>size_t</span></span><span class='ectt-0800'> length, </span><span id='textcolor3613'><span class='ectt-0800'>/* length of the buffer */</span></span> 
+<a id='x1-68281r126'></a><span class='ecrm-0500'>126</span><span class='ectt-0800'>                           loff_t *offset)</span> 
+<a id='x1-68283r127'></a><span class='ecrm-0500'>127</span><span class='ectt-0800'>{</span> 
+<a id='x1-68285r128'></a><span class='ecrm-0500'>128</span><span class='ectt-0800'>    </span><span id='textcolor3614'><span class='ectt-0800'>/* Number of the bytes actually written to the buffer */</span></span> 
+<a id='x1-68287r129'></a><span class='ecrm-0500'>129</span><span class='ectt-0800'>    </span><span id='textcolor3615'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> bytes_read = 0;</span> 
+<a id='x1-68289r130'></a><span class='ecrm-0500'>130</span><span class='ectt-0800'>    </span><span id='textcolor3616'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor3617'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *msg_ptr = msg;</span> 
+<a id='x1-68291r131'></a><span class='ecrm-0500'>131</span> 
+<a id='x1-68293r132'></a><span class='ecrm-0500'>132</span><span class='ectt-0800'>    </span><span id='textcolor3618'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (!*(msg_ptr + *offset)) { </span><span id='textcolor3619'><span class='ectt-0800'>/* We are at the end of the message */</span></span> 
+<a id='x1-68295r133'></a><span class='ecrm-0500'>133</span><span class='ectt-0800'>        *offset = 0; </span><span id='textcolor3620'><span class='ectt-0800'>/* reset the offset */</span></span> 
+<a id='x1-68297r134'></a><span class='ecrm-0500'>134</span><span class='ectt-0800'>        </span><span id='textcolor3621'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0; </span><span id='textcolor3622'><span class='ectt-0800'>/* signify end of file */</span></span> 
+<a id='x1-68299r135'></a><span class='ecrm-0500'>135</span><span class='ectt-0800'>    }</span> 
+<a id='x1-68301r136'></a><span class='ecrm-0500'>136</span> 
+<a id='x1-68303r137'></a><span class='ecrm-0500'>137</span><span class='ectt-0800'>    msg_ptr += *offset;</span> 
+<a id='x1-68305r138'></a><span class='ecrm-0500'>138</span> 
+<a id='x1-68307r139'></a><span class='ecrm-0500'>139</span><span class='ectt-0800'>    </span><span id='textcolor3623'><span class='ectt-0800'>/* Actually put the data into the buffer */</span></span> 
+<a id='x1-68309r140'></a><span class='ecrm-0500'>140</span><span class='ectt-0800'>    </span><span id='textcolor3624'><span class='ectt-0800'>while</span></span><span class='ectt-0800'> (length &amp;&amp; *msg_ptr) {</span> 
+<a id='x1-68311r141'></a><span class='ecrm-0500'>141</span><span class='ectt-0800'>        </span><span id='textcolor3625'><span class='ectt-0800'>/**</span></span> 
+<a id='x1-68313r142'></a><span class='ecrm-0500'>142</span><span id='textcolor3626'><span class='ectt-0800'>         * The buffer is in the user data segment, not the kernel</span></span> 
+<a id='x1-68315r143'></a><span class='ecrm-0500'>143</span><span id='textcolor3627'><span class='ectt-0800'>         * segment so "*" assignment won</span><span class='tctt-0800'>'</span><span class='ectt-0800'>t work. We have to use</span></span> 
+<a id='x1-68317r144'></a><span class='ecrm-0500'>144</span><span id='textcolor3628'><span class='ectt-0800'>         * put_user which copies data from the kernel data segment to</span></span> 
+<a id='x1-68319r145'></a><span class='ecrm-0500'>145</span><span id='textcolor3629'><span class='ectt-0800'>         * the user data segment.</span></span> 
+<a id='x1-68321r146'></a><span class='ecrm-0500'>146</span><span id='textcolor3630'><span class='ectt-0800'>         */</span></span> 
+<a id='x1-68323r147'></a><span class='ecrm-0500'>147</span><span class='ectt-0800'>        put_user(*(msg_ptr++), buffer++);</span> 
+<a id='x1-68325r148'></a><span class='ecrm-0500'>148</span><span class='ectt-0800'>        length--;</span> 
+<a id='x1-68327r149'></a><span class='ecrm-0500'>149</span><span class='ectt-0800'>        bytes_read++;</span> 
+<a id='x1-68329r150'></a><span class='ecrm-0500'>150</span><span class='ectt-0800'>    }</span> 
+<a id='x1-68331r151'></a><span class='ecrm-0500'>151</span> 
+<a id='x1-68333r152'></a><span class='ecrm-0500'>152</span><span class='ectt-0800'>    *offset += bytes_read;</span> 
+<a id='x1-68335r153'></a><span class='ecrm-0500'>153</span> 
+<a id='x1-68337r154'></a><span class='ecrm-0500'>154</span><span class='ectt-0800'>    </span><span id='textcolor3631'><span class='ectt-0800'>/* Most read functions return the number of bytes put into the buffer. */</span></span> 
+<a id='x1-68339r155'></a><span class='ecrm-0500'>155</span><span class='ectt-0800'>    </span><span id='textcolor3632'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> bytes_read;</span> 
+<a id='x1-68341r156'></a><span class='ecrm-0500'>156</span><span class='ectt-0800'>}</span> 
+<a id='x1-68343r157'></a><span class='ecrm-0500'>157</span> 
+<a id='x1-68345r158'></a><span class='ecrm-0500'>158</span><span id='textcolor3633'><span class='ectt-0800'>/* Called when a process writes to dev file; echo "enable" &gt; /dev/key_state */</span></span> 
+<a id='x1-68347r159'></a><span class='ecrm-0500'>159</span><span id='textcolor3634'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3635'><span class='ectt-0800'>ssize_t</span></span><span class='ectt-0800'> device_write(</span><span id='textcolor3636'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file *filp, </span><span id='textcolor3637'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor3638'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> __user *buffer,</span> 
+<a id='x1-68349r160'></a><span class='ecrm-0500'>160</span><span class='ectt-0800'>                            </span><span id='textcolor3639'><span class='ectt-0800'>size_t</span></span><span class='ectt-0800'> length, loff_t *offset)</span> 
+<a id='x1-68351r161'></a><span class='ecrm-0500'>161</span><span class='ectt-0800'>{</span> 
+<a id='x1-68353r162'></a><span class='ecrm-0500'>162</span><span class='ectt-0800'>    </span><span id='textcolor3640'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> command[10];</span> 
+<a id='x1-68355r163'></a><span class='ecrm-0500'>163</span> 
+<a id='x1-68357r164'></a><span class='ecrm-0500'>164</span><span class='ectt-0800'>    </span><span id='textcolor3641'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (length &gt; 10) {</span> 
+<a id='x1-68359r165'></a><span class='ecrm-0500'>165</span><span class='ectt-0800'>        pr_err(</span><span id='textcolor3642'><span class='ectt-0800'>"command exceeded 10 char</span></span><span id='textcolor3643'><span class='ectt-0800'>\n</span></span><span id='textcolor3644'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-68361r166'></a><span class='ecrm-0500'>166</span><span class='ectt-0800'>        </span><span id='textcolor3645'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> -EINVAL;</span> 
+<a id='x1-68363r167'></a><span class='ecrm-0500'>167</span><span class='ectt-0800'>    }</span> 
+<a id='x1-68365r168'></a><span class='ecrm-0500'>168</span> 
+<a id='x1-68367r169'></a><span class='ecrm-0500'>169</span><span class='ectt-0800'>    </span><span id='textcolor3646'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (copy_from_user(command, buffer, length))</span> 
+<a id='x1-68369r170'></a><span class='ecrm-0500'>170</span><span class='ectt-0800'>        </span><span id='textcolor3647'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> -EFAULT;</span> 
+<a id='x1-68371r171'></a><span class='ecrm-0500'>171</span> 
+<a id='x1-68373r172'></a><span class='ecrm-0500'>172</span><span class='ectt-0800'>    </span><span id='textcolor3648'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (strncmp(command, </span><span id='textcolor3649'><span class='ectt-0800'>"enable"</span></span><span class='ectt-0800'>, strlen(</span><span id='textcolor3650'><span class='ectt-0800'>"enable"</span></span><span class='ectt-0800'>)) == 0)</span> 
+<a id='x1-68375r173'></a><span class='ecrm-0500'>173</span><span class='ectt-0800'>        static_branch_enable(&amp;fkey);</span> 
+<a id='x1-68377r174'></a><span class='ecrm-0500'>174</span><span class='ectt-0800'>    </span><span id='textcolor3651'><span class='ectt-0800'>else</span></span><span class='ectt-0800'> </span><span id='textcolor3652'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (strncmp(command, </span><span id='textcolor3653'><span class='ectt-0800'>"disable"</span></span><span class='ectt-0800'>, strlen(</span><span id='textcolor3654'><span class='ectt-0800'>"disable"</span></span><span class='ectt-0800'>)) == 0)</span> 
+<a id='x1-68379r175'></a><span class='ecrm-0500'>175</span><span class='ectt-0800'>        static_branch_disable(&amp;fkey);</span> 
+<a id='x1-68381r176'></a><span class='ecrm-0500'>176</span><span class='ectt-0800'>    </span><span id='textcolor3655'><span class='ectt-0800'>else</span></span><span class='ectt-0800'> {</span> 
+<a id='x1-68383r177'></a><span class='ecrm-0500'>177</span><span class='ectt-0800'>        pr_err(</span><span id='textcolor3656'><span class='ectt-0800'>"Invalid command: %s</span></span><span id='textcolor3657'><span class='ectt-0800'>\n</span></span><span id='textcolor3658'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, command);</span> 
+<a id='x1-68385r178'></a><span class='ecrm-0500'>178</span><span class='ectt-0800'>        </span><span id='textcolor3659'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> -EINVAL;</span> 
+<a id='x1-68387r179'></a><span class='ecrm-0500'>179</span><span class='ectt-0800'>    }</span> 
+<a id='x1-68389r180'></a><span class='ecrm-0500'>180</span> 
+<a id='x1-68391r181'></a><span class='ecrm-0500'>181</span><span class='ectt-0800'>    </span><span id='textcolor3660'><span class='ectt-0800'>/* Again, return the number of input characters used. */</span></span> 
+<a id='x1-68393r182'></a><span class='ecrm-0500'>182</span><span class='ectt-0800'>    </span><span id='textcolor3661'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> length;</span> 
+<a id='x1-68395r183'></a><span class='ecrm-0500'>183</span><span class='ectt-0800'>}</span> 
+<a id='x1-68397r184'></a><span class='ecrm-0500'>184</span> 
+<a id='x1-68399r185'></a><span class='ecrm-0500'>185</span><span class='ectt-0800'>module_init(chardev_init);</span> 
+<a id='x1-68401r186'></a><span class='ecrm-0500'>186</span><span class='ectt-0800'>module_exit(chardev_exit);</span> 
+<a id='x1-68403r187'></a><span class='ecrm-0500'>187</span> 
+<a id='x1-68405r188'></a><span class='ecrm-0500'>188</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor3662'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
                                                                   
 
                                                                   
@@ -6738,13 +6739,13 @@ key works.
 interface.
 </p><!-- l. 1 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb103'><a id='x1-68406r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>cat /dev/key_state</span></pre>
+   <pre class='fancyvrb' id='fancyvrb103'><a id='x1-68408r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>cat /dev/key_state</span></pre>
 <!-- l. 2088 --><p class='indent'>   This will display the current state of the key, which is disabled by default.
 </p><!-- l. 2090 --><p class='indent'>   To change the state of the static key, we can perform a write operation on the
 file:
 </p><!-- l. 1 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb104'><a id='x1-68409r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>echo enable &gt; /dev/key_state</span></pre>
+   <pre class='fancyvrb' id='fancyvrb104'><a id='x1-68411r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>echo enable &gt; /dev/key_state</span></pre>
 <!-- l. 2096 --><p class='indent'>   This will enable the static key, causing the code path to switch from the fastpath
 to the slowpath.
 </p><!-- l. 2098 --><p class='indent'>   In some cases, the key is enabled or disabled at initialization and never changed,
