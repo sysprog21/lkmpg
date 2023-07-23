@@ -82,7 +82,6 @@ static int __init procfs3_init(void)
     our_proc_file = proc_create(PROCFS_ENTRY_FILENAME, 0644, NULL,
                                 &file_ops_4_our_proc_file);
     if (our_proc_file == NULL) {
-        remove_proc_entry(PROCFS_ENTRY_FILENAME, NULL);
         pr_debug("Error: Could not initialize /proc/%s\n",
                  PROCFS_ENTRY_FILENAME);
         return -ENOMEM;

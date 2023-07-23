@@ -98,7 +98,6 @@ static int __init procfs4_init(void)
 
     entry = proc_create(PROC_NAME, 0, NULL, &my_file_ops);
     if (entry == NULL) {
-        remove_proc_entry(PROC_NAME, NULL);
         pr_debug("Error: Could not initialize /proc/%s\n", PROC_NAME);
         return -ENOMEM;
     }
