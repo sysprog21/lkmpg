@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>July 8, 2023</span></div>
+<div class='date'><span class='ecrm-1200'>July 23, 2023</span></div>
                                                                   
 
                                                                   
@@ -2086,25 +2086,24 @@ because data is already in kernel space.
 <a id='x1-35162r77'></a><span class='ecrm-0500'>77</span><span class='ectt-0800'>{</span> 
 <a id='x1-35164r78'></a><span class='ecrm-0500'>78</span><span class='ectt-0800'>    our_proc_file = proc_create(PROCFS_NAME, 0644, NULL, &amp;proc_file_fops);</span> 
 <a id='x1-35166r79'></a><span class='ecrm-0500'>79</span><span class='ectt-0800'>    </span><span id='textcolor725'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (NULL == our_proc_file) {</span> 
-<a id='x1-35168r80'></a><span class='ecrm-0500'>80</span><span class='ectt-0800'>        proc_remove(our_proc_file);</span> 
-<a id='x1-35170r81'></a><span class='ecrm-0500'>81</span><span class='ectt-0800'>        pr_alert(</span><span id='textcolor726'><span class='ectt-0800'>"Error:Could not initialize /proc/%s</span></span><span id='textcolor727'><span class='ectt-0800'>\n</span></span><span id='textcolor728'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, PROCFS_NAME);</span> 
-<a id='x1-35172r82'></a><span class='ecrm-0500'>82</span><span class='ectt-0800'>        </span><span id='textcolor729'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> -ENOMEM;</span> 
-<a id='x1-35174r83'></a><span class='ecrm-0500'>83</span><span class='ectt-0800'>    }</span> 
-<a id='x1-35176r84'></a><span class='ecrm-0500'>84</span> 
-<a id='x1-35178r85'></a><span class='ecrm-0500'>85</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor730'><span class='ectt-0800'>"/proc/%s created</span></span><span id='textcolor731'><span class='ectt-0800'>\n</span></span><span id='textcolor732'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, PROCFS_NAME);</span> 
-<a id='x1-35180r86'></a><span class='ecrm-0500'>86</span><span class='ectt-0800'>    </span><span id='textcolor733'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
-<a id='x1-35182r87'></a><span class='ecrm-0500'>87</span><span class='ectt-0800'>}</span> 
-<a id='x1-35184r88'></a><span class='ecrm-0500'>88</span> 
-<a id='x1-35186r89'></a><span class='ecrm-0500'>89</span><span id='textcolor734'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor735'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit procfs2_exit(</span><span id='textcolor736'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
-<a id='x1-35188r90'></a><span class='ecrm-0500'>90</span><span class='ectt-0800'>{</span> 
-<a id='x1-35190r91'></a><span class='ecrm-0500'>91</span><span class='ectt-0800'>    proc_remove(our_proc_file);</span> 
-<a id='x1-35192r92'></a><span class='ecrm-0500'>92</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor737'><span class='ectt-0800'>"/proc/%s removed</span></span><span id='textcolor738'><span class='ectt-0800'>\n</span></span><span id='textcolor739'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, PROCFS_NAME);</span> 
-<a id='x1-35194r93'></a><span class='ecrm-0500'>93</span><span class='ectt-0800'>}</span> 
-<a id='x1-35196r94'></a><span class='ecrm-0500'>94</span> 
-<a id='x1-35198r95'></a><span class='ecrm-0500'>95</span><span class='ectt-0800'>module_init(procfs2_init);</span> 
-<a id='x1-35200r96'></a><span class='ecrm-0500'>96</span><span class='ectt-0800'>module_exit(procfs2_exit);</span> 
-<a id='x1-35202r97'></a><span class='ecrm-0500'>97</span> 
-<a id='x1-35204r98'></a><span class='ecrm-0500'>98</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor740'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
+<a id='x1-35168r80'></a><span class='ecrm-0500'>80</span><span class='ectt-0800'>        pr_alert(</span><span id='textcolor726'><span class='ectt-0800'>"Error:Could not initialize /proc/%s</span></span><span id='textcolor727'><span class='ectt-0800'>\n</span></span><span id='textcolor728'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, PROCFS_NAME);</span> 
+<a id='x1-35170r81'></a><span class='ecrm-0500'>81</span><span class='ectt-0800'>        </span><span id='textcolor729'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> -ENOMEM;</span> 
+<a id='x1-35172r82'></a><span class='ecrm-0500'>82</span><span class='ectt-0800'>    }</span> 
+<a id='x1-35174r83'></a><span class='ecrm-0500'>83</span> 
+<a id='x1-35176r84'></a><span class='ecrm-0500'>84</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor730'><span class='ectt-0800'>"/proc/%s created</span></span><span id='textcolor731'><span class='ectt-0800'>\n</span></span><span id='textcolor732'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, PROCFS_NAME);</span> 
+<a id='x1-35178r85'></a><span class='ecrm-0500'>85</span><span class='ectt-0800'>    </span><span id='textcolor733'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
+<a id='x1-35180r86'></a><span class='ecrm-0500'>86</span><span class='ectt-0800'>}</span> 
+<a id='x1-35182r87'></a><span class='ecrm-0500'>87</span> 
+<a id='x1-35184r88'></a><span class='ecrm-0500'>88</span><span id='textcolor734'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor735'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit procfs2_exit(</span><span id='textcolor736'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-35186r89'></a><span class='ecrm-0500'>89</span><span class='ectt-0800'>{</span> 
+<a id='x1-35188r90'></a><span class='ecrm-0500'>90</span><span class='ectt-0800'>    proc_remove(our_proc_file);</span> 
+<a id='x1-35190r91'></a><span class='ecrm-0500'>91</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor737'><span class='ectt-0800'>"/proc/%s removed</span></span><span id='textcolor738'><span class='ectt-0800'>\n</span></span><span id='textcolor739'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, PROCFS_NAME);</span> 
+<a id='x1-35192r92'></a><span class='ecrm-0500'>92</span><span class='ectt-0800'>}</span> 
+<a id='x1-35194r93'></a><span class='ecrm-0500'>93</span> 
+<a id='x1-35196r94'></a><span class='ecrm-0500'>94</span><span class='ectt-0800'>module_init(procfs2_init);</span> 
+<a id='x1-35198r95'></a><span class='ecrm-0500'>95</span><span class='ectt-0800'>module_exit(procfs2_exit);</span> 
+<a id='x1-35200r96'></a><span class='ecrm-0500'>96</span> 
+<a id='x1-35202r97'></a><span class='ecrm-0500'>97</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor740'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
 <!-- l. 1189 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='manage-proc-file-with-standard-filesystem'><span class='titlemark'>7.3   </span> <a id='x1-360007.3'></a>Manage /proc file with standard filesystem</h4>
@@ -2232,28 +2231,27 @@ input.
 <a id='x1-36172r82'></a><span class='ecrm-0500'>82</span><span class='ectt-0800'>    our_proc_file = proc_create(PROCFS_ENTRY_FILENAME, 0644, NULL,</span> 
 <a id='x1-36174r83'></a><span class='ecrm-0500'>83</span><span class='ectt-0800'>                                &amp;file_ops_4_our_proc_file);</span> 
 <a id='x1-36176r84'></a><span class='ecrm-0500'>84</span><span class='ectt-0800'>    </span><span id='textcolor826'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (our_proc_file == NULL) {</span> 
-<a id='x1-36178r85'></a><span class='ecrm-0500'>85</span><span class='ectt-0800'>        remove_proc_entry(PROCFS_ENTRY_FILENAME, NULL);</span> 
-<a id='x1-36180r86'></a><span class='ecrm-0500'>86</span><span class='ectt-0800'>        pr_debug(</span><span id='textcolor827'><span class='ectt-0800'>"Error: Could not initialize /proc/%s</span></span><span id='textcolor828'><span class='ectt-0800'>\n</span></span><span id='textcolor829'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>,</span> 
-<a id='x1-36182r87'></a><span class='ecrm-0500'>87</span><span class='ectt-0800'>                 PROCFS_ENTRY_FILENAME);</span> 
-<a id='x1-36184r88'></a><span class='ecrm-0500'>88</span><span class='ectt-0800'>        </span><span id='textcolor830'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> -ENOMEM;</span> 
-<a id='x1-36186r89'></a><span class='ecrm-0500'>89</span><span class='ectt-0800'>    }</span> 
-<a id='x1-36188r90'></a><span class='ecrm-0500'>90</span><span class='ectt-0800'>    proc_set_size(our_proc_file, 80);</span> 
-<a id='x1-36190r91'></a><span class='ecrm-0500'>91</span><span class='ectt-0800'>    proc_set_user(our_proc_file, GLOBAL_ROOT_UID, GLOBAL_ROOT_GID);</span> 
-<a id='x1-36192r92'></a><span class='ecrm-0500'>92</span> 
-<a id='x1-36194r93'></a><span class='ecrm-0500'>93</span><span class='ectt-0800'>    pr_debug(</span><span id='textcolor831'><span class='ectt-0800'>"/proc/%s created</span></span><span id='textcolor832'><span class='ectt-0800'>\n</span></span><span id='textcolor833'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, PROCFS_ENTRY_FILENAME);</span> 
-<a id='x1-36196r94'></a><span class='ecrm-0500'>94</span><span class='ectt-0800'>    </span><span id='textcolor834'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
-<a id='x1-36198r95'></a><span class='ecrm-0500'>95</span><span class='ectt-0800'>}</span> 
-<a id='x1-36200r96'></a><span class='ecrm-0500'>96</span> 
-<a id='x1-36202r97'></a><span class='ecrm-0500'>97</span><span id='textcolor835'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor836'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit procfs3_exit(</span><span id='textcolor837'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
-<a id='x1-36204r98'></a><span class='ecrm-0500'>98</span><span class='ectt-0800'>{</span> 
-<a id='x1-36206r99'></a><span class='ecrm-0500'>99</span><span class='ectt-0800'>    remove_proc_entry(PROCFS_ENTRY_FILENAME, NULL);</span> 
-<a id='x1-36208r100'></a><span class='ecrm-0500'>100</span><span class='ectt-0800'>    pr_debug(</span><span id='textcolor838'><span class='ectt-0800'>"/proc/%s removed</span></span><span id='textcolor839'><span class='ectt-0800'>\n</span></span><span id='textcolor840'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, PROCFS_ENTRY_FILENAME);</span> 
-<a id='x1-36210r101'></a><span class='ecrm-0500'>101</span><span class='ectt-0800'>}</span> 
-<a id='x1-36212r102'></a><span class='ecrm-0500'>102</span> 
-<a id='x1-36214r103'></a><span class='ecrm-0500'>103</span><span class='ectt-0800'>module_init(procfs3_init);</span> 
-<a id='x1-36216r104'></a><span class='ecrm-0500'>104</span><span class='ectt-0800'>module_exit(procfs3_exit);</span> 
-<a id='x1-36218r105'></a><span class='ecrm-0500'>105</span> 
-<a id='x1-36220r106'></a><span class='ecrm-0500'>106</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor841'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
+<a id='x1-36178r85'></a><span class='ecrm-0500'>85</span><span class='ectt-0800'>        pr_debug(</span><span id='textcolor827'><span class='ectt-0800'>"Error: Could not initialize /proc/%s</span></span><span id='textcolor828'><span class='ectt-0800'>\n</span></span><span id='textcolor829'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>,</span> 
+<a id='x1-36180r86'></a><span class='ecrm-0500'>86</span><span class='ectt-0800'>                 PROCFS_ENTRY_FILENAME);</span> 
+<a id='x1-36182r87'></a><span class='ecrm-0500'>87</span><span class='ectt-0800'>        </span><span id='textcolor830'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> -ENOMEM;</span> 
+<a id='x1-36184r88'></a><span class='ecrm-0500'>88</span><span class='ectt-0800'>    }</span> 
+<a id='x1-36186r89'></a><span class='ecrm-0500'>89</span><span class='ectt-0800'>    proc_set_size(our_proc_file, 80);</span> 
+<a id='x1-36188r90'></a><span class='ecrm-0500'>90</span><span class='ectt-0800'>    proc_set_user(our_proc_file, GLOBAL_ROOT_UID, GLOBAL_ROOT_GID);</span> 
+<a id='x1-36190r91'></a><span class='ecrm-0500'>91</span> 
+<a id='x1-36192r92'></a><span class='ecrm-0500'>92</span><span class='ectt-0800'>    pr_debug(</span><span id='textcolor831'><span class='ectt-0800'>"/proc/%s created</span></span><span id='textcolor832'><span class='ectt-0800'>\n</span></span><span id='textcolor833'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, PROCFS_ENTRY_FILENAME);</span> 
+<a id='x1-36194r93'></a><span class='ecrm-0500'>93</span><span class='ectt-0800'>    </span><span id='textcolor834'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
+<a id='x1-36196r94'></a><span class='ecrm-0500'>94</span><span class='ectt-0800'>}</span> 
+<a id='x1-36198r95'></a><span class='ecrm-0500'>95</span> 
+<a id='x1-36200r96'></a><span class='ecrm-0500'>96</span><span id='textcolor835'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor836'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit procfs3_exit(</span><span id='textcolor837'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-36202r97'></a><span class='ecrm-0500'>97</span><span class='ectt-0800'>{</span> 
+<a id='x1-36204r98'></a><span class='ecrm-0500'>98</span><span class='ectt-0800'>    remove_proc_entry(PROCFS_ENTRY_FILENAME, NULL);</span> 
+<a id='x1-36206r99'></a><span class='ecrm-0500'>99</span><span class='ectt-0800'>    pr_debug(</span><span id='textcolor838'><span class='ectt-0800'>"/proc/%s removed</span></span><span id='textcolor839'><span class='ectt-0800'>\n</span></span><span id='textcolor840'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, PROCFS_ENTRY_FILENAME);</span> 
+<a id='x1-36208r100'></a><span class='ecrm-0500'>100</span><span class='ectt-0800'>}</span> 
+<a id='x1-36210r101'></a><span class='ecrm-0500'>101</span> 
+<a id='x1-36212r102'></a><span class='ecrm-0500'>102</span><span class='ectt-0800'>module_init(procfs3_init);</span> 
+<a id='x1-36214r103'></a><span class='ecrm-0500'>103</span><span class='ectt-0800'>module_exit(procfs3_exit);</span> 
+<a id='x1-36216r104'></a><span class='ecrm-0500'>104</span> 
+<a id='x1-36218r105'></a><span class='ecrm-0500'>105</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor841'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
 <!-- l. 1213 --><p class='indent'>   Still hungry for procfs examples? Well, first of all keep in mind, there are rumors
 around, claiming that procfs is on its way out, consider using <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>sysfs</span></span></span> instead. Consider
 using this mechanism, in case you want to document something kernel related
@@ -2418,24 +2416,23 @@ the same way as in the previous example.
 <a id='x1-37220r98'></a><span class='ecrm-0500'>98</span> 
 <a id='x1-37222r99'></a><span class='ecrm-0500'>99</span><span class='ectt-0800'>    entry = proc_create(PROC_NAME, 0, NULL, &amp;my_file_ops);</span> 
 <a id='x1-37224r100'></a><span class='ecrm-0500'>100</span><span class='ectt-0800'>    </span><span id='textcolor927'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (entry == NULL) {</span> 
-<a id='x1-37226r101'></a><span class='ecrm-0500'>101</span><span class='ectt-0800'>        remove_proc_entry(PROC_NAME, NULL);</span> 
-<a id='x1-37228r102'></a><span class='ecrm-0500'>102</span><span class='ectt-0800'>        pr_debug(</span><span id='textcolor928'><span class='ectt-0800'>"Error: Could not initialize /proc/%s</span></span><span id='textcolor929'><span class='ectt-0800'>\n</span></span><span id='textcolor930'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, PROC_NAME);</span> 
-<a id='x1-37230r103'></a><span class='ecrm-0500'>103</span><span class='ectt-0800'>        </span><span id='textcolor931'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> -ENOMEM;</span> 
-<a id='x1-37232r104'></a><span class='ecrm-0500'>104</span><span class='ectt-0800'>    }</span> 
-<a id='x1-37234r105'></a><span class='ecrm-0500'>105</span> 
-<a id='x1-37236r106'></a><span class='ecrm-0500'>106</span><span class='ectt-0800'>    </span><span id='textcolor932'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
-<a id='x1-37238r107'></a><span class='ecrm-0500'>107</span><span class='ectt-0800'>}</span> 
-<a id='x1-37240r108'></a><span class='ecrm-0500'>108</span> 
-<a id='x1-37242r109'></a><span class='ecrm-0500'>109</span><span id='textcolor933'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor934'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit procfs4_exit(</span><span id='textcolor935'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
-<a id='x1-37244r110'></a><span class='ecrm-0500'>110</span><span class='ectt-0800'>{</span> 
-<a id='x1-37246r111'></a><span class='ecrm-0500'>111</span><span class='ectt-0800'>    remove_proc_entry(PROC_NAME, NULL);</span> 
-<a id='x1-37248r112'></a><span class='ecrm-0500'>112</span><span class='ectt-0800'>    pr_debug(</span><span id='textcolor936'><span class='ectt-0800'>"/proc/%s removed</span></span><span id='textcolor937'><span class='ectt-0800'>\n</span></span><span id='textcolor938'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, PROC_NAME);</span> 
-<a id='x1-37250r113'></a><span class='ecrm-0500'>113</span><span class='ectt-0800'>}</span> 
-<a id='x1-37252r114'></a><span class='ecrm-0500'>114</span> 
-<a id='x1-37254r115'></a><span class='ecrm-0500'>115</span><span class='ectt-0800'>module_init(procfs4_init);</span> 
-<a id='x1-37256r116'></a><span class='ecrm-0500'>116</span><span class='ectt-0800'>module_exit(procfs4_exit);</span> 
-<a id='x1-37258r117'></a><span class='ecrm-0500'>117</span> 
-<a id='x1-37260r118'></a><span class='ecrm-0500'>118</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor939'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
+<a id='x1-37226r101'></a><span class='ecrm-0500'>101</span><span class='ectt-0800'>        pr_debug(</span><span id='textcolor928'><span class='ectt-0800'>"Error: Could not initialize /proc/%s</span></span><span id='textcolor929'><span class='ectt-0800'>\n</span></span><span id='textcolor930'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, PROC_NAME);</span> 
+<a id='x1-37228r102'></a><span class='ecrm-0500'>102</span><span class='ectt-0800'>        </span><span id='textcolor931'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> -ENOMEM;</span> 
+<a id='x1-37230r103'></a><span class='ecrm-0500'>103</span><span class='ectt-0800'>    }</span> 
+<a id='x1-37232r104'></a><span class='ecrm-0500'>104</span> 
+<a id='x1-37234r105'></a><span class='ecrm-0500'>105</span><span class='ectt-0800'>    </span><span id='textcolor932'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
+<a id='x1-37236r106'></a><span class='ecrm-0500'>106</span><span class='ectt-0800'>}</span> 
+<a id='x1-37238r107'></a><span class='ecrm-0500'>107</span> 
+<a id='x1-37240r108'></a><span class='ecrm-0500'>108</span><span id='textcolor933'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor934'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit procfs4_exit(</span><span id='textcolor935'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-37242r109'></a><span class='ecrm-0500'>109</span><span class='ectt-0800'>{</span> 
+<a id='x1-37244r110'></a><span class='ecrm-0500'>110</span><span class='ectt-0800'>    remove_proc_entry(PROC_NAME, NULL);</span> 
+<a id='x1-37246r111'></a><span class='ecrm-0500'>111</span><span class='ectt-0800'>    pr_debug(</span><span id='textcolor936'><span class='ectt-0800'>"/proc/%s removed</span></span><span id='textcolor937'><span class='ectt-0800'>\n</span></span><span id='textcolor938'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, PROC_NAME);</span> 
+<a id='x1-37248r112'></a><span class='ecrm-0500'>112</span><span class='ectt-0800'>}</span> 
+<a id='x1-37250r113'></a><span class='ecrm-0500'>113</span> 
+<a id='x1-37252r114'></a><span class='ecrm-0500'>114</span><span class='ectt-0800'>module_init(procfs4_init);</span> 
+<a id='x1-37254r115'></a><span class='ecrm-0500'>115</span><span class='ectt-0800'>module_exit(procfs4_exit);</span> 
+<a id='x1-37256r116'></a><span class='ecrm-0500'>116</span> 
+<a id='x1-37258r117'></a><span class='ecrm-0500'>117</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor939'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
 <!-- l. 1265 --><p class='indent'>   If you want more information, you can read this web page:
 </p>
      <ul class='itemize1'>
@@ -4048,95 +4045,94 @@ $
 <a id='x1-43404r194'></a><span class='ecrm-0500'>194</span><span class='ectt-0800'>    our_proc_file =</span> 
 <a id='x1-43406r195'></a><span class='ecrm-0500'>195</span><span class='ectt-0800'>        proc_create(PROC_ENTRY_FILENAME, 0644, NULL, &amp;file_ops_4_our_proc_file);</span> 
 <a id='x1-43408r196'></a><span class='ecrm-0500'>196</span><span class='ectt-0800'>    </span><span id='textcolor1940'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (our_proc_file == NULL) {</span> 
-<a id='x1-43410r197'></a><span class='ecrm-0500'>197</span><span class='ectt-0800'>        remove_proc_entry(PROC_ENTRY_FILENAME, NULL);</span> 
-<a id='x1-43412r198'></a><span class='ecrm-0500'>198</span><span class='ectt-0800'>        pr_debug(</span><span id='textcolor1941'><span class='ectt-0800'>"Error: Could not initialize /proc/%s</span></span><span id='textcolor1942'><span class='ectt-0800'>\n</span></span><span id='textcolor1943'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, PROC_ENTRY_FILENAME);</span> 
-<a id='x1-43414r199'></a><span class='ecrm-0500'>199</span><span class='ectt-0800'>        </span><span id='textcolor1944'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> -ENOMEM;</span> 
-<a id='x1-43416r200'></a><span class='ecrm-0500'>200</span><span class='ectt-0800'>    }</span> 
-<a id='x1-43418r201'></a><span class='ecrm-0500'>201</span><span class='ectt-0800'>    proc_set_size(our_proc_file, 80);</span> 
-<a id='x1-43420r202'></a><span class='ecrm-0500'>202</span><span class='ectt-0800'>    proc_set_user(our_proc_file, GLOBAL_ROOT_UID, GLOBAL_ROOT_GID);</span> 
-<a id='x1-43422r203'></a><span class='ecrm-0500'>203</span> 
-<a id='x1-43424r204'></a><span class='ecrm-0500'>204</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor1945'><span class='ectt-0800'>"/proc/%s created</span></span><span id='textcolor1946'><span class='ectt-0800'>\n</span></span><span id='textcolor1947'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, PROC_ENTRY_FILENAME);</span> 
-<a id='x1-43426r205'></a><span class='ecrm-0500'>205</span> 
-<a id='x1-43428r206'></a><span class='ecrm-0500'>206</span><span class='ectt-0800'>    </span><span id='textcolor1948'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
-<a id='x1-43430r207'></a><span class='ecrm-0500'>207</span><span class='ectt-0800'>}</span> 
-<a id='x1-43432r208'></a><span class='ecrm-0500'>208</span> 
-<a id='x1-43434r209'></a><span class='ecrm-0500'>209</span><span id='textcolor1949'><span class='ectt-0800'>/* Cleanup - unregister our file from /proc.  This could get dangerous if</span></span> 
-<a id='x1-43436r210'></a><span class='ecrm-0500'>210</span><span id='textcolor1950'><span class='ectt-0800'> * there are still processes waiting in waitq, because they are inside our</span></span> 
-<a id='x1-43438r211'></a><span class='ecrm-0500'>211</span><span id='textcolor1951'><span class='ectt-0800'> * open function, which will get unloaded. I</span><span class='tctt-0800'>'</span><span class='ectt-0800'>ll explain how to avoid removal</span></span> 
-<a id='x1-43440r212'></a><span class='ecrm-0500'>212</span><span id='textcolor1952'><span class='ectt-0800'> * of a kernel module in such a case in chapter 10.</span></span> 
-<a id='x1-43442r213'></a><span class='ecrm-0500'>213</span><span id='textcolor1953'><span class='ectt-0800'> */</span></span> 
-<a id='x1-43444r214'></a><span class='ecrm-0500'>214</span><span id='textcolor1954'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1955'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit sleep_exit(</span><span id='textcolor1956'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
-<a id='x1-43446r215'></a><span class='ecrm-0500'>215</span><span class='ectt-0800'>{</span> 
-<a id='x1-43448r216'></a><span class='ecrm-0500'>216</span><span class='ectt-0800'>    remove_proc_entry(PROC_ENTRY_FILENAME, NULL);</span> 
-<a id='x1-43450r217'></a><span class='ecrm-0500'>217</span><span class='ectt-0800'>    pr_debug(</span><span id='textcolor1957'><span class='ectt-0800'>"/proc/%s removed</span></span><span id='textcolor1958'><span class='ectt-0800'>\n</span></span><span id='textcolor1959'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, PROC_ENTRY_FILENAME);</span> 
-<a id='x1-43452r218'></a><span class='ecrm-0500'>218</span><span class='ectt-0800'>}</span> 
-<a id='x1-43454r219'></a><span class='ecrm-0500'>219</span> 
-<a id='x1-43456r220'></a><span class='ecrm-0500'>220</span><span class='ectt-0800'>module_init(sleep_init);</span> 
-<a id='x1-43458r221'></a><span class='ecrm-0500'>221</span><span class='ectt-0800'>module_exit(sleep_exit);</span> 
-<a id='x1-43460r222'></a><span class='ecrm-0500'>222</span> 
-<a id='x1-43462r223'></a><span class='ecrm-0500'>223</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor1960'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
+<a id='x1-43410r197'></a><span class='ecrm-0500'>197</span><span class='ectt-0800'>        pr_debug(</span><span id='textcolor1941'><span class='ectt-0800'>"Error: Could not initialize /proc/%s</span></span><span id='textcolor1942'><span class='ectt-0800'>\n</span></span><span id='textcolor1943'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, PROC_ENTRY_FILENAME);</span> 
+<a id='x1-43412r198'></a><span class='ecrm-0500'>198</span><span class='ectt-0800'>        </span><span id='textcolor1944'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> -ENOMEM;</span> 
+<a id='x1-43414r199'></a><span class='ecrm-0500'>199</span><span class='ectt-0800'>    }</span> 
+<a id='x1-43416r200'></a><span class='ecrm-0500'>200</span><span class='ectt-0800'>    proc_set_size(our_proc_file, 80);</span> 
+<a id='x1-43418r201'></a><span class='ecrm-0500'>201</span><span class='ectt-0800'>    proc_set_user(our_proc_file, GLOBAL_ROOT_UID, GLOBAL_ROOT_GID);</span> 
+<a id='x1-43420r202'></a><span class='ecrm-0500'>202</span> 
+<a id='x1-43422r203'></a><span class='ecrm-0500'>203</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor1945'><span class='ectt-0800'>"/proc/%s created</span></span><span id='textcolor1946'><span class='ectt-0800'>\n</span></span><span id='textcolor1947'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, PROC_ENTRY_FILENAME);</span> 
+<a id='x1-43424r204'></a><span class='ecrm-0500'>204</span> 
+<a id='x1-43426r205'></a><span class='ecrm-0500'>205</span><span class='ectt-0800'>    </span><span id='textcolor1948'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
+<a id='x1-43428r206'></a><span class='ecrm-0500'>206</span><span class='ectt-0800'>}</span> 
+<a id='x1-43430r207'></a><span class='ecrm-0500'>207</span> 
+<a id='x1-43432r208'></a><span class='ecrm-0500'>208</span><span id='textcolor1949'><span class='ectt-0800'>/* Cleanup - unregister our file from /proc.  This could get dangerous if</span></span> 
+<a id='x1-43434r209'></a><span class='ecrm-0500'>209</span><span id='textcolor1950'><span class='ectt-0800'> * there are still processes waiting in waitq, because they are inside our</span></span> 
+<a id='x1-43436r210'></a><span class='ecrm-0500'>210</span><span id='textcolor1951'><span class='ectt-0800'> * open function, which will get unloaded. I</span><span class='tctt-0800'>'</span><span class='ectt-0800'>ll explain how to avoid removal</span></span> 
+<a id='x1-43438r211'></a><span class='ecrm-0500'>211</span><span id='textcolor1952'><span class='ectt-0800'> * of a kernel module in such a case in chapter 10.</span></span> 
+<a id='x1-43440r212'></a><span class='ecrm-0500'>212</span><span id='textcolor1953'><span class='ectt-0800'> */</span></span> 
+<a id='x1-43442r213'></a><span class='ecrm-0500'>213</span><span id='textcolor1954'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1955'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit sleep_exit(</span><span id='textcolor1956'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-43444r214'></a><span class='ecrm-0500'>214</span><span class='ectt-0800'>{</span> 
+<a id='x1-43446r215'></a><span class='ecrm-0500'>215</span><span class='ectt-0800'>    remove_proc_entry(PROC_ENTRY_FILENAME, NULL);</span> 
+<a id='x1-43448r216'></a><span class='ecrm-0500'>216</span><span class='ectt-0800'>    pr_debug(</span><span id='textcolor1957'><span class='ectt-0800'>"/proc/%s removed</span></span><span id='textcolor1958'><span class='ectt-0800'>\n</span></span><span id='textcolor1959'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, PROC_ENTRY_FILENAME);</span> 
+<a id='x1-43450r217'></a><span class='ecrm-0500'>217</span><span class='ectt-0800'>}</span> 
+<a id='x1-43452r218'></a><span class='ecrm-0500'>218</span> 
+<a id='x1-43454r219'></a><span class='ecrm-0500'>219</span><span class='ectt-0800'>module_init(sleep_init);</span> 
+<a id='x1-43456r220'></a><span class='ecrm-0500'>220</span><span class='ectt-0800'>module_exit(sleep_exit);</span> 
+<a id='x1-43458r221'></a><span class='ecrm-0500'>221</span> 
+<a id='x1-43460r222'></a><span class='ecrm-0500'>222</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor1960'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
 
 <!-- l. 1 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb68'><a id='x1-43464r1'></a><span class='ecrm-0500'>1</span><span id='textcolor1961'><span class='ectt-0800'>/*</span></span> 
-<a id='x1-43466r2'></a><span class='ecrm-0500'>2</span><span id='textcolor1962'><span class='ectt-0800'> *  cat_nonblock.c - open a file and display its contents, but exit rather than</span></span> 
-<a id='x1-43468r3'></a><span class='ecrm-0500'>3</span><span id='textcolor1963'><span class='ectt-0800'> *  wait for input.</span></span> 
-<a id='x1-43470r4'></a><span class='ecrm-0500'>4</span><span id='textcolor1964'><span class='ectt-0800'> */</span></span> 
-<a id='x1-43472r5'></a><span class='ecrm-0500'>5</span><span id='textcolor1965'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1966'><span class='ectt-0800'>&lt;errno.h&gt; /* for errno */</span></span> 
-<a id='x1-43474r6'></a><span class='ecrm-0500'>6</span><span id='textcolor1967'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1968'><span class='ectt-0800'>&lt;fcntl.h&gt; /* for open */</span></span> 
-<a id='x1-43476r7'></a><span class='ecrm-0500'>7</span><span id='textcolor1969'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1970'><span class='ectt-0800'>&lt;stdio.h&gt; /* standard I/O */</span></span> 
-<a id='x1-43478r8'></a><span class='ecrm-0500'>8</span><span id='textcolor1971'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1972'><span class='ectt-0800'>&lt;stdlib.h&gt; /* for exit */</span></span> 
-<a id='x1-43480r9'></a><span class='ecrm-0500'>9</span><span id='textcolor1973'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1974'><span class='ectt-0800'>&lt;unistd.h&gt; /* for read */</span></span> 
-<a id='x1-43482r10'></a><span class='ecrm-0500'>10</span> 
-<a id='x1-43484r11'></a><span class='ecrm-0500'>11</span><span id='textcolor1975'><span class='ectt-0800'>#define MAX_BYTES 1024 * 4</span></span> 
-<a id='x1-43486r12'></a><span class='ecrm-0500'>12</span> 
-<a id='x1-43488r13'></a><span class='ecrm-0500'>13</span><span id='textcolor1976'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> main(</span><span id='textcolor1977'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> argc, </span><span id='textcolor1978'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *argv[])</span> 
-<a id='x1-43490r14'></a><span class='ecrm-0500'>14</span><span class='ectt-0800'>{</span> 
-<a id='x1-43492r15'></a><span class='ecrm-0500'>15</span><span class='ectt-0800'>    </span><span id='textcolor1979'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> fd; </span><span id='textcolor1980'><span class='ectt-0800'>/* The file descriptor for the file to read */</span></span> 
-<a id='x1-43494r16'></a><span class='ecrm-0500'>16</span><span class='ectt-0800'>    </span><span id='textcolor1981'><span class='ectt-0800'>size_t</span></span><span class='ectt-0800'> bytes; </span><span id='textcolor1982'><span class='ectt-0800'>/* The number of bytes read */</span></span> 
-<a id='x1-43496r17'></a><span class='ecrm-0500'>17</span><span class='ectt-0800'>    </span><span id='textcolor1983'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> buffer[MAX_BYTES]; </span><span id='textcolor1984'><span class='ectt-0800'>/* The buffer for the bytes */</span></span> 
-<a id='x1-43498r18'></a><span class='ecrm-0500'>18</span> 
-<a id='x1-43500r19'></a><span class='ecrm-0500'>19</span><span class='ectt-0800'>    </span><span id='textcolor1985'><span class='ectt-0800'>/* Usage */</span></span> 
-<a id='x1-43502r20'></a><span class='ecrm-0500'>20</span><span class='ectt-0800'>    </span><span id='textcolor1986'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (argc != 2) {</span> 
-<a id='x1-43504r21'></a><span class='ecrm-0500'>21</span><span class='ectt-0800'>        printf(</span><span id='textcolor1987'><span class='ectt-0800'>"Usage: %s &lt;filename&gt;</span></span><span id='textcolor1988'><span class='ectt-0800'>\n</span></span><span id='textcolor1989'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, argv[0]);</span> 
-<a id='x1-43506r22'></a><span class='ecrm-0500'>22</span><span class='ectt-0800'>        puts(</span><span id='textcolor1990'><span class='ectt-0800'>"Reads the content of a file, but doesn</span><span class='tctt-0800'>'</span><span class='ectt-0800'>t wait for input"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-43508r23'></a><span class='ecrm-0500'>23</span><span class='ectt-0800'>        exit(-1);</span> 
-<a id='x1-43510r24'></a><span class='ecrm-0500'>24</span><span class='ectt-0800'>    }</span> 
-<a id='x1-43512r25'></a><span class='ecrm-0500'>25</span> 
-<a id='x1-43514r26'></a><span class='ecrm-0500'>26</span><span class='ectt-0800'>    </span><span id='textcolor1991'><span class='ectt-0800'>/* Open the file for reading in non blocking mode */</span></span> 
-<a id='x1-43516r27'></a><span class='ecrm-0500'>27</span><span class='ectt-0800'>    fd = open(argv[1], O_RDONLY | O_NONBLOCK);</span> 
-<a id='x1-43518r28'></a><span class='ecrm-0500'>28</span> 
-<a id='x1-43520r29'></a><span class='ecrm-0500'>29</span><span class='ectt-0800'>    </span><span id='textcolor1992'><span class='ectt-0800'>/* If open failed */</span></span> 
-<a id='x1-43522r30'></a><span class='ecrm-0500'>30</span><span class='ectt-0800'>    </span><span id='textcolor1993'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (fd == -1) {</span> 
-<a id='x1-43524r31'></a><span class='ecrm-0500'>31</span><span class='ectt-0800'>        puts(errno == EAGAIN ? </span><span id='textcolor1994'><span class='ectt-0800'>"Open would block"</span></span><span class='ectt-0800'> : </span><span id='textcolor1995'><span class='ectt-0800'>"Open failed"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-43526r32'></a><span class='ecrm-0500'>32</span><span class='ectt-0800'>        exit(-1);</span> 
-<a id='x1-43528r33'></a><span class='ecrm-0500'>33</span><span class='ectt-0800'>    }</span> 
-<a id='x1-43530r34'></a><span class='ecrm-0500'>34</span> 
-<a id='x1-43532r35'></a><span class='ecrm-0500'>35</span><span class='ectt-0800'>    </span><span id='textcolor1996'><span class='ectt-0800'>/* Read the file and output its contents */</span></span> 
-<a id='x1-43534r36'></a><span class='ecrm-0500'>36</span><span class='ectt-0800'>    </span><span id='textcolor1997'><span class='ectt-0800'>do</span></span><span class='ectt-0800'> {</span> 
-<a id='x1-43536r37'></a><span class='ecrm-0500'>37</span><span class='ectt-0800'>        </span><span id='textcolor1998'><span class='ectt-0800'>/* Read characters from the file */</span></span> 
-<a id='x1-43538r38'></a><span class='ecrm-0500'>38</span><span class='ectt-0800'>        bytes = read(fd, buffer, MAX_BYTES);</span> 
-<a id='x1-43540r39'></a><span class='ecrm-0500'>39</span> 
-<a id='x1-43542r40'></a><span class='ecrm-0500'>40</span><span class='ectt-0800'>        </span><span id='textcolor1999'><span class='ectt-0800'>/* If there</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s an error, report it and die */</span></span> 
-<a id='x1-43544r41'></a><span class='ecrm-0500'>41</span><span class='ectt-0800'>        </span><span id='textcolor2000'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (bytes == -1) {</span> 
-<a id='x1-43546r42'></a><span class='ecrm-0500'>42</span><span class='ectt-0800'>            </span><span id='textcolor2001'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (errno == EAGAIN)</span> 
-<a id='x1-43548r43'></a><span class='ecrm-0500'>43</span><span class='ectt-0800'>                puts(</span><span id='textcolor2002'><span class='ectt-0800'>"Normally I</span><span class='tctt-0800'>'</span><span class='ectt-0800'>d block, but you told me not to"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-43550r44'></a><span class='ecrm-0500'>44</span><span class='ectt-0800'>            </span><span id='textcolor2003'><span class='ectt-0800'>else</span></span> 
-<a id='x1-43552r45'></a><span class='ecrm-0500'>45</span><span class='ectt-0800'>                puts(</span><span id='textcolor2004'><span class='ectt-0800'>"Another read error"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-43554r46'></a><span class='ecrm-0500'>46</span><span class='ectt-0800'>            exit(-1);</span> 
-<a id='x1-43556r47'></a><span class='ecrm-0500'>47</span><span class='ectt-0800'>        }</span> 
-<a id='x1-43558r48'></a><span class='ecrm-0500'>48</span> 
-<a id='x1-43560r49'></a><span class='ecrm-0500'>49</span><span class='ectt-0800'>        </span><span id='textcolor2005'><span class='ectt-0800'>/* Print the characters */</span></span> 
-<a id='x1-43562r50'></a><span class='ecrm-0500'>50</span><span class='ectt-0800'>        </span><span id='textcolor2006'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (bytes &gt; 0) {</span> 
-<a id='x1-43564r51'></a><span class='ecrm-0500'>51</span><span class='ectt-0800'>            </span><span id='textcolor2007'><span class='ectt-0800'>for</span></span><span class='ectt-0800'> (</span><span id='textcolor2008'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> i = 0; i &lt; bytes; i++)</span> 
-<a id='x1-43566r52'></a><span class='ecrm-0500'>52</span><span class='ectt-0800'>                putchar(buffer[i]);</span> 
-<a id='x1-43568r53'></a><span class='ecrm-0500'>53</span><span class='ectt-0800'>        }</span> 
-<a id='x1-43570r54'></a><span class='ecrm-0500'>54</span> 
-<a id='x1-43572r55'></a><span class='ecrm-0500'>55</span><span class='ectt-0800'>        </span><span id='textcolor2009'><span class='ectt-0800'>/* While there are no errors and the file isn</span><span class='tctt-0800'>'</span><span class='ectt-0800'>t over */</span></span> 
-<a id='x1-43574r56'></a><span class='ecrm-0500'>56</span><span class='ectt-0800'>    } </span><span id='textcolor2010'><span class='ectt-0800'>while</span></span><span class='ectt-0800'> (bytes &gt; 0);</span> 
-<a id='x1-43576r57'></a><span class='ecrm-0500'>57</span> 
-<a id='x1-43578r58'></a><span class='ecrm-0500'>58</span><span class='ectt-0800'>    </span><span id='textcolor2011'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
-<a id='x1-43580r59'></a><span class='ecrm-0500'>59</span><span class='ectt-0800'>}</span></pre>
+   <pre class='fancyvrb' id='fancyvrb68'><a id='x1-43462r1'></a><span class='ecrm-0500'>1</span><span id='textcolor1961'><span class='ectt-0800'>/*</span></span> 
+<a id='x1-43464r2'></a><span class='ecrm-0500'>2</span><span id='textcolor1962'><span class='ectt-0800'> *  cat_nonblock.c - open a file and display its contents, but exit rather than</span></span> 
+<a id='x1-43466r3'></a><span class='ecrm-0500'>3</span><span id='textcolor1963'><span class='ectt-0800'> *  wait for input.</span></span> 
+<a id='x1-43468r4'></a><span class='ecrm-0500'>4</span><span id='textcolor1964'><span class='ectt-0800'> */</span></span> 
+<a id='x1-43470r5'></a><span class='ecrm-0500'>5</span><span id='textcolor1965'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1966'><span class='ectt-0800'>&lt;errno.h&gt; /* for errno */</span></span> 
+<a id='x1-43472r6'></a><span class='ecrm-0500'>6</span><span id='textcolor1967'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1968'><span class='ectt-0800'>&lt;fcntl.h&gt; /* for open */</span></span> 
+<a id='x1-43474r7'></a><span class='ecrm-0500'>7</span><span id='textcolor1969'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1970'><span class='ectt-0800'>&lt;stdio.h&gt; /* standard I/O */</span></span> 
+<a id='x1-43476r8'></a><span class='ecrm-0500'>8</span><span id='textcolor1971'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1972'><span class='ectt-0800'>&lt;stdlib.h&gt; /* for exit */</span></span> 
+<a id='x1-43478r9'></a><span class='ecrm-0500'>9</span><span id='textcolor1973'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1974'><span class='ectt-0800'>&lt;unistd.h&gt; /* for read */</span></span> 
+<a id='x1-43480r10'></a><span class='ecrm-0500'>10</span> 
+<a id='x1-43482r11'></a><span class='ecrm-0500'>11</span><span id='textcolor1975'><span class='ectt-0800'>#define MAX_BYTES 1024 * 4</span></span> 
+<a id='x1-43484r12'></a><span class='ecrm-0500'>12</span> 
+<a id='x1-43486r13'></a><span class='ecrm-0500'>13</span><span id='textcolor1976'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> main(</span><span id='textcolor1977'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> argc, </span><span id='textcolor1978'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *argv[])</span> 
+<a id='x1-43488r14'></a><span class='ecrm-0500'>14</span><span class='ectt-0800'>{</span> 
+<a id='x1-43490r15'></a><span class='ecrm-0500'>15</span><span class='ectt-0800'>    </span><span id='textcolor1979'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> fd; </span><span id='textcolor1980'><span class='ectt-0800'>/* The file descriptor for the file to read */</span></span> 
+<a id='x1-43492r16'></a><span class='ecrm-0500'>16</span><span class='ectt-0800'>    </span><span id='textcolor1981'><span class='ectt-0800'>size_t</span></span><span class='ectt-0800'> bytes; </span><span id='textcolor1982'><span class='ectt-0800'>/* The number of bytes read */</span></span> 
+<a id='x1-43494r17'></a><span class='ecrm-0500'>17</span><span class='ectt-0800'>    </span><span id='textcolor1983'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> buffer[MAX_BYTES]; </span><span id='textcolor1984'><span class='ectt-0800'>/* The buffer for the bytes */</span></span> 
+<a id='x1-43496r18'></a><span class='ecrm-0500'>18</span> 
+<a id='x1-43498r19'></a><span class='ecrm-0500'>19</span><span class='ectt-0800'>    </span><span id='textcolor1985'><span class='ectt-0800'>/* Usage */</span></span> 
+<a id='x1-43500r20'></a><span class='ecrm-0500'>20</span><span class='ectt-0800'>    </span><span id='textcolor1986'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (argc != 2) {</span> 
+<a id='x1-43502r21'></a><span class='ecrm-0500'>21</span><span class='ectt-0800'>        printf(</span><span id='textcolor1987'><span class='ectt-0800'>"Usage: %s &lt;filename&gt;</span></span><span id='textcolor1988'><span class='ectt-0800'>\n</span></span><span id='textcolor1989'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, argv[0]);</span> 
+<a id='x1-43504r22'></a><span class='ecrm-0500'>22</span><span class='ectt-0800'>        puts(</span><span id='textcolor1990'><span class='ectt-0800'>"Reads the content of a file, but doesn</span><span class='tctt-0800'>'</span><span class='ectt-0800'>t wait for input"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-43506r23'></a><span class='ecrm-0500'>23</span><span class='ectt-0800'>        exit(-1);</span> 
+<a id='x1-43508r24'></a><span class='ecrm-0500'>24</span><span class='ectt-0800'>    }</span> 
+<a id='x1-43510r25'></a><span class='ecrm-0500'>25</span> 
+<a id='x1-43512r26'></a><span class='ecrm-0500'>26</span><span class='ectt-0800'>    </span><span id='textcolor1991'><span class='ectt-0800'>/* Open the file for reading in non blocking mode */</span></span> 
+<a id='x1-43514r27'></a><span class='ecrm-0500'>27</span><span class='ectt-0800'>    fd = open(argv[1], O_RDONLY | O_NONBLOCK);</span> 
+<a id='x1-43516r28'></a><span class='ecrm-0500'>28</span> 
+<a id='x1-43518r29'></a><span class='ecrm-0500'>29</span><span class='ectt-0800'>    </span><span id='textcolor1992'><span class='ectt-0800'>/* If open failed */</span></span> 
+<a id='x1-43520r30'></a><span class='ecrm-0500'>30</span><span class='ectt-0800'>    </span><span id='textcolor1993'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (fd == -1) {</span> 
+<a id='x1-43522r31'></a><span class='ecrm-0500'>31</span><span class='ectt-0800'>        puts(errno == EAGAIN ? </span><span id='textcolor1994'><span class='ectt-0800'>"Open would block"</span></span><span class='ectt-0800'> : </span><span id='textcolor1995'><span class='ectt-0800'>"Open failed"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-43524r32'></a><span class='ecrm-0500'>32</span><span class='ectt-0800'>        exit(-1);</span> 
+<a id='x1-43526r33'></a><span class='ecrm-0500'>33</span><span class='ectt-0800'>    }</span> 
+<a id='x1-43528r34'></a><span class='ecrm-0500'>34</span> 
+<a id='x1-43530r35'></a><span class='ecrm-0500'>35</span><span class='ectt-0800'>    </span><span id='textcolor1996'><span class='ectt-0800'>/* Read the file and output its contents */</span></span> 
+<a id='x1-43532r36'></a><span class='ecrm-0500'>36</span><span class='ectt-0800'>    </span><span id='textcolor1997'><span class='ectt-0800'>do</span></span><span class='ectt-0800'> {</span> 
+<a id='x1-43534r37'></a><span class='ecrm-0500'>37</span><span class='ectt-0800'>        </span><span id='textcolor1998'><span class='ectt-0800'>/* Read characters from the file */</span></span> 
+<a id='x1-43536r38'></a><span class='ecrm-0500'>38</span><span class='ectt-0800'>        bytes = read(fd, buffer, MAX_BYTES);</span> 
+<a id='x1-43538r39'></a><span class='ecrm-0500'>39</span> 
+<a id='x1-43540r40'></a><span class='ecrm-0500'>40</span><span class='ectt-0800'>        </span><span id='textcolor1999'><span class='ectt-0800'>/* If there</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s an error, report it and die */</span></span> 
+<a id='x1-43542r41'></a><span class='ecrm-0500'>41</span><span class='ectt-0800'>        </span><span id='textcolor2000'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (bytes == -1) {</span> 
+<a id='x1-43544r42'></a><span class='ecrm-0500'>42</span><span class='ectt-0800'>            </span><span id='textcolor2001'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (errno == EAGAIN)</span> 
+<a id='x1-43546r43'></a><span class='ecrm-0500'>43</span><span class='ectt-0800'>                puts(</span><span id='textcolor2002'><span class='ectt-0800'>"Normally I</span><span class='tctt-0800'>'</span><span class='ectt-0800'>d block, but you told me not to"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-43548r44'></a><span class='ecrm-0500'>44</span><span class='ectt-0800'>            </span><span id='textcolor2003'><span class='ectt-0800'>else</span></span> 
+<a id='x1-43550r45'></a><span class='ecrm-0500'>45</span><span class='ectt-0800'>                puts(</span><span id='textcolor2004'><span class='ectt-0800'>"Another read error"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-43552r46'></a><span class='ecrm-0500'>46</span><span class='ectt-0800'>            exit(-1);</span> 
+<a id='x1-43554r47'></a><span class='ecrm-0500'>47</span><span class='ectt-0800'>        }</span> 
+<a id='x1-43556r48'></a><span class='ecrm-0500'>48</span> 
+<a id='x1-43558r49'></a><span class='ecrm-0500'>49</span><span class='ectt-0800'>        </span><span id='textcolor2005'><span class='ectt-0800'>/* Print the characters */</span></span> 
+<a id='x1-43560r50'></a><span class='ecrm-0500'>50</span><span class='ectt-0800'>        </span><span id='textcolor2006'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (bytes &gt; 0) {</span> 
+<a id='x1-43562r51'></a><span class='ecrm-0500'>51</span><span class='ectt-0800'>            </span><span id='textcolor2007'><span class='ectt-0800'>for</span></span><span class='ectt-0800'> (</span><span id='textcolor2008'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> i = 0; i &lt; bytes; i++)</span> 
+<a id='x1-43564r52'></a><span class='ecrm-0500'>52</span><span class='ectt-0800'>                putchar(buffer[i]);</span> 
+<a id='x1-43566r53'></a><span class='ecrm-0500'>53</span><span class='ectt-0800'>        }</span> 
+<a id='x1-43568r54'></a><span class='ecrm-0500'>54</span> 
+<a id='x1-43570r55'></a><span class='ecrm-0500'>55</span><span class='ectt-0800'>        </span><span id='textcolor2009'><span class='ectt-0800'>/* While there are no errors and the file isn</span><span class='tctt-0800'>'</span><span class='ectt-0800'>t over */</span></span> 
+<a id='x1-43572r56'></a><span class='ecrm-0500'>56</span><span class='ectt-0800'>    } </span><span id='textcolor2010'><span class='ectt-0800'>while</span></span><span class='ectt-0800'> (bytes &gt; 0);</span> 
+<a id='x1-43574r57'></a><span class='ecrm-0500'>57</span> 
+<a id='x1-43576r58'></a><span class='ecrm-0500'>58</span><span class='ectt-0800'>    </span><span id='textcolor2011'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
+<a id='x1-43578r59'></a><span class='ecrm-0500'>59</span><span class='ectt-0800'>}</span></pre>
 <!-- l. 1638 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='completions'><span class='titlemark'>11.2   </span> <a id='x1-4400011.2'></a>Completions</h4>
