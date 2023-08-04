@@ -30,7 +30,7 @@ For Ubuntu Linux, macOS, and other Unix-like systems, run the following command(
 
 ```bash
 # Debian / Ubuntu
-$ sudo apt install make texlive-full
+$ sudo apt install make texlive-xetex
 
 # Arch / Manjaro
 $ sudo pacman -S make texlive-most texlive-bin
