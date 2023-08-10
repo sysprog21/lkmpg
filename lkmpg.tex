@@ -80,13 +80,14 @@ Contributing in this way shows your support for free software and the LDP. If yo
 \subsection{Authorship}
 \label{sec:authorship}
 
-The Linux Kernel Module Programming Guide was originally written for the 2.2 kernels by Ori Pomerantz.
-Eventually, Ori no longer had time to maintain the document.
-After all, the Linux kernel is a fast moving target.
-Peter Jay Salzman took over maintenance and updated it for the 2.4 kernels.
-Eventually, Peter no longer had time to follow developments with the 2.6 kernel, so Michael Burian became a co-maintainer to update the document for the 2.6 kernels.
-Bob Mottram updated the examples for 3.8+ kernels.
-Jim Huang upgraded to recent kernel versions (v5.x) and revised the \LaTeX\ document.
+The Linux Kernel Module Programming Guide was initially authored by Ori Pomerantz for Linux v2.2.
+As the Linux kernel evolved, Ori's availability to maintain the document diminished.
+Consequently, Peter Jay Salzman assumed the role of maintainer and updated the guide for Linux v2.4.
+Similar constraints arose for Peter when tracking developments in Linux v2.6,
+leading to Michael Burian joining as a co-maintainer to bring the guide up to speed with Linux v2.6.
+Bob Mottram contributed to the guide by updating examples for Linux v3.8 and later.
+Jim Huang then undertook the task of updating the guide for recent Linux versions (v5.0 and beyond),
+along with revising the LaTeX document.
 
 \subsection{Acknowledgements}
 \label{sec:acknowledgements}
@@ -100,12 +101,12 @@ The following people have contributed corrections or good suggestions:
 \subsection{What Is A Kernel Module?}
 \label{sec:kernelmod}
 
-Interest in the development of kernel modules involves a background in the C programming language and a record of creating conventional programs designed for process execution.
-This endeavor delves into a realm where an unchecked pointer, if left unattended,
-could potentially cause the complete erasure of an entire file system,
-leading to an event that prompts a complete system reboot.
+Involvement in the development of Linux kernel modules requires a foundation in the C programming language and a track record of creating conventional programs intended for process execution.
+This pursuit delves into a domain where an unregulated pointer, if disregarded,
+may potentially trigger the total elimination of an entire file system,
+resulting in a scenario that necessitates a complete system reboot.
 
-A kernel module is precisely defined as a code segment capable of dynamic loading and unloading within the kernel as needed.
+A Linux kernel module is precisely defined as a code segment capable of dynamic loading and unloading within the kernel as needed.
 These modules enhance kernel capabilities without necessitating a system reboot.
 A notable example is seen in the device driver module, which facilitates kernel interaction with hardware components linked to the system.
 In the absence of modules, the prevailing approach leans toward monolithic kernels,
