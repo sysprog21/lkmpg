@@ -171,7 +171,6 @@ It is reassuring to note that overcoming the initial obstacle in the first attem
         If difficulties arise when loading the modules due to versioning errors, consider compiling a kernel with modversioning turned off.
 
   \item Using X Window System.
-  \label{sec:using_x}
         It is highly recommended to extract, compile, and load all the examples discussed in this guide from a console.
         Working on these tasks within the X Window System is discouraged.
 
@@ -1710,14 +1709,16 @@ For further details, see:
 \label{sec:print_macros}
 \subsection{Replacement}
 % FIXME: cross-reference
-In Section \ref{sec:using_x}, I said that X Window System and kernel module programming do not mix.
-That is true for developing kernel modules.
-But in actual use, you want to be able to send messages to whichever tty the command to load the module came from.
+In Section \ref{sec:preparation}, it was noted that the X Window System and kernel module programming are not conducive to integration.
+This remains valid during the development of kernel modules.
+However, in practical scenarios, the necessity emerges to relay messages to the tty (teletype) originating the module load command.
 
-"tty" is an abbreviation of \emph{teletype}: originally a combination keyboard-printer used to communicate with a Unix system, and today an abstraction for the text stream used for a Unix program, whether it is a physical terminal, an xterm on an X display, a network connection used with ssh, etc.
+The term ``tty'' originates from \emph{teletype}, which initially referred to a combined keyboard-printer for Unix system communication.
+Today, it signifies a text stream abstraction employed by Unix programs, encompassing physical terminals,
+xterms in X displays, and network connections like SSH.
 
-The way this is done is by using current, a pointer to the currently running task, to get the current task's tty structure.
-Then, we look inside that tty structure to find a pointer to a string write function, which we use to write a string to the tty.
+To achieve this, the ``current'' pointer is leveraged to access the active task's tty structure.
+Within this structure lies a pointer to a string write function, facilitating the string's transmission to the tty.
 
 \samplec{examples/print_string.c}
 
