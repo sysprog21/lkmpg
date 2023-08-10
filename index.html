@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>July 23, 2023</span></div>
+<div class='date'><span class='ecrm-1200'>August 10, 2023</span></div>
                                                                   
 
                                                                   
@@ -4791,7 +4791,7 @@ loaded, starts blinking the keyboard LEDs until it is unloaded.
 <a id='x1-52196r61'></a><span class='ecrm-0500'>61</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2448'><span class='ectt-0800'>"kbleds: finished scanning consoles</span></span><span id='textcolor2449'><span class='ectt-0800'>\n</span></span><span id='textcolor2450'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-52198r62'></a><span class='ecrm-0500'>62</span> 
 <a id='x1-52200r63'></a><span class='ecrm-0500'>63</span><span class='ectt-0800'>    my_driver = vc_cons[fg_console].d-&gt;port.tty-&gt;driver;</span> 
-<a id='x1-52202r64'></a><span class='ecrm-0500'>64</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2451'><span class='ectt-0800'>"kbleds: tty driver magic %x</span></span><span id='textcolor2452'><span class='ectt-0800'>\n</span></span><span id='textcolor2453'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, my_driver-&gt;magic);</span> 
+<a id='x1-52202r64'></a><span class='ecrm-0500'>64</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2451'><span class='ectt-0800'>"kbleds: tty driver name %s</span></span><span id='textcolor2452'><span class='ectt-0800'>\n</span></span><span id='textcolor2453'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, my_driver-&gt;driver_name);</span> 
 <a id='x1-52204r65'></a><span class='ecrm-0500'>65</span> 
 <a id='x1-52206r66'></a><span class='ecrm-0500'>66</span><span class='ectt-0800'>    </span><span id='textcolor2454'><span class='ectt-0800'>/* Set up the LED blink timer the first time. */</span></span> 
 <a id='x1-52208r67'></a><span class='ecrm-0500'>67</span><span class='ectt-0800'>    timer_setup(&amp;my_timer, my_timer_func, 0);</span> 
