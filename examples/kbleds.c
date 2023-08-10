@@ -61,7 +61,7 @@ static int __init kbleds_init(void)
     pr_info("kbleds: finished scanning consoles\n");
 
     my_driver = vc_cons[fg_console].d->port.tty->driver;
-    pr_info("kbleds: tty driver magic %x\n", my_driver->magic);
+    pr_info("kbleds: tty driver name %s\n", my_driver->driver_name);
 
     /* Set up the LED blink timer the first time. */
     timer_setup(&my_timer, my_timer_func, 0);
