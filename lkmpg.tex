@@ -118,7 +118,7 @@ This approach leads to larger kernels and necessitates kernel rebuilding and sub
 
 Linux distributions provide the commands \sh|modprobe|, \sh|insmod| and \sh|depmod| within a package.
 
-On Ubuntu/Debian:
+On Ubuntu/Debian GNU/Linux:
 \begin{codebash}
 sudo apt-get install build-essential kmod
 \end{codebash}
@@ -202,7 +202,7 @@ It is reassuring to note that overcoming the initial obstacle in the first attem
 \label{sec:headers}
 Before you can build anything you'll need to install the header files for your kernel.
 
-On Ubuntu/Debian:
+On Ubuntu/Debian GNU/Linux:
 \begin{codebash}
 sudo apt-get update
 apt-cache search linux-headers-`uname -r`
@@ -1456,7 +1456,9 @@ But there have few ways to get the symbol, manual symbol lookup and \cpp|kallsym
 Here we use both depend on the kernel version.
 
 Because of the \textit{control-flow integrity}, which is a technique to prevent the redirect execution code from the attacker, for making sure that the indirect calls go to the expected addresses and the return addresses are not changed.
-Since Linux v5.7, the kernel patched the series of \textit{control-flow enforcement} (CET) for x86, and some configurations of GCC, like GCC versions 9 and 10 in Ubuntu, will add with CET (the \verb|-fcf-protection| option) in the kernel by default.
+Since Linux v5.7, the kernel patched the series of \textit{control-flow enforcement} (CET) for x86,
+and some configurations of GCC, like GCC versions 9 and 10 in Ubuntu Linux,
+will add with CET (the \verb|-fcf-protection| option) in the kernel by default.
 Using that GCC to compile the kernel with retpoline off may result in CET being enabled in the kernel.
 You can use the following command to check out the \verb|-fcf-protection| option is enabled or not:
 \begin{verbatim}
