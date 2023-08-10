@@ -100,15 +100,16 @@ The following people have contributed corrections or good suggestions:
 \subsection{What Is A Kernel Module?}
 \label{sec:kernelmod}
 
-So, you want to write a kernel module.
-You know C, you have written a few normal programs to run as processes, and now you want to get to where the real action is, to where a single wild pointer can wipe out your file system and a core dump means a reboot.
+Interest in the development of kernel modules involves a background in the C programming language and a record of creating conventional programs designed for process execution.
+This endeavor delves into a realm where an unchecked pointer, if left unattended,
+could potentially cause the complete erasure of an entire file system,
+leading to an event that prompts a complete system reboot.
 
-What exactly is a kernel module?
-Modules are pieces of code that can be loaded and unloaded into the kernel upon demand.
-They extend the functionality of the kernel without the need to reboot the system.
-For example, one type of module is the device driver, which allows the kernel to access hardware connected to the system.
-Without modules, we would have to build monolithic kernels and add new functionality directly into the kernel image.
-Besides having larger kernels, this has the disadvantage of requiring us to rebuild and reboot the kernel every time we want new functionality.
+Precisely defined, a kernel module refers to a segment of code that possesses the ability to be dynamically loaded and unloaded within the kernel according to necessity.
+Such modules elevate kernel capabilities without the imposition of a system reboot requirement.
+A notable instance is observed in the device driver module, which serves to facilitate the interaction of the kernel with the hardware components attached to the system.
+In the absence of modules, the prevailing approach leans toward monolithic kernels, necessitating the direct integration of novel functionalities into the kernel image.
+This approach not only contributes to the generation of larger kernels but also mandates the undertaking of kernel rebuilding and subsequent system rebooting whenever a desired addition of functionality arises.
 
 \subsection{Kernel module package}
 \label{sec:packages}
