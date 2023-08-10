@@ -183,23 +183,19 @@ It is reassuring to note that overcoming the initial obstacle in the first attem
         Refer to \ref{sec:helloworld} for more information.
         For instant access to this information, it is advisable to perform all tasks from the console.
   \item SecureBoot.
-        Many contemporary computers are pre-configured with UEFI SecureBoot enabled.
-        It is a security standard that can make sure the device boots using only software that is trusted by original equipment manufacturer.
-        The default Linux kernel from some distributions have also enabled the SecureBoot.
-        For such distributions, the kernel module has to be signed with the security key or you would get the ``\emph{ERROR: could not insert module}'' when you insert your first hello world module:
+        Numerous modern computers arrive pre-configured with UEFI SecureBoot enabled—an essential security standard ensuring booting exclusively through trusted software endorsed by the original equipment manufacturer.
+        Certain Linux distributions even ship with the default Linux kernel configured to support SecureBoot.
+        In these cases, the kernel module necessitates a signed security key.
 
-\begin{codebash}
-insmod ./hello-1.ko
-\end{codebash}
-        And then you can check further with \sh|dmesg| and see the following text:
-
-           \emph{Lockdown: insmod: unsigned module loading is restricted;
-                 see man kernel lockdown.7}
-
-        If you got this message, the simplest way is to disable the UEFI SecureBoot from the PC/laptop boot menu to have your ``hello-1'' to be inserted.
-        Of course you can go through complicated steps to generate keys, install keys to your system, and finally sign your module to make it work.
-        However, this is not suitable for beginners.
-        You could read and follow the steps in \href{https://wiki.debian.org/SecureBoot}{SecureBoot} if you are interested.
+        Failing this, an attempt to insert your first ``hello world'' module would result in the message: ``\emph{ERROR: could not insert module}''.
+        If this message \emph{Lockdown: insmod: unsigned module loading is restricted;
+        see man kernel lockdown.7} appears in the \sh|dmesg| output,
+        the simplest approach involves disabling UEFI SecureBoot from the boot menu of your PC or laptop,
+        allowing the successful insertion of `hello world'' module.
+        Naturally, an alternative involves undergoing intricate procedures such as generating keys, system key installation,
+        and module signing to achieve functionality.
+        However, this intricate process is less appropriate for beginners. If interested,
+        more detailed steps for \href{https://wiki.debian.org/SecureBoot}{SecureBoot} can be explored and followed.
 \end{enumerate}
 
 \section{Headers}
