@@ -33,7 +33,7 @@ For Ubuntu Linux, macOS, and other Unix-like systems, run the following command(
 $ sudo apt install make texlive-full
 
 # Arch / Manjaro
-$ sudo pacman -S make texlive-most texlive-bin
+$ sudo pacman -S make texlive-binextra texlive-bin
 
 # macOS
 $ brew install mactex
