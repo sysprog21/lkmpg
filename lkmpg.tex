@@ -1220,7 +1220,7 @@ Consider using this mechanism, in case you want to document something kernel rel
 \subsection{Manage /proc file with seq\_file}
 \label{sec:manage_procfs_with_seq_file}
 As we have seen, writing a \verb|/proc| file may be quite ``complex''.
-So to help people writting \verb|/proc| file, there is an API named \cpp|seq_file| that helps formating a \verb|/proc| file for output.
+So to help people writing \verb|/proc| file, there is an API named \cpp|seq_file| that helps formatting a \verb|/proc| file for output.
 It is based on sequence, which is composed of 3 functions: \cpp|start()|, \cpp|next()|, and \cpp|stop()|.
 The \cpp|seq_file| API starts a sequence when a user read the \verb|/proc| file.
 
