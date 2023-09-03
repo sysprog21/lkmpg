@@ -2029,7 +2029,7 @@ echo "-34" | sudo tee /dev/vinput0
 \section{Standardizing the interfaces: The Device Model}
 \label{sec:device_model}
 Up to this point we have seen all kinds of modules doing all kinds of things, but there was no consistency in their interfaces with the rest of the kernel.
-To impose some consistency such that there is at minimum a standardized way to start, suspend and resume a device a device model was added.
+To impose some consistency such that there is at minimum a standardized way to start, suspend and resume a device model was added.
 An example is shown below, and you can use this as a template to add your own suspend, resume or other interface functions.
 
 \samplec{examples/devicemodel.c}
