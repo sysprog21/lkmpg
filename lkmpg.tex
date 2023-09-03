@@ -2087,7 +2087,7 @@ pr_info("fastpath 2\n");
 
 If the key is enabled at runtime by calling \cpp|static_branch_enable(&fkey)|, the fastpath will be patched with an unconditional jump instruction to the slowpath code \cpp|pr_alert|, so the branch will always be taken until the key is disabled again.
 
-The following kernel module derived from \verb|chardev.c|, demostrates how the static key works.
+The following kernel module derived from \verb|chardev.c|, demonstrates how the static key works.
 
 \samplec{examples/static_key.c}
 
