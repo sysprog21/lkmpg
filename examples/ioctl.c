@@ -13,7 +13,7 @@ struct ioctl_arg {
     unsigned int val;
 };
 
-/* Documentation/ioctl/ioctl-number.txt */
+/* Documentation/userspace-api/ioctl/ioctl-number.rst */
 #define IOC_MAGIC '\x66'
 
 #define IOCTL_VALSET _IOW(IOC_MAGIC, 0, struct ioctl_arg)
