@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>September 3, 2023</span></div>
+<div class='date'><span class='ecrm-1200'>September 4, 2023</span></div>
                                                                   
 
                                                                   
@@ -1572,7 +1572,7 @@ the <code>  <span class='ectt-1000'>cdev_add</span>
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb44'><a id='x1-29040r1'></a><span class='ecrm-0500'>1</span><span id='textcolor421'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> cdev_add(</span><span id='textcolor422'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> cdev *p, </span><span id='textcolor423'><span class='ectt-0800'>dev_t</span></span><span class='ectt-0800'> dev, </span><span id='textcolor424'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> count);</span></pre>
-<!-- l. 1069 --><p class='indent'>   To find a example using the interface, you can see <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>ioctl.c</span></span></span> described in section
+<!-- l. 1069 --><p class='indent'>   To find an example using the interface, you can see <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>ioctl.c</span></span></span> described in section
 <a href='#talking-to-device-files'>9<!-- tex4ht:ref: sec:device_files  --></a>.
 </p><!-- l. 1071 --><p class='noindent'>
 </p>
@@ -6372,7 +6372,7 @@ following demonstrates how simulation work.
 <!-- l. 2031 --><p class='noindent'>Up to this point we have seen all kinds of modules doing all kinds of things, but there
 was no consistency in their interfaces with the rest of the kernel. To impose some
 consistency such that there is at minimum a standardized way to start, suspend and
-resume a device a device model was added. An example is shown below, and you can
+resume a device model was added. An example is shown below, and you can
 use this as a template to add your own suspend, resume or other interface
 functions.
 </p><!-- l. 1 --><p class='indent'>
