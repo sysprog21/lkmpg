@@ -12,6 +12,7 @@
 #include <linux/printk.h>
 #include <linux/types.h>
 #include <linux/uaccess.h> /* for get_user and put_user */
+#include <linux/version.h>
 
 #include <asm/errno.h>
 
@@ -205,7 +206,11 @@ static int __init chardev2_init(void)
         return ret_val;
     }
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 4, 0)
+    cls = class_create(DEVICE_FILE_NAME);
+#else
     cls = class_create(THIS_MODULE, DEVICE_FILE_NAME);
+#endif
     device_create(cls, NULL, MKDEV(MAJOR_NUM, 0), NULL, DEVICE_FILE_NAME);
 
     pr_info("Device created on /dev/%s\n", DEVICE_FILE_NAME);
