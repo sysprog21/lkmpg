@@ -36,13 +36,12 @@ function do_cppcheck()
 
 function do_sparse()
 {
-    wget -q http://www.kernel.org/pub/software/devel/sparse/dist/sparse-latest.tar.gz
+    git clone git://git.kernel.org/pub/scm/devel/sparse/sparse.git --depth=1
     if [ $? -ne 0 ]; then
         echo "Failed to download sparse."
         exit 1
     fi
-    tar -xzf sparse-latest.tar.gz
-    pushd sparse-*/
+    pushd sparse
     make sparse || exit 1
     sudo make INST_PROGRAMS=sparse PREFIX=/usr install || exit 1
     popd
