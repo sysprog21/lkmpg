@@ -134,7 +134,7 @@ device_ioctl(struct file *file, /* ditto */
 
     /* Switch according to the ioctl called */
     switch (ioctl_num) {
-    case IOCTL_SET_MSG: {
+    case IOCTL_SET_MSG:
         /* Receive a pointer to a message (in user space) and set that to
          * be the device's message. Get the parameter given to ioctl by
          * the process.
@@ -149,8 +149,8 @@ device_ioctl(struct file *file, /* ditto */
 
         device_write(file, (char __user *)ioctl_param, i, NULL);
         break;
-    }
-    case IOCTL_GET_MSG: {
+
+    case IOCTL_GET_MSG:
         loff_t offset = 0;
 
         /* Give the current message to the calling process - the parameter
@@ -163,7 +163,7 @@ device_ioctl(struct file *file, /* ditto */
          */
         put_user('\0', (char __user *)ioctl_param + i);
         break;
-    }
+
     case IOCTL_GET_NTH_BYTE:
         /* This ioctl is both input (ioctl_param) and output (the return
          * value of this function).
