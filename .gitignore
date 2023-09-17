@@ -1,5 +1,6 @@
 # Linux kernel build system
 *.o
+*.o.d
 *.ko
 *cmd
 *.dwo
