@@ -14,7 +14,14 @@ jobs:
     steps:
       - name: checkout code
         uses: actions/checkout@v4
+      - name: Test changed source files
+        id: changed-files
+        uses: tj-actions/changed-files@v39
+        with:
+          files: examples/**
       - name: validate coding style and functionality
+        if: ${{ steps.changed-files.outputs.any_changed == 'true' ||
+                github.event_name == 'workflow_dispatch' }}
         run: |
             sudo apt-get install -q -y clang-format-12
             sudo apt-get install -q -y cppcheck
