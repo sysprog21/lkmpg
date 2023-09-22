@@ -178,9 +178,11 @@ static unsigned long **acquire_sys_call_table(void)
         return NULL;
     kallsyms_lookup_name = (unsigned long (*)(const char *name))kp.addr;
     unregister_kprobe(&kp);
-#endif
 
     return (unsigned long **)kallsyms_lookup_name("sys_call_table");
+#endif
+
+    return NULL;
 }
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 3, 0)
