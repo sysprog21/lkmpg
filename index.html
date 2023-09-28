@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>September 18, 2023</span></div>
+<div class='date'><span class='ecrm-1200'>September 28, 2023</span></div>
                                                                   
 
                                                                   
@@ -4157,124 +4157,129 @@ $
 Rather than using <code>  <span class='ectt-1000'>/bin/sleep</span>
 </code> commands, the kernel has another way to do this which allows timeouts or
 interrupts to also happen.
-</p><!-- l. 1648 --><p class='indent'>   In the following example two threads are started, but one needs to start before
-another.
-</p><!-- l. 1 --><p class='indent'>
+</p><!-- l. 1648 --><p class='indent'>   Completions as code synchronization mechanism have three main parts, initialization
+of struct completion synchronization object, the waiting or barrier part through
+<code> <span class='ectt-1000'>wait_for_completion()</span>
                                                                   
 
                                                                   
-</p>
-   <pre class='fancyvrb' id='fancyvrb68'><a id='x1-44003r1'></a><span class='ecrm-0500'>1</span><span id='textcolor2022'><span class='ectt-0800'>/*</span></span> 
-<a id='x1-44005r2'></a><span class='ecrm-0500'>2</span><span id='textcolor2023'><span class='ectt-0800'> * completions.c</span></span> 
-<a id='x1-44007r3'></a><span class='ecrm-0500'>3</span><span id='textcolor2024'><span class='ectt-0800'> */</span></span> 
-<a id='x1-44009r4'></a><span class='ecrm-0500'>4</span><span id='textcolor2025'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor2026'><span class='ectt-0800'>&lt;linux/completion.h&gt;</span></span> 
-<a id='x1-44011r5'></a><span class='ecrm-0500'>5</span><span id='textcolor2027'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor2028'><span class='ectt-0800'>&lt;linux/err.h&gt; /* for IS_ERR() */</span></span> 
-<a id='x1-44013r6'></a><span class='ecrm-0500'>6</span><span id='textcolor2029'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor2030'><span class='ectt-0800'>&lt;linux/init.h&gt;</span></span> 
-<a id='x1-44015r7'></a><span class='ecrm-0500'>7</span><span id='textcolor2031'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor2032'><span class='ectt-0800'>&lt;linux/kthread.h&gt;</span></span> 
-<a id='x1-44017r8'></a><span class='ecrm-0500'>8</span><span id='textcolor2033'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor2034'><span class='ectt-0800'>&lt;linux/module.h&gt;</span></span> 
-<a id='x1-44019r9'></a><span class='ecrm-0500'>9</span><span id='textcolor2035'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor2036'><span class='ectt-0800'>&lt;linux/printk.h&gt;</span></span> 
-<a id='x1-44021r10'></a><span class='ecrm-0500'>10</span><span id='textcolor2037'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor2038'><span class='ectt-0800'>&lt;linux/version.h&gt;</span></span> 
-<a id='x1-44023r11'></a><span class='ecrm-0500'>11</span> 
-<a id='x1-44025r12'></a><span class='ecrm-0500'>12</span><span id='textcolor2039'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2040'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> {</span> 
-<a id='x1-44027r13'></a><span class='ecrm-0500'>13</span><span class='ectt-0800'>    </span><span id='textcolor2041'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> completion crank_comp;</span> 
-<a id='x1-44029r14'></a><span class='ecrm-0500'>14</span><span class='ectt-0800'>    </span><span id='textcolor2042'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> completion flywheel_comp;</span> 
-<a id='x1-44031r15'></a><span class='ecrm-0500'>15</span><span class='ectt-0800'>} machine;</span> 
-<a id='x1-44033r16'></a><span class='ecrm-0500'>16</span> 
-<a id='x1-44035r17'></a><span class='ecrm-0500'>17</span><span id='textcolor2043'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2044'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> machine_crank_thread(</span><span id='textcolor2045'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> *arg)</span> 
-<a id='x1-44037r18'></a><span class='ecrm-0500'>18</span><span class='ectt-0800'>{</span> 
-<a id='x1-44039r19'></a><span class='ecrm-0500'>19</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2046'><span class='ectt-0800'>"Turn the crank</span></span><span id='textcolor2047'><span class='ectt-0800'>\n</span></span><span id='textcolor2048'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-44041r20'></a><span class='ecrm-0500'>20</span> 
-<a id='x1-44043r21'></a><span class='ecrm-0500'>21</span><span class='ectt-0800'>    complete_all(&amp;machine.crank_comp);</span> 
-<a id='x1-44045r22'></a><span class='ecrm-0500'>22</span><span id='textcolor2049'><span class='ectt-0800'>#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(5, 17, 0)</span></span> 
-<a id='x1-44047r23'></a><span class='ecrm-0500'>23</span><span class='ectt-0800'>    kthread_complete_and_exit(&amp;machine.crank_comp, 0);</span> 
-<a id='x1-44049r24'></a><span class='ecrm-0500'>24</span><span id='textcolor2050'><span class='ectt-0800'>#else</span></span> 
-<a id='x1-44051r25'></a><span class='ecrm-0500'>25</span><span class='ectt-0800'>    complete_and_exit(&amp;machine.crank_comp, 0);</span> 
-<a id='x1-44053r26'></a><span class='ecrm-0500'>26</span><span id='textcolor2051'><span class='ectt-0800'>#endif</span></span> 
-<a id='x1-44055r27'></a><span class='ecrm-0500'>27</span><span class='ectt-0800'>}</span> 
-<a id='x1-44057r28'></a><span class='ecrm-0500'>28</span> 
-<a id='x1-44059r29'></a><span class='ecrm-0500'>29</span><span id='textcolor2052'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2053'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> machine_flywheel_spinup_thread(</span><span id='textcolor2054'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> *arg)</span> 
-<a id='x1-44061r30'></a><span class='ecrm-0500'>30</span><span class='ectt-0800'>{</span> 
-<a id='x1-44063r31'></a><span class='ecrm-0500'>31</span><span class='ectt-0800'>    wait_for_completion(&amp;machine.crank_comp);</span> 
-<a id='x1-44065r32'></a><span class='ecrm-0500'>32</span> 
-<a id='x1-44067r33'></a><span class='ecrm-0500'>33</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2055'><span class='ectt-0800'>"Flywheel spins up</span></span><span id='textcolor2056'><span class='ectt-0800'>\n</span></span><span id='textcolor2057'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-44069r34'></a><span class='ecrm-0500'>34</span> 
-<a id='x1-44071r35'></a><span class='ecrm-0500'>35</span><span class='ectt-0800'>    complete_all(&amp;machine.flywheel_comp);</span> 
-<a id='x1-44073r36'></a><span class='ecrm-0500'>36</span><span id='textcolor2058'><span class='ectt-0800'>#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(5, 17, 0)</span></span> 
-<a id='x1-44075r37'></a><span class='ecrm-0500'>37</span><span class='ectt-0800'>    kthread_complete_and_exit(&amp;machine.flywheel_comp, 0);</span> 
-<a id='x1-44077r38'></a><span class='ecrm-0500'>38</span><span id='textcolor2059'><span class='ectt-0800'>#else</span></span> 
-<a id='x1-44079r39'></a><span class='ecrm-0500'>39</span><span class='ectt-0800'>    complete_and_exit(&amp;machine.flywheel_comp, 0);</span> 
-<a id='x1-44081r40'></a><span class='ecrm-0500'>40</span><span id='textcolor2060'><span class='ectt-0800'>#endif</span></span> 
-<a id='x1-44083r41'></a><span class='ecrm-0500'>41</span><span class='ectt-0800'>}</span> 
-<a id='x1-44085r42'></a><span class='ecrm-0500'>42</span> 
-<a id='x1-44087r43'></a><span class='ecrm-0500'>43</span><span id='textcolor2061'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2062'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> __init completions_init(</span><span id='textcolor2063'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
-<a id='x1-44089r44'></a><span class='ecrm-0500'>44</span><span class='ectt-0800'>{</span> 
-<a id='x1-44091r45'></a><span class='ecrm-0500'>45</span><span class='ectt-0800'>    </span><span id='textcolor2064'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> task_struct *crank_thread;</span> 
-<a id='x1-44093r46'></a><span class='ecrm-0500'>46</span><span class='ectt-0800'>    </span><span id='textcolor2065'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> task_struct *flywheel_thread;</span> 
-<a id='x1-44095r47'></a><span class='ecrm-0500'>47</span> 
-<a id='x1-44097r48'></a><span class='ecrm-0500'>48</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2066'><span class='ectt-0800'>"completions example</span></span><span id='textcolor2067'><span class='ectt-0800'>\n</span></span><span id='textcolor2068'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-44099r49'></a><span class='ecrm-0500'>49</span> 
-<a id='x1-44101r50'></a><span class='ecrm-0500'>50</span><span class='ectt-0800'>    init_completion(&amp;machine.crank_comp);</span> 
-<a id='x1-44103r51'></a><span class='ecrm-0500'>51</span><span class='ectt-0800'>    init_completion(&amp;machine.flywheel_comp);</span> 
-<a id='x1-44105r52'></a><span class='ecrm-0500'>52</span> 
-<a id='x1-44107r53'></a><span class='ecrm-0500'>53</span><span class='ectt-0800'>    crank_thread = kthread_create(machine_crank_thread, NULL, </span><span id='textcolor2069'><span class='ectt-0800'>"KThread Crank"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-44109r54'></a><span class='ecrm-0500'>54</span><span class='ectt-0800'>    </span><span id='textcolor2070'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (IS_ERR(crank_thread))</span> 
-<a id='x1-44111r55'></a><span class='ecrm-0500'>55</span><span class='ectt-0800'>        </span><span id='textcolor2071'><span class='ectt-0800'>goto</span></span><span class='ectt-0800'> ERROR_THREAD_1;</span> 
-<a id='x1-44113r56'></a><span class='ecrm-0500'>56</span> 
-<a id='x1-44115r57'></a><span class='ecrm-0500'>57</span><span class='ectt-0800'>    flywheel_thread = kthread_create(machine_flywheel_spinup_thread, NULL,</span> 
-<a id='x1-44117r58'></a><span class='ecrm-0500'>58</span><span class='ectt-0800'>                                     </span><span id='textcolor2072'><span class='ectt-0800'>"KThread Flywheel"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-44119r59'></a><span class='ecrm-0500'>59</span><span class='ectt-0800'>    </span><span id='textcolor2073'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (IS_ERR(flywheel_thread))</span> 
-<a id='x1-44121r60'></a><span class='ecrm-0500'>60</span><span class='ectt-0800'>        </span><span id='textcolor2074'><span class='ectt-0800'>goto</span></span><span class='ectt-0800'> ERROR_THREAD_2;</span> 
-<a id='x1-44123r61'></a><span class='ecrm-0500'>61</span> 
-<a id='x1-44125r62'></a><span class='ecrm-0500'>62</span><span class='ectt-0800'>    wake_up_process(flywheel_thread);</span> 
-<a id='x1-44127r63'></a><span class='ecrm-0500'>63</span><span class='ectt-0800'>    wake_up_process(crank_thread);</span> 
-<a id='x1-44129r64'></a><span class='ecrm-0500'>64</span> 
-<a id='x1-44131r65'></a><span class='ecrm-0500'>65</span><span class='ectt-0800'>    </span><span id='textcolor2075'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
-<a id='x1-44133r66'></a><span class='ecrm-0500'>66</span> 
-<a id='x1-44135r67'></a><span class='ecrm-0500'>67</span><span class='ectt-0800'>ERROR_THREAD_2:</span> 
-<a id='x1-44137r68'></a><span class='ecrm-0500'>68</span><span class='ectt-0800'>    kthread_stop(crank_thread);</span> 
-<a id='x1-44139r69'></a><span class='ecrm-0500'>69</span><span class='ectt-0800'>ERROR_THREAD_1:</span> 
-<a id='x1-44141r70'></a><span class='ecrm-0500'>70</span> 
-<a id='x1-44143r71'></a><span class='ecrm-0500'>71</span><span class='ectt-0800'>    </span><span id='textcolor2076'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> -1;</span> 
-<a id='x1-44145r72'></a><span class='ecrm-0500'>72</span><span class='ectt-0800'>}</span> 
-<a id='x1-44147r73'></a><span class='ecrm-0500'>73</span> 
-<a id='x1-44149r74'></a><span class='ecrm-0500'>74</span><span id='textcolor2077'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2078'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit completions_exit(</span><span id='textcolor2079'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
-<a id='x1-44151r75'></a><span class='ecrm-0500'>75</span><span class='ectt-0800'>{</span> 
-<a id='x1-44153r76'></a><span class='ecrm-0500'>76</span><span class='ectt-0800'>    wait_for_completion(&amp;machine.crank_comp);</span> 
-<a id='x1-44155r77'></a><span class='ecrm-0500'>77</span><span class='ectt-0800'>    wait_for_completion(&amp;machine.flywheel_comp);</span> 
-<a id='x1-44157r78'></a><span class='ecrm-0500'>78</span> 
-<a id='x1-44159r79'></a><span class='ecrm-0500'>79</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2080'><span class='ectt-0800'>"completions exit</span></span><span id='textcolor2081'><span class='ectt-0800'>\n</span></span><span id='textcolor2082'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-44161r80'></a><span class='ecrm-0500'>80</span><span class='ectt-0800'>}</span> 
-<a id='x1-44163r81'></a><span class='ecrm-0500'>81</span> 
-<a id='x1-44165r82'></a><span class='ecrm-0500'>82</span><span class='ectt-0800'>module_init(completions_init);</span> 
-<a id='x1-44167r83'></a><span class='ecrm-0500'>83</span><span class='ectt-0800'>module_exit(completions_exit);</span> 
-<a id='x1-44169r84'></a><span class='ecrm-0500'>84</span> 
-<a id='x1-44171r85'></a><span class='ecrm-0500'>85</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2083'><span class='ectt-0800'>"Completions example"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-44173r86'></a><span class='ecrm-0500'>86</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2084'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1652 --><p class='indent'>   The <code>  <span class='ectt-1000'>machine</span>
-</code> structure stores the completion states for the two threads. At the exit
+</code>, and the signalling side through a call to
+<code> <span class='ectt-1000'>complete()</span>
+</code>.
+</p><!-- l. 1650 --><p class='indent'>   In the subsequent example, two threads are initiated: crank and flywheel. It
+is imperative that the crank thread starts before the flywheel thread. A
+completion state is established for each of these threads, with a distinct
+completion defined for both the crank and flywheel threads. At the exit
 point of each thread the respective completion state is updated, and
 <code> <span class='ectt-1000'>wait_for_completion</span>
-</code> is used by the flywheel thread to ensure that it does not begin prematurely.
-</p><!-- l. 1655 --><p class='indent'>   So even though <code>  <span class='ectt-1000'>flywheel_thread</span>
-</code> is started first you should notice if you load this module and run
+</code> is used by the flywheel thread to ensure that it does not begin prematurely. The crank thread
+uses the <code>  <span class='ectt-1000'>complete_all()</span>
+</code> function to update the completion, which lets the flywheel thread continue.
+</p><!-- l. 1656 --><p class='indent'>   So even though <code>  <span class='ectt-1000'>flywheel_thread</span>
+</code> is started first you should notice when you load this module and run
 <code> <span class='ectt-1000'>dmesg</span>
-</code> that turning the crank always happens first because the flywheel thread waits for it
-to complete.
-</p><!-- l. 1657 --><p class='indent'>   There are other variations upon the
-<code> <span class='ectt-1000'>wait_for_completion</span>
+</code>, that turning the crank always happens first because the flywheel thread waits for
+the crank thread to complete.
+</p><!-- l. 1658 --><p class='indent'>   There are other variations of the <code>  <span class='ectt-1000'>wait_for_completion</span>
 </code> function, which include timeouts or being interrupted, but this basic mechanism is
 enough for many common situations without adding a lot of complexity.
-</p><!-- l. 1659 --><p class='noindent'>
+</p><!-- l. 1 --><p class='indent'>
+</p>
+   <pre class='fancyvrb' id='fancyvrb68'><a id='x1-44010r1'></a><span class='ecrm-0500'>1</span><span id='textcolor2022'><span class='ectt-0800'>/*</span></span> 
+<a id='x1-44012r2'></a><span class='ecrm-0500'>2</span><span id='textcolor2023'><span class='ectt-0800'> * completions.c</span></span> 
+<a id='x1-44014r3'></a><span class='ecrm-0500'>3</span><span id='textcolor2024'><span class='ectt-0800'> */</span></span> 
+<a id='x1-44016r4'></a><span class='ecrm-0500'>4</span><span id='textcolor2025'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor2026'><span class='ectt-0800'>&lt;linux/completion.h&gt;</span></span> 
+<a id='x1-44018r5'></a><span class='ecrm-0500'>5</span><span id='textcolor2027'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor2028'><span class='ectt-0800'>&lt;linux/err.h&gt; /* for IS_ERR() */</span></span> 
+<a id='x1-44020r6'></a><span class='ecrm-0500'>6</span><span id='textcolor2029'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor2030'><span class='ectt-0800'>&lt;linux/init.h&gt;</span></span> 
+<a id='x1-44022r7'></a><span class='ecrm-0500'>7</span><span id='textcolor2031'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor2032'><span class='ectt-0800'>&lt;linux/kthread.h&gt;</span></span> 
+<a id='x1-44024r8'></a><span class='ecrm-0500'>8</span><span id='textcolor2033'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor2034'><span class='ectt-0800'>&lt;linux/module.h&gt;</span></span> 
+<a id='x1-44026r9'></a><span class='ecrm-0500'>9</span><span id='textcolor2035'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor2036'><span class='ectt-0800'>&lt;linux/printk.h&gt;</span></span> 
+<a id='x1-44028r10'></a><span class='ecrm-0500'>10</span><span id='textcolor2037'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor2038'><span class='ectt-0800'>&lt;linux/version.h&gt;</span></span> 
+<a id='x1-44030r11'></a><span class='ecrm-0500'>11</span> 
+<a id='x1-44032r12'></a><span class='ecrm-0500'>12</span><span id='textcolor2039'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2040'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> completion crank_comp;</span> 
+<a id='x1-44034r13'></a><span class='ecrm-0500'>13</span><span id='textcolor2041'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2042'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> completion flywheel_comp;</span> 
+<a id='x1-44036r14'></a><span class='ecrm-0500'>14</span> 
+<a id='x1-44038r15'></a><span class='ecrm-0500'>15</span><span id='textcolor2043'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2044'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> machine_crank_thread(</span><span id='textcolor2045'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> *arg)</span> 
+<a id='x1-44040r16'></a><span class='ecrm-0500'>16</span><span class='ectt-0800'>{</span> 
+<a id='x1-44042r17'></a><span class='ecrm-0500'>17</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2046'><span class='ectt-0800'>"Turn the crank</span></span><span id='textcolor2047'><span class='ectt-0800'>\n</span></span><span id='textcolor2048'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-44044r18'></a><span class='ecrm-0500'>18</span> 
+<a id='x1-44046r19'></a><span class='ecrm-0500'>19</span><span class='ectt-0800'>    complete_all(&amp;crank_comp);</span> 
+<a id='x1-44048r20'></a><span class='ecrm-0500'>20</span><span id='textcolor2049'><span class='ectt-0800'>#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(5, 17, 0)</span></span> 
+<a id='x1-44050r21'></a><span class='ecrm-0500'>21</span><span class='ectt-0800'>    kthread_complete_and_exit(&amp;crank_comp, 0);</span> 
+<a id='x1-44052r22'></a><span class='ecrm-0500'>22</span><span id='textcolor2050'><span class='ectt-0800'>#else</span></span> 
+<a id='x1-44054r23'></a><span class='ecrm-0500'>23</span><span class='ectt-0800'>    complete_and_exit(&amp;crank_comp, 0);</span> 
+<a id='x1-44056r24'></a><span class='ecrm-0500'>24</span><span id='textcolor2051'><span class='ectt-0800'>#endif</span></span> 
+<a id='x1-44058r25'></a><span class='ecrm-0500'>25</span><span class='ectt-0800'>}</span> 
+<a id='x1-44060r26'></a><span class='ecrm-0500'>26</span> 
+<a id='x1-44062r27'></a><span class='ecrm-0500'>27</span><span id='textcolor2052'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2053'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> machine_flywheel_spinup_thread(</span><span id='textcolor2054'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> *arg)</span> 
+<a id='x1-44064r28'></a><span class='ecrm-0500'>28</span><span class='ectt-0800'>{</span> 
+<a id='x1-44066r29'></a><span class='ecrm-0500'>29</span><span class='ectt-0800'>    wait_for_completion(&amp;crank_comp);</span> 
+<a id='x1-44068r30'></a><span class='ecrm-0500'>30</span> 
+<a id='x1-44070r31'></a><span class='ecrm-0500'>31</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2055'><span class='ectt-0800'>"Flywheel spins up</span></span><span id='textcolor2056'><span class='ectt-0800'>\n</span></span><span id='textcolor2057'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-44072r32'></a><span class='ecrm-0500'>32</span> 
+<a id='x1-44074r33'></a><span class='ecrm-0500'>33</span><span class='ectt-0800'>    complete_all(&amp;flywheel_comp);</span> 
+<a id='x1-44076r34'></a><span class='ecrm-0500'>34</span><span id='textcolor2058'><span class='ectt-0800'>#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(5, 17, 0)</span></span> 
+<a id='x1-44078r35'></a><span class='ecrm-0500'>35</span><span class='ectt-0800'>    kthread_complete_and_exit(&amp;flywheel_comp, 0);</span> 
+<a id='x1-44080r36'></a><span class='ecrm-0500'>36</span><span id='textcolor2059'><span class='ectt-0800'>#else</span></span> 
+<a id='x1-44082r37'></a><span class='ecrm-0500'>37</span><span class='ectt-0800'>    complete_and_exit(&amp;flywheel_comp, 0);</span> 
+<a id='x1-44084r38'></a><span class='ecrm-0500'>38</span><span id='textcolor2060'><span class='ectt-0800'>#endif</span></span> 
+<a id='x1-44086r39'></a><span class='ecrm-0500'>39</span><span class='ectt-0800'>}</span> 
+<a id='x1-44088r40'></a><span class='ecrm-0500'>40</span> 
+<a id='x1-44090r41'></a><span class='ecrm-0500'>41</span><span id='textcolor2061'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2062'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> __init completions_init(</span><span id='textcolor2063'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-44092r42'></a><span class='ecrm-0500'>42</span><span class='ectt-0800'>{</span> 
+<a id='x1-44094r43'></a><span class='ecrm-0500'>43</span><span class='ectt-0800'>    </span><span id='textcolor2064'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> task_struct *crank_thread;</span> 
+<a id='x1-44096r44'></a><span class='ecrm-0500'>44</span><span class='ectt-0800'>    </span><span id='textcolor2065'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> task_struct *flywheel_thread;</span> 
+<a id='x1-44098r45'></a><span class='ecrm-0500'>45</span> 
+<a id='x1-44100r46'></a><span class='ecrm-0500'>46</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2066'><span class='ectt-0800'>"completions example</span></span><span id='textcolor2067'><span class='ectt-0800'>\n</span></span><span id='textcolor2068'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-44102r47'></a><span class='ecrm-0500'>47</span> 
+<a id='x1-44104r48'></a><span class='ecrm-0500'>48</span><span class='ectt-0800'>    init_completion(&amp;crank_comp);</span> 
+<a id='x1-44106r49'></a><span class='ecrm-0500'>49</span><span class='ectt-0800'>    init_completion(&amp;flywheel_comp);</span> 
+<a id='x1-44108r50'></a><span class='ecrm-0500'>50</span> 
+<a id='x1-44110r51'></a><span class='ecrm-0500'>51</span><span class='ectt-0800'>    crank_thread = kthread_create(machine_crank_thread, NULL, </span><span id='textcolor2069'><span class='ectt-0800'>"KThread Crank"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-44112r52'></a><span class='ecrm-0500'>52</span><span class='ectt-0800'>    </span><span id='textcolor2070'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (IS_ERR(crank_thread))</span> 
+<a id='x1-44114r53'></a><span class='ecrm-0500'>53</span><span class='ectt-0800'>        </span><span id='textcolor2071'><span class='ectt-0800'>goto</span></span><span class='ectt-0800'> ERROR_THREAD_1;</span> 
+<a id='x1-44116r54'></a><span class='ecrm-0500'>54</span> 
+<a id='x1-44118r55'></a><span class='ecrm-0500'>55</span><span class='ectt-0800'>    flywheel_thread = kthread_create(machine_flywheel_spinup_thread, NULL,</span> 
+<a id='x1-44120r56'></a><span class='ecrm-0500'>56</span><span class='ectt-0800'>                                     </span><span id='textcolor2072'><span class='ectt-0800'>"KThread Flywheel"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-44122r57'></a><span class='ecrm-0500'>57</span><span class='ectt-0800'>    </span><span id='textcolor2073'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (IS_ERR(flywheel_thread))</span> 
+<a id='x1-44124r58'></a><span class='ecrm-0500'>58</span><span class='ectt-0800'>        </span><span id='textcolor2074'><span class='ectt-0800'>goto</span></span><span class='ectt-0800'> ERROR_THREAD_2;</span> 
+<a id='x1-44126r59'></a><span class='ecrm-0500'>59</span> 
+<a id='x1-44128r60'></a><span class='ecrm-0500'>60</span><span class='ectt-0800'>    wake_up_process(flywheel_thread);</span> 
+<a id='x1-44130r61'></a><span class='ecrm-0500'>61</span><span class='ectt-0800'>    wake_up_process(crank_thread);</span> 
+<a id='x1-44132r62'></a><span class='ecrm-0500'>62</span> 
+<a id='x1-44134r63'></a><span class='ecrm-0500'>63</span><span class='ectt-0800'>    </span><span id='textcolor2075'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
+<a id='x1-44136r64'></a><span class='ecrm-0500'>64</span> 
+<a id='x1-44138r65'></a><span class='ecrm-0500'>65</span><span class='ectt-0800'>ERROR_THREAD_2:</span> 
+<a id='x1-44140r66'></a><span class='ecrm-0500'>66</span><span class='ectt-0800'>    kthread_stop(crank_thread);</span> 
+<a id='x1-44142r67'></a><span class='ecrm-0500'>67</span><span class='ectt-0800'>ERROR_THREAD_1:</span> 
+<a id='x1-44144r68'></a><span class='ecrm-0500'>68</span> 
+<a id='x1-44146r69'></a><span class='ecrm-0500'>69</span><span class='ectt-0800'>    </span><span id='textcolor2076'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> -1;</span> 
+<a id='x1-44148r70'></a><span class='ecrm-0500'>70</span><span class='ectt-0800'>}</span> 
+<a id='x1-44150r71'></a><span class='ecrm-0500'>71</span> 
+<a id='x1-44152r72'></a><span class='ecrm-0500'>72</span><span id='textcolor2077'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2078'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit completions_exit(</span><span id='textcolor2079'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-44154r73'></a><span class='ecrm-0500'>73</span><span class='ectt-0800'>{</span> 
+<a id='x1-44156r74'></a><span class='ecrm-0500'>74</span><span class='ectt-0800'>    wait_for_completion(&amp;crank_comp);</span> 
+<a id='x1-44158r75'></a><span class='ecrm-0500'>75</span><span class='ectt-0800'>    wait_for_completion(&amp;flywheel_comp);</span> 
+<a id='x1-44160r76'></a><span class='ecrm-0500'>76</span> 
+<a id='x1-44162r77'></a><span class='ecrm-0500'>77</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2080'><span class='ectt-0800'>"completions exit</span></span><span id='textcolor2081'><span class='ectt-0800'>\n</span></span><span id='textcolor2082'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-44164r78'></a><span class='ecrm-0500'>78</span><span class='ectt-0800'>}</span> 
+<a id='x1-44166r79'></a><span class='ecrm-0500'>79</span> 
+<a id='x1-44168r80'></a><span class='ecrm-0500'>80</span><span class='ectt-0800'>module_init(completions_init);</span> 
+<a id='x1-44170r81'></a><span class='ecrm-0500'>81</span><span class='ectt-0800'>module_exit(completions_exit);</span> 
+<a id='x1-44172r82'></a><span class='ecrm-0500'>82</span> 
+<a id='x1-44174r83'></a><span class='ecrm-0500'>83</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2083'><span class='ectt-0800'>"Completions example"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-44176r84'></a><span class='ecrm-0500'>84</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2084'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
+<!-- l. 1662 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='avoiding-collisions-and-deadlocks'><span class='titlemark'>12   </span> <a id='x1-4500012'></a>Avoiding Collisions and Deadlocks</h3>
-<!-- l. 1661 --><p class='noindent'>If processes running on different CPUs or in different threads try to access the same
+<!-- l. 1664 --><p class='noindent'>If processes running on different CPUs or in different threads try to access the same
 memory, then it is possible that strange things can happen or your system can lock
 up. To avoid this, various types of mutual exclusion kernel functions are available.
 These indicate if a section of code is "locked" or "unlocked" so that simultaneous
 attempts to run it can not happen.
 </p>
    <h4 class='subsectionHead' id='mutex'><span class='titlemark'>12.1   </span> <a id='x1-4600012.1'></a>Mutex</h4>
-<!-- l. 1666 --><p class='noindent'>You can use kernel mutexes (mutual exclusions) in much the same manner that you
+<!-- l. 1669 --><p class='noindent'>You can use kernel mutexes (mutual exclusions) in much the same manner that you
 might deploy them in userland. This may be all that is needed to avoid collisions in
 most cases.
 </p><!-- l. 1 --><p class='indent'>
@@ -4319,18 +4324,18 @@ most cases.
 <a id='x1-46076r38'></a><span class='ecrm-0500'>38</span> 
 <a id='x1-46078r39'></a><span class='ecrm-0500'>39</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2124'><span class='ectt-0800'>"Mutex example"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-46080r40'></a><span class='ecrm-0500'>40</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2125'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1671 --><p class='noindent'>
-</p>
-   <h4 class='subsectionHead' id='spinlocks'><span class='titlemark'>12.2   </span> <a id='x1-4700012.2'></a>Spinlocks</h4>
-<!-- l. 1673 --><p class='noindent'>As the name suggests, spinlocks lock up the CPU that the code is running on,
-taking 100% of its resources. Because of this you should only use the spinlock
                                                                   
 
                                                                   
+<!-- l. 1674 --><p class='noindent'>
+</p>
+   <h4 class='subsectionHead' id='spinlocks'><span class='titlemark'>12.2   </span> <a id='x1-4700012.2'></a>Spinlocks</h4>
+<!-- l. 1676 --><p class='noindent'>As the name suggests, spinlocks lock up the CPU that the code is running on,
+taking 100% of its resources. Because of this you should only use the spinlock
 mechanism around code which is likely to take no more than a few milliseconds to
 run and so will not noticeably slow anything down from the user’s point of
 view.
-</p><!-- l. 1676 --><p class='indent'>   The example here is <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>"irq safe"</span></span></span> in that if interrupts happen during the lock then
+</p><!-- l. 1679 --><p class='indent'>   The example here is <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>"irq safe"</span></span></span> in that if interrupts happen during the lock then
 they will not be forgotten and will activate when the unlock happens, using the
 <code> <span class='ectt-1000'>flags</span>
 </code> variable to retain their state.
@@ -4398,10 +4403,10 @@ they will not be forgotten and will activate when the unlock happens, using the
 <a id='x1-47121r60'></a><span class='ecrm-0500'>60</span> 
 <a id='x1-47123r61'></a><span class='ecrm-0500'>61</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2180'><span class='ectt-0800'>"Spinlock example"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-47125r62'></a><span class='ecrm-0500'>62</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2181'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1680 --><p class='noindent'>
+<!-- l. 1683 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='read-and-write-locks'><span class='titlemark'>12.3   </span> <a id='x1-4800012.3'></a>Read and write locks</h4>
-<!-- l. 1682 --><p class='noindent'>Read and write locks are specialised kinds of spinlocks so that you can exclusively
+<!-- l. 1685 --><p class='noindent'>Read and write locks are specialised kinds of spinlocks so that you can exclusively
 read from something or write to something. Like the earlier spinlocks example, the
 one below shows an "irq safe" situation in which if other functions were triggered
 from irqs which might also read and write to whatever you are concerned with
@@ -4466,16 +4471,19 @@ module.
 <a id='x1-48106r53'></a><span class='ecrm-0500'>53</span> 
 <a id='x1-48108r54'></a><span class='ecrm-0500'>54</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2229'><span class='ectt-0800'>"Read/Write locks example"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-48110r55'></a><span class='ecrm-0500'>55</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2230'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1688 --><p class='indent'>   Of course, if you know for sure that there are no functions triggered by irqs
+<!-- l. 1691 --><p class='indent'>   Of course, if you know for sure that there are no functions triggered by irqs
 which could possibly interfere with your logic then you can use the simpler
 <code> <span class='ectt-1000'>read_lock(&amp;myrwlock)</span>
 </code> and <code>  <span class='ectt-1000'>read_unlock(&amp;myrwlock)</span>
 </code> or the corresponding write functions.
 </p>
    <h4 class='subsectionHead' id='atomic-operations'><span class='titlemark'>12.4   </span> <a id='x1-4900012.4'></a>Atomic operations</h4>
-<!-- l. 1691 --><p class='noindent'>If you are doing simple arithmetic: adding, subtracting or bitwise operations, then
+<!-- l. 1694 --><p class='noindent'>If you are doing simple arithmetic: adding, subtracting or bitwise operations, then
 there is another way in the multi-CPU and multi-hyperthreaded world to stop other
 parts of the system from messing with your mojo. By using atomic operations you
+                                                                  
+
+                                                                  
 can be confident that your addition, subtraction or bit flip did actually happen
 and was not overwritten by some other shenanigans. An example is shown
 below.
@@ -4556,10 +4564,7 @@ below.
 <a id='x1-49146r73'></a><span class='ecrm-0500'>73</span> 
 <a id='x1-49148r74'></a><span class='ecrm-0500'>74</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2284'><span class='ectt-0800'>"Atomic operations example"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-49150r75'></a><span class='ecrm-0500'>75</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2285'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-                                                                  
-
-                                                                  
-<!-- l. 1697 --><p class='indent'>   Before the C11 standard adopts the built-in atomic types, the kernel already
+<!-- l. 1700 --><p class='indent'>   Before the C11 standard adopts the built-in atomic types, the kernel already
 provided a small set of atomic types by using a bunch of tricky architecture-specific
 codes. Implementing the atomic types by C11 atomics may allow the kernel to throw
 away the architecture-specific codes and letting the kernel code be more friendly to
@@ -4572,22 +4577,25 @@ For further details, see: </p>
      <li class='itemize'><a href='https://lwn.net/Articles/691128/'>Time to move to C11 atomics?</a>
      </li>
      <li class='itemize'><a href='https://lwn.net/Articles/698315/'>Atomic usage patterns in the kernel</a></li></ul>
-<!-- l. 1708 --><p class='noindent'>
+<!-- l. 1711 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='replacing-print-macros'><span class='titlemark'>13   </span> <a id='x1-5000013'></a>Replacing Print Macros</h3>
-<!-- l. 1710 --><p class='noindent'>
+<!-- l. 1713 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='replacement'><span class='titlemark'>13.1   </span> <a id='x1-5100013.1'></a>Replacement</h4>
-<!-- l. 1712 --><p class='noindent'>In Section <a href='#before-we-begin'>1.7<!-- tex4ht:ref: sec:preparation  --></a>, it was noted that the X Window System and kernel module
+<!-- l. 1715 --><p class='noindent'>In Section <a href='#before-we-begin'>1.7<!-- tex4ht:ref: sec:preparation  --></a>, it was noted that the X Window System and kernel module
 programming are not conducive to integration. This remains valid during the
 development of kernel modules. However, in practical scenarios, the necessity
 emerges to relay messages to the tty (teletype) originating the module load
 command.
-</p><!-- l. 1716 --><p class='indent'>   The term “tty” originates from <span class='ecti-1000'>teletype</span>, which initially referred to a combined
+</p><!-- l. 1719 --><p class='indent'>   The term “tty” originates from <span class='ecti-1000'>teletype</span>, which initially referred to a combined
 keyboard-printer for Unix system communication. Today, it signifies a text stream
 abstraction employed by Unix programs, encompassing physical terminals, xterms in
 X displays, and network connections like SSH.
-</p><!-- l. 1720 --><p class='indent'>   To achieve this, the “current” pointer is leveraged to access the active task’s tty
+                                                                  
+
+                                                                  
+</p><!-- l. 1723 --><p class='indent'>   To achieve this, the “current” pointer is leveraged to access the active task’s tty
 structure. Within this structure lies a pointer to a string write function, facilitating
 the string’s transmission to the tty.
 </p><!-- l. 1 --><p class='indent'>
@@ -4666,19 +4674,16 @@ the string’s transmission to the tty.
 <a id='x1-51144r72'></a><span class='ecrm-0500'>72</span><span class='ectt-0800'>module_exit(print_string_exit);</span> 
 <a id='x1-51146r73'></a><span class='ecrm-0500'>73</span> 
 <a id='x1-51148r74'></a><span class='ecrm-0500'>74</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2357'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-                                                                  
-
-                                                                  
-<!-- l. 1725 --><p class='noindent'>
+<!-- l. 1728 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='flashing-keyboard-leds'><span class='titlemark'>13.2   </span> <a id='x1-5200013.2'></a>Flashing keyboard LEDs</h4>
-<!-- l. 1727 --><p class='noindent'>In certain conditions, you may desire a simpler and more direct way to communicate
+<!-- l. 1730 --><p class='noindent'>In certain conditions, you may desire a simpler and more direct way to communicate
 to the external world. Flashing keyboard LEDs can be such a solution: It is an
 immediate way to attract attention or to display a status condition. Keyboard LEDs
 are present on every hardware, they are always visible, they do not need any setup,
 and their use is rather simple and non-intrusive, compared to writing to a tty or a
 file.
-</p><!-- l. 1731 --><p class='indent'>   From v4.14 to v4.15, the timer API made a series of changes
+</p><!-- l. 1734 --><p class='indent'>   From v4.14 to v4.15, the timer API made a series of changes
 to improve memory safety. A buffer overflow in the area of a
 <code> <span class='ectt-1000'>timer_list</span>
 </code> structure may be able to overwrite the
@@ -4701,10 +4706,13 @@ Thus, it is better to use a unique prototype to separate from the cluster that t
 <code> <span class='ectt-1000'>container_of</span>
 </code> macro instead of the <code>  <span id='textcolor2366'><span class='ectt-1000'>unsigned</span></span><span class='ectt-1000'> </span><span id='textcolor2367'><span class='ectt-1000'>long</span></span>
 </code> value. For more information see: <a href='https://lwn.net/Articles/735887/'>Improving the kernel timers API</a>.
-</p><!-- l. 1740 --><p class='indent'>   Before Linux v4.14, <code>  <span class='ectt-1000'>setup_timer</span>
+</p><!-- l. 1743 --><p class='indent'>   Before Linux v4.14, <code>  <span class='ectt-1000'>setup_timer</span>
 </code> was used to initialize the timer and the
 <code> <span class='ectt-1000'>timer_list</span>
 </code> structure looked like: 
+                                                                  
+
+                                                                  
 </p>
    <pre class='fancyvrb' id='fancyvrb74'><a id='x1-52025r1'></a><span class='ecrm-0500'>1</span><span id='textcolor2368'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> timer_list {</span> 
 <a id='x1-52027r2'></a><span class='ecrm-0500'>2</span><span class='ectt-0800'>    </span><span id='textcolor2369'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor2370'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> expires;</span> 
@@ -4716,21 +4724,18 @@ Thus, it is better to use a unique prototype to separate from the cluster that t
 <a id='x1-52039r8'></a><span class='ecrm-0500'>8</span> 
 <a id='x1-52041r9'></a><span class='ecrm-0500'>9</span><span id='textcolor2377'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> setup_timer(</span><span id='textcolor2378'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> timer_list *timer, </span><span id='textcolor2379'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> (*callback)(</span><span id='textcolor2380'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor2381'><span class='ectt-0800'>long</span></span><span class='ectt-0800'>),</span> 
 <a id='x1-52043r10'></a><span class='ecrm-0500'>10</span><span class='ectt-0800'>                 </span><span id='textcolor2382'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor2383'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> data);</span></pre>
-<!-- l. 1754 --><p class='indent'>   Since Linux v4.14, <code>  <span class='ectt-1000'>timer_setup</span>
+<!-- l. 1757 --><p class='indent'>   Since Linux v4.14, <code>  <span class='ectt-1000'>timer_setup</span>
 </code> is adopted and the kernel step by step converting to
 <code> <span class='ectt-1000'>timer_setup</span>
 </code> from <code>  <span class='ectt-1000'>setup_timer</span>
 </code>. One of the reasons why API was changed is it need to coexist with the old version interface.
 Moreover, the <code>  <span class='ectt-1000'>timer_setup</span>
-                                                                  
-
-                                                                  
 </code> was implemented by <code>  <span class='ectt-1000'>setup_timer</span>
 </code> at first. 
 </p>
    <pre class='fancyvrb' id='fancyvrb75'><a id='x1-52052r1'></a><span class='ecrm-0500'>1</span><span id='textcolor2384'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> timer_setup(</span><span id='textcolor2385'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> timer_list *timer,</span> 
 <a id='x1-52054r2'></a><span class='ecrm-0500'>2</span><span class='ectt-0800'>                 </span><span id='textcolor2386'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> (*callback)(</span><span id='textcolor2387'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> timer_list *), </span><span id='textcolor2388'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor2389'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> flags);</span></pre>
-<!-- l. 1762 --><p class='indent'>   The <code>  <span class='ectt-1000'>setup_timer</span>
+<!-- l. 1765 --><p class='indent'>   The <code>  <span class='ectt-1000'>setup_timer</span>
 </code> was then removed since v4.15. As a result, the
 <code> <span class='ectt-1000'>timer_list</span>
 </code> structure had changed to the following. 
@@ -4741,7 +4746,7 @@ Moreover, the <code>  <span class='ectt-1000'>timer_setup</span>
 <a id='x1-52070r4'></a><span class='ecrm-0500'>4</span><span class='ectt-0800'>    u32 flags;</span> 
 <a id='x1-52072r5'></a><span class='ecrm-0500'>5</span><span class='ectt-0800'>    </span><span id='textcolor2395'><span class='ectt-0800'>/* ... */</span></span> 
 <a id='x1-52074r6'></a><span class='ecrm-0500'>6</span><span class='ectt-0800'>};</span></pre>
-<!-- l. 1773 --><p class='indent'>   The following source code illustrates a minimal kernel module which, when
+<!-- l. 1776 --><p class='indent'>   The following source code illustrates a minimal kernel module which, when
 loaded, starts blinking the keyboard LEDs until it is unloaded.
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -4830,7 +4835,7 @@ loaded, starts blinking the keyboard LEDs until it is unloaded.
 <a id='x1-52240r83'></a><span class='ecrm-0500'>83</span><span class='ectt-0800'>module_exit(kbleds_cleanup);</span> 
 <a id='x1-52242r84'></a><span class='ecrm-0500'>84</span> 
 <a id='x1-52244r85'></a><span class='ecrm-0500'>85</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2472'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1777 --><p class='indent'>   If none of the examples in this chapter fit your debugging needs,
+<!-- l. 1780 --><p class='indent'>   If none of the examples in this chapter fit your debugging needs,
 there might yet be some other tricks to try. Ever wondered what
 <code> <span class='ectt-1000'>CONFIG_LL_DEBUG</span>
 </code> in <code>  <span class='ectt-1000'>make menuconfig</span>
@@ -4841,25 +4846,25 @@ everything what your code does over a serial line. If you find yourself porting 
 kernel to some new and former unsupported architecture, this is usually amongst the
 first things that should be implemented. Logging over a netconsole might also be
 worth a try.
-</p><!-- l. 1784 --><p class='indent'>   While you have seen lots of stuff that can be used to aid debugging here, there are
+</p><!-- l. 1787 --><p class='indent'>   While you have seen lots of stuff that can be used to aid debugging here, there are
 some things to be aware of. Debugging is almost always intrusive. Adding debug code
 can change the situation enough to make the bug seem to disappear. Thus, you
 should keep debug code to a minimum and make sure it does not show up in
 production code.
-</p><!-- l. 1788 --><p class='noindent'>
-</p>
-   <h3 class='sectionHead' id='scheduling-tasks'><span class='titlemark'>14   </span> <a id='x1-5300014'></a>Scheduling Tasks</h3>
-<!-- l. 1790 --><p class='noindent'>There are two main ways of running tasks: tasklets and work queues. Tasklets are a
-quick and easy way of scheduling a single function to be run. For example, when
-triggered from an interrupt, whereas work queues are more complicated but also
-better suited to running multiple things in a sequence.
                                                                   
 
                                                                   
-</p><!-- l. 1794 --><p class='noindent'>
+</p><!-- l. 1791 --><p class='noindent'>
+</p>
+   <h3 class='sectionHead' id='scheduling-tasks'><span class='titlemark'>14   </span> <a id='x1-5300014'></a>Scheduling Tasks</h3>
+<!-- l. 1793 --><p class='noindent'>There are two main ways of running tasks: tasklets and work queues. Tasklets are a
+quick and easy way of scheduling a single function to be run. For example, when
+triggered from an interrupt, whereas work queues are more complicated but also
+better suited to running multiple things in a sequence.
+</p><!-- l. 1797 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='tasklets'><span class='titlemark'>14.1   </span> <a id='x1-5400014.1'></a>Tasklets</h4>
-<!-- l. 1796 --><p class='noindent'>Here is an example tasklet module. The
+<!-- l. 1799 --><p class='noindent'>Here is an example tasklet module. The
 <code> <span class='ectt-1000'>tasklet_fn</span>
 </code> function runs for a few seconds. In the meantime, execution of the
 <code> <span class='ectt-1000'>example_tasklet_init</span>
@@ -4911,7 +4916,7 @@ better suited to running multiple things in a sequence.
 <a id='x1-54086r42'></a><span class='ecrm-0500'>42</span> 
 <a id='x1-54088r43'></a><span class='ecrm-0500'>43</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2517'><span class='ectt-0800'>"Tasklet example"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-54090r44'></a><span class='ecrm-0500'>44</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2518'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1802 --><p class='indent'>   So with this example loaded <code>  <span class='ectt-1000'>dmesg</span>
+<!-- l. 1805 --><p class='indent'>   So with this example loaded <code>  <span class='ectt-1000'>dmesg</span>
 </code> should show:
                                                                   
 
@@ -4923,23 +4928,23 @@ Example tasklet starts
 Example tasklet init continues...
 Example tasklet ends
 </pre>
-<!-- l. 1809 --><p class='nopar'>Although tasklet is easy to use, it comes with several defators, and developers are
+<!-- l. 1812 --><p class='nopar'>Although tasklet is easy to use, it comes with several defators, and developers are
 discussing about getting rid of tasklet in linux kernel. The tasklet callback
 runs in atomic context, inside a software interrupt, meaning that it cannot
 sleep or access user-space data, so not all work can be done in a tasklet
 handler. Also, the kernel only allows one instance of any given tasklet to be
 running at any given time; multiple different tasklet callbacks can run in
 parallel.
-</p><!-- l. 1814 --><p class='indent'>   In recent kernels, tasklets can be replaced by workqueues, timers, or threaded
+</p><!-- l. 1817 --><p class='indent'>   In recent kernels, tasklets can be replaced by workqueues, timers, or threaded
 interrupts.<span class='footnote-mark'><a href='#fn1x0' id='fn1x0-bk'><sup class='textsuperscript'>1</sup></a></span><a id='x1-54092f1'></a>
 While the removal of tasklets remains a longer-term goal, the current kernel contains more
 than a hundred uses of tasklets. Now developers are proceeding with the API changes and
 the macro <code>  <span class='ectt-1000'>DECLARE_TASKLET_OLD</span>
 </code> exists for compatibility. For further information, see <a class='url' href='https://lwn.net/Articles/830964/'><span class='ectt-1000'>https://lwn.net/Articles/830964/</span></a>.
-</p><!-- l. 1820 --><p class='noindent'>
+</p><!-- l. 1823 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='work-queues'><span class='titlemark'>14.2   </span> <a id='x1-5500014.2'></a>Work queues</h4>
-<!-- l. 1822 --><p class='noindent'>To add a task to the scheduler we can use a workqueue. The kernel then uses the
+<!-- l. 1825 --><p class='noindent'>To add a task to the scheduler we can use a workqueue. The kernel then uses the
 Completely Fair Scheduler (CFS) to execute work within the queue.
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -4976,36 +4981,36 @@ Completely Fair Scheduler (CFS) to execute work within the queue.
 <a id='x1-55062r31'></a><span class='ecrm-0500'>31</span> 
 <a id='x1-55064r32'></a><span class='ecrm-0500'>32</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2546'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-55066r33'></a><span class='ecrm-0500'>33</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2547'><span class='ectt-0800'>"Workqueue example"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1827 --><p class='noindent'>
+<!-- l. 1830 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='interrupt-handlers'><span class='titlemark'>15   </span> <a id='x1-5600015'></a>Interrupt Handlers</h3>
-<!-- l. 1829 --><p class='noindent'>
+<!-- l. 1832 --><p class='noindent'>
 </p>
                                                                   
 
                                                                   
    <h4 class='subsectionHead' id='interrupt-handlers1'><span class='titlemark'>15.1   </span> <a id='x1-5700015.1'></a>Interrupt Handlers</h4>
-<!-- l. 1831 --><p class='noindent'>Except for the last chapter, everything we did in the kernel so far we have done as a
+<!-- l. 1834 --><p class='noindent'>Except for the last chapter, everything we did in the kernel so far we have done as a
 response to a process asking for it, either by dealing with a special file, sending an
 <code> <span class='ectt-1000'>ioctl()</span>
 </code>, or issuing a system call. But the job of the kernel is not just to respond to process
 requests. Another job, which is every bit as important, is to speak to the hardware
 connected to the machine.
-</p><!-- l. 1835 --><p class='indent'>   There are two types of interaction between the CPU and the rest of the
+</p><!-- l. 1838 --><p class='indent'>   There are two types of interaction between the CPU and the rest of the
 computer’s hardware. The first type is when the CPU gives orders to the hardware,
 the other is when the hardware needs to tell the CPU something. The second, called
 interrupts, is much harder to implement because it has to be dealt with when
 convenient for the hardware, not the CPU. Hardware devices typically have a very
 small amount of RAM, and if you do not read their information when available, it is
 lost.
-</p><!-- l. 1840 --><p class='indent'>   Under Linux, hardware interrupts are called IRQ’s (Interrupt ReQuests). There
+</p><!-- l. 1843 --><p class='indent'>   Under Linux, hardware interrupts are called IRQ’s (Interrupt ReQuests). There
 are two types of IRQ’s, short and long. A short IRQ is one which is expected to take
 a very short period of time, during which the rest of the machine will be blocked and
 no other interrupts will be handled. A long IRQ is one which can take longer, and
 during which other interrupts may occur (but not interrupts from the same
 device). If at all possible, it is better to declare an interrupt handler to be
 long.
-</p><!-- l. 1846 --><p class='indent'>   When the CPU receives an interrupt, it stops whatever it is doing (unless it is
+</p><!-- l. 1849 --><p class='indent'>   When the CPU receives an interrupt, it stops whatever it is doing (unless it is
 processing a more important interrupt, in which case it will deal with this one only
 when the more important one is done), saves certain parameters on the stack and
 calls the interrupt handler. This means that certain things are not allowed in the
@@ -5017,10 +5022,10 @@ heavy work deferred from an interrupt handler. Historically, BH (Linux
 naming for <span class='ecti-1000'>Bottom Halves</span>) statistically book-keeps the deferred functions.
 <span class='ecbx-1000'>Softirq </span>and its higher level abstraction, <span class='ecbx-1000'>Tasklet</span>, replace BH since Linux
 2.3.
-</p><!-- l. 1856 --><p class='indent'>   The way to implement this is to call
+</p><!-- l. 1859 --><p class='indent'>   The way to implement this is to call
 <code> <span class='ectt-1000'>request_irq()</span>
 </code> to get your interrupt handler called when the relevant IRQ is received.
-</p><!-- l. 1858 --><p class='indent'>   In practice IRQ handling can be a bit more complex. Hardware is often designed
+</p><!-- l. 1861 --><p class='indent'>   In practice IRQ handling can be a bit more complex. Hardware is often designed
 in a way that chains two interrupt controllers, so that all the IRQs from
 interrupt controller B are cascaded to a certain IRQ from interrupt controller A.
 Of course, that requires that the kernel finds out which IRQ it really was
@@ -5037,7 +5042,7 @@ need to solve another truckload of problems. It is not enough to know if a
 certain IRQs has happened, it’s also important to know what CPU(s) it was
 for. People still interested in more details, might want to refer to "APIC"
 now.
-</p><!-- l. 1867 --><p class='indent'>   This function receives the IRQ number, the name of the function,
+</p><!-- l. 1870 --><p class='indent'>   This function receives the IRQ number, the name of the function,
 flags, a name for <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/interrupts</span></span></span> and a parameter to be passed to the
 interrupt handler. Usually there is a certain number of IRQs available.
 How many IRQs there are is hardware-dependent. The flags can include
@@ -5047,16 +5052,16 @@ How many IRQs there are is hardware-dependent. The flags can include
 <code> <span class='ectt-1000'>SA_INTERRUPT</span>
 </code> to indicate this is a fast interrupt. This function will only succeed if there is not
 already a handler on this IRQ, or if you are both willing to share.
-</p><!-- l. 1873 --><p class='noindent'>
+</p><!-- l. 1876 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='detecting-button-presses'><span class='titlemark'>15.2   </span> <a id='x1-5800015.2'></a>Detecting button presses</h4>
-<!-- l. 1875 --><p class='noindent'>Many popular single board computers, such as Raspberry Pi or Beagleboards, have a
+<!-- l. 1878 --><p class='noindent'>Many popular single board computers, such as Raspberry Pi or Beagleboards, have a
 bunch of GPIO pins. Attaching buttons to those and then having a button press do
 something is a classic case in which you might need to use interrupts, so that instead
 of having the CPU waste time and battery power polling for a change in input state,
 it is better for the input to trigger the CPU to then run a particular handling
 function.
-</p><!-- l. 1879 --><p class='indent'>   Here is an example where buttons are connected to GPIO numbers 17 and 18 and
+</p><!-- l. 1882 --><p class='indent'>   Here is an example where buttons are connected to GPIO numbers 17 and 18 and
 an LED is connected to GPIO 4. You can change those numbers to whatever is
 appropriate for your board.
 </p><!-- l. 1 --><p class='indent'>
@@ -5206,14 +5211,14 @@ appropriate for your board.
 <a id='x1-58286r143'></a><span class='ecrm-0500'>143</span> 
 <a id='x1-58288r144'></a><span class='ecrm-0500'>144</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2656'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-58290r145'></a><span class='ecrm-0500'>145</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2657'><span class='ectt-0800'>"Handle some GPIO interrupts"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1884 --><p class='noindent'>
+<!-- l. 1887 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='bottom-half'><span class='titlemark'>15.3   </span> <a id='x1-5900015.3'></a>Bottom Half</h4>
-<!-- l. 1886 --><p class='noindent'>Suppose you want to do a bunch of stuff inside of an interrupt routine. A common
+<!-- l. 1889 --><p class='noindent'>Suppose you want to do a bunch of stuff inside of an interrupt routine. A common
 way to do that without rendering the interrupt unavailable for a significant duration
 is to combine it with a tasklet. This pushes the bulk of the work off into the
 scheduler.
-</p><!-- l. 1890 --><p class='indent'>   The example below modifies the previous example to also run an additional task
+</p><!-- l. 1893 --><p class='indent'>   The example below modifies the previous example to also run an additional task
 when an interrupt is triggered.
 </p><!-- l. 1 --><p class='indent'>
                                                                   
@@ -5388,19 +5393,19 @@ when an interrupt is triggered.
 <a id='x1-59332r166'></a><span class='ecrm-0500'>166</span> 
 <a id='x1-59334r167'></a><span class='ecrm-0500'>167</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2787'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-59336r168'></a><span class='ecrm-0500'>168</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2788'><span class='ectt-0800'>"Interrupt with top and bottom half"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1894 --><p class='noindent'>
+<!-- l. 1897 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='crypto'><span class='titlemark'>16   </span> <a id='x1-6000016'></a>Crypto</h3>
-<!-- l. 1896 --><p class='noindent'>At the dawn of the internet, everybody trusted everybody completely…but that did
+<!-- l. 1899 --><p class='noindent'>At the dawn of the internet, everybody trusted everybody completely…but that did
 not work out so well. When this guide was originally written, it was a more innocent
 era in which almost nobody actually gave a damn about crypto - least of all kernel
 developers. That is certainly no longer the case now. To handle crypto stuff, the
 kernel has its own API enabling common methods of encryption, decryption and your
 favourite hash functions.
-</p><!-- l. 1901 --><p class='noindent'>
+</p><!-- l. 1904 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='hash-functions'><span class='titlemark'>16.1   </span> <a id='x1-6100016.1'></a>Hash functions</h4>
-<!-- l. 1904 --><p class='noindent'>Calculating and checking the hashes of things is a common operation.
+<!-- l. 1907 --><p class='noindent'>Calculating and checking the hashes of things is a common operation.
 Here is a demonstration of how to calculate a sha256 hash within a
 kernel module. To provide the sha256 algorithm support, make sure
 <code> <span class='ectt-1000'>CONFIG_CRYPTO_SHA256</span>
@@ -5475,23 +5480,23 @@ kernel module. To provide the sha256 algorithm support, make sure
 <a id='x1-61133r66'></a><span class='ecrm-0500'>66</span> 
 <a id='x1-61135r67'></a><span class='ecrm-0500'>67</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2843'><span class='ectt-0800'>"sha256 hash test"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-61137r68'></a><span class='ecrm-0500'>68</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2844'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1910 --><p class='indent'>   Install the module:
+<!-- l. 1913 --><p class='indent'>   Install the module:
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb83'><a id='x1-61141r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>sudo insmod cryptosha256.ko</span> 
 <a id='x1-61143r2'></a><span class='ecrm-0500'>2</span><span class='ectt-1000'>sudo dmesg</span></pre>
-<!-- l. 1917 --><p class='indent'>   And you should see that the hash was calculated for the test string.
-</p><!-- l. 1919 --><p class='indent'>   Finally, remove the test module:
+<!-- l. 1920 --><p class='indent'>   And you should see that the hash was calculated for the test string.
+</p><!-- l. 1922 --><p class='indent'>   Finally, remove the test module:
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb84'><a id='x1-61146r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>sudo rmmod cryptosha256</span></pre>
                                                                   
 
                                                                   
-<!-- l. 1925 --><p class='noindent'>
+<!-- l. 1928 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='symmetric-key-encryption'><span class='titlemark'>16.2   </span> <a id='x1-6200016.2'></a>Symmetric key encryption</h4>
-<!-- l. 1927 --><p class='noindent'>Here is an example of symmetrically encrypting a string using the AES algorithm
+<!-- l. 1930 --><p class='noindent'>Here is an example of symmetrically encrypting a string using the AES algorithm
 and a password.
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -5693,10 +5698,10 @@ and a password.
 <a id='x1-62392r196'></a><span class='ecrm-0500'>196</span> 
 <a id='x1-62394r197'></a><span class='ecrm-0500'>197</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2996'><span class='ectt-0800'>"Symmetric key encryption example"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-62396r198'></a><span class='ecrm-0500'>198</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2997'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1931 --><p class='noindent'>
+<!-- l. 1934 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='virtual-input-device-driver'><span class='titlemark'>17   </span> <a id='x1-6300017'></a>Virtual Input Device Driver</h3>
-<!-- l. 1933 --><p class='noindent'>The input device driver is a module that provides a way to communicate
+<!-- l. 1936 --><p class='noindent'>The input device driver is a module that provides a way to communicate
 with the interaction device via the event. For example, the keyboard
 can send the press or release event to tell the kernel what we want to
 do. The input device driver will allocate a new input structure with
@@ -5704,7 +5709,7 @@ do. The input device driver will allocate a new input structure with
 </code> and sets up input bitfields, device id, version, etc. After that, registers it by calling
 <code> <span class='ectt-1000'>input_register_device()</span>
 </code>.
-</p><!-- l. 1938 --><p class='indent'>   Here is an example, vinput, It is an API to allow easy
+</p><!-- l. 1941 --><p class='indent'>   Here is an example, vinput, It is an API to allow easy
 development of virtual input drivers. The drivers needs to export a
 <code> <span class='ectt-1000'>vinput_device()</span>
 </code> that contains the virtual device name and
@@ -5720,13 +5725,13 @@ development of virtual input drivers. The drivers needs to export a
      </li>
      <li class='itemize'>the readback function: <code>  <span class='ectt-1000'>read()</span>
      </code></li></ul>
-<!-- l. 1948 --><p class='indent'>   Then using <code>  <span class='ectt-1000'>vinput_register_device()</span>
+<!-- l. 1951 --><p class='indent'>   Then using <code>  <span class='ectt-1000'>vinput_register_device()</span>
 </code> and <code>  <span class='ectt-1000'>vinput_unregister_device()</span>
 </code> will add a new device to the list of support virtual input devices.
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb86'><a id='x1-63012r1'></a><span class='ecrm-0500'>1</span><span id='textcolor2998'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> init(</span><span id='textcolor2999'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> vinput *);</span></pre>
-<!-- l. 1954 --><p class='indent'>   This function is passed a <code>  <span id='textcolor3000'><span class='ectt-1000'>struct</span></span><span class='ectt-1000'> vinput</span>
+<!-- l. 1957 --><p class='indent'>   This function is passed a <code>  <span id='textcolor3000'><span class='ectt-1000'>struct</span></span><span class='ectt-1000'> vinput</span>
 </code> already initialized with an allocated <code>  <span id='textcolor3001'><span class='ectt-1000'>struct</span></span><span class='ectt-1000'> input_dev</span>
 </code>. The <code>  <span class='ectt-1000'>init()</span>
 </code> function is responsible for initializing the capabilities of the input device and register
@@ -5734,20 +5739,20 @@ it.
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb87'><a id='x1-63018r1'></a><span class='ecrm-0500'>1</span><span id='textcolor3002'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> send(</span><span id='textcolor3003'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> vinput *, </span><span id='textcolor3004'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *, </span><span id='textcolor3005'><span class='ectt-0800'>int</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1961 --><p class='indent'>   This function will receive a user string to interpret and inject the event using the
+<!-- l. 1964 --><p class='indent'>   This function will receive a user string to interpret and inject the event using the
 <code> <span class='ectt-1000'>input_report_XXXX</span>
 </code> or <code>  <span class='ectt-1000'>input_event</span>
 </code> call. The string is already copied from user.
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb88'><a id='x1-63023r1'></a><span class='ecrm-0500'>1</span><span id='textcolor3006'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> read(</span><span id='textcolor3007'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> vinput *, </span><span id='textcolor3008'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *, </span><span id='textcolor3009'><span class='ectt-0800'>int</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1968 --><p class='indent'>   This function is used for debugging and should fill the buffer parameter with the
+<!-- l. 1971 --><p class='indent'>   This function is used for debugging and should fill the buffer parameter with the
 last event sent in the virtual input device format. The buffer will then be copied to
 user.
-</p><!-- l. 1971 --><p class='indent'>   vinput devices are created and destroyed using sysfs. And, event injection is done
+</p><!-- l. 1974 --><p class='indent'>   vinput devices are created and destroyed using sysfs. And, event injection is done
 through a <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/dev</span></span></span> node. The device name will be used by the userland to export a new
 virtual input device.
-</p><!-- l. 1975 --><p class='indent'>   The <code>  <span class='ectt-1000'>class_attribute</span>
+</p><!-- l. 1978 --><p class='indent'>   The <code>  <span class='ectt-1000'>class_attribute</span>
 </code> structure is similar to other attribute types we talked about in section <a href='#sysfs-interacting-with-your-module'>8<!-- tex4ht:ref: sec:sysfs  --></a>:
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -5758,7 +5763,7 @@ virtual input device.
 <a id='x1-63041r5'></a><span class='ecrm-0500'>5</span><span class='ectt-0800'>    </span><span id='textcolor3016'><span class='ectt-0800'>ssize_t</span></span><span class='ectt-0800'> (*store)(</span><span id='textcolor3017'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> class *class, </span><span id='textcolor3018'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> class_attribute *attr,</span> 
 <a id='x1-63043r6'></a><span class='ecrm-0500'>6</span><span class='ectt-0800'>                    </span><span id='textcolor3019'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor3020'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *buf, </span><span id='textcolor3021'><span class='ectt-0800'>size_t</span></span><span class='ectt-0800'> count);</span> 
 <a id='x1-63045r7'></a><span class='ecrm-0500'>7</span><span class='ectt-0800'>};</span></pre>
-<!-- l. 1987 --><p class='indent'>   In <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>vinput.c</span></span></span>, the macro <code>  <span class='ectt-1000'>CLASS_ATTR_WO(export/unexport)</span>
+<!-- l. 1990 --><p class='indent'>   In <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>vinput.c</span></span></span>, the macro <code>  <span class='ectt-1000'>CLASS_ATTR_WO(export/unexport)</span>
 </code> defined in <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/device.h'>include/linux/device.h</a> (in this case, <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>device.h</span></span></span> is included in <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/input.h'>include/linux/input.h</a>)
 will generate the <code>  <span class='ectt-1000'>class_attribute</span>
 </code> structures which are named <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>class_attr_export/unexport</span></span></span>. Then, put them into
@@ -5771,11 +5776,11 @@ will generate the <code>  <span class='ectt-1000'>class_attribute</span>
 </code> that should be assigned in <code>  <span class='ectt-1000'>vinput_class</span>
 </code>. Finally, call <code>  <span class='ectt-1000'>class_register(&amp;vinput_class)</span>
 </code> to create attributes in sysfs.
-</p><!-- l. 1991 --><p class='indent'>   To create a <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>vinputX</span></span></span> sysfs entry and <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/dev</span></span></span> node.
+</p><!-- l. 1994 --><p class='indent'>   To create a <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>vinputX</span></span></span> sysfs entry and <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/dev</span></span></span> node.
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb90'><a id='x1-63055r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>echo </span><span id='textcolor3023'><span class='ectt-1000'>"vkbd"</span></span><span class='ectt-1000'> | sudo tee /sys/class/vinput/export</span></pre>
-<!-- l. 1997 --><p class='indent'>   To unexport the device, just echo its id in unexport:
+<!-- l. 2000 --><p class='indent'>   To unexport the device, just echo its id in unexport:
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb91'><a id='x1-63058r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>echo </span><span id='textcolor3024'><span class='ectt-1000'>"0"</span></span><span class='ectt-1000'> | sudo tee /sys/class/vinput/unexport</span></pre>
@@ -6237,7 +6242,7 @@ will generate the <code>  <span class='ectt-1000'>class_attribute</span>
 <a id='x1-63958r401'></a><span class='ecrm-0500'>401</span> 
 <a id='x1-63960r402'></a><span class='ecrm-0500'>402</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor3319'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-63962r403'></a><span class='ecrm-0500'>403</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor3320'><span class='ectt-0800'>"Emulate input events"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 2006 --><p class='indent'>   Here the virtual keyboard is one of example to use vinput. It supports all
+<!-- l. 2009 --><p class='indent'>   Here the virtual keyboard is one of example to use vinput. It supports all
 <code> <span class='ectt-1000'>KEY_MAX</span>
 </code> keycodes. The injection format is the <code>  <span class='ectt-1000'>KEY_CODE</span>
 </code> such as defined in <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/input.h'>include/linux/input.h</a>. A positive value means
@@ -6245,12 +6250,12 @@ will generate the <code>  <span class='ectt-1000'>class_attribute</span>
 </code> while a negative value is a <code>  <span class='ectt-1000'>KEY_RELEASE</span>
 </code>. The keyboard supports repetition when the key stays pressed for too long. The
 following demonstrates how simulation work.
-</p><!-- l. 2013 --><p class='indent'>   Simulate a key press on "g" (<code>  <span class='ectt-1000'>KEY_G</span>
+</p><!-- l. 2016 --><p class='indent'>   Simulate a key press on "g" (<code>  <span class='ectt-1000'>KEY_G</span>
 </code> = 34):
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb94'><a id='x1-63970r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>echo </span><span id='textcolor3321'><span class='ectt-1000'>"+34"</span></span><span class='ectt-1000'> | sudo tee /dev/vinput0</span></pre>
-<!-- l. 2019 --><p class='indent'>   Simulate a key release on "g" (<code>  <span class='ectt-1000'>KEY_G</span>
+<!-- l. 2022 --><p class='indent'>   Simulate a key release on "g" (<code>  <span class='ectt-1000'>KEY_G</span>
 </code> = 34):
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -6371,10 +6376,10 @@ following demonstrates how simulation work.
                                                                   
 
                                                                   
-<!-- l. 2029 --><p class='noindent'>
+<!-- l. 2032 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='standardizing-the-interfaces-the-device-model'><span class='titlemark'>18   </span> <a id='x1-6500018'></a>Standardizing the interfaces: The Device Model</h3>
-<!-- l. 2031 --><p class='noindent'>Up to this point we have seen all kinds of modules doing all kinds of things, but there
+<!-- l. 2034 --><p class='noindent'>Up to this point we have seen all kinds of modules doing all kinds of things, but there
 was no consistency in their interfaces with the rest of the kernel. To impose some
 consistency such that there is at minimum a standardized way to start, suspend and
 resume a device model was added. An example is shown below, and you can
@@ -6480,13 +6485,13 @@ functions.
 <a id='x1-65192r96'></a><span class='ecrm-0500'>96</span> 
 <a id='x1-65194r97'></a><span class='ecrm-0500'>97</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor3480'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-65196r98'></a><span class='ecrm-0500'>98</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor3481'><span class='ectt-0800'>"Linux Device Model example"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 2037 --><p class='noindent'>
+<!-- l. 2040 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='optimizations'><span class='titlemark'>19   </span> <a id='x1-6600019'></a>Optimizations</h3>
-<!-- l. 2039 --><p class='noindent'>
+<!-- l. 2042 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='likely-and-unlikely-conditions'><span class='titlemark'>19.1   </span> <a id='x1-6700019.1'></a>Likely and Unlikely conditions</h4>
-<!-- l. 2041 --><p class='noindent'>Sometimes you might want your code to run as quickly as possible,
+<!-- l. 2044 --><p class='noindent'>Sometimes you might want your code to run as quickly as possible,
 especially if it is handling an interrupt or doing something which might
 cause noticeable latency. If your code contains boolean conditions and if
 you know that the conditions are almost always likely to evaluate as either
@@ -6505,7 +6510,7 @@ to succeed.
 <a id='x1-67018r4'></a><span class='ecrm-0500'>4</span><span class='ectt-0800'>    bio = NULL;</span> 
 <a id='x1-67020r5'></a><span class='ecrm-0500'>5</span><span class='ectt-0800'>    </span><span id='textcolor3483'><span class='ectt-0800'>goto</span></span><span class='ectt-0800'> out;</span> 
 <a id='x1-67022r6'></a><span class='ecrm-0500'>6</span><span class='ectt-0800'>}</span></pre>
-<!-- l. 2055 --><p class='indent'>   When the <code>  <span class='ectt-1000'>unlikely</span>
+<!-- l. 2058 --><p class='indent'>   When the <code>  <span class='ectt-1000'>unlikely</span>
 </code> macro is used, the compiler alters its machine instruction output, so that it
 continues along the false branch and only jumps if the condition is true. That
 avoids flushing the processor pipeline. The opposite happens if you use the
@@ -6514,10 +6519,10 @@ avoids flushing the processor pipeline. The opposite happens if you use the
                                                                   
 
                                                                   
-</p><!-- l. 2059 --><p class='noindent'>
+</p><!-- l. 2062 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='static-keys'><span class='titlemark'>19.2   </span> <a id='x1-6800019.2'></a>Static keys</h4>
-<!-- l. 2061 --><p class='noindent'>Static keys allow us to enable or disable kernel code paths based on the runtime state
+<!-- l. 2064 --><p class='noindent'>Static keys allow us to enable or disable kernel code paths based on the runtime state
 of key. Its APIs have been available since 2010 (most architectures are already
 supported), use self-modifying code to eliminate the overhead of cache and branch
 prediction. The most typical use case of static keys is for performance-sensitive kernel
@@ -6531,7 +6536,7 @@ Before we can use static keys in the kernel, we need to make sure that gcc suppo
    <pre class='fancyvrb' id='fancyvrb99'><a id='x1-68006r1'></a><span class='ecrm-0500'>1</span><span class='ectt-0800'>CONFIG_JUMP_LABEL=y</span> 
 <a id='x1-68008r2'></a><span class='ecrm-0500'>2</span><span class='ectt-0800'>CONFIG_HAVE_ARCH_JUMP_LABEL=y</span> 
 <a id='x1-68010r3'></a><span class='ecrm-0500'>3</span><span class='ectt-0800'>CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE=y</span></pre>
-<!-- l. 2071 --><p class='indent'>   To declare a static key, we need to define a global variable using the
+<!-- l. 2074 --><p class='indent'>   To declare a static key, we need to define a global variable using the
 <code> <span class='ectt-1000'>DEFINE_STATIC_KEY_FALSE</span>
 </code> or <code>  <span class='ectt-1000'>DEFINE_STATIC_KEY_TRUE</span>
 </code> macro defined in <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/jump_label.h'>include/linux/jump_label.h</a>. This macro initializes the key with
@@ -6541,7 +6546,7 @@ code:
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb100'><a id='x1-68015r1'></a><span class='ecrm-0500'>1</span><span class='ectt-0800'>DEFINE_STATIC_KEY_FALSE(fkey);</span></pre>
-<!-- l. 2078 --><p class='indent'>   Once the static key has been declared, we need to add branching code to the
+<!-- l. 2081 --><p class='indent'>   Once the static key has been declared, we need to add branching code to the
 module that uses the static key. For example, the code includes a fastpath, where a
 no-op instruction will be generated at compile time as the key is initialized to false
 and the branch is unlikely to be taken.
@@ -6551,12 +6556,12 @@ and the branch is unlikely to be taken.
 <a id='x1-68023r2'></a><span class='ecrm-0500'>2</span><span id='textcolor3489'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (static_branch_unlikely(&amp;fkey))</span> 
 <a id='x1-68025r3'></a><span class='ecrm-0500'>3</span><span class='ectt-0800'>    pr_alert(</span><span id='textcolor3490'><span class='ectt-0800'>"do unlikely thing</span></span><span id='textcolor3491'><span class='ectt-0800'>\n</span></span><span id='textcolor3492'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-68027r4'></a><span class='ecrm-0500'>4</span><span class='ectt-0800'>pr_info(</span><span id='textcolor3493'><span class='ectt-0800'>"fastpath 2</span></span><span id='textcolor3494'><span class='ectt-0800'>\n</span></span><span id='textcolor3495'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 2088 --><p class='indent'>   If the key is enabled at runtime by calling
+<!-- l. 2091 --><p class='indent'>   If the key is enabled at runtime by calling
 <code> <span class='ectt-1000'>static_branch_enable(&amp;fkey)</span>
 </code>, the fastpath will be patched with an unconditional jump instruction to the slowpath
 code <code>  <span class='ectt-1000'>pr_alert</span>
 </code>, so the branch will always be taken until the key is disabled again.
-</p><!-- l. 2090 --><p class='indent'>   The following kernel module derived from <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>chardev.c</span></span></span>, demonstrates how the
+</p><!-- l. 2093 --><p class='indent'>   The following kernel module derived from <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>chardev.c</span></span></span>, demonstrates how the
 static key works.
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -6751,57 +6756,57 @@ static key works.
                                                                   
 
                                                                   
-<!-- l. 2094 --><p class='indent'>   To check the state of the static key, we can use the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/dev/key_state</span></span></span>
+<!-- l. 2097 --><p class='indent'>   To check the state of the static key, we can use the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/dev/key_state</span></span></span>
 interface.
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb103'><a id='x1-68408r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>cat /dev/key_state</span></pre>
-<!-- l. 2100 --><p class='indent'>   This will display the current state of the key, which is disabled by default.
-</p><!-- l. 2102 --><p class='indent'>   To change the state of the static key, we can perform a write operation on the
+<!-- l. 2103 --><p class='indent'>   This will display the current state of the key, which is disabled by default.
+</p><!-- l. 2105 --><p class='indent'>   To change the state of the static key, we can perform a write operation on the
 file:
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb104'><a id='x1-68411r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>echo enable &gt; /dev/key_state</span></pre>
-<!-- l. 2108 --><p class='indent'>   This will enable the static key, causing the code path to switch from the fastpath
+<!-- l. 2111 --><p class='indent'>   This will enable the static key, causing the code path to switch from the fastpath
 to the slowpath.
-</p><!-- l. 2110 --><p class='indent'>   In some cases, the key is enabled or disabled at initialization and never changed,
+</p><!-- l. 2113 --><p class='indent'>   In some cases, the key is enabled or disabled at initialization and never changed,
 we can declare a static key as read-only, which means that it can only be toggled in
 the module init function. To declare a read-only static key, we can use the
 <code> <span class='ectt-1000'>DEFINE_STATIC_KEY_FALSE_RO</span>
 </code> or <code>  <span class='ectt-1000'>DEFINE_STATIC_KEY_TRUE_RO</span>
 </code> macro instead. Attempts to change the key at runtime will result in a page fault. For
 more information, see <a href='https://www.kernel.org/doc/Documentation/static-keys.txt'>Static keys</a>
-</p><!-- l. 2113 --><p class='noindent'>
+</p><!-- l. 2116 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='common-pitfalls'><span class='titlemark'>20   </span> <a id='x1-6900020'></a>Common Pitfalls</h3>
-<!-- l. 2116 --><p class='noindent'>
+<!-- l. 2119 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='using-standard-libraries'><span class='titlemark'>20.1   </span> <a id='x1-7000020.1'></a>Using standard libraries</h4>
-<!-- l. 2118 --><p class='noindent'>You can not do that. In a kernel module, you can only use kernel functions which are
+<!-- l. 2121 --><p class='noindent'>You can not do that. In a kernel module, you can only use kernel functions which are
 the functions you can see in <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/kallsyms</span></span></span>.
-</p><!-- l. 2121 --><p class='noindent'>
+</p><!-- l. 2124 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='disabling-interrupts'><span class='titlemark'>20.2   </span> <a id='x1-7100020.2'></a>Disabling interrupts</h4>
-<!-- l. 2123 --><p class='noindent'>You might need to do this for a short time and that is OK, but if you do not enable
+<!-- l. 2126 --><p class='noindent'>You might need to do this for a short time and that is OK, but if you do not enable
 them afterwards, your system will be stuck and you will have to power it
 off.
                                                                   
 
                                                                   
-</p><!-- l. 2125 --><p class='noindent'>
+</p><!-- l. 2128 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='where-to-go-from-here'><span class='titlemark'>21   </span> <a id='x1-7200021'></a>Where To Go From Here?</h3>
-<!-- l. 2127 --><p class='noindent'>For people seriously interested in kernel programming, I recommend <a href='https://kernelnewbies.org'>kernelnewbies.org</a>
+<!-- l. 2130 --><p class='noindent'>For people seriously interested in kernel programming, I recommend <a href='https://kernelnewbies.org'>kernelnewbies.org</a>
 and the <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/Documentation'>Documentation</a> subdirectory within the kernel source code which is not
 always easy to understand but can be a starting point for further investigation. Also,
 as Linus Torvalds said, the best way to learn the kernel is to read the source code
 yourself.
-</p><!-- l. 2130 --><p class='indent'>   If you would like to contribute to this guide or notice anything glaringly wrong,
+</p><!-- l. 2133 --><p class='indent'>   If you would like to contribute to this guide or notice anything glaringly wrong,
 please create an issue at <a class='url' href='https://github.com/sysprog21/lkmpg'><span class='ectt-1000'>https://github.com/sysprog21/lkmpg</span></a>. Your pull requests
 will be appreciated.
-</p><!-- l. 2133 --><p class='indent'>   Happy hacking!
+</p><!-- l. 2136 --><p class='indent'>   Happy hacking!
 </p>
-   <div class='footnotes'><!-- l. 1815 --><p class='indent'>     <span class='footnote-mark'><a href='#fn1x0-bk' id='fn1x0'><sup class='textsuperscript'>1</sup></a></span><span class='ecrm-0800'>The goal of threaded interrupts is to push more of the work to separate threads, so that the
+   <div class='footnotes'><!-- l. 1818 --><p class='indent'>     <span class='footnote-mark'><a href='#fn1x0-bk' id='fn1x0'><sup class='textsuperscript'>1</sup></a></span><span class='ecrm-0800'>The goal of threaded interrupts is to push more of the work to separate threads, so that the
 </span><span class='ecrm-0800'>minimum needed for acknowledging an interrupt is reduced, and therefore the time spent handling
 </span><span class='ecrm-0800'>the interrupt (where it can’t handle any other interrupts at the same time) is reduced. See</span>
 <a class='url' href='https://lwn.net/Articles/302043/'><span class='ectt-0800'>https://lwn.net/Articles/302043/</span></a><span class='ecrm-0800'>.</span></p>                                                                         </div>
