@@ -1645,16 +1645,19 @@ $
 Sometimes one thing should happen before another within a module having multiple threads.
 Rather than using \sh|/bin/sleep| commands, the kernel has another way to do this which allows timeouts or interrupts to also happen.
 
-In the following example two threads are started, but one needs to start before another.
+Completions as code synchronization mechanism have three main parts, initialization of struct completion synchronization object, the waiting or barrier part through \cpp|wait_for_completion()|, and the signalling side through a call to \cpp|complete()|.
+
+In the subsequent example, two threads are initiated: crank and flywheel. 
+It is imperative that the crank thread starts before the flywheel thread. 
+A completion state is established for each of these threads, with a distinct completion defined for both the crank and flywheel threads.
+At the exit point of each thread the respective completion state is updated, and \cpp|wait_for_completion| is used by the flywheel thread to ensure that it does not begin prematurely.
+The crank thread uses the \cpp|complete_all()| function to update the completion, which lets the flywheel thread continue.
+
+So even though \cpp|flywheel_thread| is started first you should notice when you load this module and run \sh|dmesg|, that turning the crank always happens first because the flywheel thread waits for the crank thread to complete.
+
+There are other variations of the \cpp|wait_for_completion| function, which include timeouts or being interrupted, but this basic mechanism is enough for many common situations without adding a lot of complexity.
 
 \samplec{examples/completions.c}
-
-The \cpp|machine| structure stores the completion states for the two threads.
-At the exit point of each thread the respective completion state is updated, and \cpp|wait_for_completion| is used by the flywheel thread to ensure that it does not begin prematurely.
-
-So even though \cpp|flywheel_thread| is started first you should notice if you load this module and run \sh|dmesg| that turning the crank always happens first because the flywheel thread waits for it to complete.
-
-There are other variations upon the \cpp|wait_for_completion| function, which include timeouts or being interrupted, but this basic mechanism is enough for many common situations without adding a lot of complexity.
 
 \section{Avoiding Collisions and Deadlocks}
 \label{sec:synchronization}

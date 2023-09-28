@@ -9,34 +9,32 @@
 #include <linux/printk.h>
 #include <linux/version.h>
 
-static struct {
-    struct completion crank_comp;
-    struct completion flywheel_comp;
-} machine;
+static struct completion crank_comp;
+static struct completion flywheel_comp;
 
 static int machine_crank_thread(void *arg)
 {
     pr_info("Turn the crank\n");
 
-    complete_all(&machine.crank_comp);
+    complete_all(&crank_comp);
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 17, 0)
-    kthread_complete_and_exit(&machine.crank_comp, 0);
+    kthread_complete_and_exit(&crank_comp, 0);
 #else
-    complete_and_exit(&machine.crank_comp, 0);
+    complete_and_exit(&crank_comp, 0);
 #endif
 }
 
 static int machine_flywheel_spinup_thread(void *arg)
 {
-    wait_for_completion(&machine.crank_comp);
+    wait_for_completion(&crank_comp);
 
     pr_info("Flywheel spins up\n");
 
-    complete_all(&machine.flywheel_comp);
+    complete_all(&flywheel_comp);
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 17, 0)
-    kthread_complete_and_exit(&machine.flywheel_comp, 0);
+    kthread_complete_and_exit(&flywheel_comp, 0);
 #else
-    complete_and_exit(&machine.flywheel_comp, 0);
+    complete_and_exit(&flywheel_comp, 0);
 #endif
 }
 
@@ -47,8 +45,8 @@ static int __init completions_init(void)
 
     pr_info("completions example\n");
 
-    init_completion(&machine.crank_comp);
-    init_completion(&machine.flywheel_comp);
+    init_completion(&crank_comp);
+    init_completion(&flywheel_comp);
 
     crank_thread = kthread_create(machine_crank_thread, NULL, "KThread Crank");
     if (IS_ERR(crank_thread))
@@ -73,8 +71,8 @@ ERROR_THREAD_1:
 
 static void __exit completions_exit(void)
 {
-    wait_for_completion(&machine.crank_comp);
-    wait_for_completion(&machine.flywheel_comp);
+    wait_for_completion(&crank_comp);
+    wait_for_completion(&flywheel_comp);
 
     pr_info("completions exit\n");
 }
