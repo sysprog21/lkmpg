@@ -50,7 +50,7 @@ static void atomic_bitwise(void)
     pr_info("Bits 4: " BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(word));
 
     word = 255;
-    pr_info("Bits 5: " BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(word));
+    pr_info("Bits 5: " BYTE_TO_BINARY_PATTERN "\n", BYTE_TO_BINARY(word));
 }
 
 static int __init example_atomic_init(void)
