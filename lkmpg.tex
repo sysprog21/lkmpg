@@ -1810,7 +1810,7 @@ Example tasklet starts
 Example tasklet init continues...
 Example tasklet ends
 \end{verbatim}
-Although tasklet is easy to use, it comes with several defators, and developers are discussing about getting rid of tasklet in linux kernel.
+Although tasklet is easy to use, it comes with several drawbacks, and developers are discussing about getting rid of tasklet in linux kernel.
 The tasklet callback runs in atomic context, inside a software interrupt, meaning that it cannot sleep or access user-space data, so not all work can be done in a tasklet handler.
 Also, the kernel only allows one instance of any given tasklet to be running at any given time; multiple different tasklet callbacks can run in parallel.
 
