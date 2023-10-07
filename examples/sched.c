@@ -17,7 +17,7 @@ static int __init sched_init(void)
 {
     queue = alloc_workqueue("HELLOWORLD", WQ_UNBOUND, 1);
     INIT_WORK(&work, work_handler);
-    schedule_work(&work);
+    queue_work(queue, &work);
     return 0;
 }
 
