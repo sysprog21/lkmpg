@@ -4967,7 +4967,7 @@ Completely Fair Scheduler (CFS) to execute work within the queue.
 <a id='x1-55034r17'></a><span class='ecrm-0500'>17</span><span class='ectt-0800'>{</span> 
 <a id='x1-55036r18'></a><span class='ecrm-0500'>18</span><span class='ectt-0800'>    queue = alloc_workqueue(</span><span id='textcolor2544'><span class='ectt-0800'>"HELLOWORLD"</span></span><span class='ectt-0800'>, WQ_UNBOUND, 1);</span> 
 <a id='x1-55038r19'></a><span class='ecrm-0500'>19</span><span class='ectt-0800'>    INIT_WORK(&amp;work, work_handler);</span> 
-<a id='x1-55040r20'></a><span class='ecrm-0500'>20</span><span class='ectt-0800'>    schedule_work(&amp;work);</span> 
+<a id='x1-55040r20'></a><span class='ecrm-0500'>20</span><span class='ectt-0800'>    queue_work(queue, &amp;work);</span> 
 <a id='x1-55042r21'></a><span class='ecrm-0500'>21</span><span class='ectt-0800'>    </span><span id='textcolor2545'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
 <a id='x1-55044r22'></a><span class='ecrm-0500'>22</span><span class='ectt-0800'>}</span> 
 <a id='x1-55046r23'></a><span class='ecrm-0500'>23</span> 
