@@ -675,7 +675,7 @@ EXTRAVERSION = -rc2
 \end{verbatim}
 
 In this case, you need to restore the value of symbol \textbf{EXTRAVERSION} to \textbf{-rc2}.
-We suggest to keep a backup copy of the makefile used to compile your kernel available in \verb|/lib/modules/5.14.0-rc2/build|.
+We suggest keeping a backup copy of the makefile used to compile your kernel available in \verb|/lib/modules/5.14.0-rc2/build|.
 A simple command as following should suffice.
 \begin{codebash}
 cp /lib/modules/`uname -r`/build/Makefile linux-`uname -r`
