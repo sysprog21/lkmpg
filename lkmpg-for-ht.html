@@ -1872,7 +1872,7 @@ function <code>  <span class='ectt-1000'>procfile_read</span>
 </code>.
 </p><!-- l. 1147 --><p class='indent'>   The <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/helloworld</span></span></span> is created when the module is loaded with the function
 <code> <span class='ectt-1000'>proc_create</span>
-</code>. The return value is a <code>  <span id='textcolor584'><span class='ectt-1000'>struct</span></span><span class='ectt-1000'> proc_dir_entry</span>
+</code>. The return value is a pointer to <code>  <span id='textcolor584'><span class='ectt-1000'>struct</span></span><span class='ectt-1000'> proc_dir_entry</span>
 </code>, and it will be used to configure the file <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/helloworld</span></span></span> (for example, the owner
 of this file). A null return value means that the creation has failed.
 </p><!-- l. 1151 --><p class='indent'>   Every time the file <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/helloworld</span></span></span> is read, the function
