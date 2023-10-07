@@ -1145,7 +1145,7 @@ This is the HelloWorld for the \verb|/proc| filesystem.
 There are three parts: create the file \verb|/proc/helloworld| in the function \cpp|init_module|, return a value (and a buffer) when the file \verb|/proc/helloworld| is read in the callback function \cpp|procfile_read|, and delete the file \verb|/proc/helloworld| in the function \cpp|cleanup_module|.
 
 The \verb|/proc/helloworld| is created when the module is loaded with the function \cpp|proc_create|.
-The return value is a \cpp|struct proc_dir_entry|, and it will be used to configure the file \verb|/proc/helloworld| (for example, the owner of this file).
+The return value is a pointer to \cpp|struct proc_dir_entry|, and it will be used to configure the file \verb|/proc/helloworld| (for example, the owner of this file).
 A null return value means that the creation has failed.
 
 Every time the file \verb|/proc/helloworld| is read, the function \cpp|procfile_read| is called.
