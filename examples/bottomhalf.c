@@ -15,7 +15,7 @@
 #include <linux/printk.h>
 #include <linux/init.h>
 
-/* Macro DECLARE_TASKLET_OLD exists for compatibiity.
+/* Macro DECLARE_TASKLET_OLD exists for compatibility.
  * See https://lwn.net/Articles/830964/
  */
 #ifndef DECLARE_TASKLET_OLD
