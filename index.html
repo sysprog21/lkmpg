@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>October 7, 2023</span></div>
+<div class='date'><span class='ecrm-1200'>October 8, 2023</span></div>
                                                                   
 
                                                                   
@@ -2366,7 +2366,7 @@ the same way as in the previous example.
 <a id='x1-37096r36'></a><span class='ecrm-0500'>36</span><span class='ectt-0800'>}</span> 
 <a id='x1-37098r37'></a><span class='ecrm-0500'>37</span> 
 <a id='x1-37100r38'></a><span class='ecrm-0500'>38</span><span id='textcolor882'><span class='ectt-0800'>/* This function is called after the beginning of a sequence.</span></span> 
-<a id='x1-37102r39'></a><span class='ecrm-0500'>39</span><span id='textcolor883'><span class='ectt-0800'> * It is called untill the return is NULL (this ends the sequence).</span></span> 
+<a id='x1-37102r39'></a><span class='ecrm-0500'>39</span><span id='textcolor883'><span class='ectt-0800'> * It is called until the return is NULL (this ends the sequence).</span></span> 
 <a id='x1-37104r40'></a><span class='ecrm-0500'>40</span><span id='textcolor884'><span class='ectt-0800'> */</span></span> 
 <a id='x1-37106r41'></a><span class='ecrm-0500'>41</span><span id='textcolor885'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor886'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> *my_seq_next(</span><span id='textcolor887'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> seq_file *s, </span><span id='textcolor888'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> *v, loff_t *pos)</span> 
 <a id='x1-37108r42'></a><span class='ecrm-0500'>42</span><span class='ectt-0800'>{</span> 
@@ -5242,7 +5242,7 @@ when an interrupt is triggered.
 <a id='x1-59030r15'></a><span class='ecrm-0500'>15</span><span id='textcolor2678'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor2679'><span class='ectt-0800'>&lt;linux/printk.h&gt;</span></span> 
 <a id='x1-59032r16'></a><span class='ecrm-0500'>16</span><span id='textcolor2680'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor2681'><span class='ectt-0800'>&lt;linux/init.h&gt;</span></span> 
 <a id='x1-59034r17'></a><span class='ecrm-0500'>17</span> 
-<a id='x1-59036r18'></a><span class='ecrm-0500'>18</span><span id='textcolor2682'><span class='ectt-0800'>/* Macro DECLARE_TASKLET_OLD exists for compatibiity.</span></span> 
+<a id='x1-59036r18'></a><span class='ecrm-0500'>18</span><span id='textcolor2682'><span class='ectt-0800'>/* Macro DECLARE_TASKLET_OLD exists for compatibility.</span></span> 
 <a id='x1-59038r19'></a><span class='ecrm-0500'>19</span><span id='textcolor2683'><span class='ectt-0800'> * See https://lwn.net/Articles/830964/</span></span> 
 <a id='x1-59040r20'></a><span class='ecrm-0500'>20</span><span id='textcolor2684'><span class='ectt-0800'> */</span></span> 
 <a id='x1-59042r21'></a><span class='ecrm-0500'>21</span><span id='textcolor2685'><span class='ectt-0800'>#ifndef DECLARE_TASKLET_OLD</span></span> 
