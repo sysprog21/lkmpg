@@ -36,7 +36,7 @@ static void *my_seq_start(struct seq_file *s, loff_t *pos)
 }
 
 /* This function is called after the beginning of a sequence.
- * It is called untill the return is NULL (this ends the sequence).
+ * It is called until the return is NULL (this ends the sequence).
  */
 static void *my_seq_next(struct seq_file *s, void *v, loff_t *pos)
 {
