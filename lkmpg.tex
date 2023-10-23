@@ -1201,7 +1201,7 @@ Since every file system has to have its own functions to handle inode and file o
 The difference between file and inode operations is that file operations deal with the file itself whereas inode operations deal with ways of referencing the file, such as creating links to it.
 
 In \verb|/proc|, whenever we register a new file, we're allowed to specify which \cpp|struct inode_operations| will be used to access to it.
-This is the mechanism we use, a \cpp|struct inode_operations| which includes a pointer to a \cpp|struct proc_ops| which includes pointers to our \cpp|procf_read| and \cpp|procfs_write| functions.
+This is the mechanism we use, a \cpp|struct inode_operations| which includes a pointer to a \cpp|struct proc_ops| which includes pointers to our \cpp|procfs_read| and \cpp|procfs_write| functions.
 
 Another interesting point here is the \cpp|module_permission| function.
 This function is called whenever a process tries to do something with the \verb|/proc| file, and it can decide whether to allow access or not.
