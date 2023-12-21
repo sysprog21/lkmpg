@@ -1,5 +1,5 @@
 /*
- * syscall.c
+ * syscall_steal.c
  *
  * System call "stealing" sample.
  *
@@ -206,7 +206,7 @@ static void disable_write_protection(void)
     __write_cr0(cr0);
 }
 
-static int __init syscall_start(void)
+static int __init syscall_steal_start(void)
 {
     if (!(sys_call_table = acquire_sys_call_table()))
         return -1;
@@ -226,7 +226,7 @@ static int __init syscall_start(void)
     return 0;
 }
 
-static void __exit syscall_end(void)
+static void __exit syscall_steal_end(void)
 {
     if (!sys_call_table)
         return;
@@ -246,7 +246,7 @@ static void __exit syscall_end(void)
     msleep(2000);
 }
 
-module_init(syscall_start);
-module_exit(syscall_end);
+module_init(syscall_steal_start);
+module_exit(syscall_steal_end);
 
 MODULE_LICENSE("GPL");
