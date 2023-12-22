@@ -1,5 +1,5 @@
 /*
- * syscall.c
+ * syscall_steal.c
  *
  * System call "stealing" sample.
  *
@@ -61,7 +61,7 @@ module_param(sym, ulong, 0644);
 
 #endif /* Version < v5.7 */
 
-static unsigned long **sys_call_table;
+static unsigned long **sys_call_table_stolen;
 
 /* UID we want to spy on - will be filled from the command line. */
 static uid_t uid = -1;
@@ -206,18 +206,18 @@ static void disable_write_protection(void)
     __write_cr0(cr0);
 }
 
-static int __init syscall_start(void)
+static int __init syscall_steal_start(void)
 {
-    if (!(sys_call_table = acquire_sys_call_table()))
+    if (!(sys_call_table_stolen = acquire_sys_call_table()))
         return -1;
 
     disable_write_protection();
 
     /* keep track of the original open function */
-    original_call = (void *)sys_call_table[__NR_openat];
+    original_call = (void *)sys_call_table_stolen[__NR_openat];
 
     /* use our openat function instead */
-    sys_call_table[__NR_openat] = (unsigned long *)our_sys_openat;
+    sys_call_table_stolen[__NR_openat] = (unsigned long *)our_sys_openat;
 
     enable_write_protection();
 
@@ -226,13 +226,13 @@ static int __init syscall_start(void)
     return 0;
 }
 
-static void __exit syscall_end(void)
+static void __exit syscall_steal_end(void)
 {
-    if (!sys_call_table)
+    if (!sys_call_table_stolen)
         return;
 
     /* Return the system call back to normal */
-    if (sys_call_table[__NR_openat] != (unsigned long *)our_sys_openat) {
+    if (sys_call_table_stolen[__NR_openat] != (unsigned long *)our_sys_openat) {
         pr_alert("Somebody else also played with the ");
         pr_alert("open system call\n");
         pr_alert("The system may be left in ");
@@ -240,13 +240,13 @@ static void __exit syscall_end(void)
     }
 
     disable_write_protection();
-    sys_call_table[__NR_openat] = (unsigned long *)original_call;
+    sys_call_table_stolen[__NR_openat] = (unsigned long *)original_call;
     enable_write_protection();
 
     msleep(2000);
 }
 
-module_init(syscall_start);
-module_exit(syscall_end);
+module_init(syscall_steal_start);
+module_exit(syscall_steal_end);
 
 MODULE_LICENSE("GPL");

@@ -1491,7 +1491,7 @@ $ sudo grep sys_call_table /proc/kallsyms
 ffffffff82000280 R x32_sys_call_table
 ffffffff820013a0 R sys_call_table
 ffffffff820023e0 R ia32_sys_call_table
-$ sudo insmod syscall.ko sym=0xffffffff820013a0
+$ sudo insmod syscall_steal.ko sym=0xffffffff820013a0
 \end{verbatim}
 
 Using the address from \verb|/boot/System.map|, be careful about \verb|KASLR| (Kernel Address Space Layout Randomization).
