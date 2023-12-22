@@ -1,13 +1,10 @@
 /*
- * syscall_steal.c
+ * syscall-steal.c
  *
  * System call "stealing" sample.
  *
  * Disables page protection at a processor level by changing the 16th bit
  * in the cr0 register (could be Intel specific).
- *
- * Based on example by Peter Jay Salzman and
- * https://bbs.archlinux.org/viewtopic.php?id=139406
  */
 
 #include <linux/delay.h>
