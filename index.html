@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>October 23, 2023</span></div>
+<div class='date'><span class='ecrm-1200'>December 22, 2023</span></div>
                                                                   
 
                                                                   
@@ -3384,7 +3384,7 @@ $ sudo grep sys_call_table /proc/kallsyms
 ffffffff82000280 R x32_sys_call_table
 ffffffff820013a0 R sys_call_table
 ffffffff820023e0 R ia32_sys_call_table
-$ sudo insmod syscall.ko sym=0xffffffff820013a0
+$ sudo insmod syscall_steal.ko sym=0xffffffff820013a0
 </pre>
 <!-- l. 1495 --><p class='nopar'>
 </p><!-- l. 1497 --><p class='indent'>   Using the address from <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/boot/System.map</span></span></span>, be careful about <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>KASLR</span></span></span> (Kernel
@@ -3511,7 +3511,7 @@ dry run of this example, you will have to patch your current kernel in order to 
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb64'><a id='x1-41044r1'></a><span class='ecrm-0500'>1</span><span id='textcolor1502'><span class='ectt-0800'>/*</span></span> 
-<a id='x1-41046r2'></a><span class='ecrm-0500'>2</span><span id='textcolor1503'><span class='ectt-0800'> * syscall.c</span></span> 
+<a id='x1-41046r2'></a><span class='ecrm-0500'>2</span><span id='textcolor1503'><span class='ectt-0800'> * syscall_steal.c</span></span> 
 <a id='x1-41048r3'></a><span class='ecrm-0500'>3</span><span id='textcolor1504'><span class='ectt-0800'> *</span></span> 
 <a id='x1-41050r4'></a><span class='ecrm-0500'>4</span><span id='textcolor1505'><span class='ectt-0800'> * System call "stealing" sample.</span></span> 
 <a id='x1-41052r5'></a><span class='ecrm-0500'>5</span><span id='textcolor1506'><span class='ectt-0800'> *</span></span> 
@@ -3573,7 +3573,7 @@ dry run of this example, you will have to patch your current kernel in order to 
 <a id='x1-41164r61'></a><span class='ecrm-0500'>61</span> 
 <a id='x1-41166r62'></a><span class='ecrm-0500'>62</span><span id='textcolor1571'><span class='ectt-0800'>#endif </span></span><span id='textcolor1572'><span class='ectt-0800'>/* Version &lt; v5.7 */</span></span> 
 <a id='x1-41168r63'></a><span class='ecrm-0500'>63</span> 
-<a id='x1-41170r64'></a><span class='ecrm-0500'>64</span><span id='textcolor1573'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1574'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1575'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> **sys_call_table;</span> 
+<a id='x1-41170r64'></a><span class='ecrm-0500'>64</span><span id='textcolor1573'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1574'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1575'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> **sys_call_table_stolen;</span> 
 <a id='x1-41172r65'></a><span class='ecrm-0500'>65</span> 
 <a id='x1-41174r66'></a><span class='ecrm-0500'>66</span><span id='textcolor1576'><span class='ectt-0800'>/* UID we want to spy on - will be filled from the command line. */</span></span> 
 <a id='x1-41176r67'></a><span class='ecrm-0500'>67</span><span id='textcolor1577'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1578'><span class='ectt-0800'>uid_t</span></span><span class='ectt-0800'> uid = -1;</span> 
@@ -3718,18 +3718,18 @@ dry run of this example, you will have to patch your current kernel in order to 
 <a id='x1-41454r206'></a><span class='ecrm-0500'>206</span><span class='ectt-0800'>    __write_cr0(cr0);</span> 
 <a id='x1-41456r207'></a><span class='ecrm-0500'>207</span><span class='ectt-0800'>}</span> 
 <a id='x1-41458r208'></a><span class='ecrm-0500'>208</span> 
-<a id='x1-41460r209'></a><span class='ecrm-0500'>209</span><span id='textcolor1738'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1739'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> __init syscall_start(</span><span id='textcolor1740'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-41460r209'></a><span class='ecrm-0500'>209</span><span id='textcolor1738'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1739'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> __init syscall_steal_start(</span><span id='textcolor1740'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
 <a id='x1-41462r210'></a><span class='ecrm-0500'>210</span><span class='ectt-0800'>{</span> 
-<a id='x1-41464r211'></a><span class='ecrm-0500'>211</span><span class='ectt-0800'>    </span><span id='textcolor1741'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (!(sys_call_table = acquire_sys_call_table()))</span> 
+<a id='x1-41464r211'></a><span class='ecrm-0500'>211</span><span class='ectt-0800'>    </span><span id='textcolor1741'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (!(sys_call_table_stolen = acquire_sys_call_table()))</span> 
 <a id='x1-41466r212'></a><span class='ecrm-0500'>212</span><span class='ectt-0800'>        </span><span id='textcolor1742'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> -1;</span> 
 <a id='x1-41468r213'></a><span class='ecrm-0500'>213</span> 
 <a id='x1-41470r214'></a><span class='ecrm-0500'>214</span><span class='ectt-0800'>    disable_write_protection();</span> 
 <a id='x1-41472r215'></a><span class='ecrm-0500'>215</span> 
 <a id='x1-41474r216'></a><span class='ecrm-0500'>216</span><span class='ectt-0800'>    </span><span id='textcolor1743'><span class='ectt-0800'>/* keep track of the original open function */</span></span> 
-<a id='x1-41476r217'></a><span class='ecrm-0500'>217</span><span class='ectt-0800'>    original_call = (</span><span id='textcolor1744'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> *)sys_call_table[__NR_openat];</span> 
+<a id='x1-41476r217'></a><span class='ecrm-0500'>217</span><span class='ectt-0800'>    original_call = (</span><span id='textcolor1744'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> *)sys_call_table_stolen[__NR_openat];</span> 
 <a id='x1-41478r218'></a><span class='ecrm-0500'>218</span> 
 <a id='x1-41480r219'></a><span class='ecrm-0500'>219</span><span class='ectt-0800'>    </span><span id='textcolor1745'><span class='ectt-0800'>/* use our openat function instead */</span></span> 
-<a id='x1-41482r220'></a><span class='ecrm-0500'>220</span><span class='ectt-0800'>    sys_call_table[__NR_openat] = (</span><span id='textcolor1746'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1747'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> *)our_sys_openat;</span> 
+<a id='x1-41482r220'></a><span class='ecrm-0500'>220</span><span class='ectt-0800'>    sys_call_table_stolen[__NR_openat] = (</span><span id='textcolor1746'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1747'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> *)our_sys_openat;</span> 
 <a id='x1-41484r221'></a><span class='ecrm-0500'>221</span> 
 <a id='x1-41486r222'></a><span class='ecrm-0500'>222</span><span class='ectt-0800'>    enable_write_protection();</span> 
 <a id='x1-41488r223'></a><span class='ecrm-0500'>223</span> 
@@ -3738,13 +3738,13 @@ dry run of this example, you will have to patch your current kernel in order to 
 <a id='x1-41494r226'></a><span class='ecrm-0500'>226</span><span class='ectt-0800'>    </span><span id='textcolor1751'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
 <a id='x1-41496r227'></a><span class='ecrm-0500'>227</span><span class='ectt-0800'>}</span> 
 <a id='x1-41498r228'></a><span class='ecrm-0500'>228</span> 
-<a id='x1-41500r229'></a><span class='ecrm-0500'>229</span><span id='textcolor1752'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1753'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit syscall_end(</span><span id='textcolor1754'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-41500r229'></a><span class='ecrm-0500'>229</span><span id='textcolor1752'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1753'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit syscall_steal_end(</span><span id='textcolor1754'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
 <a id='x1-41502r230'></a><span class='ecrm-0500'>230</span><span class='ectt-0800'>{</span> 
-<a id='x1-41504r231'></a><span class='ecrm-0500'>231</span><span class='ectt-0800'>    </span><span id='textcolor1755'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (!sys_call_table)</span> 
+<a id='x1-41504r231'></a><span class='ecrm-0500'>231</span><span class='ectt-0800'>    </span><span id='textcolor1755'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (!sys_call_table_stolen)</span> 
 <a id='x1-41506r232'></a><span class='ecrm-0500'>232</span><span class='ectt-0800'>        </span><span id='textcolor1756'><span class='ectt-0800'>return</span></span><span class='ectt-0800'>;</span> 
 <a id='x1-41508r233'></a><span class='ecrm-0500'>233</span> 
 <a id='x1-41510r234'></a><span class='ecrm-0500'>234</span><span class='ectt-0800'>    </span><span id='textcolor1757'><span class='ectt-0800'>/* Return the system call back to normal */</span></span> 
-<a id='x1-41512r235'></a><span class='ecrm-0500'>235</span><span class='ectt-0800'>    </span><span id='textcolor1758'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (sys_call_table[__NR_openat] != (</span><span id='textcolor1759'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1760'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> *)our_sys_openat) {</span> 
+<a id='x1-41512r235'></a><span class='ecrm-0500'>235</span><span class='ectt-0800'>    </span><span id='textcolor1758'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (sys_call_table_stolen[__NR_openat] != (</span><span id='textcolor1759'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1760'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> *)our_sys_openat) {</span> 
 <a id='x1-41514r236'></a><span class='ecrm-0500'>236</span><span class='ectt-0800'>        pr_alert(</span><span id='textcolor1761'><span class='ectt-0800'>"Somebody else also played with the "</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-41516r237'></a><span class='ecrm-0500'>237</span><span class='ectt-0800'>        pr_alert(</span><span id='textcolor1762'><span class='ectt-0800'>"open system call</span></span><span id='textcolor1763'><span class='ectt-0800'>\n</span></span><span id='textcolor1764'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-41518r238'></a><span class='ecrm-0500'>238</span><span class='ectt-0800'>        pr_alert(</span><span id='textcolor1765'><span class='ectt-0800'>"The system may be left in "</span></span><span class='ectt-0800'>);</span> 
@@ -3752,14 +3752,14 @@ dry run of this example, you will have to patch your current kernel in order to 
 <a id='x1-41522r240'></a><span class='ecrm-0500'>240</span><span class='ectt-0800'>    }</span> 
 <a id='x1-41524r241'></a><span class='ecrm-0500'>241</span> 
 <a id='x1-41526r242'></a><span class='ecrm-0500'>242</span><span class='ectt-0800'>    disable_write_protection();</span> 
-<a id='x1-41528r243'></a><span class='ecrm-0500'>243</span><span class='ectt-0800'>    sys_call_table[__NR_openat] = (</span><span id='textcolor1769'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1770'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> *)original_call;</span> 
+<a id='x1-41528r243'></a><span class='ecrm-0500'>243</span><span class='ectt-0800'>    sys_call_table_stolen[__NR_openat] = (</span><span id='textcolor1769'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1770'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> *)original_call;</span> 
 <a id='x1-41530r244'></a><span class='ecrm-0500'>244</span><span class='ectt-0800'>    enable_write_protection();</span> 
 <a id='x1-41532r245'></a><span class='ecrm-0500'>245</span> 
 <a id='x1-41534r246'></a><span class='ecrm-0500'>246</span><span class='ectt-0800'>    msleep(2000);</span> 
 <a id='x1-41536r247'></a><span class='ecrm-0500'>247</span><span class='ectt-0800'>}</span> 
 <a id='x1-41538r248'></a><span class='ecrm-0500'>248</span> 
-<a id='x1-41540r249'></a><span class='ecrm-0500'>249</span><span class='ectt-0800'>module_init(syscall_start);</span> 
-<a id='x1-41542r250'></a><span class='ecrm-0500'>250</span><span class='ectt-0800'>module_exit(syscall_end);</span> 
+<a id='x1-41540r249'></a><span class='ecrm-0500'>249</span><span class='ectt-0800'>module_init(syscall_steal_start);</span> 
+<a id='x1-41542r250'></a><span class='ecrm-0500'>250</span><span class='ectt-0800'>module_exit(syscall_steal_end);</span> 
 <a id='x1-41544r251'></a><span class='ecrm-0500'>251</span> 
 <a id='x1-41546r252'></a><span class='ecrm-0500'>252</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor1771'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
 <!-- l. 1567 --><p class='noindent'>
