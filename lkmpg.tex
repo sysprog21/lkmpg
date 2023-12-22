@@ -199,7 +199,7 @@ It is reassuring to note that overcoming the initial obstacle in the first attem
 
 \section{Headers}
 \label{sec:headers}
-Before you can build anything you'll need to install the header files for your kernel.
+Before building anything, it is necessary to install the header files for the kernel.
 
 On Ubuntu/Debian GNU/Linux:
 \begin{codebash}
@@ -207,7 +207,7 @@ sudo apt-get update
 apt-cache search linux-headers-`uname -r`
 \end{codebash}
 
-This will tell you what kernel header files are available.
+The following command provides information on the available kernel header files.
 Then for example:
 \begin{codebash}
 sudo apt-get install kmod linux-headers-5.4.0-80-generic
@@ -227,17 +227,18 @@ sudo dnf install kernel-devel kernel-headers
 \label{sec:examples}
 All the examples from this document are available within the \verb|examples| subdirectory.
 
-If there are any compile errors then you might have a more recent kernel version or need to install the corresponding kernel header files.
+Should compile errors occur, it may be due to a more recent kernel version being in use,
+or there might be a need to install the corresponding kernel header files.
 
 \section{Hello World}
 \label{sec:helloworld}
 \subsection{The Simplest Module}
 \label{sec:org2d3e245}
-Most people learning programming start out with some sort of "\emph{hello world}" example.
-I don't know what happens to people who break with this tradition, but I think it is safer not to find out.
-We will start with a series of hello world programs that demonstrate the different aspects of the basics of writing a kernel module.
+Most individuals beginning their programming journey typically start with some variant of a \emph{hello world} example.
+It is unclear what the outcomes are for those who deviate from this tradition, but it seems prudent to adhere to it.
+The learning process will begin with a series of hello world programs that illustrate various fundamental aspects of writing a kernel module.
 
-Here is the simplest module possible.
+Presented next is the simplest possible module.
 
 Make a test directory:
 \begin{codebash}
@@ -545,7 +546,7 @@ It takes two parameters: a variable name and a free form string describing that 
 
 \samplec{examples/hello-5.c}
 
-I would recommend playing around with this code:
+It is recommended to experiment with the following code:
 \begin{verbatim}
 $ sudo insmod hello-5.ko mystring="bebop" myintarray=-1
 $ sudo dmesg -t | tail -7
@@ -707,17 +708,21 @@ Now you can turn back to the directory of your module and compile it: It will be
 \section{Preliminaries}
 \subsection{How modules begin and end}
 \label{sec:module_init_exit}
-A program usually begins with a \cpp|main()| function, executes a bunch of instructions and terminates upon completion of those instructions.
-Kernel modules work a bit differently. A module always begin with either the \cpp|init_module| or the function you specify with \cpp|module_init| call.
-This is the entry function for modules; it tells the kernel what functionality the module provides and sets up the kernel to run the module's functions when they are needed.
-Once it does this, entry function returns and the module does nothing until the kernel wants to do something with the code that the module provides.
+A typical program starts with a |main()| function, executes a series of instructions,
+and terminates after completing these instructions.
+Kernel modules, however, follow a different pattern.
+A module always begins with either the \cpp|init_module| function or a function designated by the \cpp|module_init| call.
+This function acts as the module's entry point,
+informing the kernel of the module's functionalities and preparing the kernel to utilize the module's functions when necessary.
+After performing these tasks, the entry function returns, and the module remains inactive until the kernel requires its code.
 
-All modules end by calling either \cpp|cleanup_module| or the function you specify with the \cpp|module_exit| call.
-This is the exit function for modules; it undoes whatever entry function did.
-It unregisters the functionality that the entry function registered.
+All modules conclude by invoking either \cpp|cleanup_module| or a function specified through the \cpp|module_exit |call.
+This serves as the module's exit function, reversing the actions of the entry function by unregistering the previously registered functionalities.
 
-Every module must have an entry function and an exit function.
-Since there's more than one way to specify entry and exit functions, I will try my best to use the terms ``entry function'' and ``exit function'', but if I slip and simply refer to them as \cpp|init_module| and \cpp|cleanup_module|, I think you will know what I mean.
+It is mandatory for every module to have both an entry and an exit function.
+While there are multiple methods to define these functions, the terms ``entry function'' and ``exit function'' are generally used.
+However, they may occasionally be referred to as \cpp|init_module| and \cpp|cleanup_module|,
+which are understood to mean the same.
 
 \subsection{Functions available to modules}
 \label{sec:avail_func}
@@ -768,13 +773,16 @@ Crackers often make use of this sort of thing for backdoors or trojans, but you 
 
 \subsection{User Space vs Kernel Space}
 \label{sec:user_kernl_space}
-A kernel is all about access to resources, whether the resource in question happens to be a video card, a hard drive or even memory.
-Programs often compete for the same resource. As I just saved this document, updatedb started updating the locate database.
-My vim session and updatedb are both using the hard drive concurrently.
-The kernel needs to keep things orderly, and not give users access to resources whenever they feel like it.
-To this end, a CPU can run in different modes.
-Each mode gives a different level of freedom to do what you want on the system.
-The Intel 80386 architecture had 4 of these modes, which were called rings. Unix uses only two rings; the highest ring (ring 0, also known as ``supervisor mode'' where everything is allowed to happen) and the lowest ring, which is called ``user mode''.
+The kernel primarily manages access to resources, be it a video card, hard drive, or memory.
+Programs frequently vie for the same resources.
+For instance, as a document is saved, updatedb might commence updating the locate database.
+Sessions in editors like vim and processes like updatedb can simultaneously utilize the hard drive.
+The kernel's role is to maintain order, ensuring that users do not access resources indiscriminately.
+
+To manage this, CPUs operate in different modes, each offering varying levels of system control.
+The Intel 80386 architecture, for example, featured four such modes, known as rings.
+Unix, however, utilizes only two of these rings: the highest ring (ring 0, also known as ``supervisor mode'',
+where all actions are permissible) and the lowest ring, referred to as ``user mode''.
 
 Recall the discussion about library functions vs system calls.
 Typically, you use a library function in user mode.
@@ -812,10 +820,11 @@ Therefore, if your module segfaults, the kernel segfaults.
 And if you start writing over data because of an off-by-one error, then you're trampling on kernel data (or code).
 This is even worse than it sounds, so try your best to be careful.
 
-By the way, I would like to point out that the above discussion is true for any operating system which uses a monolithic kernel.
-This is not quite the same thing as \emph{"building all your modules into the kernel"}, although the idea is the same.
-There are things called microkernels which have modules which get their own codespace.
-The \href{https://www.gnu.org/software/hurd/}{GNU Hurd} and the \href{https://fuchsia.dev/fuchsia-src/concepts/kernel}{Zircon kernel} of Google Fuchsia are two examples of a microkernel.
+It should be noted that the aforementioned discussion applies to any operating system utilizing a monolithic kernel.
+This concept differs slightly from \emph{``building all your modules into the kernel''},
+although the underlying principle is similar.
+In contrast, there are microkernels, where modules are allocated their own code space.
+Two notable examples of microkernels include the \href{https://www.gnu.org/software/hurd/}{GNU Hurd} and the \href{https://fuchsia.dev/fuchsia-src/concepts/kernel}{Zircon kernel} of Google's Fuchsia.
 
 \subsection{Device Drivers}
 \label{sec:device_drivers}
@@ -872,14 +881,14 @@ Linus put his device files in \verb|/dev|, and so should you.
 However, when creating a device file for testing purposes, it is probably OK to place it in your working directory where you compile the kernel module.
 Just be sure to put it in the right place when you're done writing the device driver.
 
-I would like to make a few last points which are implicit from the above discussion, but I would like to make them explicit just in case.
-When a device file is accessed, the kernel uses the major number of the file to determine which driver should be used to handle the access.
-This means that the kernel doesn't really need to use or even know about the minor number.
-The driver itself is the only thing that cares about the minor number.
-It uses the minor number to distinguish between different pieces of hardware.
+A few final points, although implicit in the previous discussion, are worth stating explicitly for clarity.
+When a device file is accessed, the kernel utilizes the file's major number to identify the appropriate driver for handling the access.
+This indicates that the kernel does not necessarily rely on or need to be aware of the minor number.
+It is the driver that concerns itself with the minor number, using it to differentiate between various pieces of hardware.
 
-By the way, when I say \emph{"hardware"}, I mean something a bit more abstract than a PCI card that you can hold in your hand.
-Look at these two device files:
+It is important to note that when referring to \emph{``hardware''},
+the term is used in a slightly more abstract sense than just a physical PCI card that can be held in hand.
+Consider the following two device files:
 
 \begin{verbatim}
 $ ls -l /dev/sda /dev/sdb
@@ -1408,12 +1417,12 @@ This is fine if you want to do something the kernel programmers thought you'd wa
 But what if you want to do something unusual, to change the behavior of the system in some way?
 Then, you are mostly on your own.
 
-If you are not being sensible and using a virtual machine then this is where kernel programming can become hazardous.
-While writing the example below, I killed the \cpp|open()| system call.
-This meant I could not open any files, I could not run any programs, and I could not shutdown the system.
-I had to restart the virtual machine.
-No important files got annihilated, but if I was doing this on some live mission critical system then that could have been a possible outcome.
-To ensure you do not lose any files, even within a test environment, please run \sh|sync| right before you do the \sh|insmod| and the \sh|rmmod|.
+Should one choose not to use a virtual machine, kernel programming can become risky.
+For example, while writing the code below, the \cpp|open()| system call was inadvertently disrupted.
+This resulted in an inability to open any files, run programs, or shut down the system, necessitating a restart of the virtual machine.
+Fortunately, no critical files were lost in this instance.
+However, if such modifications were made on a live, mission-critical system, the consequences could be severe.
+To mitigate the risk of file loss, even in a test environment, it is advised to execute \sh|sync| right before using \sh|insmod| and \sh|rmmod|.
 
 Forget about \verb|/proc| files, forget about device files.
 They are just minor details.
