@@ -3384,7 +3384,7 @@ $ sudo grep sys_call_table /proc/kallsyms
 ffffffff82000280 R x32_sys_call_table
 ffffffff820013a0 R sys_call_table
 ffffffff820023e0 R ia32_sys_call_table
-$ sudo insmod syscall_steal.ko sym=0xffffffff820013a0
+$ sudo insmod syscall-steal.ko sym=0xffffffff820013a0
 </pre>
 <!-- l. 1495 --><p class='nopar'>
 </p><!-- l. 1497 --><p class='indent'>   Using the address from <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/boot/System.map</span></span></span>, be careful about <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>KASLR</span></span></span> (Kernel
