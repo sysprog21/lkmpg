@@ -1491,7 +1491,7 @@ $ sudo grep sys_call_table /proc/kallsyms
 ffffffff82000280 R x32_sys_call_table
 ffffffff820013a0 R sys_call_table
 ffffffff820023e0 R ia32_sys_call_table
-$ sudo insmod syscall_steal.ko sym=0xffffffff820013a0
+$ sudo insmod syscall-steal.ko sym=0xffffffff820013a0
 \end{verbatim}
 
 Using the address from \verb|/boot/System.map|, be careful about \verb|KASLR| (Kernel Address Space Layout Randomization).
@@ -1562,7 +1562,7 @@ Note that all the related problems make syscall stealing unfeasible for producti
 In order to keep people from doing potential harmful things \cpp|sys_call_table| is no longer exported.
 This means, if you want to do something more than a mere dry run of this example, you will have to patch your current kernel in order to have \cpp|sys_call_table| exported.
 
-\samplec{examples/syscall.c}
+\samplec{examples/syscall-steal.c}
 
 \section{Blocking Processes and threads}
 \label{sec:blocking_process_thread}
