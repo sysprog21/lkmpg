@@ -46,7 +46,8 @@ static int test_skcipher_result(struct skcipher_def *sk, int rc)
     switch (rc) {
     case 0:
         break;
-    case -EINPROGRESS || -EBUSY:
+    case -EINPROGRESS:
+    case -EBUSY:
         rc = wait_for_completion_interruptible(&sk->result.completion);
         if (!rc && !sk->result.err) {
             reinit_completion(&sk->result.completion);
