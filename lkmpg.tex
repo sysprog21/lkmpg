@@ -1879,7 +1879,14 @@ People still interested in more details, might want to refer to "APIC" now.
 This function receives the IRQ number, the name of the function, flags, a name for \verb|/proc/interrupts| and a parameter to be passed to the interrupt handler.
 Usually there is a certain number of IRQs available.
 How many IRQs there are is hardware-dependent.
-The flags can include \cpp|SA_SHIRQ| to indicate you are willing to share the IRQ with other interrupt handlers (usually because a number of hardware devices sit on the same IRQ) and \cpp|SA_INTERRUPT| to indicate this is a fast interrupt.
+
+The flags can be used for specify behaviors of the IRQ.
+For example, use \cpp|IRQF_SHARED| to indicate you are willing to share the IRQ with other interrupt handlers (usually because a number of hardware devices sit on the same IRQ); use the \cpp|IRQF_ONESHOT| to indicate that the IRQ is not reenabled after the handler finished.
+It should be noted that in some materials, you may encouter another set of IRQ flags named with the \cpp|SA| prefix.
+For example, the \cpp|SA_SHIRQ| and the \cpp|SA_INTERRUPT|.
+Those are the the IRQ flags in the older kernels.
+They have been removed completely.
+Today only the \cpp|IRQF| flags are in use.
 This function will only succeed if there is not already a handler on this IRQ, or if you are both willing to share.
 
 \subsection{Detecting button presses}
