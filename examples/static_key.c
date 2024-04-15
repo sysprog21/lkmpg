@@ -11,6 +11,7 @@
 #include <linux/types.h>
 #include <linux/uaccess.h> /* for get_user and put_user */
 #include <linux/jump_label.h> /* for static key macros */
+#include <linux/version.h>
 
 #include <asm/errno.h>
 
@@ -41,7 +42,9 @@ static struct class *cls;
 static DEFINE_STATIC_KEY_FALSE(fkey);
 
 static struct file_operations chardev_fops = {
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 4, 0)
     .owner = THIS_MODULE,
+#endif
     .open = device_open,
     .release = device_release,
     .read = device_read,
