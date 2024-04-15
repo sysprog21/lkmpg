@@ -34,7 +34,7 @@ static int __init mymodule_init(void)
 {
     int error = 0;
 
-    pr_info("mymodule: initialised\n");
+    pr_info("mymodule: initialized\n");
 
     mymodule = kobject_create_and_add("mymodule", kernel_kobj);
     if (!mymodule)
