@@ -5609,106 +5609,104 @@ and a password.
 <a id='x1-62198r99'></a><span class='ecrm-0500'>99</span><span class='ectt-0800'>{</span> 
 <a id='x1-62200r100'></a><span class='ecrm-0500'>100</span><span class='ectt-0800'>    </span><span id='textcolor2929'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> ret = -EFAULT;</span> 
 <a id='x1-62202r101'></a><span class='ecrm-0500'>101</span><span class='ectt-0800'>    </span><span id='textcolor2930'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor2931'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> key[SYMMETRIC_KEY_LENGTH];</span> 
-<a id='x1-62204r102'></a><span class='ecrm-0500'>102</span><span class='ectt-0800'>    crypto_completion_t compl ;</span> 
-<a id='x1-62206r103'></a><span class='ecrm-0500'>103</span> 
-<a id='x1-62208r104'></a><span class='ecrm-0500'>104</span><span class='ectt-0800'>    </span><span id='textcolor2932'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (!sk-&gt;tfm) {</span> 
-<a id='x1-62210r105'></a><span class='ecrm-0500'>105</span><span class='ectt-0800'>        sk-&gt;tfm = crypto_alloc_skcipher(</span><span id='textcolor2933'><span class='ectt-0800'>"cbc-aes-aesni"</span></span><span class='ectt-0800'>, 0, 0);</span> 
-<a id='x1-62212r106'></a><span class='ecrm-0500'>106</span><span class='ectt-0800'>        </span><span id='textcolor2934'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (IS_ERR(sk-&gt;tfm)) {</span> 
-<a id='x1-62214r107'></a><span class='ecrm-0500'>107</span><span class='ectt-0800'>            pr_info(</span><span id='textcolor2935'><span class='ectt-0800'>"could not allocate skcipher handle</span></span><span id='textcolor2936'><span class='ectt-0800'>\n</span></span><span id='textcolor2937'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-62216r108'></a><span class='ecrm-0500'>108</span><span class='ectt-0800'>            </span><span id='textcolor2938'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> PTR_ERR(sk-&gt;tfm);</span> 
-<a id='x1-62218r109'></a><span class='ecrm-0500'>109</span><span class='ectt-0800'>        }</span> 
-<a id='x1-62220r110'></a><span class='ecrm-0500'>110</span><span class='ectt-0800'>    }</span> 
-<a id='x1-62222r111'></a><span class='ecrm-0500'>111</span> 
-<a id='x1-62224r112'></a><span class='ecrm-0500'>112</span><span class='ectt-0800'>    </span><span id='textcolor2939'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (!sk-&gt;req) {</span> 
-<a id='x1-62226r113'></a><span class='ecrm-0500'>113</span><span class='ectt-0800'>        sk-&gt;req = skcipher_request_alloc(sk-&gt;tfm, GFP_KERNEL);</span> 
-<a id='x1-62228r114'></a><span class='ecrm-0500'>114</span><span class='ectt-0800'>        </span><span id='textcolor2940'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (!sk-&gt;req) {</span> 
-<a id='x1-62230r115'></a><span class='ecrm-0500'>115</span><span class='ectt-0800'>            pr_info(</span><span id='textcolor2941'><span class='ectt-0800'>"could not allocate skcipher request</span></span><span id='textcolor2942'><span class='ectt-0800'>\n</span></span><span id='textcolor2943'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-62232r116'></a><span class='ecrm-0500'>116</span><span class='ectt-0800'>            ret = -ENOMEM;</span> 
-<a id='x1-62234r117'></a><span class='ecrm-0500'>117</span><span class='ectt-0800'>            </span><span id='textcolor2944'><span class='ectt-0800'>goto</span></span><span class='ectt-0800'> out;</span> 
-<a id='x1-62236r118'></a><span class='ecrm-0500'>118</span><span class='ectt-0800'>        }</span> 
-<a id='x1-62238r119'></a><span class='ecrm-0500'>119</span><span class='ectt-0800'>    }</span> 
-<a id='x1-62240r120'></a><span class='ecrm-0500'>120</span> 
-<a id='x1-62242r121'></a><span class='ecrm-0500'>121</span><span class='ectt-0800'>    compl = (crypto_completion_t)test_skcipher_callback;</span> 
-<a id='x1-62244r122'></a><span class='ecrm-0500'>122</span><span class='ectt-0800'>    skcipher_request_set_callback(sk-&gt;req, CRYPTO_TFM_REQ_MAY_BACKLOG, compl,</span> 
-<a id='x1-62246r123'></a><span class='ecrm-0500'>123</span><span class='ectt-0800'>                                  &amp;sk-&gt;result);</span> 
-<a id='x1-62248r124'></a><span class='ecrm-0500'>124</span> 
-<a id='x1-62250r125'></a><span class='ecrm-0500'>125</span><span class='ectt-0800'>    </span><span id='textcolor2945'><span class='ectt-0800'>/* clear the key */</span></span> 
-<a id='x1-62252r126'></a><span class='ecrm-0500'>126</span><span class='ectt-0800'>    memset((</span><span id='textcolor2946'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> *)key, </span><span id='textcolor2947'><span class='tctt-0800'>'</span><span class='ectt-0800'>\0</span><span class='tctt-0800'>'</span></span><span class='ectt-0800'>, SYMMETRIC_KEY_LENGTH);</span> 
-<a id='x1-62254r127'></a><span class='ecrm-0500'>127</span> 
-<a id='x1-62256r128'></a><span class='ecrm-0500'>128</span><span class='ectt-0800'>    </span><span id='textcolor2948'><span class='ectt-0800'>/* Use the world</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s favourite password */</span></span> 
-<a id='x1-62258r129'></a><span class='ecrm-0500'>129</span><span class='ectt-0800'>    sprintf((</span><span id='textcolor2949'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *)key, </span><span id='textcolor2950'><span class='ectt-0800'>"%s"</span></span><span class='ectt-0800'>, password);</span> 
-<a id='x1-62260r130'></a><span class='ecrm-0500'>130</span> 
-<a id='x1-62262r131'></a><span class='ecrm-0500'>131</span><span class='ectt-0800'>    </span><span id='textcolor2951'><span class='ectt-0800'>/* AES 256 with given symmetric key */</span></span> 
-<a id='x1-62264r132'></a><span class='ecrm-0500'>132</span><span class='ectt-0800'>    </span><span id='textcolor2952'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (crypto_skcipher_setkey(sk-&gt;tfm, key, SYMMETRIC_KEY_LENGTH)) {</span> 
-<a id='x1-62266r133'></a><span class='ecrm-0500'>133</span><span class='ectt-0800'>        pr_info(</span><span id='textcolor2953'><span class='ectt-0800'>"key could not be set</span></span><span id='textcolor2954'><span class='ectt-0800'>\n</span></span><span id='textcolor2955'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-62268r134'></a><span class='ecrm-0500'>134</span><span class='ectt-0800'>        ret = -EAGAIN;</span> 
-<a id='x1-62270r135'></a><span class='ecrm-0500'>135</span><span class='ectt-0800'>        </span><span id='textcolor2956'><span class='ectt-0800'>goto</span></span><span class='ectt-0800'> out;</span> 
-<a id='x1-62272r136'></a><span class='ecrm-0500'>136</span><span class='ectt-0800'>    }</span> 
-<a id='x1-62274r137'></a><span class='ecrm-0500'>137</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2957'><span class='ectt-0800'>"Symmetric key: %s</span></span><span id='textcolor2958'><span class='ectt-0800'>\n</span></span><span id='textcolor2959'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, key);</span> 
-<a id='x1-62276r138'></a><span class='ecrm-0500'>138</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2960'><span class='ectt-0800'>"Plaintext: %s</span></span><span id='textcolor2961'><span class='ectt-0800'>\n</span></span><span id='textcolor2962'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, plaintext);</span> 
-<a id='x1-62278r139'></a><span class='ecrm-0500'>139</span> 
-<a id='x1-62280r140'></a><span class='ecrm-0500'>140</span><span class='ectt-0800'>    </span><span id='textcolor2963'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (!sk-&gt;ivdata) {</span> 
-<a id='x1-62282r141'></a><span class='ecrm-0500'>141</span><span class='ectt-0800'>        </span><span id='textcolor2964'><span class='ectt-0800'>/* see https://en.wikipedia.org/wiki/Initialization_vector */</span></span> 
-<a id='x1-62284r142'></a><span class='ecrm-0500'>142</span><span class='ectt-0800'>        sk-&gt;ivdata = kmalloc(CIPHER_BLOCK_SIZE, GFP_KERNEL);</span> 
-<a id='x1-62286r143'></a><span class='ecrm-0500'>143</span><span class='ectt-0800'>        </span><span id='textcolor2965'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (!sk-&gt;ivdata) {</span> 
-<a id='x1-62288r144'></a><span class='ecrm-0500'>144</span><span class='ectt-0800'>            pr_info(</span><span id='textcolor2966'><span class='ectt-0800'>"could not allocate ivdata</span></span><span id='textcolor2967'><span class='ectt-0800'>\n</span></span><span id='textcolor2968'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-62290r145'></a><span class='ecrm-0500'>145</span><span class='ectt-0800'>            </span><span id='textcolor2969'><span class='ectt-0800'>goto</span></span><span class='ectt-0800'> out;</span> 
-<a id='x1-62292r146'></a><span class='ecrm-0500'>146</span><span class='ectt-0800'>        }</span> 
-<a id='x1-62294r147'></a><span class='ecrm-0500'>147</span><span class='ectt-0800'>        get_random_bytes(sk-&gt;ivdata, CIPHER_BLOCK_SIZE);</span> 
-<a id='x1-62296r148'></a><span class='ecrm-0500'>148</span><span class='ectt-0800'>    }</span> 
-<a id='x1-62298r149'></a><span class='ecrm-0500'>149</span> 
-<a id='x1-62300r150'></a><span class='ecrm-0500'>150</span><span class='ectt-0800'>    </span><span id='textcolor2970'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (!sk-&gt;scratchpad) {</span> 
-<a id='x1-62302r151'></a><span class='ecrm-0500'>151</span><span class='ectt-0800'>        </span><span id='textcolor2971'><span class='ectt-0800'>/* The text to be encrypted */</span></span> 
-<a id='x1-62304r152'></a><span class='ecrm-0500'>152</span><span class='ectt-0800'>        sk-&gt;scratchpad = kmalloc(CIPHER_BLOCK_SIZE, GFP_KERNEL);</span> 
-<a id='x1-62306r153'></a><span class='ecrm-0500'>153</span><span class='ectt-0800'>        </span><span id='textcolor2972'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (!sk-&gt;scratchpad) {</span> 
-<a id='x1-62308r154'></a><span class='ecrm-0500'>154</span><span class='ectt-0800'>            pr_info(</span><span id='textcolor2973'><span class='ectt-0800'>"could not allocate scratchpad</span></span><span id='textcolor2974'><span class='ectt-0800'>\n</span></span><span id='textcolor2975'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-62310r155'></a><span class='ecrm-0500'>155</span><span class='ectt-0800'>            </span><span id='textcolor2976'><span class='ectt-0800'>goto</span></span><span class='ectt-0800'> out;</span> 
-<a id='x1-62312r156'></a><span class='ecrm-0500'>156</span><span class='ectt-0800'>        }</span> 
-<a id='x1-62314r157'></a><span class='ecrm-0500'>157</span><span class='ectt-0800'>    }</span> 
-<a id='x1-62316r158'></a><span class='ecrm-0500'>158</span><span class='ectt-0800'>    sprintf((</span><span id='textcolor2977'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *)sk-&gt;scratchpad, </span><span id='textcolor2978'><span class='ectt-0800'>"%s"</span></span><span class='ectt-0800'>, plaintext);</span> 
-<a id='x1-62318r159'></a><span class='ecrm-0500'>159</span> 
-<a id='x1-62320r160'></a><span class='ecrm-0500'>160</span><span class='ectt-0800'>    sg_init_one(&amp;sk-&gt;sg, sk-&gt;scratchpad, CIPHER_BLOCK_SIZE);</span> 
-<a id='x1-62322r161'></a><span class='ecrm-0500'>161</span><span class='ectt-0800'>    skcipher_request_set_crypt(sk-&gt;req, &amp;sk-&gt;sg, &amp;sk-&gt;sg, CIPHER_BLOCK_SIZE,</span> 
-<a id='x1-62324r162'></a><span class='ecrm-0500'>162</span><span class='ectt-0800'>                               sk-&gt;ivdata);</span> 
-<a id='x1-62326r163'></a><span class='ecrm-0500'>163</span><span class='ectt-0800'>    init_completion(&amp;sk-&gt;result.completion);</span> 
-<a id='x1-62328r164'></a><span class='ecrm-0500'>164</span> 
-<a id='x1-62330r165'></a><span class='ecrm-0500'>165</span><span class='ectt-0800'>    </span><span id='textcolor2979'><span class='ectt-0800'>/* encrypt data */</span></span> 
-<a id='x1-62332r166'></a><span class='ecrm-0500'>166</span><span class='ectt-0800'>    ret = crypto_skcipher_encrypt(sk-&gt;req);</span> 
-<a id='x1-62334r167'></a><span class='ecrm-0500'>167</span><span class='ectt-0800'>    ret = test_skcipher_result(sk, ret);</span> 
-<a id='x1-62336r168'></a><span class='ecrm-0500'>168</span><span class='ectt-0800'>    </span><span id='textcolor2980'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (ret)</span> 
-<a id='x1-62338r169'></a><span class='ecrm-0500'>169</span><span class='ectt-0800'>        </span><span id='textcolor2981'><span class='ectt-0800'>goto</span></span><span class='ectt-0800'> out;</span> 
+<a id='x1-62204r102'></a><span class='ecrm-0500'>102</span> 
+<a id='x1-62206r103'></a><span class='ecrm-0500'>103</span><span class='ectt-0800'>    </span><span id='textcolor2932'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (!sk-&gt;tfm) {</span> 
+<a id='x1-62208r104'></a><span class='ecrm-0500'>104</span><span class='ectt-0800'>        sk-&gt;tfm = crypto_alloc_skcipher(</span><span id='textcolor2933'><span class='ectt-0800'>"cbc-aes-aesni"</span></span><span class='ectt-0800'>, 0, 0);</span> 
+<a id='x1-62210r105'></a><span class='ecrm-0500'>105</span><span class='ectt-0800'>        </span><span id='textcolor2934'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (IS_ERR(sk-&gt;tfm)) {</span> 
+<a id='x1-62212r106'></a><span class='ecrm-0500'>106</span><span class='ectt-0800'>            pr_info(</span><span id='textcolor2935'><span class='ectt-0800'>"could not allocate skcipher handle</span></span><span id='textcolor2936'><span class='ectt-0800'>\n</span></span><span id='textcolor2937'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-62214r107'></a><span class='ecrm-0500'>107</span><span class='ectt-0800'>            </span><span id='textcolor2938'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> PTR_ERR(sk-&gt;tfm);</span> 
+<a id='x1-62216r108'></a><span class='ecrm-0500'>108</span><span class='ectt-0800'>        }</span> 
+<a id='x1-62218r109'></a><span class='ecrm-0500'>109</span><span class='ectt-0800'>    }</span> 
+<a id='x1-62220r110'></a><span class='ecrm-0500'>110</span> 
+<a id='x1-62222r111'></a><span class='ecrm-0500'>111</span><span class='ectt-0800'>    </span><span id='textcolor2939'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (!sk-&gt;req) {</span> 
+<a id='x1-62224r112'></a><span class='ecrm-0500'>112</span><span class='ectt-0800'>        sk-&gt;req = skcipher_request_alloc(sk-&gt;tfm, GFP_KERNEL);</span> 
+<a id='x1-62226r113'></a><span class='ecrm-0500'>113</span><span class='ectt-0800'>        </span><span id='textcolor2940'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (!sk-&gt;req) {</span> 
+<a id='x1-62228r114'></a><span class='ecrm-0500'>114</span><span class='ectt-0800'>            pr_info(</span><span id='textcolor2941'><span class='ectt-0800'>"could not allocate skcipher request</span></span><span id='textcolor2942'><span class='ectt-0800'>\n</span></span><span id='textcolor2943'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-62230r115'></a><span class='ecrm-0500'>115</span><span class='ectt-0800'>            ret = -ENOMEM;</span> 
+<a id='x1-62232r116'></a><span class='ecrm-0500'>116</span><span class='ectt-0800'>            </span><span id='textcolor2944'><span class='ectt-0800'>goto</span></span><span class='ectt-0800'> out;</span> 
+<a id='x1-62234r117'></a><span class='ecrm-0500'>117</span><span class='ectt-0800'>        }</span> 
+<a id='x1-62236r118'></a><span class='ecrm-0500'>118</span><span class='ectt-0800'>    }</span> 
+<a id='x1-62238r119'></a><span class='ecrm-0500'>119</span> 
+<a id='x1-62240r120'></a><span class='ecrm-0500'>120</span><span class='ectt-0800'>    skcipher_request_set_callback(sk-&gt;req, CRYPTO_TFM_REQ_MAY_BACKLOG,</span> 
+<a id='x1-62242r121'></a><span class='ecrm-0500'>121</span><span class='ectt-0800'>                                  test_skcipher_callback, &amp;sk-&gt;result);</span> 
+<a id='x1-62244r122'></a><span class='ecrm-0500'>122</span> 
+<a id='x1-62246r123'></a><span class='ecrm-0500'>123</span><span class='ectt-0800'>    </span><span id='textcolor2945'><span class='ectt-0800'>/* clear the key */</span></span> 
+<a id='x1-62248r124'></a><span class='ecrm-0500'>124</span><span class='ectt-0800'>    memset((</span><span id='textcolor2946'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> *)key, </span><span id='textcolor2947'><span class='tctt-0800'>'</span><span class='ectt-0800'>\0</span><span class='tctt-0800'>'</span></span><span class='ectt-0800'>, SYMMETRIC_KEY_LENGTH);</span> 
+<a id='x1-62250r125'></a><span class='ecrm-0500'>125</span> 
+<a id='x1-62252r126'></a><span class='ecrm-0500'>126</span><span class='ectt-0800'>    </span><span id='textcolor2948'><span class='ectt-0800'>/* Use the world</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s favourite password */</span></span> 
+<a id='x1-62254r127'></a><span class='ecrm-0500'>127</span><span class='ectt-0800'>    sprintf((</span><span id='textcolor2949'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *)key, </span><span id='textcolor2950'><span class='ectt-0800'>"%s"</span></span><span class='ectt-0800'>, password);</span> 
+<a id='x1-62256r128'></a><span class='ecrm-0500'>128</span> 
+<a id='x1-62258r129'></a><span class='ecrm-0500'>129</span><span class='ectt-0800'>    </span><span id='textcolor2951'><span class='ectt-0800'>/* AES 256 with given symmetric key */</span></span> 
+<a id='x1-62260r130'></a><span class='ecrm-0500'>130</span><span class='ectt-0800'>    </span><span id='textcolor2952'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (crypto_skcipher_setkey(sk-&gt;tfm, key, SYMMETRIC_KEY_LENGTH)) {</span> 
+<a id='x1-62262r131'></a><span class='ecrm-0500'>131</span><span class='ectt-0800'>        pr_info(</span><span id='textcolor2953'><span class='ectt-0800'>"key could not be set</span></span><span id='textcolor2954'><span class='ectt-0800'>\n</span></span><span id='textcolor2955'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-62264r132'></a><span class='ecrm-0500'>132</span><span class='ectt-0800'>        ret = -EAGAIN;</span> 
+<a id='x1-62266r133'></a><span class='ecrm-0500'>133</span><span class='ectt-0800'>        </span><span id='textcolor2956'><span class='ectt-0800'>goto</span></span><span class='ectt-0800'> out;</span> 
+<a id='x1-62268r134'></a><span class='ecrm-0500'>134</span><span class='ectt-0800'>    }</span> 
+<a id='x1-62270r135'></a><span class='ecrm-0500'>135</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2957'><span class='ectt-0800'>"Symmetric key: %s</span></span><span id='textcolor2958'><span class='ectt-0800'>\n</span></span><span id='textcolor2959'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, key);</span> 
+<a id='x1-62272r136'></a><span class='ecrm-0500'>136</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2960'><span class='ectt-0800'>"Plaintext: %s</span></span><span id='textcolor2961'><span class='ectt-0800'>\n</span></span><span id='textcolor2962'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, plaintext);</span> 
+<a id='x1-62274r137'></a><span class='ecrm-0500'>137</span> 
+<a id='x1-62276r138'></a><span class='ecrm-0500'>138</span><span class='ectt-0800'>    </span><span id='textcolor2963'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (!sk-&gt;ivdata) {</span> 
+<a id='x1-62278r139'></a><span class='ecrm-0500'>139</span><span class='ectt-0800'>        </span><span id='textcolor2964'><span class='ectt-0800'>/* see https://en.wikipedia.org/wiki/Initialization_vector */</span></span> 
+<a id='x1-62280r140'></a><span class='ecrm-0500'>140</span><span class='ectt-0800'>        sk-&gt;ivdata = kmalloc(CIPHER_BLOCK_SIZE, GFP_KERNEL);</span> 
+<a id='x1-62282r141'></a><span class='ecrm-0500'>141</span><span class='ectt-0800'>        </span><span id='textcolor2965'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (!sk-&gt;ivdata) {</span> 
+<a id='x1-62284r142'></a><span class='ecrm-0500'>142</span><span class='ectt-0800'>            pr_info(</span><span id='textcolor2966'><span class='ectt-0800'>"could not allocate ivdata</span></span><span id='textcolor2967'><span class='ectt-0800'>\n</span></span><span id='textcolor2968'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-62286r143'></a><span class='ecrm-0500'>143</span><span class='ectt-0800'>            </span><span id='textcolor2969'><span class='ectt-0800'>goto</span></span><span class='ectt-0800'> out;</span> 
+<a id='x1-62288r144'></a><span class='ecrm-0500'>144</span><span class='ectt-0800'>        }</span> 
+<a id='x1-62290r145'></a><span class='ecrm-0500'>145</span><span class='ectt-0800'>        get_random_bytes(sk-&gt;ivdata, CIPHER_BLOCK_SIZE);</span> 
+<a id='x1-62292r146'></a><span class='ecrm-0500'>146</span><span class='ectt-0800'>    }</span> 
+<a id='x1-62294r147'></a><span class='ecrm-0500'>147</span> 
+<a id='x1-62296r148'></a><span class='ecrm-0500'>148</span><span class='ectt-0800'>    </span><span id='textcolor2970'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (!sk-&gt;scratchpad) {</span> 
+<a id='x1-62298r149'></a><span class='ecrm-0500'>149</span><span class='ectt-0800'>        </span><span id='textcolor2971'><span class='ectt-0800'>/* The text to be encrypted */</span></span> 
+<a id='x1-62300r150'></a><span class='ecrm-0500'>150</span><span class='ectt-0800'>        sk-&gt;scratchpad = kmalloc(CIPHER_BLOCK_SIZE, GFP_KERNEL);</span> 
+<a id='x1-62302r151'></a><span class='ecrm-0500'>151</span><span class='ectt-0800'>        </span><span id='textcolor2972'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (!sk-&gt;scratchpad) {</span> 
+<a id='x1-62304r152'></a><span class='ecrm-0500'>152</span><span class='ectt-0800'>            pr_info(</span><span id='textcolor2973'><span class='ectt-0800'>"could not allocate scratchpad</span></span><span id='textcolor2974'><span class='ectt-0800'>\n</span></span><span id='textcolor2975'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-62306r153'></a><span class='ecrm-0500'>153</span><span class='ectt-0800'>            </span><span id='textcolor2976'><span class='ectt-0800'>goto</span></span><span class='ectt-0800'> out;</span> 
+<a id='x1-62308r154'></a><span class='ecrm-0500'>154</span><span class='ectt-0800'>        }</span> 
+<a id='x1-62310r155'></a><span class='ecrm-0500'>155</span><span class='ectt-0800'>    }</span> 
+<a id='x1-62312r156'></a><span class='ecrm-0500'>156</span><span class='ectt-0800'>    sprintf((</span><span id='textcolor2977'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *)sk-&gt;scratchpad, </span><span id='textcolor2978'><span class='ectt-0800'>"%s"</span></span><span class='ectt-0800'>, plaintext);</span> 
+<a id='x1-62314r157'></a><span class='ecrm-0500'>157</span> 
+<a id='x1-62316r158'></a><span class='ecrm-0500'>158</span><span class='ectt-0800'>    sg_init_one(&amp;sk-&gt;sg, sk-&gt;scratchpad, CIPHER_BLOCK_SIZE);</span> 
+<a id='x1-62318r159'></a><span class='ecrm-0500'>159</span><span class='ectt-0800'>    skcipher_request_set_crypt(sk-&gt;req, &amp;sk-&gt;sg, &amp;sk-&gt;sg, CIPHER_BLOCK_SIZE,</span> 
+<a id='x1-62320r160'></a><span class='ecrm-0500'>160</span><span class='ectt-0800'>                               sk-&gt;ivdata);</span> 
+<a id='x1-62322r161'></a><span class='ecrm-0500'>161</span><span class='ectt-0800'>    init_completion(&amp;sk-&gt;result.completion);</span> 
+<a id='x1-62324r162'></a><span class='ecrm-0500'>162</span> 
+<a id='x1-62326r163'></a><span class='ecrm-0500'>163</span><span class='ectt-0800'>    </span><span id='textcolor2979'><span class='ectt-0800'>/* encrypt data */</span></span> 
+<a id='x1-62328r164'></a><span class='ecrm-0500'>164</span><span class='ectt-0800'>    ret = crypto_skcipher_encrypt(sk-&gt;req);</span> 
+<a id='x1-62330r165'></a><span class='ecrm-0500'>165</span><span class='ectt-0800'>    ret = test_skcipher_result(sk, ret);</span> 
+<a id='x1-62332r166'></a><span class='ecrm-0500'>166</span><span class='ectt-0800'>    </span><span id='textcolor2980'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (ret)</span> 
+<a id='x1-62334r167'></a><span class='ecrm-0500'>167</span><span class='ectt-0800'>        </span><span id='textcolor2981'><span class='ectt-0800'>goto</span></span><span class='ectt-0800'> out;</span> 
+<a id='x1-62336r168'></a><span class='ecrm-0500'>168</span> 
+<a id='x1-62338r169'></a><span class='ecrm-0500'>169</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2982'><span class='ectt-0800'>"Encryption request successful</span></span><span id='textcolor2983'><span class='ectt-0800'>\n</span></span><span id='textcolor2984'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-62340r170'></a><span class='ecrm-0500'>170</span> 
-<a id='x1-62342r171'></a><span class='ecrm-0500'>171</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor2982'><span class='ectt-0800'>"Encryption request successful</span></span><span id='textcolor2983'><span class='ectt-0800'>\n</span></span><span id='textcolor2984'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-62344r172'></a><span class='ecrm-0500'>172</span> 
-<a id='x1-62346r173'></a><span class='ecrm-0500'>173</span><span class='ectt-0800'>out:</span> 
-<a id='x1-62348r174'></a><span class='ecrm-0500'>174</span><span class='ectt-0800'>    </span><span id='textcolor2985'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> ret;</span> 
-<a id='x1-62350r175'></a><span class='ecrm-0500'>175</span><span class='ectt-0800'>}</span> 
-<a id='x1-62352r176'></a><span class='ecrm-0500'>176</span> 
-<a id='x1-62354r177'></a><span class='ecrm-0500'>177</span><span id='textcolor2986'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2987'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> __init cryptoapi_init(</span><span id='textcolor2988'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
-<a id='x1-62356r178'></a><span class='ecrm-0500'>178</span><span class='ectt-0800'>{</span> 
-<a id='x1-62358r179'></a><span class='ecrm-0500'>179</span><span class='ectt-0800'>    </span><span id='textcolor2989'><span class='ectt-0800'>/* The world</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s favorite password */</span></span> 
-<a id='x1-62360r180'></a><span class='ecrm-0500'>180</span><span class='ectt-0800'>    </span><span id='textcolor2990'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *password = </span><span id='textcolor2991'><span class='ectt-0800'>"password123"</span></span><span class='ectt-0800'>;</span> 
-<a id='x1-62362r181'></a><span class='ecrm-0500'>181</span> 
-<a id='x1-62364r182'></a><span class='ecrm-0500'>182</span><span class='ectt-0800'>    sk.tfm = NULL;</span> 
-<a id='x1-62366r183'></a><span class='ecrm-0500'>183</span><span class='ectt-0800'>    sk.req = NULL;</span> 
-<a id='x1-62368r184'></a><span class='ecrm-0500'>184</span><span class='ectt-0800'>    sk.scratchpad = NULL;</span> 
-<a id='x1-62370r185'></a><span class='ecrm-0500'>185</span><span class='ectt-0800'>    sk.ciphertext = NULL;</span> 
-<a id='x1-62372r186'></a><span class='ecrm-0500'>186</span><span class='ectt-0800'>    sk.ivdata = NULL;</span> 
-<a id='x1-62374r187'></a><span class='ecrm-0500'>187</span> 
-<a id='x1-62376r188'></a><span class='ecrm-0500'>188</span><span class='ectt-0800'>    test_skcipher_encrypt(</span><span id='textcolor2992'><span class='ectt-0800'>"Testing"</span></span><span class='ectt-0800'>, password, &amp;sk);</span> 
-<a id='x1-62378r189'></a><span class='ecrm-0500'>189</span><span class='ectt-0800'>    </span><span id='textcolor2993'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
-<a id='x1-62380r190'></a><span class='ecrm-0500'>190</span><span class='ectt-0800'>}</span> 
-<a id='x1-62382r191'></a><span class='ecrm-0500'>191</span> 
-<a id='x1-62384r192'></a><span class='ecrm-0500'>192</span><span id='textcolor2994'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2995'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit cryptoapi_exit(</span><span id='textcolor2996'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
-<a id='x1-62386r193'></a><span class='ecrm-0500'>193</span><span class='ectt-0800'>{</span> 
-<a id='x1-62388r194'></a><span class='ecrm-0500'>194</span><span class='ectt-0800'>    test_skcipher_finish(&amp;sk);</span> 
-<a id='x1-62390r195'></a><span class='ecrm-0500'>195</span><span class='ectt-0800'>}</span> 
-<a id='x1-62392r196'></a><span class='ecrm-0500'>196</span> 
-<a id='x1-62394r197'></a><span class='ecrm-0500'>197</span><span class='ectt-0800'>module_init(cryptoapi_init);</span> 
-<a id='x1-62396r198'></a><span class='ecrm-0500'>198</span><span class='ectt-0800'>module_exit(cryptoapi_exit);</span> 
-<a id='x1-62398r199'></a><span class='ecrm-0500'>199</span> 
-<a id='x1-62400r200'></a><span class='ecrm-0500'>200</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2997'><span class='ectt-0800'>"Symmetric key encryption example"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-62402r201'></a><span class='ecrm-0500'>201</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2998'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
+<a id='x1-62342r171'></a><span class='ecrm-0500'>171</span><span class='ectt-0800'>out:</span> 
+<a id='x1-62344r172'></a><span class='ecrm-0500'>172</span><span class='ectt-0800'>    </span><span id='textcolor2985'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> ret;</span> 
+<a id='x1-62346r173'></a><span class='ecrm-0500'>173</span><span class='ectt-0800'>}</span> 
+<a id='x1-62348r174'></a><span class='ecrm-0500'>174</span> 
+<a id='x1-62350r175'></a><span class='ecrm-0500'>175</span><span id='textcolor2986'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2987'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> __init cryptoapi_init(</span><span id='textcolor2988'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-62352r176'></a><span class='ecrm-0500'>176</span><span class='ectt-0800'>{</span> 
+<a id='x1-62354r177'></a><span class='ecrm-0500'>177</span><span class='ectt-0800'>    </span><span id='textcolor2989'><span class='ectt-0800'>/* The world</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s favorite password */</span></span> 
+<a id='x1-62356r178'></a><span class='ecrm-0500'>178</span><span class='ectt-0800'>    </span><span id='textcolor2990'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *password = </span><span id='textcolor2991'><span class='ectt-0800'>"password123"</span></span><span class='ectt-0800'>;</span> 
+<a id='x1-62358r179'></a><span class='ecrm-0500'>179</span> 
+<a id='x1-62360r180'></a><span class='ecrm-0500'>180</span><span class='ectt-0800'>    sk.tfm = NULL;</span> 
+<a id='x1-62362r181'></a><span class='ecrm-0500'>181</span><span class='ectt-0800'>    sk.req = NULL;</span> 
+<a id='x1-62364r182'></a><span class='ecrm-0500'>182</span><span class='ectt-0800'>    sk.scratchpad = NULL;</span> 
+<a id='x1-62366r183'></a><span class='ecrm-0500'>183</span><span class='ectt-0800'>    sk.ciphertext = NULL;</span> 
+<a id='x1-62368r184'></a><span class='ecrm-0500'>184</span><span class='ectt-0800'>    sk.ivdata = NULL;</span> 
+<a id='x1-62370r185'></a><span class='ecrm-0500'>185</span> 
+<a id='x1-62372r186'></a><span class='ecrm-0500'>186</span><span class='ectt-0800'>    test_skcipher_encrypt(</span><span id='textcolor2992'><span class='ectt-0800'>"Testing"</span></span><span class='ectt-0800'>, password, &amp;sk);</span> 
+<a id='x1-62374r187'></a><span class='ecrm-0500'>187</span><span class='ectt-0800'>    </span><span id='textcolor2993'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
+<a id='x1-62376r188'></a><span class='ecrm-0500'>188</span><span class='ectt-0800'>}</span> 
+<a id='x1-62378r189'></a><span class='ecrm-0500'>189</span> 
+<a id='x1-62380r190'></a><span class='ecrm-0500'>190</span><span id='textcolor2994'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor2995'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit cryptoapi_exit(</span><span id='textcolor2996'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-62382r191'></a><span class='ecrm-0500'>191</span><span class='ectt-0800'>{</span> 
+<a id='x1-62384r192'></a><span class='ecrm-0500'>192</span><span class='ectt-0800'>    test_skcipher_finish(&amp;sk);</span> 
+<a id='x1-62386r193'></a><span class='ecrm-0500'>193</span><span class='ectt-0800'>}</span> 
+<a id='x1-62388r194'></a><span class='ecrm-0500'>194</span> 
+<a id='x1-62390r195'></a><span class='ecrm-0500'>195</span><span class='ectt-0800'>module_init(cryptoapi_init);</span> 
+<a id='x1-62392r196'></a><span class='ecrm-0500'>196</span><span class='ectt-0800'>module_exit(cryptoapi_exit);</span> 
+<a id='x1-62394r197'></a><span class='ecrm-0500'>197</span> 
+<a id='x1-62396r198'></a><span class='ecrm-0500'>198</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2997'><span class='ectt-0800'>"Symmetric key encryption example"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-62398r199'></a><span class='ecrm-0500'>199</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2998'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
 <!-- l. 1950 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='virtual-input-device-driver'><span class='titlemark'>17   </span> <a id='x1-6300017'></a>Virtual Input Device Driver</h3>
