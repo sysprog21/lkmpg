@@ -716,7 +716,7 @@ This function acts as the module's entry point,
 informing the kernel of the module's functionalities and preparing the kernel to utilize the module's functions when necessary.
 After performing these tasks, the entry function returns, and the module remains inactive until the kernel requires its code.
 
-All modules conclude by invoking either \cpp|cleanup_module| or a function specified through the \cpp|module_exit |call.
+All modules conclude by invoking either \cpp|cleanup_module| or a function specified through the \cpp|module_exit| call.
 This serves as the module's exit function, reversing the actions of the entry function by unregistering the previously registered functionalities.
 
 It is mandatory for every module to have both an entry and an exit function.
