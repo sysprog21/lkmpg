@@ -1910,43 +1910,6 @@ The example below modifies the previous example to also run an additional task w
 
 \samplec{examples/bottomhalf.c}
 
-\section{Crypto}
-\label{sec:crypto}
-At the dawn of the internet, everybody trusted everybody completely\ldots{}but that did not work out so well.
-When this guide was originally written, it was a more innocent era in which almost nobody actually gave a damn about crypto - least of all kernel developers.
-That is certainly no longer the case now.
-To handle crypto stuff, the kernel has its own API enabling common methods of encryption, decryption and your favourite hash functions.
-
-\subsection{Hash functions}
-\label{sec:hashfunc}
-
-Calculating and checking the hashes of things is a common operation.
-Here is a demonstration of how to calculate a sha256 hash within a kernel module.
-To provide the sha256 algorithm support, make sure \cpp|CONFIG_CRYPTO_SHA256| is enabled in kernel.
-
-\samplec{examples/cryptosha256.c}
-
-Install the module:
-
-\begin{codebash}
-sudo insmod cryptosha256.ko
-sudo dmesg
-\end{codebash}
-
-And you should see that the hash was calculated for the test string.
-
-Finally, remove the test module:
-
-\begin{codebash}
-sudo rmmod cryptosha256
-\end{codebash}
-
-\subsection{Symmetric key encryption}
-\label{sec:org2fab20b}
-Here is an example of symmetrically encrypting a string using the AES algorithm and a password.
-
-\samplec{examples/cryptosk.c}
-
 \section{Virtual Input Device Driver}
 \label{sec:vinput}
 The input device driver is a module that provides a way to communicate with the interaction device via the event.
