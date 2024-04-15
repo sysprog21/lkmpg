@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>April 13, 2024</span></div>
+<div class='date'><span class='ecrm-1200'>April 15, 2024</span></div>
                                                                   
 
                                                                   
@@ -1548,7 +1548,7 @@ whether you know the major numbers for your device. Using
 <code> <span class='ectt-1000'>register_chrdev_region</span>
 </code> if you know the device major number and
 <code> <span class='ectt-1000'>alloc_chrdev_region</span>
-</code> if you would like to allocate a dynamicly-allocated major number.
+</code> if you would like to allocate a dynamically-allocated major number.
 </p><!-- l. 1057 --><p class='indent'>   Second, we should initialize the data structure
 <code> <span id='textcolor413'><span class='ectt-1000'>struct</span></span><span class='ectt-1000'> cdev</span>
 </code> for our char device and associate it with the device numbers. To initialize the
@@ -2545,7 +2545,7 @@ accessible via sysfs is given below.
 <a id='x1-38131r34'></a><span class='ecrm-0500'>34</span><span class='ectt-0800'>{</span> 
 <a id='x1-38133r35'></a><span class='ecrm-0500'>35</span><span class='ectt-0800'>    </span><span id='textcolor1020'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> error = 0;</span> 
 <a id='x1-38135r36'></a><span class='ecrm-0500'>36</span> 
-<a id='x1-38137r37'></a><span class='ecrm-0500'>37</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor1021'><span class='ectt-0800'>"mymodule: initialised</span></span><span id='textcolor1022'><span class='ectt-0800'>\n</span></span><span id='textcolor1023'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-38137r37'></a><span class='ecrm-0500'>37</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor1021'><span class='ectt-0800'>"mymodule: initialized</span></span><span id='textcolor1022'><span class='ectt-0800'>\n</span></span><span id='textcolor1023'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-38139r38'></a><span class='ecrm-0500'>38</span> 
 <a id='x1-38141r39'></a><span class='ecrm-0500'>39</span><span class='ectt-0800'>    mymodule = kobject_create_and_add(</span><span id='textcolor1024'><span class='ectt-0800'>"mymodule"</span></span><span class='ectt-0800'>, kernel_kobj);</span> 
 <a id='x1-38143r40'></a><span class='ecrm-0500'>40</span><span class='ectt-0800'>    </span><span id='textcolor1025'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (!mymodule)</span> 
