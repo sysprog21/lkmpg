@@ -5628,7 +5628,7 @@ and a password.
 <a id='x1-62236r118'></a><span class='ecrm-0500'>118</span><span class='ectt-0800'>        }</span> 
 <a id='x1-62238r119'></a><span class='ecrm-0500'>119</span><span class='ectt-0800'>    }</span> 
 <a id='x1-62240r120'></a><span class='ecrm-0500'>120</span> 
-<a id='x1-62242r121'></a><span class='ecrm-0500'>121</span><span class='ectt-0800'>    compl = test_skcipher_callback;</span> 
+<a id='x1-62242r121'></a><span class='ecrm-0500'>121</span><span class='ectt-0800'>    compl = (crypto_completion_t)test_skcipher_callback;</span> 
 <a id='x1-62244r122'></a><span class='ecrm-0500'>122</span><span class='ectt-0800'>    skcipher_request_set_callback(sk-&gt;req, CRYPTO_TFM_REQ_MAY_BACKLOG, compl,</span> 
 <a id='x1-62246r123'></a><span class='ecrm-0500'>123</span><span class='ectt-0800'>                                  &amp;sk-&gt;result);</span> 
 <a id='x1-62248r124'></a><span class='ecrm-0500'>124</span> 
