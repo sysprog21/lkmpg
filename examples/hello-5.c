@@ -18,7 +18,7 @@ static int myintarray[2] = { 420, 420 };
 static int arr_argc = 0;
 
 /* module_param(foo, int, 0000)
- * The first param is the parameters name.
+ * The first param is the parameter's name.
  * The second param is its data type.
  * The final argument is the permissions bits,
  * for exposing parameters in sysfs (if non-zero) at a later stage.
