@@ -1689,6 +1689,21 @@ The example here is \verb|"irq safe"| in that if interrupts happen during the lo
 
 \samplec{examples/example_spinlock.c}
 
+Taking 100\% of a CPU's resources comes with greater responsibility.
+Situations where the kernel code monopolizes a CPU are called \textbf{atomic contexts}.
+Holding a spinlock is one of those situations.
+Sleeping in atomic contexts may leave the system hanging, as the occupied CPU devotes 100\% of its resources doing nothing but sleeping.
+In some worse cases the system may crash.
+Thus, sleeping in atomic contexts is considered a bug in the kernel.
+They are sometimes called ``sleep-in-atomic-context'' in some materials.
+
+Note that sleeping here is not limited to calling the sleep functions explicitly.
+If subsequent function calls eventually invoke a function that sleeps, it is also considered sleeping.
+Thus, it is important to pay attention to functions being used in atomic context.
+There's no documentation recording all such functions, but code comments may help.
+Sometimes you may find comments in kernel source code stating that a function ``may sleep'', ``might sleep'', or more explicitly ``the caller should not hold a spinlock''.
+Those comments are hints that a function may implicitly sleep and must not be called in atomic contexts.
+
 \subsection{Read and write locks}
 \label{sec:rwlock}
 Read and write locks are specialised kinds of spinlocks so that you can exclusively read from something or write to something.
