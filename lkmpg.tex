@@ -1673,10 +1673,36 @@ The example below modifies the previous example to also run an additional task w
 
 \samplec{examples/bottomhalf.c}
 
-It is expected that at some unspecified point in the future tasklets may eventually be deprecated, to be replaced by \textit{threaded irqs} instead.
+\subsection{Threaded IRQ}
+
+Threaded IRQ is a mechanism to handle both top-half and bottom-half of an IRQ at once.
+A threaded IRQ splits one handler into two: one for the top-half, the other for the bottom-half.
+Those two handlers are registered at once by \cpp|request_threaded_irq()|.
+
+The top-half handler runs in interrupt context.
+It's the equivalence of the handler passed to the \cpp|request_irq()|.
+The bottom-half handler on the other hand runs in its own thread.
+This thread is created on registration of a threaded IRQ. Its sole purpose is to run this bottom-half handler.
+This is where a threaded IRQ is ``threaded''.
+
+Whether the bottom-half handler will be invoked is determined by the return value of the top-half handler.
+If \cpp|IRQ_WAKE_THREAD| is returned, that bottom-half serving thread will wake up.
+The thread then runs the bottom-half handler.
+
 Here is an example of how to do the same thing as before, with top and bottom halves, but using threads.
 
 \samplec{examples/bh_threaded.c}
+
+\cpp|request_threaded_irq()| only takes one additional parameter than the \cpp|request_irq()| -- the bottom-half handling function that runs in its own thread.
+In this example it is the \cpp|button_bottom_half()|.
+Usage of other parameters are the same as \cpp|request_irq()|.
+
+Presence of both handlers is not mandatory.
+If either of them is not needed, pass the \cpp|NULL| instead.
+A \cpp|NULL| top-half handler implicitly means doing nothing but waking up the bottom-half serving thread; A \cpp|NULL| bottom-half handler will have the same effect as \cpp|request_irq()|.
+In fact, this is how \cpp|request_irq()| is implemented.
+
+Note that passing \cpp|NULL| as both handlers is considered an error and will make registration fail.
 
 \section{Crypto}
 \label{sec:crypto}
