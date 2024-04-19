@@ -81,7 +81,7 @@ static int __init bottomhalf_init(void)
 
     ret = request_threaded_irq(
         button_irqs[0], button_top_half, button_bottom_half,
-        IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING, "gpiomod#button1", NULL);
+        IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING, "gpiomod#button1", &buttons[0]);
 
     if (ret) {
         pr_err("Unable to request IRQ: %d\n", ret);
@@ -101,7 +101,7 @@ static int __init bottomhalf_init(void)
 
     ret = request_threaded_irq(
         button_irqs[1], button_top_half, button_bottom_half,
-        IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING, "gpiomod#button2", NULL);
+        IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING, "gpiomod#button2", &buttons[1]);
 
     if (ret) {
         pr_err("Unable to request IRQ: %d\n", ret);
