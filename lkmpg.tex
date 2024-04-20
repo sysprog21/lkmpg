@@ -1701,7 +1701,8 @@ Usage of other parameters are the same as \cpp|request_irq()|.
 
 Presence of both handlers is not mandatory.
 If either of them is not needed, pass the \cpp|NULL| instead.
-A \cpp|NULL| top-half handler implicitly means doing nothing but waking up the bottom-half serving thread (for running the bottom-half handler); A \cpp|NULL| bottom-half handler would have the same effect as if \cpp|request_irq()| were used.
+A \cpp|NULL| top-half handler implies that no action is taken except to wake up the bottom-half serving thread, which runs the bottom-half handler.
+Similarly, a \cpp|NULL| bottom-half handler effectively acts as if \cpp|request_irq()| were used.
 In fact, this is how \cpp|request_irq()| is implemented.
 
 Note that passing \cpp|NULL| to both handlers is considered an error and will make registration fail.
