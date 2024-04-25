@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>April 20, 2024</span></div>
+<div class='date'><span class='ecrm-1200'>April 25, 2024</span></div>
                                                                   
 
                                                                   
@@ -1079,10 +1079,10 @@ without any errors.
 <!-- l. 709 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='how-modules-begin-and-end'><span class='titlemark'>5.1   </span> <a id='x1-200005.1'></a>How modules begin and end</h4>
-<!-- l. 711 --><p class='noindent'>A typical program starts with a |main()| function, executes a series of
-instructions, and terminates after completing these instructions. Kernel modules,
-however, follow a different pattern. A module always begins with either the
-<code> <span class='ectt-1000'>init_module</span>
+<!-- l. 711 --><p class='noindent'>A typical program starts with a <code>  <span class='ectt-1000'>main()</span>
+</code> function, executes a series of instructions, and terminates after completing these instructions.
+Kernel modules, however, follow a different pattern. A module always begins with either
+the <code>  <span class='ectt-1000'>init_module</span>
 </code> function or a function designated by the
 <code> <span class='ectt-1000'>module_init</span>
 </code> call. This function acts as the module’s entry point, informing the kernel of the
