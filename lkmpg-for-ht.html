@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>April 25, 2024</span></div>
+<div class='date'><span class='ecrm-1200'>May 5, 2024</span></div>
                                                                   
 
                                                                   
@@ -1095,7 +1095,7 @@ module remains inactive until the kernel requires its code.
 </p><!-- l. 719 --><p class='indent'>   All modules conclude by invoking either
 <code> <span class='ectt-1000'>cleanup_module</span>
 </code> or a function specified through the <code>  <span class='ectt-1000'>module_exit</span>
-</code>call. This serves as the module’s exit function, reversing the actions of the entry
+</code> call. This serves as the module’s exit function, reversing the actions of the entry
 function by unregistering the previously registered functionalities.
 </p><!-- l. 722 --><p class='indent'>   It is mandatory for every module to have both an entry and an exit function. While
 there are multiple methods to define these functions, the terms “entry function” and
@@ -1110,7 +1110,7 @@ there are multiple methods to define these functions, the terms “entry functio
 is <code>  <span class='ectt-1000'>printf()</span>
 </code>. You use these library functions which are provided by the standard C
 library, libc. The definitions for these functions do not actually enter
-your program until the linking stage, which insures that the code (for
+your program until the linking stage, which ensures that the code (for
 <code> <span class='ectt-1000'>printf()</span>
 </code> for example) is available, and fixes the call instruction to point to that
 code.
