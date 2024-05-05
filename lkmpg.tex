@@ -716,7 +716,7 @@ This function acts as the module's entry point,
 informing the kernel of the module's functionalities and preparing the kernel to utilize the module's functions when necessary.
 After performing these tasks, the entry function returns, and the module remains inactive until the kernel requires its code.
 
-All modules conclude by invoking either \cpp|cleanup_module| or a function specified through the \cpp|module_exit |call.
+All modules conclude by invoking either \cpp|cleanup_module| or a function specified through the \cpp|module_exit| call.
 This serves as the module's exit function, reversing the actions of the entry function by unregistering the previously registered functionalities.
 
 It is mandatory for every module to have both an entry and an exit function.
@@ -729,7 +729,7 @@ which are understood to mean the same.
 Programmers use functions they do not define all the time.
 A prime example of this is \cpp|printf()|.
 You use these library functions which are provided by the standard C library, libc.
-The definitions for these functions do not actually enter your program until the linking stage, which insures that the code (for \cpp|printf()| for example) is available, and fixes the call instruction to point to that code.
+The definitions for these functions do not actually enter your program until the linking stage, which ensures that the code (for \cpp|printf()| for example) is available, and fixes the call instruction to point to that code.
 
 Kernel modules are different here, too. In the hello world example, you might have noticed that we used a function, \cpp|pr_info()| but did not include a standard I/O library.
 That is because modules are object files whose symbols get resolved upon running \sh|insmod| or \sh|modprobe|.
