@@ -179,8 +179,6 @@ static struct vinput *vinput_alloc_vdevice(void)
 
     try_module_get(THIS_MODULE);
 
-    memset(vinput, 0, sizeof(struct vinput));
-
     spin_lock_init(&vinput->lock);
 
     spin_lock(&vinput_lock);
