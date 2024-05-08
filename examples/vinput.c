@@ -177,6 +177,11 @@ static struct vinput *vinput_alloc_vdevice(void)
     int err;
     struct vinput *vinput = kzalloc(sizeof(struct vinput), GFP_KERNEL);
 
+    if (!vinput) {
+        pr_err("vinput: Cannot allocate vinput input device\n");
+        return ERR_PTR(-ENOMEM);
+    }
+
     try_module_get(THIS_MODULE);
 
     spin_lock_init(&vinput->lock);
