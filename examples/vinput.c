@@ -106,7 +106,7 @@ static ssize_t vinput_read(struct file *file, char __user *buffer, size_t count,
         count = len - *offset;
 
     if (raw_copy_to_user(buffer, buff + *offset, count))
-        count = -EFAULT;
+        return -EFAULT;
 
     *offset += count;
 
@@ -177,9 +177,12 @@ static struct vinput *vinput_alloc_vdevice(void)
     int err;
     struct vinput *vinput = kzalloc(sizeof(struct vinput), GFP_KERNEL);
 
-    try_module_get(THIS_MODULE);
+    if (!vinput) {
+        pr_err("vinput: Cannot allocate vinput input device\n");
+        return ERR_PTR(-ENOMEM);
+    }
 
-    memset(vinput, 0, sizeof(struct vinput));
+    try_module_get(THIS_MODULE);
 
     spin_lock_init(&vinput->lock);
 
