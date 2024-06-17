@@ -1567,6 +1567,11 @@ At first glance, it appears we could solve this particular problem by checking i
 When A is removed, it sees that the system call was changed to \cpp|B_openat| so that it is no longer pointing to \cpp|A_openat|, so it will not restore it to \cpp|sys_openat| before it is removed from memory.
 Unfortunately, \cpp|B_openat| will still try to call \cpp|A_openat| which is no longer there, so that even without removing B the system would crash.
 
+For x86 architecture, the system call table cannot be used to invoke a system call after commit 
+\href{https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=1e3ad78334a69b36e107232e337f9d693dcc9df2}{1e3ad78} since v6.9. 
+This commit has been backported to long term stable kernels, like v5.15.154+, v6.1.85+, v6.6.26+ and v6.8.5+, see this \href{https://stackoverflow.com/a/78607015}{answer} for more details.
+In this case, thanks to Kprobes, a hook can be used instead on the system call entry to intercept the system call.
+
 Note that all the related problems make syscall stealing unfeasible for production use.
 In order to keep people from doing potential harmful things \cpp|sys_call_table| is no longer exported.
 This means, if you want to do something more than a mere dry run of this example, you will have to patch your current kernel in order to have \cpp|sys_call_table| exported.
