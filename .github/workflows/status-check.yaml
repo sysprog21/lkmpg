@@ -26,6 +26,7 @@ jobs:
             sudo apt-get install -q -y clang-format-12
             sudo apt-get install -q -y cppcheck
             sudo apt-get install -q -y gcc-11
+            .ci/check-newline.sh
             .ci/check-format.sh
             .ci/static-analysis.sh
             .ci/build-n-run.sh
