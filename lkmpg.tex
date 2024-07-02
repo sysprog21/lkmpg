@@ -1234,7 +1234,7 @@ It is based on sequence, which is composed of 3 functions: \cpp|start()|, \cpp|n
 The \cpp|seq_file| API starts a sequence when a user read the \verb|/proc| file.
 
 A sequence begins with the call of the function \cpp|start()|.
-If the return is a non \cpp|NULL| value, the function \cpp|next()| is called.
+If the return is a non \cpp|NULL| value, the function \cpp|next()| is called; otherwise, otherwise, the \cpp|stop()| function is called directly.
 This function is an iterator, the goal is to go through all the data.
 Each time \cpp|next()| is called, the function \cpp|show()| is also called.
 It writes data values in the buffer read by the user.
@@ -1251,13 +1251,12 @@ You can see a scheme of this in the Figure~\ref{img:seqfile}.
   \begin{tikzpicture}[node distance=2cm, thick]
     \node (start) [startstop] {start() treatment};
     \node (branch1) [decision, below of=start, yshift=-1cm] {return is NULL?};
-    \node (emptynode) [right of=branch1, xshift=2cm] {Yes};
     \node (next) [process, below of=branch1, yshift=-1cm] {next() treatment};
     \node (branch2) [decision, below of=next, yshift=-1cm] {return is NULL?};
     \node (stop) [startstop, below of=branch2, yshift=-1cm] {stop() treatment};
 
     \draw [->] (start) -- (branch1);
-    \draw [->] (branch1) -- node[anchor=east] {} (emptynode);
+    \draw [->] (branch1.east) to [out=135, in=-135, bend left=45] node [right] {Yes} (stop.east);
     \draw [->] (branch1) -- node[left=2em, anchor=south] {No} (next);
     \draw [->] (next) -- (branch2);
     \draw [->] (branch2.west) to [out=135, in=-135, bend left=45] node [left] {No} (next.west);
