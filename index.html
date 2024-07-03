@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>July 2, 2024</span></div>
+<div class='date'><span class='ecrm-1200'>July 3, 2024</span></div>
                                                                   
 
                                                                   
@@ -2583,13 +2583,13 @@ accessible via sysfs is given below.
 </code> ?
 </p><!-- l. 1 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb57'><a id='x1-38198r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>cat /sys/kernel/mymodule/myvariable</span></pre>
+   <pre class='fancyvrb' id='fancyvrb57'><a id='x1-38198r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>sudo cat /sys/kernel/mymodule/myvariable</span></pre>
 <!-- l. 1352 --><p class='indent'>   Set the value of <code>  <span class='ectt-1000'>myvariable</span>
 </code> and check that it changed.
 </p><!-- l. 1 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb58'><a id='x1-38203r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>echo </span><span id='textcolor1040'><span class='ectt-1000'>"32"</span></span><span class='ectt-1000'> &gt; /sys/kernel/mymodule/myvariable</span> 
-<a id='x1-38205r2'></a><span class='ecrm-0500'>2</span><span class='ectt-1000'>cat /sys/kernel/mymodule/myvariable</span></pre>
+   <pre class='fancyvrb' id='fancyvrb58'><a id='x1-38203r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>echo </span><span id='textcolor1040'><span class='ectt-1000'>"32"</span></span><span class='ectt-1000'> | sudo tee /sys/kernel/mymodule/myvariable</span> 
+<a id='x1-38205r2'></a><span class='ecrm-0500'>2</span><span class='ectt-1000'>sudo cat /sys/kernel/mymodule/myvariable</span></pre>
 <!-- l. 1359 --><p class='indent'>   Finally, remove the test module:
 </p><!-- l. 1 --><p class='indent'>
 </p>
