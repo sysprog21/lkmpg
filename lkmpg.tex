@@ -1234,7 +1234,7 @@ It is based on sequence, which is composed of 3 functions: \cpp|start()|, \cpp|n
 The \cpp|seq_file| API starts a sequence when a user read the \verb|/proc| file.
 
 A sequence begins with the call of the function \cpp|start()|.
-If the return is a non \cpp|NULL| value, the function \cpp|next()| is called; otherwise, otherwise, the \cpp|stop()| function is called directly.
+If the return is a non \cpp|NULL| value, the function \cpp|next()| is called; otherwise, the \cpp|stop()| function is called directly.
 This function is an iterator, the goal is to go through all the data.
 Each time \cpp|next()| is called, the function \cpp|show()| is also called.
 It writes data values in the buffer read by the user.
