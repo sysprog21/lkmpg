@@ -1346,14 +1346,14 @@ sudo lsmod | grep hello_sysfs
 What is the current value of \cpp|myvariable| ?
 
 \begin{codebash}
-cat /sys/kernel/mymodule/myvariable
+sudo cat /sys/kernel/mymodule/myvariable
 \end{codebash}
 
 Set the value of \cpp|myvariable| and check that it changed.
 
 \begin{codebash}
-echo "32" > /sys/kernel/mymodule/myvariable
-cat /sys/kernel/mymodule/myvariable
+echo "32" | sudo tee /sys/kernel/mymodule/myvariable
+sudo cat /sys/kernel/mymodule/myvariable
 \end{codebash}
 
 Finally, remove the test module:
