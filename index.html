@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>July 4, 2024</span></div>
+<div class='date'><span class='ecrm-1200'>July 21, 2024</span></div>
                                                                   
 
                                                                   
@@ -4765,7 +4765,7 @@ to improve memory safety. A buffer overflow in the area of a
 </code> structure may be able to overwrite the
 <code> <span class='ectt-1000'>function</span>
 </code> and <code>  <span class='ectt-1000'>data</span>
-</code> fields, providing the attacker with a way to use return-object programming (ROP)
+</code> fields, providing the attacker with a way to use return-oriented programming (ROP)
 to call arbitrary functions within the kernel. Also, the function prototype of the callback,
 containing a <code>  <span id='textcolor2409'><span class='ectt-1000'>unsigned</span></span><span class='ectt-1000'> </span><span id='textcolor2410'><span class='ectt-1000'>long</span></span>
 </code> argument, will prevent work from any type checking. Furthermore, the function prototype
