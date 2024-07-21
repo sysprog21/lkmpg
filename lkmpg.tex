@@ -1760,7 +1760,7 @@ Flashing keyboard LEDs can be such a solution: It is an immediate way to attract
 Keyboard LEDs are present on every hardware, they are always visible, they do not need any setup, and their use is rather simple and non-intrusive, compared to writing to a tty or a file.
 
 From v4.14 to v4.15, the timer API made a series of changes to improve memory safety.
-A buffer overflow in the area of a \cpp|timer_list| structure may be able to overwrite the \cpp|function| and \cpp|data| fields, providing the attacker with a way to use return-object programming (ROP) to call arbitrary functions within the kernel.
+A buffer overflow in the area of a \cpp|timer_list| structure may be able to overwrite the \cpp|function| and \cpp|data| fields, providing the attacker with a way to use return-oriented programming (ROP) to call arbitrary functions within the kernel.
 Also, the function prototype of the callback, containing a \cpp|unsigned long| argument, will prevent work from any type checking.
 Furthermore, the function prototype with \cpp|unsigned long| argument may be an obstacle to the forward-edge protection of \textit{control-flow integrity}.
 Thus, it is better to use a unique prototype to separate from the cluster that takes an \cpp|unsigned long| argument.
