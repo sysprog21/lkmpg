@@ -92,12 +92,18 @@ static DECLARE_WAIT_QUEUE_HEAD(waitq);
 /* Called when the /proc file is opened */
 static int module_open(struct inode *inode, struct file *file)
 {
+    /* Try to get without blocking  */
+    if (!atomic_cmpxchg(&already_open, 0, 1)) {
+        /* Success without blocking, allow the access */
+        try_module_get(THIS_MODULE);
+        return 0;
+    }
     /* If the file's flags include O_NONBLOCK, it means the process does not
-     * want to wait for the file. In this case, if the file is already open,
+     * want to wait for the file. In this case, because the file is already open,
      * we should fail with -EAGAIN, meaning "you will have to try again",
      * instead of blocking a process which would rather stay awake.
      */
-    if ((file->f_flags & O_NONBLOCK) && atomic_read(&already_open))
+    if (file->f_flags & O_NONBLOCK)
         return -EAGAIN;
 
     /* This is the correct place for try_module_get(THIS_MODULE) because if
