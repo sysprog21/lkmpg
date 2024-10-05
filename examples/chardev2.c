@@ -196,7 +196,7 @@ static struct file_operations fops = {
 /* Initialize the module - Register the character device */
 static int __init chardev2_init(void)
 {
-    /* Register the character device (atleast try) */
+    /* Register the character device (at least try) */
     int ret_val = register_chrdev(MAJOR_NUM, DEVICE_NAME, &fops);
 
     /* Negative values signify an error */
