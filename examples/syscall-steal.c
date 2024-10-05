@@ -93,6 +93,7 @@ static struct kprobe syscall_kprobe = {
     .symbol_name = "__x64_sys_openat",
     .pre_handler = sys_call_kprobe_pre_handler,
 };
+
 #else
 
 static unsigned long **sys_call_table_stolen;
@@ -240,7 +241,6 @@ static void disable_write_protection(void)
 static int __init syscall_steal_start(void)
 {
 #if USE_KPROBES_PRE_HANDLER_BEFORE_SYSCALL
-
     int err;
     /* use symbol name from the module parameter */
     syscall_kprobe.symbol_name = syscall_sym;
@@ -250,7 +250,6 @@ static int __init syscall_steal_start(void)
         pr_err("Please check the symbol name from 'syscall_sym' parameter.\n");
         return err;
     }
-
 #else
     if (!(sys_call_table_stolen = acquire_sys_call_table()))
         return -1;
@@ -264,7 +263,6 @@ static int __init syscall_steal_start(void)
     sys_call_table_stolen[__NR_openat] = (unsigned long *)our_sys_openat;
 
     enable_write_protection();
-
 #endif
 
     pr_info("Spying on UID:%d\n", uid);
