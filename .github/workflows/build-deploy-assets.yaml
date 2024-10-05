@@ -27,7 +27,7 @@ jobs:
           git tag latest
           git push -f --tags
       - name: Release
-        uses: softprops/action-gh-release@v0.1.15
+        uses: softprops/action-gh-release@v2
         with:
           files: |
             lkmpg.pdf
