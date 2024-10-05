@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>August 12, 2024</span></div>
+<div class='date'><span class='ecrm-1200'>October 5, 2024</span></div>
                                                                   
 
                                                                   
@@ -3060,7 +3060,7 @@ which we mentioned at <a href='#chardevc'>6.5<!-- tex4ht:ref: sec:chardev_c  -->
 <a id='x1-39787r196'></a><span class='ecrm-0500'>196</span><span id='textcolor1358'><span class='ectt-0800'>/* Initialize the module - Register the character device */</span></span> 
 <a id='x1-39789r197'></a><span class='ecrm-0500'>197</span><span id='textcolor1359'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1360'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> __init chardev2_init(</span><span id='textcolor1361'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
 <a id='x1-39791r198'></a><span class='ecrm-0500'>198</span><span class='ectt-0800'>{</span> 
-<a id='x1-39793r199'></a><span class='ecrm-0500'>199</span><span class='ectt-0800'>    </span><span id='textcolor1362'><span class='ectt-0800'>/* Register the character device (atleast try) */</span></span> 
+<a id='x1-39793r199'></a><span class='ecrm-0500'>199</span><span class='ectt-0800'>    </span><span id='textcolor1362'><span class='ectt-0800'>/* Register the character device (at least try) */</span></span> 
 <a id='x1-39795r200'></a><span class='ecrm-0500'>200</span><span class='ectt-0800'>    </span><span id='textcolor1363'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> ret_val = register_chrdev(MAJOR_NUM, DEVICE_NAME, &amp;fops);</span> 
 <a id='x1-39797r201'></a><span class='ecrm-0500'>201</span> 
 <a id='x1-39799r202'></a><span class='ecrm-0500'>202</span><span class='ectt-0800'>    </span><span id='textcolor1364'><span class='ectt-0800'>/* Negative values signify an error */</span></span> 
@@ -5137,9 +5137,9 @@ hardware-dependent.
 </code> to indicate you are willing to share the IRQ with other interrupt handlers
 (usually because a number of hardware devices sit on the same IRQ); use the
 <code> <span class='ectt-1000'>IRQF_ONESHOT</span>
-</code> to indicate that the IRQ is not reenabled after the handler finished. It should be
-noted that in some materials, you may encouter another set of IRQ flags named with
-the <code>  <span class='ectt-1000'>SA</span>
+</code> to indicate that the IRQ is not reenabled after the handler finished. It should be noted
+that in some materials, you may encounter another set of IRQ flags named with the
+<code> <span class='ectt-1000'>SA</span>
 </code> prefix. For example, the <code>  <span class='ectt-1000'>SA_SHIRQ</span>
 </code> and the <code>  <span class='ectt-1000'>SA_INTERRUPT</span>
 </code>. Those are the the IRQ flags in the older kernels. They have been removed completely. Today
