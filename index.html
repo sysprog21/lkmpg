@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>October 5, 2024</span></div>
+<div class='date'><span class='ecrm-1200'>October 6, 2024</span></div>
                                                                   
 
                                                                   
@@ -1947,25 +1947,24 @@ HelloWorld!
 <a id='x1-33107r48'></a><span class='ecrm-0500'>48</span><span class='ectt-0800'>{</span> 
 <a id='x1-33109r49'></a><span class='ecrm-0500'>49</span><span class='ectt-0800'>    our_proc_file = proc_create(procfs_name, 0644, NULL, &amp;proc_file_fops);</span> 
 <a id='x1-33111r50'></a><span class='ecrm-0500'>50</span><span class='ectt-0800'>    </span><span id='textcolor637'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (NULL == our_proc_file) {</span> 
-<a id='x1-33113r51'></a><span class='ecrm-0500'>51</span><span class='ectt-0800'>        proc_remove(our_proc_file);</span> 
-<a id='x1-33115r52'></a><span class='ecrm-0500'>52</span><span class='ectt-0800'>        pr_alert(</span><span id='textcolor638'><span class='ectt-0800'>"Error:Could not initialize /proc/%s</span></span><span id='textcolor639'><span class='ectt-0800'>\n</span></span><span id='textcolor640'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, procfs_name);</span> 
-<a id='x1-33117r53'></a><span class='ecrm-0500'>53</span><span class='ectt-0800'>        </span><span id='textcolor641'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> -ENOMEM;</span> 
-<a id='x1-33119r54'></a><span class='ecrm-0500'>54</span><span class='ectt-0800'>    }</span> 
-<a id='x1-33121r55'></a><span class='ecrm-0500'>55</span> 
-<a id='x1-33123r56'></a><span class='ecrm-0500'>56</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor642'><span class='ectt-0800'>"/proc/%s created</span></span><span id='textcolor643'><span class='ectt-0800'>\n</span></span><span id='textcolor644'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, procfs_name);</span> 
-<a id='x1-33125r57'></a><span class='ecrm-0500'>57</span><span class='ectt-0800'>    </span><span id='textcolor645'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
-<a id='x1-33127r58'></a><span class='ecrm-0500'>58</span><span class='ectt-0800'>}</span> 
-<a id='x1-33129r59'></a><span class='ecrm-0500'>59</span> 
-<a id='x1-33131r60'></a><span class='ecrm-0500'>60</span><span id='textcolor646'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor647'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit procfs1_exit(</span><span id='textcolor648'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
-<a id='x1-33133r61'></a><span class='ecrm-0500'>61</span><span class='ectt-0800'>{</span> 
-<a id='x1-33135r62'></a><span class='ecrm-0500'>62</span><span class='ectt-0800'>    proc_remove(our_proc_file);</span> 
-<a id='x1-33137r63'></a><span class='ecrm-0500'>63</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor649'><span class='ectt-0800'>"/proc/%s removed</span></span><span id='textcolor650'><span class='ectt-0800'>\n</span></span><span id='textcolor651'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, procfs_name);</span> 
-<a id='x1-33139r64'></a><span class='ecrm-0500'>64</span><span class='ectt-0800'>}</span> 
-<a id='x1-33141r65'></a><span class='ecrm-0500'>65</span> 
-<a id='x1-33143r66'></a><span class='ecrm-0500'>66</span><span class='ectt-0800'>module_init(procfs1_init);</span> 
-<a id='x1-33145r67'></a><span class='ecrm-0500'>67</span><span class='ectt-0800'>module_exit(procfs1_exit);</span> 
-<a id='x1-33147r68'></a><span class='ecrm-0500'>68</span> 
-<a id='x1-33149r69'></a><span class='ecrm-0500'>69</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor652'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
+<a id='x1-33113r51'></a><span class='ecrm-0500'>51</span><span class='ectt-0800'>        pr_alert(</span><span id='textcolor638'><span class='ectt-0800'>"Error:Could not initialize /proc/%s</span></span><span id='textcolor639'><span class='ectt-0800'>\n</span></span><span id='textcolor640'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, procfs_name);</span> 
+<a id='x1-33115r52'></a><span class='ecrm-0500'>52</span><span class='ectt-0800'>        </span><span id='textcolor641'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> -ENOMEM;</span> 
+<a id='x1-33117r53'></a><span class='ecrm-0500'>53</span><span class='ectt-0800'>    }</span> 
+<a id='x1-33119r54'></a><span class='ecrm-0500'>54</span> 
+<a id='x1-33121r55'></a><span class='ecrm-0500'>55</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor642'><span class='ectt-0800'>"/proc/%s created</span></span><span id='textcolor643'><span class='ectt-0800'>\n</span></span><span id='textcolor644'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, procfs_name);</span> 
+<a id='x1-33123r56'></a><span class='ecrm-0500'>56</span><span class='ectt-0800'>    </span><span id='textcolor645'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
+<a id='x1-33125r57'></a><span class='ecrm-0500'>57</span><span class='ectt-0800'>}</span> 
+<a id='x1-33127r58'></a><span class='ecrm-0500'>58</span> 
+<a id='x1-33129r59'></a><span class='ecrm-0500'>59</span><span id='textcolor646'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor647'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit procfs1_exit(</span><span id='textcolor648'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-33131r60'></a><span class='ecrm-0500'>60</span><span class='ectt-0800'>{</span> 
+<a id='x1-33133r61'></a><span class='ecrm-0500'>61</span><span class='ectt-0800'>    proc_remove(our_proc_file);</span> 
+<a id='x1-33135r62'></a><span class='ecrm-0500'>62</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor649'><span class='ectt-0800'>"/proc/%s removed</span></span><span id='textcolor650'><span class='ectt-0800'>\n</span></span><span id='textcolor651'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, procfs_name);</span> 
+<a id='x1-33137r63'></a><span class='ecrm-0500'>63</span><span class='ectt-0800'>}</span> 
+<a id='x1-33139r64'></a><span class='ecrm-0500'>64</span> 
+<a id='x1-33141r65'></a><span class='ecrm-0500'>65</span><span class='ectt-0800'>module_init(procfs1_init);</span> 
+<a id='x1-33143r66'></a><span class='ecrm-0500'>66</span><span class='ectt-0800'>module_exit(procfs1_exit);</span> 
+<a id='x1-33145r67'></a><span class='ecrm-0500'>67</span> 
+<a id='x1-33147r68'></a><span class='ecrm-0500'>68</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor652'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
 <!-- l. 1174 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='the-procops-structure'><span class='titlemark'>7.1   </span> <a id='x1-340007.1'></a>The proc_ops Structure</h4>
