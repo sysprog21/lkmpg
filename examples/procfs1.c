@@ -48,7 +48,6 @@ static int __init procfs1_init(void)
 {
     our_proc_file = proc_create(procfs_name, 0644, NULL, &proc_file_fops);
     if (NULL == our_proc_file) {
-        proc_remove(our_proc_file);
         pr_alert("Error:Could not initialize /proc/%s\n", procfs_name);
         return -ENOMEM;
     }
