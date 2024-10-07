@@ -48,13 +48,13 @@ static ssize_t procfile_write(struct file *file, const char __user *buff,
                               size_t len, loff_t *off)
 {
     procfs_buffer_size = len;
-    if (procfs_buffer_size > PROCFS_MAX_SIZE)
-        procfs_buffer_size = PROCFS_MAX_SIZE;
+    if (procfs_buffer_size >= PROCFS_MAX_SIZE)
+        procfs_buffer_size = PROCFS_MAX_SIZE - 1;
 
     if (copy_from_user(procfs_buffer, buff, procfs_buffer_size))
         return -EFAULT;
 
-    procfs_buffer[procfs_buffer_size & (PROCFS_MAX_SIZE - 1)] = '\0';
+    procfs_buffer[procfs_buffer_size] = '\0';
     *off += procfs_buffer_size;
     pr_info("procfile write %s\n", procfs_buffer);
 
