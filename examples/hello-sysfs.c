@@ -20,7 +20,7 @@ static ssize_t myvariable_show(struct kobject *kobj,
 }
 
 static ssize_t myvariable_store(struct kobject *kobj,
-                                struct kobj_attribute *attr, char *buf,
+                                struct kobj_attribute *attr, const char *buf,
                                 size_t count)
 {
     sscanf(buf, "%du", &myvariable);
@@ -28,7 +28,7 @@ static ssize_t myvariable_store(struct kobject *kobj,
 }
 
 static struct kobj_attribute myvariable_attribute =
-    __ATTR(myvariable, 0660, myvariable_show, (void *)myvariable_store);
+    __ATTR(myvariable, 0660, myvariable_show, myvariable_store);
 
 static int __init mymodule_init(void)
 {
