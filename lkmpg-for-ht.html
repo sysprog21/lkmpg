@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>October 6, 2024</span></div>
+<div class='date'><span class='ecrm-1200'>October 7, 2024</span></div>
                                                                   
 
                                                                   
@@ -2070,13 +2070,13 @@ because data is already in kernel space.
 <a id='x1-35104r48'></a><span class='ecrm-0500'>48</span><span class='ectt-0800'>                              </span><span id='textcolor709'><span class='ectt-0800'>size_t</span></span><span class='ectt-0800'> len, loff_t *off)</span> 
 <a id='x1-35106r49'></a><span class='ecrm-0500'>49</span><span class='ectt-0800'>{</span> 
 <a id='x1-35108r50'></a><span class='ecrm-0500'>50</span><span class='ectt-0800'>    procfs_buffer_size = len;</span> 
-<a id='x1-35110r51'></a><span class='ecrm-0500'>51</span><span class='ectt-0800'>    </span><span id='textcolor710'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (procfs_buffer_size &gt; PROCFS_MAX_SIZE)</span> 
-<a id='x1-35112r52'></a><span class='ecrm-0500'>52</span><span class='ectt-0800'>        procfs_buffer_size = PROCFS_MAX_SIZE;</span> 
+<a id='x1-35110r51'></a><span class='ecrm-0500'>51</span><span class='ectt-0800'>    </span><span id='textcolor710'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (procfs_buffer_size &gt;= PROCFS_MAX_SIZE)</span> 
+<a id='x1-35112r52'></a><span class='ecrm-0500'>52</span><span class='ectt-0800'>        procfs_buffer_size = PROCFS_MAX_SIZE - 1;</span> 
 <a id='x1-35114r53'></a><span class='ecrm-0500'>53</span> 
 <a id='x1-35116r54'></a><span class='ecrm-0500'>54</span><span class='ectt-0800'>    </span><span id='textcolor711'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (copy_from_user(procfs_buffer, buff, procfs_buffer_size))</span> 
 <a id='x1-35118r55'></a><span class='ecrm-0500'>55</span><span class='ectt-0800'>        </span><span id='textcolor712'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> -EFAULT;</span> 
 <a id='x1-35120r56'></a><span class='ecrm-0500'>56</span> 
-<a id='x1-35122r57'></a><span class='ecrm-0500'>57</span><span class='ectt-0800'>    procfs_buffer[procfs_buffer_size &amp; (PROCFS_MAX_SIZE - 1)] = </span><span id='textcolor713'><span class='tctt-0800'>'</span><span class='ectt-0800'>\0</span><span class='tctt-0800'>'</span></span><span class='ectt-0800'>;</span> 
+<a id='x1-35122r57'></a><span class='ecrm-0500'>57</span><span class='ectt-0800'>    procfs_buffer[procfs_buffer_size] = </span><span id='textcolor713'><span class='tctt-0800'>'</span><span class='ectt-0800'>\0</span><span class='tctt-0800'>'</span></span><span class='ectt-0800'>;</span> 
 <a id='x1-35124r58'></a><span class='ecrm-0500'>58</span><span class='ectt-0800'>    *off += procfs_buffer_size;</span> 
 <a id='x1-35126r59'></a><span class='ecrm-0500'>59</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor714'><span class='ectt-0800'>"procfile write %s</span></span><span id='textcolor715'><span class='ectt-0800'>\n</span></span><span id='textcolor716'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, procfs_buffer);</span> 
 <a id='x1-35128r60'></a><span class='ecrm-0500'>60</span> 
