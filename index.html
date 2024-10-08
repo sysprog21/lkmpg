@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>October 7, 2024</span></div>
+<div class='date'><span class='ecrm-1200'>October 8, 2024</span></div>
                                                                   
 
                                                                   
@@ -2533,7 +2533,7 @@ accessible via sysfs is given below.
 <a id='x1-38109r23'></a><span class='ecrm-0500'>23</span><span class='ectt-0800'>                                </span><span id='textcolor1009'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> kobj_attribute *attr, </span><span id='textcolor1010'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *buf,</span> 
 <a id='x1-38111r24'></a><span class='ecrm-0500'>24</span><span class='ectt-0800'>                                </span><span id='textcolor1011'><span class='ectt-0800'>size_t</span></span><span class='ectt-0800'> count)</span> 
 <a id='x1-38113r25'></a><span class='ecrm-0500'>25</span><span class='ectt-0800'>{</span> 
-<a id='x1-38115r26'></a><span class='ecrm-0500'>26</span><span class='ectt-0800'>    sscanf(buf, </span><span id='textcolor1012'><span class='ectt-0800'>"%du"</span></span><span class='ectt-0800'>, &amp;myvariable);</span> 
+<a id='x1-38115r26'></a><span class='ecrm-0500'>26</span><span class='ectt-0800'>    sscanf(buf, </span><span id='textcolor1012'><span class='ectt-0800'>"%d"</span></span><span class='ectt-0800'>, &amp;myvariable);</span> 
 <a id='x1-38117r27'></a><span class='ecrm-0500'>27</span><span class='ectt-0800'>    </span><span id='textcolor1013'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> count;</span> 
 <a id='x1-38119r28'></a><span class='ecrm-0500'>28</span><span class='ectt-0800'>}</span> 
 <a id='x1-38121r29'></a><span class='ecrm-0500'>29</span> 
