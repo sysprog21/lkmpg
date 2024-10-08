@@ -23,7 +23,7 @@ static ssize_t myvariable_store(struct kobject *kobj,
                                 struct kobj_attribute *attr, char *buf,
                                 size_t count)
 {
-    sscanf(buf, "%du", &myvariable);
+    sscanf(buf, "%d", &myvariable);
     return count;
 }
 
