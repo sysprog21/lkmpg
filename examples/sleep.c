@@ -71,7 +71,7 @@ static ssize_t module_input(struct file *file, /* The file itself */
 {
     int i;
 
-    /* Put the input into Message, where module_output will later be able
+    /* Put the input into message, where module_output will later be able
      * to use it.
      */
     for (i = 0; i < MESSAGE_LENGTH - 1 && i < length; i++)
