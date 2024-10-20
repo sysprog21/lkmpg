@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>October 17, 2024</span></div>
+<div class='date'><span class='ecrm-1200'>October 20, 2024</span></div>
                                                                   
 
                                                                   
@@ -6229,7 +6229,7 @@ will generate the <code>  <span class='ectt-1000'>class_attribute</span>
 <a id='x1-61958r401'></a><span class='ecrm-0500'>401</span> 
 <a id='x1-61960r402'></a><span class='ecrm-0500'>402</span><span class='ectt-0800'>    </span><span id='textcolor3302'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
 <a id='x1-61962r403'></a><span class='ecrm-0500'>403</span><span class='ectt-0800'>failed_class:</span> 
-<a id='x1-61964r404'></a><span class='ecrm-0500'>404</span><span class='ectt-0800'>    class_unregister(&amp;vinput_class);</span> 
+<a id='x1-61964r404'></a><span class='ecrm-0500'>404</span><span class='ectt-0800'>    unregister_chrdev(vinput_dev, DRIVER_NAME);</span> 
 <a id='x1-61966r405'></a><span class='ecrm-0500'>405</span><span class='ectt-0800'>failed_alloc:</span> 
 <a id='x1-61968r406'></a><span class='ecrm-0500'>406</span><span class='ectt-0800'>    </span><span id='textcolor3303'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> err;</span> 
 <a id='x1-61970r407'></a><span class='ecrm-0500'>407</span><span class='ectt-0800'>}</span> 
