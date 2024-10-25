@@ -284,6 +284,8 @@ static ssize_t export_store(struct class *class, struct class_attribute *attr,
 
 fail_register_vinput:
     device_unregister(&vinput->dev);
+    /* avoid calling vinput_destroy_vdevice() twice */
+    return err;
 fail_register:
     vinput_destroy_vdevice(vinput);
 fail:
