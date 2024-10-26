@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>October 25, 2024</span></div>
+<div class='date'><span class='ecrm-1200'>October 26, 2024</span></div>
                                                                   
 
                                                                   
@@ -6111,144 +6111,146 @@ will generate the <code>  <span class='ectt-1000'>class_attribute</span>
 <a id='x1-61722r283'></a><span class='ecrm-0500'>283</span><span class='ectt-0800'>    </span><span id='textcolor3225'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> len;</span> 
 <a id='x1-61724r284'></a><span class='ecrm-0500'>284</span> 
 <a id='x1-61726r285'></a><span class='ecrm-0500'>285</span><span class='ectt-0800'>fail_register_vinput:</span> 
-<a id='x1-61728r286'></a><span class='ecrm-0500'>286</span><span class='ectt-0800'>    device_unregister(&amp;vinput-&gt;dev);</span> 
-<a id='x1-61730r287'></a><span class='ecrm-0500'>287</span><span class='ectt-0800'>    </span><span id='textcolor3226'><span class='ectt-0800'>/* avoid calling vinput_destroy_vdevice() twice */</span></span> 
-<a id='x1-61732r288'></a><span class='ecrm-0500'>288</span><span class='ectt-0800'>    </span><span id='textcolor3227'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> err;</span> 
-<a id='x1-61734r289'></a><span class='ecrm-0500'>289</span><span class='ectt-0800'>fail_register:</span> 
-<a id='x1-61736r290'></a><span class='ecrm-0500'>290</span><span class='ectt-0800'>    vinput_destroy_vdevice(vinput);</span> 
-<a id='x1-61738r291'></a><span class='ecrm-0500'>291</span><span class='ectt-0800'>fail:</span> 
-<a id='x1-61740r292'></a><span class='ecrm-0500'>292</span><span class='ectt-0800'>    </span><span id='textcolor3228'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> err;</span> 
-<a id='x1-61742r293'></a><span class='ecrm-0500'>293</span><span class='ectt-0800'>}</span> 
-<a id='x1-61744r294'></a><span class='ecrm-0500'>294</span><span id='textcolor3229'><span class='ectt-0800'>/* This macro generates class_attr_export structure and export_store() */</span></span> 
-<a id='x1-61746r295'></a><span class='ecrm-0500'>295</span><span id='textcolor3230'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> CLASS_ATTR_WO(export);</span> 
-<a id='x1-61748r296'></a><span class='ecrm-0500'>296</span> 
-<a id='x1-61750r297'></a><span class='ecrm-0500'>297</span><span id='textcolor3231'><span class='ectt-0800'>#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(6, 4, 0)</span></span> 
-<a id='x1-61752r298'></a><span class='ecrm-0500'>298</span><span id='textcolor3232'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3233'><span class='ectt-0800'>ssize_t</span></span><span class='ectt-0800'> unexport_store(</span><span id='textcolor3234'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor3235'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> class *class,</span> 
-<a id='x1-61754r299'></a><span class='ecrm-0500'>299</span><span class='ectt-0800'>                              </span><span id='textcolor3236'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor3237'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> class_attribute *attr,</span> 
-<a id='x1-61756r300'></a><span class='ecrm-0500'>300</span><span id='textcolor3238'><span class='ectt-0800'>#else</span></span> 
-<a id='x1-61758r301'></a><span class='ecrm-0500'>301</span><span id='textcolor3239'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3240'><span class='ectt-0800'>ssize_t</span></span><span class='ectt-0800'> unexport_store(</span><span id='textcolor3241'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> class *class, </span><span id='textcolor3242'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> class_attribute *attr,</span> 
-<a id='x1-61760r302'></a><span class='ecrm-0500'>302</span><span id='textcolor3243'><span class='ectt-0800'>#endif</span></span> 
-<a id='x1-61762r303'></a><span class='ecrm-0500'>303</span><span class='ectt-0800'>                              </span><span id='textcolor3244'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor3245'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *buf, </span><span id='textcolor3246'><span class='ectt-0800'>size_t</span></span><span class='ectt-0800'> len)</span> 
-<a id='x1-61764r304'></a><span class='ecrm-0500'>304</span><span class='ectt-0800'>{</span> 
-<a id='x1-61766r305'></a><span class='ecrm-0500'>305</span><span class='ectt-0800'>    </span><span id='textcolor3247'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> err;</span> 
-<a id='x1-61768r306'></a><span class='ecrm-0500'>306</span><span class='ectt-0800'>    </span><span id='textcolor3248'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor3249'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> id;</span> 
-<a id='x1-61770r307'></a><span class='ecrm-0500'>307</span><span class='ectt-0800'>    </span><span id='textcolor3250'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> vinput *vinput;</span> 
-<a id='x1-61772r308'></a><span class='ecrm-0500'>308</span> 
-<a id='x1-61774r309'></a><span class='ecrm-0500'>309</span><span class='ectt-0800'>    err = kstrtol(buf, 10, &amp;id);</span> 
-<a id='x1-61776r310'></a><span class='ecrm-0500'>310</span><span class='ectt-0800'>    </span><span id='textcolor3251'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (err) {</span> 
-<a id='x1-61778r311'></a><span class='ecrm-0500'>311</span><span class='ectt-0800'>        err = -EINVAL;</span> 
-<a id='x1-61780r312'></a><span class='ecrm-0500'>312</span><span class='ectt-0800'>        </span><span id='textcolor3252'><span class='ectt-0800'>goto</span></span><span class='ectt-0800'> failed;</span> 
-<a id='x1-61782r313'></a><span class='ecrm-0500'>313</span><span class='ectt-0800'>    }</span> 
-<a id='x1-61784r314'></a><span class='ecrm-0500'>314</span> 
-<a id='x1-61786r315'></a><span class='ecrm-0500'>315</span><span class='ectt-0800'>    vinput = vinput_get_vdevice_by_id(id);</span> 
-<a id='x1-61788r316'></a><span class='ecrm-0500'>316</span><span class='ectt-0800'>    </span><span id='textcolor3253'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (IS_ERR(vinput)) {</span> 
-<a id='x1-61790r317'></a><span class='ecrm-0500'>317</span><span class='ectt-0800'>        pr_err(</span><span id='textcolor3254'><span class='ectt-0800'>"vinput: No such vinput device %ld</span></span><span id='textcolor3255'><span class='ectt-0800'>\n</span></span><span id='textcolor3256'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, id);</span> 
-<a id='x1-61792r318'></a><span class='ecrm-0500'>318</span><span class='ectt-0800'>        err = PTR_ERR(vinput);</span> 
-<a id='x1-61794r319'></a><span class='ecrm-0500'>319</span><span class='ectt-0800'>        </span><span id='textcolor3257'><span class='ectt-0800'>goto</span></span><span class='ectt-0800'> failed;</span> 
-<a id='x1-61796r320'></a><span class='ecrm-0500'>320</span><span class='ectt-0800'>    }</span> 
-<a id='x1-61798r321'></a><span class='ecrm-0500'>321</span> 
-<a id='x1-61800r322'></a><span class='ecrm-0500'>322</span><span class='ectt-0800'>    vinput_unregister_vdevice(vinput);</span> 
-<a id='x1-61802r323'></a><span class='ecrm-0500'>323</span><span class='ectt-0800'>    device_unregister(&amp;vinput-&gt;dev);</span> 
-<a id='x1-61804r324'></a><span class='ecrm-0500'>324</span> 
-<a id='x1-61806r325'></a><span class='ecrm-0500'>325</span><span class='ectt-0800'>    </span><span id='textcolor3258'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> len;</span> 
-<a id='x1-61808r326'></a><span class='ecrm-0500'>326</span><span class='ectt-0800'>failed:</span> 
-<a id='x1-61810r327'></a><span class='ecrm-0500'>327</span><span class='ectt-0800'>    </span><span id='textcolor3259'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> err;</span> 
-<a id='x1-61812r328'></a><span class='ecrm-0500'>328</span><span class='ectt-0800'>}</span> 
-<a id='x1-61814r329'></a><span class='ecrm-0500'>329</span><span id='textcolor3260'><span class='ectt-0800'>/* This macro generates class_attr_unexport structure and unexport_store() */</span></span> 
-<a id='x1-61816r330'></a><span class='ecrm-0500'>330</span><span id='textcolor3261'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> CLASS_ATTR_WO(unexport);</span> 
-<a id='x1-61818r331'></a><span class='ecrm-0500'>331</span> 
-<a id='x1-61820r332'></a><span class='ecrm-0500'>332</span><span id='textcolor3262'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3263'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> attribute *vinput_class_attrs[] = {</span> 
-<a id='x1-61822r333'></a><span class='ecrm-0500'>333</span><span class='ectt-0800'>    &amp;class_attr_export.attr,</span> 
-<a id='x1-61824r334'></a><span class='ecrm-0500'>334</span><span class='ectt-0800'>    &amp;class_attr_unexport.attr,</span> 
-<a id='x1-61826r335'></a><span class='ecrm-0500'>335</span><span class='ectt-0800'>    NULL,</span> 
-<a id='x1-61828r336'></a><span class='ecrm-0500'>336</span><span class='ectt-0800'>};</span> 
-<a id='x1-61830r337'></a><span class='ecrm-0500'>337</span> 
-<a id='x1-61832r338'></a><span class='ecrm-0500'>338</span><span id='textcolor3264'><span class='ectt-0800'>/* This macro generates vinput_class_groups structure */</span></span> 
-<a id='x1-61834r339'></a><span class='ecrm-0500'>339</span><span class='ectt-0800'>ATTRIBUTE_GROUPS(vinput_class);</span> 
-<a id='x1-61836r340'></a><span class='ecrm-0500'>340</span> 
-<a id='x1-61838r341'></a><span class='ecrm-0500'>341</span><span id='textcolor3265'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3266'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> class vinput_class = {</span> 
-<a id='x1-61840r342'></a><span class='ecrm-0500'>342</span><span class='ectt-0800'>    .name = </span><span id='textcolor3267'><span class='ectt-0800'>"vinput"</span></span><span class='ectt-0800'>,</span> 
-<a id='x1-61842r343'></a><span class='ecrm-0500'>343</span><span id='textcolor3268'><span class='ectt-0800'>#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(6, 4, 0)</span></span> 
-<a id='x1-61844r344'></a><span class='ecrm-0500'>344</span><span class='ectt-0800'>    .owner = THIS_MODULE,</span> 
-<a id='x1-61846r345'></a><span class='ecrm-0500'>345</span><span id='textcolor3269'><span class='ectt-0800'>#endif</span></span> 
-<a id='x1-61848r346'></a><span class='ecrm-0500'>346</span><span class='ectt-0800'>    .class_groups = vinput_class_groups,</span> 
-<a id='x1-61850r347'></a><span class='ecrm-0500'>347</span><span class='ectt-0800'>};</span> 
-<a id='x1-61852r348'></a><span class='ecrm-0500'>348</span> 
-<a id='x1-61854r349'></a><span class='ecrm-0500'>349</span><span id='textcolor3270'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> vinput_register(</span><span id='textcolor3271'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> vinput_device *dev)</span> 
-<a id='x1-61856r350'></a><span class='ecrm-0500'>350</span><span class='ectt-0800'>{</span> 
-<a id='x1-61858r351'></a><span class='ecrm-0500'>351</span><span class='ectt-0800'>    spin_lock(&amp;vinput_lock);</span> 
-<a id='x1-61860r352'></a><span class='ecrm-0500'>352</span><span class='ectt-0800'>    list_add(&amp;dev-&gt;list, &amp;vinput_devices);</span> 
-<a id='x1-61862r353'></a><span class='ecrm-0500'>353</span><span class='ectt-0800'>    spin_unlock(&amp;vinput_lock);</span> 
-<a id='x1-61864r354'></a><span class='ecrm-0500'>354</span> 
-<a id='x1-61866r355'></a><span class='ecrm-0500'>355</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor3272'><span class='ectt-0800'>"vinput: registered new virtual input device </span><span class='tctt-0800'>'</span><span class='ectt-0800'>%s</span><span class='tctt-0800'>'</span></span><span id='textcolor3273'><span class='ectt-0800'>\n</span></span><span id='textcolor3274'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, dev-&gt;name);</span> 
+<a id='x1-61728r286'></a><span class='ecrm-0500'>286</span><span class='ectt-0800'>    input_free_device(vinput-&gt;input);</span> 
+<a id='x1-61730r287'></a><span class='ecrm-0500'>287</span><span class='ectt-0800'>    device_unregister(&amp;vinput-&gt;dev);</span> 
+<a id='x1-61732r288'></a><span class='ecrm-0500'>288</span><span class='ectt-0800'>    </span><span id='textcolor3226'><span class='ectt-0800'>/* avoid calling vinput_destroy_vdevice() twice */</span></span> 
+<a id='x1-61734r289'></a><span class='ecrm-0500'>289</span><span class='ectt-0800'>    </span><span id='textcolor3227'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> err;</span> 
+<a id='x1-61736r290'></a><span class='ecrm-0500'>290</span><span class='ectt-0800'>fail_register:</span> 
+<a id='x1-61738r291'></a><span class='ecrm-0500'>291</span><span class='ectt-0800'>    input_free_device(vinput-&gt;input);</span> 
+<a id='x1-61740r292'></a><span class='ecrm-0500'>292</span><span class='ectt-0800'>    vinput_destroy_vdevice(vinput);</span> 
+<a id='x1-61742r293'></a><span class='ecrm-0500'>293</span><span class='ectt-0800'>fail:</span> 
+<a id='x1-61744r294'></a><span class='ecrm-0500'>294</span><span class='ectt-0800'>    </span><span id='textcolor3228'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> err;</span> 
+<a id='x1-61746r295'></a><span class='ecrm-0500'>295</span><span class='ectt-0800'>}</span> 
+<a id='x1-61748r296'></a><span class='ecrm-0500'>296</span><span id='textcolor3229'><span class='ectt-0800'>/* This macro generates class_attr_export structure and export_store() */</span></span> 
+<a id='x1-61750r297'></a><span class='ecrm-0500'>297</span><span id='textcolor3230'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> CLASS_ATTR_WO(export);</span> 
+<a id='x1-61752r298'></a><span class='ecrm-0500'>298</span> 
+<a id='x1-61754r299'></a><span class='ecrm-0500'>299</span><span id='textcolor3231'><span class='ectt-0800'>#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(6, 4, 0)</span></span> 
+<a id='x1-61756r300'></a><span class='ecrm-0500'>300</span><span id='textcolor3232'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3233'><span class='ectt-0800'>ssize_t</span></span><span class='ectt-0800'> unexport_store(</span><span id='textcolor3234'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor3235'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> class *class,</span> 
+<a id='x1-61758r301'></a><span class='ecrm-0500'>301</span><span class='ectt-0800'>                              </span><span id='textcolor3236'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor3237'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> class_attribute *attr,</span> 
+<a id='x1-61760r302'></a><span class='ecrm-0500'>302</span><span id='textcolor3238'><span class='ectt-0800'>#else</span></span> 
+<a id='x1-61762r303'></a><span class='ecrm-0500'>303</span><span id='textcolor3239'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3240'><span class='ectt-0800'>ssize_t</span></span><span class='ectt-0800'> unexport_store(</span><span id='textcolor3241'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> class *class, </span><span id='textcolor3242'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> class_attribute *attr,</span> 
+<a id='x1-61764r304'></a><span class='ecrm-0500'>304</span><span id='textcolor3243'><span class='ectt-0800'>#endif</span></span> 
+<a id='x1-61766r305'></a><span class='ecrm-0500'>305</span><span class='ectt-0800'>                              </span><span id='textcolor3244'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor3245'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *buf, </span><span id='textcolor3246'><span class='ectt-0800'>size_t</span></span><span class='ectt-0800'> len)</span> 
+<a id='x1-61768r306'></a><span class='ecrm-0500'>306</span><span class='ectt-0800'>{</span> 
+<a id='x1-61770r307'></a><span class='ecrm-0500'>307</span><span class='ectt-0800'>    </span><span id='textcolor3247'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> err;</span> 
+<a id='x1-61772r308'></a><span class='ecrm-0500'>308</span><span class='ectt-0800'>    </span><span id='textcolor3248'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor3249'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> id;</span> 
+<a id='x1-61774r309'></a><span class='ecrm-0500'>309</span><span class='ectt-0800'>    </span><span id='textcolor3250'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> vinput *vinput;</span> 
+<a id='x1-61776r310'></a><span class='ecrm-0500'>310</span> 
+<a id='x1-61778r311'></a><span class='ecrm-0500'>311</span><span class='ectt-0800'>    err = kstrtol(buf, 10, &amp;id);</span> 
+<a id='x1-61780r312'></a><span class='ecrm-0500'>312</span><span class='ectt-0800'>    </span><span id='textcolor3251'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (err) {</span> 
+<a id='x1-61782r313'></a><span class='ecrm-0500'>313</span><span class='ectt-0800'>        err = -EINVAL;</span> 
+<a id='x1-61784r314'></a><span class='ecrm-0500'>314</span><span class='ectt-0800'>        </span><span id='textcolor3252'><span class='ectt-0800'>goto</span></span><span class='ectt-0800'> failed;</span> 
+<a id='x1-61786r315'></a><span class='ecrm-0500'>315</span><span class='ectt-0800'>    }</span> 
+<a id='x1-61788r316'></a><span class='ecrm-0500'>316</span> 
+<a id='x1-61790r317'></a><span class='ecrm-0500'>317</span><span class='ectt-0800'>    vinput = vinput_get_vdevice_by_id(id);</span> 
+<a id='x1-61792r318'></a><span class='ecrm-0500'>318</span><span class='ectt-0800'>    </span><span id='textcolor3253'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (IS_ERR(vinput)) {</span> 
+<a id='x1-61794r319'></a><span class='ecrm-0500'>319</span><span class='ectt-0800'>        pr_err(</span><span id='textcolor3254'><span class='ectt-0800'>"vinput: No such vinput device %ld</span></span><span id='textcolor3255'><span class='ectt-0800'>\n</span></span><span id='textcolor3256'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, id);</span> 
+<a id='x1-61796r320'></a><span class='ecrm-0500'>320</span><span class='ectt-0800'>        err = PTR_ERR(vinput);</span> 
+<a id='x1-61798r321'></a><span class='ecrm-0500'>321</span><span class='ectt-0800'>        </span><span id='textcolor3257'><span class='ectt-0800'>goto</span></span><span class='ectt-0800'> failed;</span> 
+<a id='x1-61800r322'></a><span class='ecrm-0500'>322</span><span class='ectt-0800'>    }</span> 
+<a id='x1-61802r323'></a><span class='ecrm-0500'>323</span> 
+<a id='x1-61804r324'></a><span class='ecrm-0500'>324</span><span class='ectt-0800'>    vinput_unregister_vdevice(vinput);</span> 
+<a id='x1-61806r325'></a><span class='ecrm-0500'>325</span><span class='ectt-0800'>    device_unregister(&amp;vinput-&gt;dev);</span> 
+<a id='x1-61808r326'></a><span class='ecrm-0500'>326</span> 
+<a id='x1-61810r327'></a><span class='ecrm-0500'>327</span><span class='ectt-0800'>    </span><span id='textcolor3258'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> len;</span> 
+<a id='x1-61812r328'></a><span class='ecrm-0500'>328</span><span class='ectt-0800'>failed:</span> 
+<a id='x1-61814r329'></a><span class='ecrm-0500'>329</span><span class='ectt-0800'>    </span><span id='textcolor3259'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> err;</span> 
+<a id='x1-61816r330'></a><span class='ecrm-0500'>330</span><span class='ectt-0800'>}</span> 
+<a id='x1-61818r331'></a><span class='ecrm-0500'>331</span><span id='textcolor3260'><span class='ectt-0800'>/* This macro generates class_attr_unexport structure and unexport_store() */</span></span> 
+<a id='x1-61820r332'></a><span class='ecrm-0500'>332</span><span id='textcolor3261'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> CLASS_ATTR_WO(unexport);</span> 
+<a id='x1-61822r333'></a><span class='ecrm-0500'>333</span> 
+<a id='x1-61824r334'></a><span class='ecrm-0500'>334</span><span id='textcolor3262'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3263'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> attribute *vinput_class_attrs[] = {</span> 
+<a id='x1-61826r335'></a><span class='ecrm-0500'>335</span><span class='ectt-0800'>    &amp;class_attr_export.attr,</span> 
+<a id='x1-61828r336'></a><span class='ecrm-0500'>336</span><span class='ectt-0800'>    &amp;class_attr_unexport.attr,</span> 
+<a id='x1-61830r337'></a><span class='ecrm-0500'>337</span><span class='ectt-0800'>    NULL,</span> 
+<a id='x1-61832r338'></a><span class='ecrm-0500'>338</span><span class='ectt-0800'>};</span> 
+<a id='x1-61834r339'></a><span class='ecrm-0500'>339</span> 
+<a id='x1-61836r340'></a><span class='ecrm-0500'>340</span><span id='textcolor3264'><span class='ectt-0800'>/* This macro generates vinput_class_groups structure */</span></span> 
+<a id='x1-61838r341'></a><span class='ecrm-0500'>341</span><span class='ectt-0800'>ATTRIBUTE_GROUPS(vinput_class);</span> 
+<a id='x1-61840r342'></a><span class='ecrm-0500'>342</span> 
+<a id='x1-61842r343'></a><span class='ecrm-0500'>343</span><span id='textcolor3265'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3266'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> class vinput_class = {</span> 
+<a id='x1-61844r344'></a><span class='ecrm-0500'>344</span><span class='ectt-0800'>    .name = </span><span id='textcolor3267'><span class='ectt-0800'>"vinput"</span></span><span class='ectt-0800'>,</span> 
+<a id='x1-61846r345'></a><span class='ecrm-0500'>345</span><span id='textcolor3268'><span class='ectt-0800'>#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(6, 4, 0)</span></span> 
+<a id='x1-61848r346'></a><span class='ecrm-0500'>346</span><span class='ectt-0800'>    .owner = THIS_MODULE,</span> 
+<a id='x1-61850r347'></a><span class='ecrm-0500'>347</span><span id='textcolor3269'><span class='ectt-0800'>#endif</span></span> 
+<a id='x1-61852r348'></a><span class='ecrm-0500'>348</span><span class='ectt-0800'>    .class_groups = vinput_class_groups,</span> 
+<a id='x1-61854r349'></a><span class='ecrm-0500'>349</span><span class='ectt-0800'>};</span> 
+<a id='x1-61856r350'></a><span class='ecrm-0500'>350</span> 
+<a id='x1-61858r351'></a><span class='ecrm-0500'>351</span><span id='textcolor3270'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> vinput_register(</span><span id='textcolor3271'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> vinput_device *dev)</span> 
+<a id='x1-61860r352'></a><span class='ecrm-0500'>352</span><span class='ectt-0800'>{</span> 
+<a id='x1-61862r353'></a><span class='ecrm-0500'>353</span><span class='ectt-0800'>    spin_lock(&amp;vinput_lock);</span> 
+<a id='x1-61864r354'></a><span class='ecrm-0500'>354</span><span class='ectt-0800'>    list_add(&amp;dev-&gt;list, &amp;vinput_devices);</span> 
+<a id='x1-61866r355'></a><span class='ecrm-0500'>355</span><span class='ectt-0800'>    spin_unlock(&amp;vinput_lock);</span> 
 <a id='x1-61868r356'></a><span class='ecrm-0500'>356</span> 
-<a id='x1-61870r357'></a><span class='ecrm-0500'>357</span><span class='ectt-0800'>    </span><span id='textcolor3275'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
-<a id='x1-61872r358'></a><span class='ecrm-0500'>358</span><span class='ectt-0800'>}</span> 
-<a id='x1-61874r359'></a><span class='ecrm-0500'>359</span><span class='ectt-0800'>EXPORT_SYMBOL(vinput_register);</span> 
-<a id='x1-61876r360'></a><span class='ecrm-0500'>360</span> 
-<a id='x1-61878r361'></a><span class='ecrm-0500'>361</span><span id='textcolor3276'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> vinput_unregister(</span><span id='textcolor3277'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> vinput_device *dev)</span> 
-<a id='x1-61880r362'></a><span class='ecrm-0500'>362</span><span class='ectt-0800'>{</span> 
-<a id='x1-61882r363'></a><span class='ecrm-0500'>363</span><span class='ectt-0800'>    </span><span id='textcolor3278'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> list_head *curr, *next;</span> 
-<a id='x1-61884r364'></a><span class='ecrm-0500'>364</span> 
-<a id='x1-61886r365'></a><span class='ecrm-0500'>365</span><span class='ectt-0800'>    </span><span id='textcolor3279'><span class='ectt-0800'>/* Remove from the list first */</span></span> 
-<a id='x1-61888r366'></a><span class='ecrm-0500'>366</span><span class='ectt-0800'>    spin_lock(&amp;vinput_lock);</span> 
-<a id='x1-61890r367'></a><span class='ecrm-0500'>367</span><span class='ectt-0800'>    list_del(&amp;dev-&gt;list);</span> 
-<a id='x1-61892r368'></a><span class='ecrm-0500'>368</span><span class='ectt-0800'>    spin_unlock(&amp;vinput_lock);</span> 
-<a id='x1-61894r369'></a><span class='ecrm-0500'>369</span> 
-<a id='x1-61896r370'></a><span class='ecrm-0500'>370</span><span class='ectt-0800'>    </span><span id='textcolor3280'><span class='ectt-0800'>/* unregister all devices of this type */</span></span> 
-<a id='x1-61898r371'></a><span class='ecrm-0500'>371</span><span class='ectt-0800'>    list_for_each_safe (curr, next, &amp;vinput_vdevices) {</span> 
-<a id='x1-61900r372'></a><span class='ecrm-0500'>372</span><span class='ectt-0800'>        </span><span id='textcolor3281'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> vinput *vinput = list_entry(curr, </span><span id='textcolor3282'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> vinput, list);</span> 
-<a id='x1-61902r373'></a><span class='ecrm-0500'>373</span><span class='ectt-0800'>        </span><span id='textcolor3283'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (vinput &amp;&amp; vinput-&gt;type == dev) {</span> 
-<a id='x1-61904r374'></a><span class='ecrm-0500'>374</span><span class='ectt-0800'>            vinput_unregister_vdevice(vinput);</span> 
-<a id='x1-61906r375'></a><span class='ecrm-0500'>375</span><span class='ectt-0800'>            device_unregister(&amp;vinput-&gt;dev);</span> 
-<a id='x1-61908r376'></a><span class='ecrm-0500'>376</span><span class='ectt-0800'>        }</span> 
-<a id='x1-61910r377'></a><span class='ecrm-0500'>377</span><span class='ectt-0800'>    }</span> 
-<a id='x1-61912r378'></a><span class='ecrm-0500'>378</span> 
-<a id='x1-61914r379'></a><span class='ecrm-0500'>379</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor3284'><span class='ectt-0800'>"vinput: unregistered virtual input device </span><span class='tctt-0800'>'</span><span class='ectt-0800'>%s</span><span class='tctt-0800'>'</span></span><span id='textcolor3285'><span class='ectt-0800'>\n</span></span><span id='textcolor3286'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, dev-&gt;name);</span> 
-<a id='x1-61916r380'></a><span class='ecrm-0500'>380</span><span class='ectt-0800'>}</span> 
-<a id='x1-61918r381'></a><span class='ecrm-0500'>381</span><span class='ectt-0800'>EXPORT_SYMBOL(vinput_unregister);</span> 
-<a id='x1-61920r382'></a><span class='ecrm-0500'>382</span> 
-<a id='x1-61922r383'></a><span class='ecrm-0500'>383</span><span id='textcolor3287'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3288'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> __init vinput_init(</span><span id='textcolor3289'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
-<a id='x1-61924r384'></a><span class='ecrm-0500'>384</span><span class='ectt-0800'>{</span> 
-<a id='x1-61926r385'></a><span class='ecrm-0500'>385</span><span class='ectt-0800'>    </span><span id='textcolor3290'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> err = 0;</span> 
-<a id='x1-61928r386'></a><span class='ecrm-0500'>386</span> 
-<a id='x1-61930r387'></a><span class='ecrm-0500'>387</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor3291'><span class='ectt-0800'>"vinput: Loading virtual input driver</span></span><span id='textcolor3292'><span class='ectt-0800'>\n</span></span><span id='textcolor3293'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-61870r357'></a><span class='ecrm-0500'>357</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor3272'><span class='ectt-0800'>"vinput: registered new virtual input device </span><span class='tctt-0800'>'</span><span class='ectt-0800'>%s</span><span class='tctt-0800'>'</span></span><span id='textcolor3273'><span class='ectt-0800'>\n</span></span><span id='textcolor3274'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, dev-&gt;name);</span> 
+<a id='x1-61872r358'></a><span class='ecrm-0500'>358</span> 
+<a id='x1-61874r359'></a><span class='ecrm-0500'>359</span><span class='ectt-0800'>    </span><span id='textcolor3275'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
+<a id='x1-61876r360'></a><span class='ecrm-0500'>360</span><span class='ectt-0800'>}</span> 
+<a id='x1-61878r361'></a><span class='ecrm-0500'>361</span><span class='ectt-0800'>EXPORT_SYMBOL(vinput_register);</span> 
+<a id='x1-61880r362'></a><span class='ecrm-0500'>362</span> 
+<a id='x1-61882r363'></a><span class='ecrm-0500'>363</span><span id='textcolor3276'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> vinput_unregister(</span><span id='textcolor3277'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> vinput_device *dev)</span> 
+<a id='x1-61884r364'></a><span class='ecrm-0500'>364</span><span class='ectt-0800'>{</span> 
+<a id='x1-61886r365'></a><span class='ecrm-0500'>365</span><span class='ectt-0800'>    </span><span id='textcolor3278'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> list_head *curr, *next;</span> 
+<a id='x1-61888r366'></a><span class='ecrm-0500'>366</span> 
+<a id='x1-61890r367'></a><span class='ecrm-0500'>367</span><span class='ectt-0800'>    </span><span id='textcolor3279'><span class='ectt-0800'>/* Remove from the list first */</span></span> 
+<a id='x1-61892r368'></a><span class='ecrm-0500'>368</span><span class='ectt-0800'>    spin_lock(&amp;vinput_lock);</span> 
+<a id='x1-61894r369'></a><span class='ecrm-0500'>369</span><span class='ectt-0800'>    list_del(&amp;dev-&gt;list);</span> 
+<a id='x1-61896r370'></a><span class='ecrm-0500'>370</span><span class='ectt-0800'>    spin_unlock(&amp;vinput_lock);</span> 
+<a id='x1-61898r371'></a><span class='ecrm-0500'>371</span> 
+<a id='x1-61900r372'></a><span class='ecrm-0500'>372</span><span class='ectt-0800'>    </span><span id='textcolor3280'><span class='ectt-0800'>/* unregister all devices of this type */</span></span> 
+<a id='x1-61902r373'></a><span class='ecrm-0500'>373</span><span class='ectt-0800'>    list_for_each_safe (curr, next, &amp;vinput_vdevices) {</span> 
+<a id='x1-61904r374'></a><span class='ecrm-0500'>374</span><span class='ectt-0800'>        </span><span id='textcolor3281'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> vinput *vinput = list_entry(curr, </span><span id='textcolor3282'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> vinput, list);</span> 
+<a id='x1-61906r375'></a><span class='ecrm-0500'>375</span><span class='ectt-0800'>        </span><span id='textcolor3283'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (vinput &amp;&amp; vinput-&gt;type == dev) {</span> 
+<a id='x1-61908r376'></a><span class='ecrm-0500'>376</span><span class='ectt-0800'>            vinput_unregister_vdevice(vinput);</span> 
+<a id='x1-61910r377'></a><span class='ecrm-0500'>377</span><span class='ectt-0800'>            device_unregister(&amp;vinput-&gt;dev);</span> 
+<a id='x1-61912r378'></a><span class='ecrm-0500'>378</span><span class='ectt-0800'>        }</span> 
+<a id='x1-61914r379'></a><span class='ecrm-0500'>379</span><span class='ectt-0800'>    }</span> 
+<a id='x1-61916r380'></a><span class='ecrm-0500'>380</span> 
+<a id='x1-61918r381'></a><span class='ecrm-0500'>381</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor3284'><span class='ectt-0800'>"vinput: unregistered virtual input device </span><span class='tctt-0800'>'</span><span class='ectt-0800'>%s</span><span class='tctt-0800'>'</span></span><span id='textcolor3285'><span class='ectt-0800'>\n</span></span><span id='textcolor3286'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, dev-&gt;name);</span> 
+<a id='x1-61920r382'></a><span class='ecrm-0500'>382</span><span class='ectt-0800'>}</span> 
+<a id='x1-61922r383'></a><span class='ecrm-0500'>383</span><span class='ectt-0800'>EXPORT_SYMBOL(vinput_unregister);</span> 
+<a id='x1-61924r384'></a><span class='ecrm-0500'>384</span> 
+<a id='x1-61926r385'></a><span class='ecrm-0500'>385</span><span id='textcolor3287'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3288'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> __init vinput_init(</span><span id='textcolor3289'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-61928r386'></a><span class='ecrm-0500'>386</span><span class='ectt-0800'>{</span> 
+<a id='x1-61930r387'></a><span class='ecrm-0500'>387</span><span class='ectt-0800'>    </span><span id='textcolor3290'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> err = 0;</span> 
 <a id='x1-61932r388'></a><span class='ecrm-0500'>388</span> 
-<a id='x1-61934r389'></a><span class='ecrm-0500'>389</span><span class='ectt-0800'>    vinput_dev = register_chrdev(0, DRIVER_NAME, &amp;vinput_fops);</span> 
-<a id='x1-61936r390'></a><span class='ecrm-0500'>390</span><span class='ectt-0800'>    </span><span id='textcolor3294'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (vinput_dev &lt; 0) {</span> 
-<a id='x1-61938r391'></a><span class='ecrm-0500'>391</span><span class='ectt-0800'>        pr_err(</span><span id='textcolor3295'><span class='ectt-0800'>"vinput: Unable to allocate char dev region</span></span><span id='textcolor3296'><span class='ectt-0800'>\n</span></span><span id='textcolor3297'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-61940r392'></a><span class='ecrm-0500'>392</span><span class='ectt-0800'>        err = vinput_dev;</span> 
-<a id='x1-61942r393'></a><span class='ecrm-0500'>393</span><span class='ectt-0800'>        </span><span id='textcolor3298'><span class='ectt-0800'>goto</span></span><span class='ectt-0800'> failed_alloc;</span> 
-<a id='x1-61944r394'></a><span class='ecrm-0500'>394</span><span class='ectt-0800'>    }</span> 
-<a id='x1-61946r395'></a><span class='ecrm-0500'>395</span> 
-<a id='x1-61948r396'></a><span class='ecrm-0500'>396</span><span class='ectt-0800'>    spin_lock_init(&amp;vinput_lock);</span> 
+<a id='x1-61934r389'></a><span class='ecrm-0500'>389</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor3291'><span class='ectt-0800'>"vinput: Loading virtual input driver</span></span><span id='textcolor3292'><span class='ectt-0800'>\n</span></span><span id='textcolor3293'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-61936r390'></a><span class='ecrm-0500'>390</span> 
+<a id='x1-61938r391'></a><span class='ecrm-0500'>391</span><span class='ectt-0800'>    vinput_dev = register_chrdev(0, DRIVER_NAME, &amp;vinput_fops);</span> 
+<a id='x1-61940r392'></a><span class='ecrm-0500'>392</span><span class='ectt-0800'>    </span><span id='textcolor3294'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (vinput_dev &lt; 0) {</span> 
+<a id='x1-61942r393'></a><span class='ecrm-0500'>393</span><span class='ectt-0800'>        pr_err(</span><span id='textcolor3295'><span class='ectt-0800'>"vinput: Unable to allocate char dev region</span></span><span id='textcolor3296'><span class='ectt-0800'>\n</span></span><span id='textcolor3297'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-61944r394'></a><span class='ecrm-0500'>394</span><span class='ectt-0800'>        err = vinput_dev;</span> 
+<a id='x1-61946r395'></a><span class='ecrm-0500'>395</span><span class='ectt-0800'>        </span><span id='textcolor3298'><span class='ectt-0800'>goto</span></span><span class='ectt-0800'> failed_alloc;</span> 
+<a id='x1-61948r396'></a><span class='ecrm-0500'>396</span><span class='ectt-0800'>    }</span> 
 <a id='x1-61950r397'></a><span class='ecrm-0500'>397</span> 
-<a id='x1-61952r398'></a><span class='ecrm-0500'>398</span><span class='ectt-0800'>    err = class_register(&amp;vinput_class);</span> 
-<a id='x1-61954r399'></a><span class='ecrm-0500'>399</span><span class='ectt-0800'>    </span><span id='textcolor3299'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (err &lt; 0) {</span> 
-<a id='x1-61956r400'></a><span class='ecrm-0500'>400</span><span class='ectt-0800'>        pr_err(</span><span id='textcolor3300'><span class='ectt-0800'>"vinput: Unable to register vinput class</span></span><span id='textcolor3301'><span class='ectt-0800'>\n</span></span><span id='textcolor3302'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-61958r401'></a><span class='ecrm-0500'>401</span><span class='ectt-0800'>        </span><span id='textcolor3303'><span class='ectt-0800'>goto</span></span><span class='ectt-0800'> failed_class;</span> 
-<a id='x1-61960r402'></a><span class='ecrm-0500'>402</span><span class='ectt-0800'>    }</span> 
-<a id='x1-61962r403'></a><span class='ecrm-0500'>403</span> 
-<a id='x1-61964r404'></a><span class='ecrm-0500'>404</span><span class='ectt-0800'>    </span><span id='textcolor3304'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
-<a id='x1-61966r405'></a><span class='ecrm-0500'>405</span><span class='ectt-0800'>failed_class:</span> 
-<a id='x1-61968r406'></a><span class='ecrm-0500'>406</span><span class='ectt-0800'>    unregister_chrdev(vinput_dev, DRIVER_NAME);</span> 
-<a id='x1-61970r407'></a><span class='ecrm-0500'>407</span><span class='ectt-0800'>failed_alloc:</span> 
-<a id='x1-61972r408'></a><span class='ecrm-0500'>408</span><span class='ectt-0800'>    </span><span id='textcolor3305'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> err;</span> 
-<a id='x1-61974r409'></a><span class='ecrm-0500'>409</span><span class='ectt-0800'>}</span> 
-<a id='x1-61976r410'></a><span class='ecrm-0500'>410</span> 
-<a id='x1-61978r411'></a><span class='ecrm-0500'>411</span><span id='textcolor3306'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3307'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit vinput_end(</span><span id='textcolor3308'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
-<a id='x1-61980r412'></a><span class='ecrm-0500'>412</span><span class='ectt-0800'>{</span> 
-<a id='x1-61982r413'></a><span class='ecrm-0500'>413</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor3309'><span class='ectt-0800'>"vinput: Unloading virtual input driver</span></span><span id='textcolor3310'><span class='ectt-0800'>\n</span></span><span id='textcolor3311'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-61984r414'></a><span class='ecrm-0500'>414</span> 
-<a id='x1-61986r415'></a><span class='ecrm-0500'>415</span><span class='ectt-0800'>    unregister_chrdev(vinput_dev, DRIVER_NAME);</span> 
-<a id='x1-61988r416'></a><span class='ecrm-0500'>416</span><span class='ectt-0800'>    class_unregister(&amp;vinput_class);</span> 
-<a id='x1-61990r417'></a><span class='ecrm-0500'>417</span><span class='ectt-0800'>}</span> 
-<a id='x1-61992r418'></a><span class='ecrm-0500'>418</span> 
-<a id='x1-61994r419'></a><span class='ecrm-0500'>419</span><span class='ectt-0800'>module_init(vinput_init);</span> 
-<a id='x1-61996r420'></a><span class='ecrm-0500'>420</span><span class='ectt-0800'>module_exit(vinput_end);</span> 
-<a id='x1-61998r421'></a><span class='ecrm-0500'>421</span> 
-<a id='x1-62000r422'></a><span class='ecrm-0500'>422</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor3312'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-62002r423'></a><span class='ecrm-0500'>423</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor3313'><span class='ectt-0800'>"Emulate input events"</span></span><span class='ectt-0800'>);</span></pre>
+<a id='x1-61952r398'></a><span class='ecrm-0500'>398</span><span class='ectt-0800'>    spin_lock_init(&amp;vinput_lock);</span> 
+<a id='x1-61954r399'></a><span class='ecrm-0500'>399</span> 
+<a id='x1-61956r400'></a><span class='ecrm-0500'>400</span><span class='ectt-0800'>    err = class_register(&amp;vinput_class);</span> 
+<a id='x1-61958r401'></a><span class='ecrm-0500'>401</span><span class='ectt-0800'>    </span><span id='textcolor3299'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (err &lt; 0) {</span> 
+<a id='x1-61960r402'></a><span class='ecrm-0500'>402</span><span class='ectt-0800'>        pr_err(</span><span id='textcolor3300'><span class='ectt-0800'>"vinput: Unable to register vinput class</span></span><span id='textcolor3301'><span class='ectt-0800'>\n</span></span><span id='textcolor3302'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-61962r403'></a><span class='ecrm-0500'>403</span><span class='ectt-0800'>        </span><span id='textcolor3303'><span class='ectt-0800'>goto</span></span><span class='ectt-0800'> failed_class;</span> 
+<a id='x1-61964r404'></a><span class='ecrm-0500'>404</span><span class='ectt-0800'>    }</span> 
+<a id='x1-61966r405'></a><span class='ecrm-0500'>405</span> 
+<a id='x1-61968r406'></a><span class='ecrm-0500'>406</span><span class='ectt-0800'>    </span><span id='textcolor3304'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
+<a id='x1-61970r407'></a><span class='ecrm-0500'>407</span><span class='ectt-0800'>failed_class:</span> 
+<a id='x1-61972r408'></a><span class='ecrm-0500'>408</span><span class='ectt-0800'>    unregister_chrdev(vinput_dev, DRIVER_NAME);</span> 
+<a id='x1-61974r409'></a><span class='ecrm-0500'>409</span><span class='ectt-0800'>failed_alloc:</span> 
+<a id='x1-61976r410'></a><span class='ecrm-0500'>410</span><span class='ectt-0800'>    </span><span id='textcolor3305'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> err;</span> 
+<a id='x1-61978r411'></a><span class='ecrm-0500'>411</span><span class='ectt-0800'>}</span> 
+<a id='x1-61980r412'></a><span class='ecrm-0500'>412</span> 
+<a id='x1-61982r413'></a><span class='ecrm-0500'>413</span><span id='textcolor3306'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3307'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit vinput_end(</span><span id='textcolor3308'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-61984r414'></a><span class='ecrm-0500'>414</span><span class='ectt-0800'>{</span> 
+<a id='x1-61986r415'></a><span class='ecrm-0500'>415</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor3309'><span class='ectt-0800'>"vinput: Unloading virtual input driver</span></span><span id='textcolor3310'><span class='ectt-0800'>\n</span></span><span id='textcolor3311'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-61988r416'></a><span class='ecrm-0500'>416</span> 
+<a id='x1-61990r417'></a><span class='ecrm-0500'>417</span><span class='ectt-0800'>    unregister_chrdev(vinput_dev, DRIVER_NAME);</span> 
+<a id='x1-61992r418'></a><span class='ecrm-0500'>418</span><span class='ectt-0800'>    class_unregister(&amp;vinput_class);</span> 
+<a id='x1-61994r419'></a><span class='ecrm-0500'>419</span><span class='ectt-0800'>}</span> 
+<a id='x1-61996r420'></a><span class='ecrm-0500'>420</span> 
+<a id='x1-61998r421'></a><span class='ecrm-0500'>421</span><span class='ectt-0800'>module_init(vinput_init);</span> 
+<a id='x1-62000r422'></a><span class='ecrm-0500'>422</span><span class='ectt-0800'>module_exit(vinput_end);</span> 
+<a id='x1-62002r423'></a><span class='ecrm-0500'>423</span> 
+<a id='x1-62004r424'></a><span class='ecrm-0500'>424</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor3312'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-62006r425'></a><span class='ecrm-0500'>425</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor3313'><span class='ectt-0800'>"Emulate input events"</span></span><span class='ectt-0800'>);</span></pre>
 <!-- l. 2045 --><p class='indent'>   Here the virtual keyboard is one of example to use vinput. It supports all
 <code> <span class='ectt-1000'>KEY_MAX</span>
 </code> keycodes. The injection format is the <code>  <span class='ectt-1000'>KEY_CODE</span>
@@ -6261,7 +6263,7 @@ following demonstrates how simulation work.
 </code> = 34):
 </p><!-- l. 1 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb91'><a id='x1-62010r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>echo </span><span id='textcolor3314'><span class='ectt-1000'>"+34"</span></span><span class='ectt-1000'> | sudo tee /dev/vinput0</span></pre>
+   <pre class='fancyvrb' id='fancyvrb91'><a id='x1-62014r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>echo </span><span id='textcolor3314'><span class='ectt-1000'>"+34"</span></span><span class='ectt-1000'> | sudo tee /dev/vinput0</span></pre>
 <!-- l. 2058 --><p class='indent'>   Simulate a key release on "g" (<code>  <span class='ectt-1000'>KEY_G</span>
 </code> = 34):
 </p><!-- l. 1 --><p class='indent'>
@@ -6269,120 +6271,120 @@ following demonstrates how simulation work.
 
                                                                   
 </p>
-   <pre class='fancyvrb' id='fancyvrb92'><a id='x1-62014r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>echo </span><span id='textcolor3315'><span class='ectt-1000'>"-34"</span></span><span class='ectt-1000'> | sudo tee /dev/vinput0</span></pre>
+   <pre class='fancyvrb' id='fancyvrb92'><a id='x1-62018r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>echo </span><span id='textcolor3315'><span class='ectt-1000'>"-34"</span></span><span class='ectt-1000'> | sudo tee /dev/vinput0</span></pre>
 
 <!-- l. 1 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb93'><a id='x1-62016r1'></a><span class='ecrm-0500'>1</span><span id='textcolor3316'><span class='ectt-0800'>/*</span></span> 
-<a id='x1-62018r2'></a><span class='ecrm-0500'>2</span><span id='textcolor3317'><span class='ectt-0800'> * vkbd.c</span></span> 
-<a id='x1-62020r3'></a><span class='ecrm-0500'>3</span><span id='textcolor3318'><span class='ectt-0800'> */</span></span> 
-<a id='x1-62022r4'></a><span class='ecrm-0500'>4</span> 
-<a id='x1-62024r5'></a><span class='ecrm-0500'>5</span><span id='textcolor3319'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor3320'><span class='ectt-0800'>&lt;linux/init.h&gt;</span></span> 
-<a id='x1-62026r6'></a><span class='ecrm-0500'>6</span><span id='textcolor3321'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor3322'><span class='ectt-0800'>&lt;linux/input.h&gt;</span></span> 
-<a id='x1-62028r7'></a><span class='ecrm-0500'>7</span><span id='textcolor3323'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor3324'><span class='ectt-0800'>&lt;linux/module.h&gt;</span></span> 
-<a id='x1-62030r8'></a><span class='ecrm-0500'>8</span><span id='textcolor3325'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor3326'><span class='ectt-0800'>&lt;linux/spinlock.h&gt;</span></span> 
-<a id='x1-62032r9'></a><span class='ecrm-0500'>9</span> 
-<a id='x1-62034r10'></a><span class='ecrm-0500'>10</span><span id='textcolor3327'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor3328'><span class='ectt-0800'>"vinput.h"</span></span> 
-<a id='x1-62036r11'></a><span class='ecrm-0500'>11</span> 
-<a id='x1-62038r12'></a><span class='ecrm-0500'>12</span><span id='textcolor3329'><span class='ectt-0800'>#define VINPUT_KBD "vkbd"</span></span> 
-<a id='x1-62040r13'></a><span class='ecrm-0500'>13</span><span id='textcolor3330'><span class='ectt-0800'>#define VINPUT_RELEASE 0</span></span> 
-<a id='x1-62042r14'></a><span class='ecrm-0500'>14</span><span id='textcolor3331'><span class='ectt-0800'>#define VINPUT_PRESS 1</span></span> 
-<a id='x1-62044r15'></a><span class='ecrm-0500'>15</span> 
-<a id='x1-62046r16'></a><span class='ecrm-0500'>16</span><span id='textcolor3332'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3333'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor3334'><span class='ectt-0800'>short</span></span><span class='ectt-0800'> vkeymap[KEY_MAX];</span> 
-<a id='x1-62048r17'></a><span class='ecrm-0500'>17</span> 
-<a id='x1-62050r18'></a><span class='ecrm-0500'>18</span><span id='textcolor3335'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3336'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> vinput_vkbd_init(</span><span id='textcolor3337'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> vinput *vinput)</span> 
-<a id='x1-62052r19'></a><span class='ecrm-0500'>19</span><span class='ectt-0800'>{</span> 
-<a id='x1-62054r20'></a><span class='ecrm-0500'>20</span><span class='ectt-0800'>    </span><span id='textcolor3338'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> i;</span> 
-<a id='x1-62056r21'></a><span class='ecrm-0500'>21</span> 
-<a id='x1-62058r22'></a><span class='ecrm-0500'>22</span><span class='ectt-0800'>    </span><span id='textcolor3339'><span class='ectt-0800'>/* Set up the input bitfield */</span></span> 
-<a id='x1-62060r23'></a><span class='ecrm-0500'>23</span><span class='ectt-0800'>    vinput-&gt;input-&gt;evbit[0] = BIT_MASK(EV_KEY) | BIT_MASK(EV_REP);</span> 
-<a id='x1-62062r24'></a><span class='ecrm-0500'>24</span><span class='ectt-0800'>    vinput-&gt;input-&gt;keycodesize = </span><span id='textcolor3340'><span class='ectt-0800'>sizeof</span></span><span class='ectt-0800'>(</span><span id='textcolor3341'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor3342'><span class='ectt-0800'>short</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-62064r25'></a><span class='ecrm-0500'>25</span><span class='ectt-0800'>    vinput-&gt;input-&gt;keycodemax = KEY_MAX;</span> 
-<a id='x1-62066r26'></a><span class='ecrm-0500'>26</span><span class='ectt-0800'>    vinput-&gt;input-&gt;keycode = vkeymap;</span> 
-<a id='x1-62068r27'></a><span class='ecrm-0500'>27</span> 
-<a id='x1-62070r28'></a><span class='ecrm-0500'>28</span><span class='ectt-0800'>    </span><span id='textcolor3343'><span class='ectt-0800'>for</span></span><span class='ectt-0800'> (i = 0; i &lt; KEY_MAX; i++)</span> 
-<a id='x1-62072r29'></a><span class='ecrm-0500'>29</span><span class='ectt-0800'>        set_bit(vkeymap[i], vinput-&gt;input-&gt;keybit);</span> 
-<a id='x1-62074r30'></a><span class='ecrm-0500'>30</span> 
-<a id='x1-62076r31'></a><span class='ecrm-0500'>31</span><span class='ectt-0800'>    </span><span id='textcolor3344'><span class='ectt-0800'>/* vinput will help us allocate new input device structure via</span></span> 
-<a id='x1-62078r32'></a><span class='ecrm-0500'>32</span><span id='textcolor3345'><span class='ectt-0800'>     * input_allocate_device(). So, we can register it straightforwardly.</span></span> 
-<a id='x1-62080r33'></a><span class='ecrm-0500'>33</span><span id='textcolor3346'><span class='ectt-0800'>     */</span></span> 
-<a id='x1-62082r34'></a><span class='ecrm-0500'>34</span><span class='ectt-0800'>    </span><span id='textcolor3347'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> input_register_device(vinput-&gt;input);</span> 
-<a id='x1-62084r35'></a><span class='ecrm-0500'>35</span><span class='ectt-0800'>}</span> 
-<a id='x1-62086r36'></a><span class='ecrm-0500'>36</span> 
-<a id='x1-62088r37'></a><span class='ecrm-0500'>37</span><span id='textcolor3348'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3349'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> vinput_vkbd_read(</span><span id='textcolor3350'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> vinput *vinput, </span><span id='textcolor3351'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *buff, </span><span id='textcolor3352'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> len)</span> 
-<a id='x1-62090r38'></a><span class='ecrm-0500'>38</span><span class='ectt-0800'>{</span> 
-<a id='x1-62092r39'></a><span class='ecrm-0500'>39</span><span class='ectt-0800'>    spin_lock(&amp;vinput-&gt;lock);</span> 
-<a id='x1-62094r40'></a><span class='ecrm-0500'>40</span><span class='ectt-0800'>    len = snprintf(buff, len, </span><span id='textcolor3353'><span class='ectt-0800'>"%+ld</span></span><span id='textcolor3354'><span class='ectt-0800'>\n</span></span><span id='textcolor3355'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, vinput-&gt;last_entry);</span> 
-<a id='x1-62096r41'></a><span class='ecrm-0500'>41</span><span class='ectt-0800'>    spin_unlock(&amp;vinput-&gt;lock);</span> 
-<a id='x1-62098r42'></a><span class='ecrm-0500'>42</span> 
-<a id='x1-62100r43'></a><span class='ecrm-0500'>43</span><span class='ectt-0800'>    </span><span id='textcolor3356'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> len;</span> 
-<a id='x1-62102r44'></a><span class='ecrm-0500'>44</span><span class='ectt-0800'>}</span> 
-<a id='x1-62104r45'></a><span class='ecrm-0500'>45</span> 
-<a id='x1-62106r46'></a><span class='ecrm-0500'>46</span><span id='textcolor3357'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3358'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> vinput_vkbd_send(</span><span id='textcolor3359'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> vinput *vinput, </span><span id='textcolor3360'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *buff, </span><span id='textcolor3361'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> len)</span> 
-<a id='x1-62108r47'></a><span class='ecrm-0500'>47</span><span class='ectt-0800'>{</span> 
-<a id='x1-62110r48'></a><span class='ecrm-0500'>48</span><span class='ectt-0800'>    </span><span id='textcolor3362'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> ret;</span> 
-<a id='x1-62112r49'></a><span class='ecrm-0500'>49</span><span class='ectt-0800'>    </span><span id='textcolor3363'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> key = 0;</span> 
-<a id='x1-62114r50'></a><span class='ecrm-0500'>50</span><span class='ectt-0800'>    </span><span id='textcolor3364'><span class='ectt-0800'>short</span></span><span class='ectt-0800'> type = VINPUT_PRESS;</span> 
-<a id='x1-62116r51'></a><span class='ecrm-0500'>51</span> 
-<a id='x1-62118r52'></a><span class='ecrm-0500'>52</span><span class='ectt-0800'>    </span><span id='textcolor3365'><span class='ectt-0800'>/* Determine which event was received (press or release)</span></span> 
-<a id='x1-62120r53'></a><span class='ecrm-0500'>53</span><span id='textcolor3366'><span class='ectt-0800'>     * and store the state.</span></span> 
-<a id='x1-62122r54'></a><span class='ecrm-0500'>54</span><span id='textcolor3367'><span class='ectt-0800'>     */</span></span> 
-<a id='x1-62124r55'></a><span class='ecrm-0500'>55</span><span class='ectt-0800'>    </span><span id='textcolor3368'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (buff[0] == </span><span id='textcolor3369'><span class='tctt-0800'>'</span><span class='ectt-0800'>+</span><span class='tctt-0800'>'</span></span><span class='ectt-0800'>)</span> 
-<a id='x1-62126r56'></a><span class='ecrm-0500'>56</span><span class='ectt-0800'>        ret = kstrtol(buff + 1, 10, &amp;key);</span> 
-<a id='x1-62128r57'></a><span class='ecrm-0500'>57</span><span class='ectt-0800'>    </span><span id='textcolor3370'><span class='ectt-0800'>else</span></span> 
-<a id='x1-62130r58'></a><span class='ecrm-0500'>58</span><span class='ectt-0800'>        ret = kstrtol(buff, 10, &amp;key);</span> 
-<a id='x1-62132r59'></a><span class='ecrm-0500'>59</span><span class='ectt-0800'>    </span><span id='textcolor3371'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (ret)</span> 
-<a id='x1-62134r60'></a><span class='ecrm-0500'>60</span><span class='ectt-0800'>        dev_err(&amp;vinput-&gt;dev, </span><span id='textcolor3372'><span class='ectt-0800'>"error during kstrtol: -%d</span></span><span id='textcolor3373'><span class='ectt-0800'>\n</span></span><span id='textcolor3374'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, ret);</span> 
-<a id='x1-62136r61'></a><span class='ecrm-0500'>61</span><span class='ectt-0800'>    spin_lock(&amp;vinput-&gt;lock);</span> 
-<a id='x1-62138r62'></a><span class='ecrm-0500'>62</span><span class='ectt-0800'>    vinput-&gt;last_entry = key;</span> 
-<a id='x1-62140r63'></a><span class='ecrm-0500'>63</span><span class='ectt-0800'>    spin_unlock(&amp;vinput-&gt;lock);</span> 
-<a id='x1-62142r64'></a><span class='ecrm-0500'>64</span> 
-<a id='x1-62144r65'></a><span class='ecrm-0500'>65</span><span class='ectt-0800'>    </span><span id='textcolor3375'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (key &lt; 0) {</span> 
-<a id='x1-62146r66'></a><span class='ecrm-0500'>66</span><span class='ectt-0800'>        type = VINPUT_RELEASE;</span> 
-<a id='x1-62148r67'></a><span class='ecrm-0500'>67</span><span class='ectt-0800'>        key = -key;</span> 
-<a id='x1-62150r68'></a><span class='ecrm-0500'>68</span><span class='ectt-0800'>    }</span> 
-<a id='x1-62152r69'></a><span class='ecrm-0500'>69</span> 
-<a id='x1-62154r70'></a><span class='ecrm-0500'>70</span><span class='ectt-0800'>    dev_info(&amp;vinput-&gt;dev, </span><span id='textcolor3376'><span class='ectt-0800'>"Event %s code %ld</span></span><span id='textcolor3377'><span class='ectt-0800'>\n</span></span><span id='textcolor3378'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>,</span> 
-<a id='x1-62156r71'></a><span class='ecrm-0500'>71</span><span class='ectt-0800'>             (type == VINPUT_RELEASE) ? </span><span id='textcolor3379'><span class='ectt-0800'>"VINPUT_RELEASE"</span></span><span class='ectt-0800'> : </span><span id='textcolor3380'><span class='ectt-0800'>"VINPUT_PRESS"</span></span><span class='ectt-0800'>, key);</span> 
-<a id='x1-62158r72'></a><span class='ecrm-0500'>72</span> 
-<a id='x1-62160r73'></a><span class='ecrm-0500'>73</span><span class='ectt-0800'>    </span><span id='textcolor3381'><span class='ectt-0800'>/* Report the state received to input subsystem. */</span></span> 
-<a id='x1-62162r74'></a><span class='ecrm-0500'>74</span><span class='ectt-0800'>    input_report_key(vinput-&gt;input, key, type);</span> 
-<a id='x1-62164r75'></a><span class='ecrm-0500'>75</span><span class='ectt-0800'>    </span><span id='textcolor3382'><span class='ectt-0800'>/* Tell input subsystem that it finished the report. */</span></span> 
-<a id='x1-62166r76'></a><span class='ecrm-0500'>76</span><span class='ectt-0800'>    input_sync(vinput-&gt;input);</span> 
-<a id='x1-62168r77'></a><span class='ecrm-0500'>77</span> 
-<a id='x1-62170r78'></a><span class='ecrm-0500'>78</span><span class='ectt-0800'>    </span><span id='textcolor3383'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> len;</span> 
-<a id='x1-62172r79'></a><span class='ecrm-0500'>79</span><span class='ectt-0800'>}</span> 
-<a id='x1-62174r80'></a><span class='ecrm-0500'>80</span> 
-<a id='x1-62176r81'></a><span class='ecrm-0500'>81</span><span id='textcolor3384'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3385'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> vinput_ops vkbd_ops = {</span> 
-<a id='x1-62178r82'></a><span class='ecrm-0500'>82</span><span class='ectt-0800'>    .init = vinput_vkbd_init,</span> 
-<a id='x1-62180r83'></a><span class='ecrm-0500'>83</span><span class='ectt-0800'>    .send = vinput_vkbd_send,</span> 
-<a id='x1-62182r84'></a><span class='ecrm-0500'>84</span><span class='ectt-0800'>    .read = vinput_vkbd_read,</span> 
-<a id='x1-62184r85'></a><span class='ecrm-0500'>85</span><span class='ectt-0800'>};</span> 
-<a id='x1-62186r86'></a><span class='ecrm-0500'>86</span> 
-<a id='x1-62188r87'></a><span class='ecrm-0500'>87</span><span id='textcolor3386'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3387'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> vinput_device vkbd_dev = {</span> 
-<a id='x1-62190r88'></a><span class='ecrm-0500'>88</span><span class='ectt-0800'>    .name = VINPUT_KBD,</span> 
-<a id='x1-62192r89'></a><span class='ecrm-0500'>89</span><span class='ectt-0800'>    .ops = &amp;vkbd_ops,</span> 
-<a id='x1-62194r90'></a><span class='ecrm-0500'>90</span><span class='ectt-0800'>};</span> 
-<a id='x1-62196r91'></a><span class='ecrm-0500'>91</span> 
-<a id='x1-62198r92'></a><span class='ecrm-0500'>92</span><span id='textcolor3388'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3389'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> __init vkbd_init(</span><span id='textcolor3390'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
-<a id='x1-62200r93'></a><span class='ecrm-0500'>93</span><span class='ectt-0800'>{</span> 
-<a id='x1-62202r94'></a><span class='ecrm-0500'>94</span><span class='ectt-0800'>    </span><span id='textcolor3391'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> i;</span> 
-<a id='x1-62204r95'></a><span class='ecrm-0500'>95</span> 
-<a id='x1-62206r96'></a><span class='ecrm-0500'>96</span><span class='ectt-0800'>    </span><span id='textcolor3392'><span class='ectt-0800'>for</span></span><span class='ectt-0800'> (i = 0; i &lt; KEY_MAX; i++)</span> 
-<a id='x1-62208r97'></a><span class='ecrm-0500'>97</span><span class='ectt-0800'>        vkeymap[i] = i;</span> 
-<a id='x1-62210r98'></a><span class='ecrm-0500'>98</span><span class='ectt-0800'>    </span><span id='textcolor3393'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> vinput_register(&amp;vkbd_dev);</span> 
-<a id='x1-62212r99'></a><span class='ecrm-0500'>99</span><span class='ectt-0800'>}</span> 
-<a id='x1-62214r100'></a><span class='ecrm-0500'>100</span> 
-<a id='x1-62216r101'></a><span class='ecrm-0500'>101</span><span id='textcolor3394'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3395'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit vkbd_end(</span><span id='textcolor3396'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
-<a id='x1-62218r102'></a><span class='ecrm-0500'>102</span><span class='ectt-0800'>{</span> 
-<a id='x1-62220r103'></a><span class='ecrm-0500'>103</span><span class='ectt-0800'>    vinput_unregister(&amp;vkbd_dev);</span> 
-<a id='x1-62222r104'></a><span class='ecrm-0500'>104</span><span class='ectt-0800'>}</span> 
-<a id='x1-62224r105'></a><span class='ecrm-0500'>105</span> 
-<a id='x1-62226r106'></a><span class='ecrm-0500'>106</span><span class='ectt-0800'>module_init(vkbd_init);</span> 
-<a id='x1-62228r107'></a><span class='ecrm-0500'>107</span><span class='ectt-0800'>module_exit(vkbd_end);</span> 
-<a id='x1-62230r108'></a><span class='ecrm-0500'>108</span> 
-<a id='x1-62232r109'></a><span class='ecrm-0500'>109</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor3397'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-62234r110'></a><span class='ecrm-0500'>110</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor3398'><span class='ectt-0800'>"Emulate keyboard input events through /dev/vinput"</span></span><span class='ectt-0800'>);</span></pre>
+   <pre class='fancyvrb' id='fancyvrb93'><a id='x1-62020r1'></a><span class='ecrm-0500'>1</span><span id='textcolor3316'><span class='ectt-0800'>/*</span></span> 
+<a id='x1-62022r2'></a><span class='ecrm-0500'>2</span><span id='textcolor3317'><span class='ectt-0800'> * vkbd.c</span></span> 
+<a id='x1-62024r3'></a><span class='ecrm-0500'>3</span><span id='textcolor3318'><span class='ectt-0800'> */</span></span> 
+<a id='x1-62026r4'></a><span class='ecrm-0500'>4</span> 
+<a id='x1-62028r5'></a><span class='ecrm-0500'>5</span><span id='textcolor3319'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor3320'><span class='ectt-0800'>&lt;linux/init.h&gt;</span></span> 
+<a id='x1-62030r6'></a><span class='ecrm-0500'>6</span><span id='textcolor3321'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor3322'><span class='ectt-0800'>&lt;linux/input.h&gt;</span></span> 
+<a id='x1-62032r7'></a><span class='ecrm-0500'>7</span><span id='textcolor3323'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor3324'><span class='ectt-0800'>&lt;linux/module.h&gt;</span></span> 
+<a id='x1-62034r8'></a><span class='ecrm-0500'>8</span><span id='textcolor3325'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor3326'><span class='ectt-0800'>&lt;linux/spinlock.h&gt;</span></span> 
+<a id='x1-62036r9'></a><span class='ecrm-0500'>9</span> 
+<a id='x1-62038r10'></a><span class='ecrm-0500'>10</span><span id='textcolor3327'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor3328'><span class='ectt-0800'>"vinput.h"</span></span> 
+<a id='x1-62040r11'></a><span class='ecrm-0500'>11</span> 
+<a id='x1-62042r12'></a><span class='ecrm-0500'>12</span><span id='textcolor3329'><span class='ectt-0800'>#define VINPUT_KBD "vkbd"</span></span> 
+<a id='x1-62044r13'></a><span class='ecrm-0500'>13</span><span id='textcolor3330'><span class='ectt-0800'>#define VINPUT_RELEASE 0</span></span> 
+<a id='x1-62046r14'></a><span class='ecrm-0500'>14</span><span id='textcolor3331'><span class='ectt-0800'>#define VINPUT_PRESS 1</span></span> 
+<a id='x1-62048r15'></a><span class='ecrm-0500'>15</span> 
+<a id='x1-62050r16'></a><span class='ecrm-0500'>16</span><span id='textcolor3332'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3333'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor3334'><span class='ectt-0800'>short</span></span><span class='ectt-0800'> vkeymap[KEY_MAX];</span> 
+<a id='x1-62052r17'></a><span class='ecrm-0500'>17</span> 
+<a id='x1-62054r18'></a><span class='ecrm-0500'>18</span><span id='textcolor3335'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3336'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> vinput_vkbd_init(</span><span id='textcolor3337'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> vinput *vinput)</span> 
+<a id='x1-62056r19'></a><span class='ecrm-0500'>19</span><span class='ectt-0800'>{</span> 
+<a id='x1-62058r20'></a><span class='ecrm-0500'>20</span><span class='ectt-0800'>    </span><span id='textcolor3338'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> i;</span> 
+<a id='x1-62060r21'></a><span class='ecrm-0500'>21</span> 
+<a id='x1-62062r22'></a><span class='ecrm-0500'>22</span><span class='ectt-0800'>    </span><span id='textcolor3339'><span class='ectt-0800'>/* Set up the input bitfield */</span></span> 
+<a id='x1-62064r23'></a><span class='ecrm-0500'>23</span><span class='ectt-0800'>    vinput-&gt;input-&gt;evbit[0] = BIT_MASK(EV_KEY) | BIT_MASK(EV_REP);</span> 
+<a id='x1-62066r24'></a><span class='ecrm-0500'>24</span><span class='ectt-0800'>    vinput-&gt;input-&gt;keycodesize = </span><span id='textcolor3340'><span class='ectt-0800'>sizeof</span></span><span class='ectt-0800'>(</span><span id='textcolor3341'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor3342'><span class='ectt-0800'>short</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-62068r25'></a><span class='ecrm-0500'>25</span><span class='ectt-0800'>    vinput-&gt;input-&gt;keycodemax = KEY_MAX;</span> 
+<a id='x1-62070r26'></a><span class='ecrm-0500'>26</span><span class='ectt-0800'>    vinput-&gt;input-&gt;keycode = vkeymap;</span> 
+<a id='x1-62072r27'></a><span class='ecrm-0500'>27</span> 
+<a id='x1-62074r28'></a><span class='ecrm-0500'>28</span><span class='ectt-0800'>    </span><span id='textcolor3343'><span class='ectt-0800'>for</span></span><span class='ectt-0800'> (i = 0; i &lt; KEY_MAX; i++)</span> 
+<a id='x1-62076r29'></a><span class='ecrm-0500'>29</span><span class='ectt-0800'>        set_bit(vkeymap[i], vinput-&gt;input-&gt;keybit);</span> 
+<a id='x1-62078r30'></a><span class='ecrm-0500'>30</span> 
+<a id='x1-62080r31'></a><span class='ecrm-0500'>31</span><span class='ectt-0800'>    </span><span id='textcolor3344'><span class='ectt-0800'>/* vinput will help us allocate new input device structure via</span></span> 
+<a id='x1-62082r32'></a><span class='ecrm-0500'>32</span><span id='textcolor3345'><span class='ectt-0800'>     * input_allocate_device(). So, we can register it straightforwardly.</span></span> 
+<a id='x1-62084r33'></a><span class='ecrm-0500'>33</span><span id='textcolor3346'><span class='ectt-0800'>     */</span></span> 
+<a id='x1-62086r34'></a><span class='ecrm-0500'>34</span><span class='ectt-0800'>    </span><span id='textcolor3347'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> input_register_device(vinput-&gt;input);</span> 
+<a id='x1-62088r35'></a><span class='ecrm-0500'>35</span><span class='ectt-0800'>}</span> 
+<a id='x1-62090r36'></a><span class='ecrm-0500'>36</span> 
+<a id='x1-62092r37'></a><span class='ecrm-0500'>37</span><span id='textcolor3348'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3349'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> vinput_vkbd_read(</span><span id='textcolor3350'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> vinput *vinput, </span><span id='textcolor3351'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *buff, </span><span id='textcolor3352'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> len)</span> 
+<a id='x1-62094r38'></a><span class='ecrm-0500'>38</span><span class='ectt-0800'>{</span> 
+<a id='x1-62096r39'></a><span class='ecrm-0500'>39</span><span class='ectt-0800'>    spin_lock(&amp;vinput-&gt;lock);</span> 
+<a id='x1-62098r40'></a><span class='ecrm-0500'>40</span><span class='ectt-0800'>    len = snprintf(buff, len, </span><span id='textcolor3353'><span class='ectt-0800'>"%+ld</span></span><span id='textcolor3354'><span class='ectt-0800'>\n</span></span><span id='textcolor3355'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, vinput-&gt;last_entry);</span> 
+<a id='x1-62100r41'></a><span class='ecrm-0500'>41</span><span class='ectt-0800'>    spin_unlock(&amp;vinput-&gt;lock);</span> 
+<a id='x1-62102r42'></a><span class='ecrm-0500'>42</span> 
+<a id='x1-62104r43'></a><span class='ecrm-0500'>43</span><span class='ectt-0800'>    </span><span id='textcolor3356'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> len;</span> 
+<a id='x1-62106r44'></a><span class='ecrm-0500'>44</span><span class='ectt-0800'>}</span> 
+<a id='x1-62108r45'></a><span class='ecrm-0500'>45</span> 
+<a id='x1-62110r46'></a><span class='ecrm-0500'>46</span><span id='textcolor3357'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3358'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> vinput_vkbd_send(</span><span id='textcolor3359'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> vinput *vinput, </span><span id='textcolor3360'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *buff, </span><span id='textcolor3361'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> len)</span> 
+<a id='x1-62112r47'></a><span class='ecrm-0500'>47</span><span class='ectt-0800'>{</span> 
+<a id='x1-62114r48'></a><span class='ecrm-0500'>48</span><span class='ectt-0800'>    </span><span id='textcolor3362'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> ret;</span> 
+<a id='x1-62116r49'></a><span class='ecrm-0500'>49</span><span class='ectt-0800'>    </span><span id='textcolor3363'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> key = 0;</span> 
+<a id='x1-62118r50'></a><span class='ecrm-0500'>50</span><span class='ectt-0800'>    </span><span id='textcolor3364'><span class='ectt-0800'>short</span></span><span class='ectt-0800'> type = VINPUT_PRESS;</span> 
+<a id='x1-62120r51'></a><span class='ecrm-0500'>51</span> 
+<a id='x1-62122r52'></a><span class='ecrm-0500'>52</span><span class='ectt-0800'>    </span><span id='textcolor3365'><span class='ectt-0800'>/* Determine which event was received (press or release)</span></span> 
+<a id='x1-62124r53'></a><span class='ecrm-0500'>53</span><span id='textcolor3366'><span class='ectt-0800'>     * and store the state.</span></span> 
+<a id='x1-62126r54'></a><span class='ecrm-0500'>54</span><span id='textcolor3367'><span class='ectt-0800'>     */</span></span> 
+<a id='x1-62128r55'></a><span class='ecrm-0500'>55</span><span class='ectt-0800'>    </span><span id='textcolor3368'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (buff[0] == </span><span id='textcolor3369'><span class='tctt-0800'>'</span><span class='ectt-0800'>+</span><span class='tctt-0800'>'</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-62130r56'></a><span class='ecrm-0500'>56</span><span class='ectt-0800'>        ret = kstrtol(buff + 1, 10, &amp;key);</span> 
+<a id='x1-62132r57'></a><span class='ecrm-0500'>57</span><span class='ectt-0800'>    </span><span id='textcolor3370'><span class='ectt-0800'>else</span></span> 
+<a id='x1-62134r58'></a><span class='ecrm-0500'>58</span><span class='ectt-0800'>        ret = kstrtol(buff, 10, &amp;key);</span> 
+<a id='x1-62136r59'></a><span class='ecrm-0500'>59</span><span class='ectt-0800'>    </span><span id='textcolor3371'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (ret)</span> 
+<a id='x1-62138r60'></a><span class='ecrm-0500'>60</span><span class='ectt-0800'>        dev_err(&amp;vinput-&gt;dev, </span><span id='textcolor3372'><span class='ectt-0800'>"error during kstrtol: -%d</span></span><span id='textcolor3373'><span class='ectt-0800'>\n</span></span><span id='textcolor3374'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, ret);</span> 
+<a id='x1-62140r61'></a><span class='ecrm-0500'>61</span><span class='ectt-0800'>    spin_lock(&amp;vinput-&gt;lock);</span> 
+<a id='x1-62142r62'></a><span class='ecrm-0500'>62</span><span class='ectt-0800'>    vinput-&gt;last_entry = key;</span> 
+<a id='x1-62144r63'></a><span class='ecrm-0500'>63</span><span class='ectt-0800'>    spin_unlock(&amp;vinput-&gt;lock);</span> 
+<a id='x1-62146r64'></a><span class='ecrm-0500'>64</span> 
+<a id='x1-62148r65'></a><span class='ecrm-0500'>65</span><span class='ectt-0800'>    </span><span id='textcolor3375'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (key &lt; 0) {</span> 
+<a id='x1-62150r66'></a><span class='ecrm-0500'>66</span><span class='ectt-0800'>        type = VINPUT_RELEASE;</span> 
+<a id='x1-62152r67'></a><span class='ecrm-0500'>67</span><span class='ectt-0800'>        key = -key;</span> 
+<a id='x1-62154r68'></a><span class='ecrm-0500'>68</span><span class='ectt-0800'>    }</span> 
+<a id='x1-62156r69'></a><span class='ecrm-0500'>69</span> 
+<a id='x1-62158r70'></a><span class='ecrm-0500'>70</span><span class='ectt-0800'>    dev_info(&amp;vinput-&gt;dev, </span><span id='textcolor3376'><span class='ectt-0800'>"Event %s code %ld</span></span><span id='textcolor3377'><span class='ectt-0800'>\n</span></span><span id='textcolor3378'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>,</span> 
+<a id='x1-62160r71'></a><span class='ecrm-0500'>71</span><span class='ectt-0800'>             (type == VINPUT_RELEASE) ? </span><span id='textcolor3379'><span class='ectt-0800'>"VINPUT_RELEASE"</span></span><span class='ectt-0800'> : </span><span id='textcolor3380'><span class='ectt-0800'>"VINPUT_PRESS"</span></span><span class='ectt-0800'>, key);</span> 
+<a id='x1-62162r72'></a><span class='ecrm-0500'>72</span> 
+<a id='x1-62164r73'></a><span class='ecrm-0500'>73</span><span class='ectt-0800'>    </span><span id='textcolor3381'><span class='ectt-0800'>/* Report the state received to input subsystem. */</span></span> 
+<a id='x1-62166r74'></a><span class='ecrm-0500'>74</span><span class='ectt-0800'>    input_report_key(vinput-&gt;input, key, type);</span> 
+<a id='x1-62168r75'></a><span class='ecrm-0500'>75</span><span class='ectt-0800'>    </span><span id='textcolor3382'><span class='ectt-0800'>/* Tell input subsystem that it finished the report. */</span></span> 
+<a id='x1-62170r76'></a><span class='ecrm-0500'>76</span><span class='ectt-0800'>    input_sync(vinput-&gt;input);</span> 
+<a id='x1-62172r77'></a><span class='ecrm-0500'>77</span> 
+<a id='x1-62174r78'></a><span class='ecrm-0500'>78</span><span class='ectt-0800'>    </span><span id='textcolor3383'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> len;</span> 
+<a id='x1-62176r79'></a><span class='ecrm-0500'>79</span><span class='ectt-0800'>}</span> 
+<a id='x1-62178r80'></a><span class='ecrm-0500'>80</span> 
+<a id='x1-62180r81'></a><span class='ecrm-0500'>81</span><span id='textcolor3384'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3385'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> vinput_ops vkbd_ops = {</span> 
+<a id='x1-62182r82'></a><span class='ecrm-0500'>82</span><span class='ectt-0800'>    .init = vinput_vkbd_init,</span> 
+<a id='x1-62184r83'></a><span class='ecrm-0500'>83</span><span class='ectt-0800'>    .send = vinput_vkbd_send,</span> 
+<a id='x1-62186r84'></a><span class='ecrm-0500'>84</span><span class='ectt-0800'>    .read = vinput_vkbd_read,</span> 
+<a id='x1-62188r85'></a><span class='ecrm-0500'>85</span><span class='ectt-0800'>};</span> 
+<a id='x1-62190r86'></a><span class='ecrm-0500'>86</span> 
+<a id='x1-62192r87'></a><span class='ecrm-0500'>87</span><span id='textcolor3386'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3387'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> vinput_device vkbd_dev = {</span> 
+<a id='x1-62194r88'></a><span class='ecrm-0500'>88</span><span class='ectt-0800'>    .name = VINPUT_KBD,</span> 
+<a id='x1-62196r89'></a><span class='ecrm-0500'>89</span><span class='ectt-0800'>    .ops = &amp;vkbd_ops,</span> 
+<a id='x1-62198r90'></a><span class='ecrm-0500'>90</span><span class='ectt-0800'>};</span> 
+<a id='x1-62200r91'></a><span class='ecrm-0500'>91</span> 
+<a id='x1-62202r92'></a><span class='ecrm-0500'>92</span><span id='textcolor3388'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3389'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> __init vkbd_init(</span><span id='textcolor3390'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-62204r93'></a><span class='ecrm-0500'>93</span><span class='ectt-0800'>{</span> 
+<a id='x1-62206r94'></a><span class='ecrm-0500'>94</span><span class='ectt-0800'>    </span><span id='textcolor3391'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> i;</span> 
+<a id='x1-62208r95'></a><span class='ecrm-0500'>95</span> 
+<a id='x1-62210r96'></a><span class='ecrm-0500'>96</span><span class='ectt-0800'>    </span><span id='textcolor3392'><span class='ectt-0800'>for</span></span><span class='ectt-0800'> (i = 0; i &lt; KEY_MAX; i++)</span> 
+<a id='x1-62212r97'></a><span class='ecrm-0500'>97</span><span class='ectt-0800'>        vkeymap[i] = i;</span> 
+<a id='x1-62214r98'></a><span class='ecrm-0500'>98</span><span class='ectt-0800'>    </span><span id='textcolor3393'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> vinput_register(&amp;vkbd_dev);</span> 
+<a id='x1-62216r99'></a><span class='ecrm-0500'>99</span><span class='ectt-0800'>}</span> 
+<a id='x1-62218r100'></a><span class='ecrm-0500'>100</span> 
+<a id='x1-62220r101'></a><span class='ecrm-0500'>101</span><span id='textcolor3394'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3395'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit vkbd_end(</span><span id='textcolor3396'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-62222r102'></a><span class='ecrm-0500'>102</span><span class='ectt-0800'>{</span> 
+<a id='x1-62224r103'></a><span class='ecrm-0500'>103</span><span class='ectt-0800'>    vinput_unregister(&amp;vkbd_dev);</span> 
+<a id='x1-62226r104'></a><span class='ecrm-0500'>104</span><span class='ectt-0800'>}</span> 
+<a id='x1-62228r105'></a><span class='ecrm-0500'>105</span> 
+<a id='x1-62230r106'></a><span class='ecrm-0500'>106</span><span class='ectt-0800'>module_init(vkbd_init);</span> 
+<a id='x1-62232r107'></a><span class='ecrm-0500'>107</span><span class='ectt-0800'>module_exit(vkbd_end);</span> 
+<a id='x1-62234r108'></a><span class='ecrm-0500'>108</span> 
+<a id='x1-62236r109'></a><span class='ecrm-0500'>109</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor3397'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-62238r110'></a><span class='ecrm-0500'>110</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor3398'><span class='ectt-0800'>"Emulate keyboard input events through /dev/vinput"</span></span><span class='ectt-0800'>);</span></pre>
 <!-- l. 2068 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='standardizing-the-interfaces-the-device-model'><span class='titlemark'>17   </span> <a id='x1-6300017'></a>Standardizing the interfaces: The Device Model</h3>
