@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>October 26, 2024</span></div>
+<div class='date'><span class='ecrm-1200'>November 5, 2024</span></div>
                                                                   
 
                                                                   
@@ -2552,47 +2552,48 @@ accessible via sysfs is given below.
 <a id='x1-38147r42'></a><span class='ecrm-0500'>42</span> 
 <a id='x1-38149r43'></a><span class='ecrm-0500'>43</span><span class='ectt-0800'>    error = sysfs_create_file(mymodule, &amp;myvariable_attribute.attr);</span> 
 <a id='x1-38151r44'></a><span class='ecrm-0500'>44</span><span class='ectt-0800'>    </span><span id='textcolor1027'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (error) {</span> 
-<a id='x1-38153r45'></a><span class='ecrm-0500'>45</span><span class='ectt-0800'>        pr_info(</span><span id='textcolor1028'><span class='ectt-0800'>"failed to create the myvariable file "</span></span> 
-<a id='x1-38155r46'></a><span class='ecrm-0500'>46</span><span class='ectt-0800'>                </span><span id='textcolor1029'><span class='ectt-0800'>"in /sys/kernel/mymodule</span></span><span id='textcolor1030'><span class='ectt-0800'>\n</span></span><span id='textcolor1031'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-38157r47'></a><span class='ecrm-0500'>47</span><span class='ectt-0800'>    }</span> 
-<a id='x1-38159r48'></a><span class='ecrm-0500'>48</span> 
-<a id='x1-38161r49'></a><span class='ecrm-0500'>49</span><span class='ectt-0800'>    </span><span id='textcolor1032'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> error;</span> 
-<a id='x1-38163r50'></a><span class='ecrm-0500'>50</span><span class='ectt-0800'>}</span> 
-<a id='x1-38165r51'></a><span class='ecrm-0500'>51</span> 
-<a id='x1-38167r52'></a><span class='ecrm-0500'>52</span><span id='textcolor1033'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1034'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit mymodule_exit(</span><span id='textcolor1035'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
-<a id='x1-38169r53'></a><span class='ecrm-0500'>53</span><span class='ectt-0800'>{</span> 
-<a id='x1-38171r54'></a><span class='ecrm-0500'>54</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor1036'><span class='ectt-0800'>"mymodule: Exit success</span></span><span id='textcolor1037'><span class='ectt-0800'>\n</span></span><span id='textcolor1038'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-38173r55'></a><span class='ecrm-0500'>55</span><span class='ectt-0800'>    kobject_put(mymodule);</span> 
-<a id='x1-38175r56'></a><span class='ecrm-0500'>56</span><span class='ectt-0800'>}</span> 
-<a id='x1-38177r57'></a><span class='ecrm-0500'>57</span> 
-<a id='x1-38179r58'></a><span class='ecrm-0500'>58</span><span class='ectt-0800'>module_init(mymodule_init);</span> 
-<a id='x1-38181r59'></a><span class='ecrm-0500'>59</span><span class='ectt-0800'>module_exit(mymodule_exit);</span> 
-<a id='x1-38183r60'></a><span class='ecrm-0500'>60</span> 
-<a id='x1-38185r61'></a><span class='ecrm-0500'>61</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor1039'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
+<a id='x1-38153r45'></a><span class='ecrm-0500'>45</span><span class='ectt-0800'>        kobject_put(mymodule);</span> 
+<a id='x1-38155r46'></a><span class='ecrm-0500'>46</span><span class='ectt-0800'>        pr_info(</span><span id='textcolor1028'><span class='ectt-0800'>"failed to create the myvariable file "</span></span> 
+<a id='x1-38157r47'></a><span class='ecrm-0500'>47</span><span class='ectt-0800'>                </span><span id='textcolor1029'><span class='ectt-0800'>"in /sys/kernel/mymodule</span></span><span id='textcolor1030'><span class='ectt-0800'>\n</span></span><span id='textcolor1031'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-38159r48'></a><span class='ecrm-0500'>48</span><span class='ectt-0800'>    }</span> 
+<a id='x1-38161r49'></a><span class='ecrm-0500'>49</span> 
+<a id='x1-38163r50'></a><span class='ecrm-0500'>50</span><span class='ectt-0800'>    </span><span id='textcolor1032'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> error;</span> 
+<a id='x1-38165r51'></a><span class='ecrm-0500'>51</span><span class='ectt-0800'>}</span> 
+<a id='x1-38167r52'></a><span class='ecrm-0500'>52</span> 
+<a id='x1-38169r53'></a><span class='ecrm-0500'>53</span><span id='textcolor1033'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1034'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> __exit mymodule_exit(</span><span id='textcolor1035'><span class='ectt-0800'>void</span></span><span class='ectt-0800'>)</span> 
+<a id='x1-38171r54'></a><span class='ecrm-0500'>54</span><span class='ectt-0800'>{</span> 
+<a id='x1-38173r55'></a><span class='ecrm-0500'>55</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor1036'><span class='ectt-0800'>"mymodule: Exit success</span></span><span id='textcolor1037'><span class='ectt-0800'>\n</span></span><span id='textcolor1038'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
+<a id='x1-38175r56'></a><span class='ecrm-0500'>56</span><span class='ectt-0800'>    kobject_put(mymodule);</span> 
+<a id='x1-38177r57'></a><span class='ecrm-0500'>57</span><span class='ectt-0800'>}</span> 
+<a id='x1-38179r58'></a><span class='ecrm-0500'>58</span> 
+<a id='x1-38181r59'></a><span class='ecrm-0500'>59</span><span class='ectt-0800'>module_init(mymodule_init);</span> 
+<a id='x1-38183r60'></a><span class='ecrm-0500'>60</span><span class='ectt-0800'>module_exit(mymodule_exit);</span> 
+<a id='x1-38185r61'></a><span class='ecrm-0500'>61</span> 
+<a id='x1-38187r62'></a><span class='ecrm-0500'>62</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor1039'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
 <!-- l. 1333 --><p class='indent'>   Make and install the module:
 </p><!-- l. 1 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb55'><a id='x1-38189r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>make</span> 
-<a id='x1-38191r2'></a><span class='ecrm-0500'>2</span><span class='ectt-1000'>sudo insmod hello-sysfs.ko</span></pre>
+   <pre class='fancyvrb' id='fancyvrb55'><a id='x1-38191r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>make</span> 
+<a id='x1-38193r2'></a><span class='ecrm-0500'>2</span><span class='ectt-1000'>sudo insmod hello-sysfs.ko</span></pre>
 <!-- l. 1340 --><p class='indent'>   Check that it exists:
 </p><!-- l. 1 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb56'><a id='x1-38194r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>sudo lsmod | grep hello_sysfs</span></pre>
+   <pre class='fancyvrb' id='fancyvrb56'><a id='x1-38196r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>sudo lsmod | grep hello_sysfs</span></pre>
 <!-- l. 1346 --><p class='indent'>   What is the current value of <code>  <span class='ectt-1000'>myvariable</span>
 </code> ?
 </p><!-- l. 1 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb57'><a id='x1-38198r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>sudo cat /sys/kernel/mymodule/myvariable</span></pre>
+   <pre class='fancyvrb' id='fancyvrb57'><a id='x1-38200r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>sudo cat /sys/kernel/mymodule/myvariable</span></pre>
 <!-- l. 1352 --><p class='indent'>   Set the value of <code>  <span class='ectt-1000'>myvariable</span>
 </code> and check that it changed.
 </p><!-- l. 1 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb58'><a id='x1-38203r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>echo </span><span id='textcolor1040'><span class='ectt-1000'>"32"</span></span><span class='ectt-1000'> | sudo tee /sys/kernel/mymodule/myvariable</span> 
-<a id='x1-38205r2'></a><span class='ecrm-0500'>2</span><span class='ectt-1000'>sudo cat /sys/kernel/mymodule/myvariable</span></pre>
+   <pre class='fancyvrb' id='fancyvrb58'><a id='x1-38205r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>echo </span><span id='textcolor1040'><span class='ectt-1000'>"32"</span></span><span class='ectt-1000'> | sudo tee /sys/kernel/mymodule/myvariable</span> 
+<a id='x1-38207r2'></a><span class='ecrm-0500'>2</span><span class='ectt-1000'>sudo cat /sys/kernel/mymodule/myvariable</span></pre>
 <!-- l. 1359 --><p class='indent'>   Finally, remove the test module:
 </p><!-- l. 1 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb59'><a id='x1-38208r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>sudo rmmod hello_sysfs</span></pre>
+   <pre class='fancyvrb' id='fancyvrb59'><a id='x1-38210r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>sudo rmmod hello_sysfs</span></pre>
                                                                   
 
                                                                   
