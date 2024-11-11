@@ -1686,8 +1686,8 @@ concurrency details in the <a href='#avoiding-collisions-and-deadlocks'>12<!-- t
 <a id='x1-31074r34'></a><span class='ecrm-0500'>34</span><span id='textcolor488'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor489'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> major; </span><span id='textcolor490'><span class='ectt-0800'>/* major number assigned to our device driver */</span></span> 
 <a id='x1-31076r35'></a><span class='ecrm-0500'>35</span> 
 <a id='x1-31078r36'></a><span class='ecrm-0500'>36</span><span id='textcolor491'><span class='ectt-0800'>enum</span></span><span class='ectt-0800'> {</span> 
-<a id='x1-31080r37'></a><span class='ecrm-0500'>37</span><span class='ectt-0800'>    CDEV_NOT_USED = 0,</span> 
-<a id='x1-31082r38'></a><span class='ecrm-0500'>38</span><span class='ectt-0800'>    CDEV_EXCLUSIVE_OPEN = 1,</span> 
+<a id='x1-31080r37'></a><span class='ecrm-0500'>37</span><span class='ectt-0800'>    CDEV_NOT_USED,</span> 
+<a id='x1-31082r38'></a><span class='ecrm-0500'>38</span><span class='ectt-0800'>    CDEV_EXCLUSIVE_OPEN,</span> 
 <a id='x1-31084r39'></a><span class='ecrm-0500'>39</span><span class='ectt-0800'>};</span> 
 <a id='x1-31086r40'></a><span class='ecrm-0500'>40</span> 
 <a id='x1-31088r41'></a><span class='ecrm-0500'>41</span><span id='textcolor492'><span class='ectt-0800'>/* Is device open? Used to prevent multiple access to device */</span></span> 
@@ -2886,8 +2886,8 @@ which we mentioned at <a href='#chardevc'>6.5<!-- tex4ht:ref: sec:chardev_c  -->
 <a id='x1-39439r22'></a><span class='ecrm-0500'>22</span><span id='textcolor1223'><span class='ectt-0800'>#define BUF_LEN 80</span></span> 
 <a id='x1-39441r23'></a><span class='ecrm-0500'>23</span> 
 <a id='x1-39443r24'></a><span class='ecrm-0500'>24</span><span id='textcolor1224'><span class='ectt-0800'>enum</span></span><span class='ectt-0800'> {</span> 
-<a id='x1-39445r25'></a><span class='ecrm-0500'>25</span><span class='ectt-0800'>    CDEV_NOT_USED = 0,</span> 
-<a id='x1-39447r26'></a><span class='ecrm-0500'>26</span><span class='ectt-0800'>    CDEV_EXCLUSIVE_OPEN = 1,</span> 
+<a id='x1-39445r25'></a><span class='ecrm-0500'>25</span><span class='ectt-0800'>    CDEV_NOT_USED,</span> 
+<a id='x1-39447r26'></a><span class='ecrm-0500'>26</span><span class='ectt-0800'>    CDEV_EXCLUSIVE_OPEN,</span> 
 <a id='x1-39449r27'></a><span class='ecrm-0500'>27</span><span class='ectt-0800'>};</span> 
 <a id='x1-39451r28'></a><span class='ecrm-0500'>28</span> 
 <a id='x1-39453r29'></a><span class='ecrm-0500'>29</span><span id='textcolor1225'><span class='ectt-0800'>/* Is the device open right now? Used to prevent concurrent access into</span></span> 
@@ -6609,8 +6609,8 @@ static key works.
 <a id='x1-66087r29'></a><span class='ecrm-0500'>29</span><span id='textcolor3542'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3543'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> major;</span> 
 <a id='x1-66089r30'></a><span class='ecrm-0500'>30</span> 
 <a id='x1-66091r31'></a><span class='ecrm-0500'>31</span><span id='textcolor3544'><span class='ectt-0800'>enum</span></span><span class='ectt-0800'> {</span> 
-<a id='x1-66093r32'></a><span class='ecrm-0500'>32</span><span class='ectt-0800'>    CDEV_NOT_USED = 0,</span> 
-<a id='x1-66095r33'></a><span class='ecrm-0500'>33</span><span class='ectt-0800'>    CDEV_EXCLUSIVE_OPEN = 1,</span> 
+<a id='x1-66093r32'></a><span class='ecrm-0500'>32</span><span class='ectt-0800'>    CDEV_NOT_USED,</span> 
+<a id='x1-66095r33'></a><span class='ecrm-0500'>33</span><span class='ectt-0800'>    CDEV_EXCLUSIVE_OPEN,</span> 
 <a id='x1-66097r34'></a><span class='ecrm-0500'>34</span><span class='ectt-0800'>};</span> 
 <a id='x1-66099r35'></a><span class='ecrm-0500'>35</span> 
 <a id='x1-66101r36'></a><span class='ecrm-0500'>36</span><span id='textcolor3545'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> atomic_t already_open = ATOMIC_INIT(CDEV_NOT_USED);</span> 
