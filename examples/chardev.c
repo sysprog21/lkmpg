@@ -34,8 +34,8 @@ static ssize_t device_write(struct file *, const char __user *, size_t,
 static int major; /* major number assigned to our device driver */
 
 enum {
-    CDEV_NOT_USED = 0,
-    CDEV_EXCLUSIVE_OPEN = 1,
+    CDEV_NOT_USED,
+    CDEV_EXCLUSIVE_OPEN,
 };
 
 /* Is device open? Used to prevent multiple access to device */

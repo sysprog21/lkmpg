@@ -29,8 +29,8 @@ static ssize_t device_write(struct file *file, const char __user *buf,
 static int major;
 
 enum {
-    CDEV_NOT_USED = 0,
-    CDEV_EXCLUSIVE_OPEN = 1,
+    CDEV_NOT_USED,
+    CDEV_EXCLUSIVE_OPEN,
 };
 
 static atomic_t already_open = ATOMIC_INIT(CDEV_NOT_USED);

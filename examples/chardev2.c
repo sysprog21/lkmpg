@@ -22,8 +22,8 @@
 #define BUF_LEN 80
 
 enum {
-    CDEV_NOT_USED = 0,
-    CDEV_EXCLUSIVE_OPEN = 1,
+    CDEV_NOT_USED,
+    CDEV_EXCLUSIVE_OPEN,
 };
 
 /* Is the device open right now? Used to prevent concurrent access into
