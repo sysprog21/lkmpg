@@ -133,18 +133,18 @@ sudo pacman -S gcc kmod
 
 To discover what modules are already loaded within your current kernel use the command \sh|lsmod|.
 \begin{codebash}
-sudo lsmod
+lsmod
 \end{codebash}
 
 Modules are stored within the file \verb|/proc/modules|, so you can also see them with:
 \begin{codebash}
-sudo cat /proc/modules
+cat /proc/modules
 \end{codebash}
 
 This can be a long list, and you might prefer to search for something particular.
 To search for the \verb|fat| module:
 \begin{codebash}
-sudo lsmod | grep fat
+lsmod | grep fat
 \end{codebash}
 
 \subsection{Is there a need to download and compile the kernel?}
@@ -370,7 +370,7 @@ modinfo hello-1.ko
 
 At this point the command:
 \begin{codebash}
-sudo lsmod | grep hello
+lsmod | grep hello
 \end{codebash}
 
 should return nothing.
@@ -381,7 +381,7 @@ sudo insmod hello-1.ko
 
 The dash character will get converted to an underscore, so when you again try:
 \begin{codebash}
-sudo lsmod | grep hello
+lsmod | grep hello
 \end{codebash}
 
 You should now see your loaded module. It can be removed again with:
@@ -392,7 +392,7 @@ sudo rmmod hello_1
 Notice that the dash was replaced by an underscore.
 To see what just happened in the logs:
 \begin{codebash}
-sudo journalctl --since "1 hour ago" | grep kernel
+journalctl --since "1 hour ago" | grep kernel
 \end{codebash}
 
 You now know the basics of creating, compiling, installing and removing modules.
@@ -1088,7 +1088,7 @@ The results of this would be impossible to predict, but they can not be very pos
 Normally, when you do not want to allow something, you return an error code (a negative number) from the function which is supposed to do it.
 With \cpp|cleanup_module| that's impossible because it is a void function.
 However, there is a counter which keeps track of how many processes are using your module.
-You can see what its value is by looking at the 3rd field with the command \sh|cat /proc/modules| or \sh|sudo lsmod|.
+You can see what its value is by looking at the 3rd field with the command \sh|cat /proc/modules| or \sh|lsmod|.
 If this number isn't zero, \sh|rmmod| will fail.
 Note that you do not have to check the counter within \cpp|cleanup_module| because the check will be performed for you by the system call \cpp|sys_delete_module|, defined in \src{include/linux/syscalls.h}.
 You should not use this counter directly, but there are functions defined in \src{include/linux/module.h} which let you increase, decrease and display this counter:
@@ -1340,20 +1340,20 @@ sudo insmod hello-sysfs.ko
 Check that it exists:
 
 \begin{codebash}
-sudo lsmod | grep hello_sysfs
+lsmod | grep hello_sysfs
 \end{codebash}
 
 What is the current value of \cpp|myvariable| ?
 
 \begin{codebash}
-sudo cat /sys/kernel/mymodule/myvariable
+cat /sys/kernel/mymodule/myvariable
 \end{codebash}
 
 Set the value of \cpp|myvariable| and check that it changed.
 
 \begin{codebash}
 echo "32" | sudo tee /sys/kernel/mymodule/myvariable
-sudo cat /sys/kernel/mymodule/myvariable
+cat /sys/kernel/mymodule/myvariable
 \end{codebash}
 
 Finally, remove the test module:
