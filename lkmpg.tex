@@ -258,10 +258,10 @@ obj-m += hello-1.o
 PWD := $(CURDIR)
 
 all:
-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+	$(MAKE) -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
 
 clean:
-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
+	$(MAKE) -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
 \end{code}
 
 In \verb|Makefile|, \verb|$(CURDIR)| can set to the absolute pathname of the current working directory(after all \verb|-C| options are processed, if any). 
@@ -461,10 +461,10 @@ obj-m += hello-2.o
 PWD := $(CURDIR)
 
 all:
-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+	$(MAKE) -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
 
 clean:
-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
+	$(MAKE) -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
 \end{code}
 
 Now have a look at \src{drivers/char/Makefile} for a real world example.
@@ -604,10 +604,10 @@ startstop-objs := start.o stop.o
 PWD := $(CURDIR)
 
 all:
-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+	$(MAKE) -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
 
 clean:
-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
+	$(MAKE) -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
 \end{code}
 
 This is the complete makefile for all the examples we have seen so far.
