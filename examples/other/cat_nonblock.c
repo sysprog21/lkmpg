@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     if (argc != 2) {
         printf("Usage: %s <filename>\n", argv[0]);
         puts("Reads the content of a file, but doesn't wait for input");
-        exit(-1);
+        exit(EXIT_FAILURE);
     }
 
     /* Open the file for reading in non blocking mode */
@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     /* If open failed */
     if (fd == -1) {
         puts(errno == EAGAIN ? "Open would block" : "Open failed");
-        exit(-1);
+        exit(EXIT_FAILURE);
     }
 
     /* Read the file and output its contents */
@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
                 puts("Normally I'd block, but you told me not to");
             else
                 puts("Another read error");
-            exit(-1);
+            exit(EXIT_FAILURE);
         }
 
         /* Print the characters */
@@ -55,5 +55,6 @@ int main(int argc, char *argv[])
         /* While there are no errors and the file isn't over */
     } while (bytes > 0);
 
+    close(fd);
     return 0;
 }
