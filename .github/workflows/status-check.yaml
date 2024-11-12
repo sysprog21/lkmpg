@@ -10,7 +10,7 @@ on:
 
 jobs:
   validate:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: checkout code
         uses: actions/checkout@v4
@@ -23,9 +23,7 @@ jobs:
         if: ${{ steps.changed-files.outputs.any_changed == 'true' ||
                 github.event_name == 'workflow_dispatch' }}
         run: |
-            sudo apt-get install -q -y clang-format-12
-            sudo apt-get install -q -y cppcheck
-            sudo apt-get install -q -y gcc-11
+            sudo apt install -q -y clang-format cppcheck gcc
             .ci/check-newline.sh
             .ci/check-format.sh
             .ci/static-analysis.sh

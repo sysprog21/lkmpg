@@ -62,9 +62,9 @@ function do_sparse()
 
 function do_gcc()
 {
-    local GCC=$(which gcc-11)
+    local GCC=$(which gcc)
     if [ $? -ne 0 ]; then
-        echo "[!] gcc-11 is not installed. Failed to run static analysis with GCC." >&2
+        echo "[!] gcc is not installed. Failed to run static analysis with GCC." >&2
         exit 1
     fi
 
