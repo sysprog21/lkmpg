@@ -2,7 +2,7 @@
 
 SOURCES=$(find $(git rev-parse --show-toplevel) | grep -E "\.(cpp|cc|c|h)\$")
 
-CLANG_FORMAT=$(which clang-format-12)
+CLANG_FORMAT=$(which clang-format)
 if [ $? -ne 0 ]; then
     CLANG_FORMAT=$(which clang-format)
     if [ $? -ne 0 ]; then
