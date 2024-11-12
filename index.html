@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>November 11, 2024</span></div>
+<div class='date'><span class='ecrm-1200'>November 12, 2024</span></div>
                                                                   
 
                                                                   
@@ -4177,7 +4177,7 @@ $
 <a id='x1-43512r20'></a><span class='ecrm-0500'>20</span><span class='ectt-0800'>    </span><span id='textcolor2054'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (argc != 2) {</span> 
 <a id='x1-43514r21'></a><span class='ecrm-0500'>21</span><span class='ectt-0800'>        printf(</span><span id='textcolor2055'><span class='ectt-0800'>"Usage: %s &lt;filename&gt;</span></span><span id='textcolor2056'><span class='ectt-0800'>\n</span></span><span id='textcolor2057'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, argv[0]);</span> 
 <a id='x1-43516r22'></a><span class='ecrm-0500'>22</span><span class='ectt-0800'>        puts(</span><span id='textcolor2058'><span class='ectt-0800'>"Reads the content of a file, but doesn</span><span class='tctt-0800'>'</span><span class='ectt-0800'>t wait for input"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-43518r23'></a><span class='ecrm-0500'>23</span><span class='ectt-0800'>        exit(-1);</span> 
+<a id='x1-43518r23'></a><span class='ecrm-0500'>23</span><span class='ectt-0800'>        exit(EXIT_FAILURE);</span> 
 <a id='x1-43520r24'></a><span class='ecrm-0500'>24</span><span class='ectt-0800'>    }</span> 
 <a id='x1-43522r25'></a><span class='ecrm-0500'>25</span> 
 <a id='x1-43524r26'></a><span class='ecrm-0500'>26</span><span class='ectt-0800'>    </span><span id='textcolor2059'><span class='ectt-0800'>/* Open the file for reading in non blocking mode */</span></span> 
@@ -4186,7 +4186,7 @@ $
 <a id='x1-43530r29'></a><span class='ecrm-0500'>29</span><span class='ectt-0800'>    </span><span id='textcolor2060'><span class='ectt-0800'>/* If open failed */</span></span> 
 <a id='x1-43532r30'></a><span class='ecrm-0500'>30</span><span class='ectt-0800'>    </span><span id='textcolor2061'><span class='ectt-0800'>if</span></span><span class='ectt-0800'> (fd == -1) {</span> 
 <a id='x1-43534r31'></a><span class='ecrm-0500'>31</span><span class='ectt-0800'>        puts(errno == EAGAIN ? </span><span id='textcolor2062'><span class='ectt-0800'>"Open would block"</span></span><span class='ectt-0800'> : </span><span id='textcolor2063'><span class='ectt-0800'>"Open failed"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-43536r32'></a><span class='ecrm-0500'>32</span><span class='ectt-0800'>        exit(-1);</span> 
+<a id='x1-43536r32'></a><span class='ecrm-0500'>32</span><span class='ectt-0800'>        exit(EXIT_FAILURE);</span> 
 <a id='x1-43538r33'></a><span class='ecrm-0500'>33</span><span class='ectt-0800'>    }</span> 
 <a id='x1-43540r34'></a><span class='ecrm-0500'>34</span> 
 <a id='x1-43542r35'></a><span class='ecrm-0500'>35</span><span class='ectt-0800'>    </span><span id='textcolor2064'><span class='ectt-0800'>/* Read the file and output its contents */</span></span> 
@@ -4200,7 +4200,7 @@ $
 <a id='x1-43558r43'></a><span class='ecrm-0500'>43</span><span class='ectt-0800'>                puts(</span><span id='textcolor2070'><span class='ectt-0800'>"Normally I</span><span class='tctt-0800'>'</span><span class='ectt-0800'>d block, but you told me not to"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-43560r44'></a><span class='ecrm-0500'>44</span><span class='ectt-0800'>            </span><span id='textcolor2071'><span class='ectt-0800'>else</span></span> 
 <a id='x1-43562r45'></a><span class='ecrm-0500'>45</span><span class='ectt-0800'>                puts(</span><span id='textcolor2072'><span class='ectt-0800'>"Another read error"</span></span><span class='ectt-0800'>);</span> 
-<a id='x1-43564r46'></a><span class='ecrm-0500'>46</span><span class='ectt-0800'>            exit(-1);</span> 
+<a id='x1-43564r46'></a><span class='ecrm-0500'>46</span><span class='ectt-0800'>            exit(EXIT_FAILURE);</span> 
 <a id='x1-43566r47'></a><span class='ecrm-0500'>47</span><span class='ectt-0800'>        }</span> 
 <a id='x1-43568r48'></a><span class='ecrm-0500'>48</span> 
 <a id='x1-43570r49'></a><span class='ecrm-0500'>49</span><span class='ectt-0800'>        </span><span id='textcolor2073'><span class='ectt-0800'>/* Print the characters */</span></span> 
@@ -4212,8 +4212,9 @@ $
 <a id='x1-43582r55'></a><span class='ecrm-0500'>55</span><span class='ectt-0800'>        </span><span id='textcolor2077'><span class='ectt-0800'>/* While there are no errors and the file isn</span><span class='tctt-0800'>'</span><span class='ectt-0800'>t over */</span></span> 
 <a id='x1-43584r56'></a><span class='ecrm-0500'>56</span><span class='ectt-0800'>    } </span><span id='textcolor2078'><span class='ectt-0800'>while</span></span><span class='ectt-0800'> (bytes &gt; 0);</span> 
 <a id='x1-43586r57'></a><span class='ecrm-0500'>57</span> 
-<a id='x1-43588r58'></a><span class='ecrm-0500'>58</span><span class='ectt-0800'>    </span><span id='textcolor2079'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
-<a id='x1-43590r59'></a><span class='ecrm-0500'>59</span><span class='ectt-0800'>}</span></pre>
+<a id='x1-43588r58'></a><span class='ecrm-0500'>58</span><span class='ectt-0800'>    close(fd);</span> 
+<a id='x1-43590r59'></a><span class='ecrm-0500'>59</span><span class='ectt-0800'>    </span><span id='textcolor2079'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
+<a id='x1-43592r60'></a><span class='ecrm-0500'>60</span><span class='ectt-0800'>}</span></pre>
 <!-- l. 1656 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='completions'><span class='titlemark'>11.2   </span> <a id='x1-4400011.2'></a>Completions</h4>
