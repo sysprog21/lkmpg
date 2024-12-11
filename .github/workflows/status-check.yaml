@@ -23,7 +23,7 @@ jobs:
         if: ${{ steps.changed-files.outputs.any_changed == 'true' ||
                 github.event_name == 'workflow_dispatch' }}
         run: |
-            sudo apt install -q -y clang-format cppcheck gcc
+            sudo apt install -q -y clang-format cppcheck gcc libsqlite3-dev
             .ci/check-newline.sh
             .ci/check-format.sh
             .ci/static-analysis.sh
