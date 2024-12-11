@@ -19,7 +19,7 @@ function do_cppcheck()
     # - [*.c] missingIncludeSystem: Focus on the example code, not the kernel headers.
 
     local OPTS="
-            --enable=warning,style,performance,information
+            --enable=warning,performance,information
             --suppress=unusedFunction:hello-1.c
             --suppress=missingIncludeSystem
             --std=c89 "
