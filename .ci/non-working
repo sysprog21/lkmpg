@@ -2,3 +2,4 @@ bottomhalf
 bh_threaded
 intrpt
 vkbd
+syscall-steal
