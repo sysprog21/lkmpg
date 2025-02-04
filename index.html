@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>December 12, 2024</span></div>
+<div class='date'><span class='ecrm-1200'>February 4, 2025</span></div>
                                                                   
 
                                                                   
@@ -571,7 +571,7 @@ needed to include <span class='obeylines-h'><span class='verb'><span class='ectt
 want by using the <code>  <span class='ectt-1000'>module_init</span>
 </code> and <code>  <span class='ectt-1000'>module_exit</span>
 </code> macros. These macros are defined in <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/module.h'>include/linux/module.h</a>. The only requirement
-is that your init and cleanup functions must be defined before calling the those
+is that your init and cleanup functions must be defined before calling those
 macros, otherwise you’ll get compilation errors. Here is an example of this
 technique:
 </p><!-- l. 1 --><p class='indent'>
