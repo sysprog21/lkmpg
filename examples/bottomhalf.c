@@ -15,6 +15,7 @@
 #include <linux/printk.h>
 #include <linux/init.h>
 #include <linux/version.h>
+#include <linux/workqueue.h>
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 10, 0)
 #define NO_GPIO_REQUEST_ARRAY
@@ -42,16 +43,17 @@ static struct gpio buttons[] = {
     { 18, GPIOF_IN, "LED 1 OFF BUTTON" },
 };
 
-/* Tasklet containing some non-trivial amount of processing */
-static void bottomhalf_tasklet_fn(unsigned long data)
+/* Workqueue function containing some non-trivial amount of processing */
+static void bottomhalf_work_fn(struct work_struct *work)
 {
-    pr_info("Bottom half tasklet starts\n");
+    pr_info("Bottom half workqueue starts\n");
     /* do something which takes a while */
-    mdelay(500);
-    pr_info("Bottom half tasklet ends\n");
+    msleep(500);
+
+    pr_info("Bottom half workqueue ends\n");
 }
 
-static DECLARE_TASKLET_OLD(buttontask, bottomhalf_tasklet_fn);
+static DECLARE_WORK(bottomhalf_work, bottomhalf_work_fn);
 
 /* interrupt function triggered when a button is pressed */
 static irqreturn_t button_isr(int irq, void *data)
@@ -63,8 +65,7 @@ static irqreturn_t button_isr(int irq, void *data)
         gpio_set_value(leds[0].gpio, 0);
 
     /* Do the rest at leisure via the scheduler */
-    tasklet_schedule(&buttontask);
-
+    schedule_work(&bottomhalf_work);
     return IRQ_HANDLED;
 }
 
