@@ -1816,6 +1816,65 @@ While you have seen lots of stuff that can be used to aid debugging here, there 
 Adding debug code can change the situation enough to make the bug seem to disappear.
 Thus, you should keep debug code to a minimum and make sure it does not show up in production code.
 
+\section{GPIO}
+\label{sec:gpio}
+\subsection{GPIO}
+\label{sec:gpio_introduction}
+General Purpose Input/Output (GPIO) appears on the development board as pins.
+It acts as a bridge for communication between the development board and external devices.
+You can think of it like a switch: users can turn it on or off (Input), and the development board can also turn it on or off (Output).
+
+To implement a GPIO device driver, you use the \cpp|gpio_request()| function to enable a specific GPIO pin.
+After successfully enabling it, you can check that the pin is being used by looking at /sys/kernel/debug/gpio.
+
+\begin{codebash}
+cat /sys/kernel/debug/gpio
+\end{codebash}
+
+There are other ways to register GPIOs.
+For example, you can use \cpp|gpio_request_one()| to register a GPIO while setting its direction (input or output) and initial state at the same time.
+You can also use \cpp|gpio_request_array()| to register multiple GPIOs at once. However, note that \cpp|gpio_request_array()| has been removed since Linux v6.10+.
+
+When using GPIO, you must set it as either output with \cpp|gpio_direction_output()| or input with \cpp|gpio_direction_input()|.
+
+\begin{itemize}
+  \item when the GPIO is set as output, you can use \cpp|gpio_set_value()| to choose to set it to high voltage or low voltage.
+  \item when the GPIO is set as input, you can use \cpp|gpio_get_value()| to read whether the voltage is high or low.
+\end{itemize}
+
+\subsection{Control the LED's on/off state}
+\label{sec:gpio_led}
+In Section \ref{sec:device_files}, we learned how to communicate with device files.
+Therefore, we will further use device files to control the LED on and off.
+
+In the implementation, a pull-down resistor is used.
+The anode of the LED is connected to GPIO4, and the cathode is connected to GND.
+For more details about the Raspberry Pi pin assignments, refer to \href{https://pinout.xyz/}{Raspberry Pi Pinout}.
+The materials used include a Raspberry Pi 5, an LED, jumper wires, and a 220$\Omega$ resistor.
+
+\samplec{examples/led.c}
+
+Make and install the module:
+\begin{codebash}
+make
+sudo insmod led.ko
+\end{codebash}
+
+Switch on the LED:
+\begin{codebash}
+echo "1" | sudo tee /dev/gpio_led
+\end{codebash}
+
+Switch off the LED:
+\begin{codebash}
+echo "0" | sudo tee /dev/gpio_led
+\end{codebash}
+
+Finally, remove the module:
+\begin{codebash}
+sudo rmmod led
+\end{codebash}
+
 \section{Scheduling Tasks}
 \label{sec:scheduling_tasks}
 There are two main ways of running tasks: tasklets and work queues.
