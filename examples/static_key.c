@@ -22,7 +22,6 @@ static ssize_t device_read(struct file *file, char __user *buf, size_t count,
 static ssize_t device_write(struct file *file, const char __user *buf,
                             size_t count, loff_t *ppos);
 
-#define SUCCESS 0
 #define DEVICE_NAME "key_state"
 #define BUF_LEN 10
 
@@ -71,7 +70,7 @@ static int __init chardev_init(void)
 
     pr_info("Device created on /dev/%s\n", DEVICE_NAME);
 
-    return SUCCESS;
+    return 0;
 }
 
 static void __exit chardev_exit(void)
@@ -103,7 +102,7 @@ static int device_open(struct inode *inode, struct file *file)
 
     try_module_get(THIS_MODULE);
 
-    return SUCCESS;
+    return 0;
 }
 
 /**
@@ -120,7 +119,7 @@ static int device_release(struct inode *inode, struct file *file)
      */
     module_put(THIS_MODULE);
 
-    return SUCCESS;
+    return 0;
 }
 
 /**
