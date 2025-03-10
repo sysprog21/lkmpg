@@ -25,7 +25,6 @@ static ssize_t device_read(struct file *, char __user *, size_t, loff_t *);
 static ssize_t device_write(struct file *, const char __user *, size_t,
                             loff_t *);
 
-#define SUCCESS 0
 #define DEVICE_NAME "chardev" /* Dev name as it appears in /proc/devices   */
 #define BUF_LEN 80 /* Max length of the message from the device */
 
@@ -72,7 +71,7 @@ static int __init chardev_init(void)
 
     pr_info("Device created on /dev/%s\n", DEVICE_NAME);
 
-    return SUCCESS;
+    return 0;
 }
 
 static void __exit chardev_exit(void)
@@ -99,7 +98,7 @@ static int device_open(struct inode *inode, struct file *file)
     sprintf(msg, "I already told you %d times Hello world!\n", counter++);
     try_module_get(THIS_MODULE);
 
-    return SUCCESS;
+    return 0;
 }
 
 /* Called when a process closes the device file. */
@@ -113,7 +112,7 @@ static int device_release(struct inode *inode, struct file *file)
      */
     module_put(THIS_MODULE);
 
-    return SUCCESS;
+    return 0;
 }
 
 /* Called when a process, which already opened the dev file, attempts to

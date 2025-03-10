@@ -17,7 +17,6 @@
 #include <asm/errno.h>
 
 #include "chardev.h"
-#define SUCCESS 0
 #define DEVICE_NAME "char_dev"
 #define BUF_LEN 80
 
@@ -42,7 +41,7 @@ static int device_open(struct inode *inode, struct file *file)
     pr_info("device_open(%p)\n", file);
 
     try_module_get(THIS_MODULE);
-    return SUCCESS;
+    return 0;
 }
 
 static int device_release(struct inode *inode, struct file *file)
@@ -50,7 +49,7 @@ static int device_release(struct inode *inode, struct file *file)
     pr_info("device_release(%p,%p)\n", inode, file);
 
     module_put(THIS_MODULE);
-    return SUCCESS;
+    return 0;
 }
 
 /* This function is called whenever a process which has already opened the
@@ -126,7 +125,7 @@ device_ioctl(struct file *file, /* ditto */
              unsigned long ioctl_param)
 {
     int i;
-    long ret = SUCCESS;
+    long ret = 0;
 
     /* We don't want to talk to two processes at the same time. */
     if (atomic_cmpxchg(&already_open, CDEV_NOT_USED, CDEV_EXCLUSIVE_OPEN))
