@@ -1708,6 +1708,27 @@ There's no documentation recording all such functions, but code comments may hel
 Sometimes you may find comments in kernel source code stating that a function ``may sleep'', ``might sleep'', or more explicitly ``the caller should not hold a spinlock''.
 Those comments are hints that a function may implicitly sleep and must not be called in atomic contexts.
 
+Now, let's differentiate between a few types of spinlock functions in Linux kernel: \cpp|spin_lock()|, \cpp|spin_lock_irq()|, \cpp|spin_lock_irqsave()|, and \cpp|spin_lock_bh()|.
+
+\cpp|spin_lock()| does not allow the CPU to sleep while waiting for the lock, which makes it suitable for most use cases where the critical section is short.
+However, this is problematic for real-time Linux because spinlocks in this configuration behave as sleeping locks.
+This can prevent other tasks from running and cause the system to become unresponsive.
+To address this in real-time Linux environments, a \cpp|raw_spin_lock()| is used, which behaves similarly to a \cpp|spin_lock()| but without causing the system to sleep.
+
+On the other hand, \cpp|spin_lock_irq()| disables interrupts while holding the lock, but it does not save the interrupt state.
+This means that if an interrupt occurs while the lock is held, the interrupt state could be lost.
+In contrast, \cpp|spin_lock_irqsave()| disables interrupts and also saves the interrupt state, ensuring that interrupts are restored to their previous state when the lock is released.
+This makes \cpp|spin_lock_irqsave()| a safer option in scenarios where preserving the interrupt state is crucial.
+
+Next, \cpp|spin_lock_bh()| disables softirqs (software interrupts) but allows hardware interrupts to continue.
+Unlike \cpp|spin_lock_irq()| and \cpp|spin_lock_irqsave()|, which disable both hardware and software interrupts, \cpp|spin_lock_bh()| is useful when hardware interrupts need to remain active.
+
+For more information about spinlock usage and lock types, see the following resources:
+ \begin{itemize}
+  \item \href{https://www.kernel.org/doc/Documentation/locking/spinlocks.txt}{Lesson 1: Spin locks}
+  \item\href{https://docs.kernel.org/locking/locktypes.html}{Lock types and their rules}
+ \end{itemize}
+
 \subsection{Read and write locks}
 \label{sec:rwlock}
 Read and write locks are specialised kinds of spinlocks so that you can exclusively read from something or write to something.
