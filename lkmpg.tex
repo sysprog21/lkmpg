@@ -1987,7 +1987,7 @@ The flags can be used for specify behaviors of the IRQ.
 For example, use \cpp|IRQF_SHARED| to indicate you are willing to share the IRQ with other interrupt handlers (usually because a number of hardware devices sit on the same IRQ); use the \cpp|IRQF_ONESHOT| to indicate that the IRQ is not reenabled after the handler finished.
 It should be noted that in some materials, you may encounter another set of IRQ flags named with the \cpp|SA| prefix.
 For example, the \cpp|SA_SHIRQ| and the \cpp|SA_INTERRUPT|.
-Those are the the IRQ flags in the older kernels.
+Those are the IRQ flags in the older kernels.
 They have been removed completely.
 Today only the \cpp|IRQF| flags are in use.
 This function will only succeed if there is not already a handler on this IRQ, or if you are both willing to share.
