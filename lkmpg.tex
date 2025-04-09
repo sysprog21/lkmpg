@@ -836,14 +836,13 @@ So the es1370.ko sound card device driver might connect the \verb|/dev/sound| de
 A userspace program like mp3blaster can use \verb|/dev/sound| without ever knowing what kind of sound card is installed.
 
 Let's look at some device files.
-% FIXME: use popular devices
-Here are device files which represent the first three partitions on the primary master IDE hard drive:
+Here are device files which represent the first three partitions on the primary SCSI storage devices:
 
 \begin{verbatim}
-$ ls -l /dev/hda[1-3]
-brw-rw----  1 root  disk  3, 1 Jul  5  2000 /dev/hda1
-brw-rw----  1 root  disk  3, 2 Jul  5  2000 /dev/hda2
-brw-rw----  1 root  disk  3, 3 Jul  5  2000 /dev/hda3
+$ ls -l /dev/sda[1-3]
+brw-rw----  1 root  disk  8, 1 Apr  9  2025 /dev/sda1
+brw-rw----  1 root  disk  8, 2 Apr  9  2025 /dev/sda2
+brw-rw----  1 root  disk  8, 3 Apr  9  2025 /dev/sda3
 \end{verbatim}
 
 Notice the column of numbers separated by a comma.
@@ -851,7 +850,7 @@ The first number is called the device's major number.
 The second number is the minor number.
 The major number tells you which driver is used to access the hardware.
 Each driver is assigned a unique major number; all device files with the same major number are controlled by the same driver.
-All the above major numbers are 3, because they're all controlled by the same driver.
+All the above major numbers are 8, because they're all controlled by the same driver.
 
 The minor number is used by the driver to distinguish between the various hardware it controls.
 Returning to the example above, although all three devices are handled by the same driver they have unique minor numbers because the driver sees them as being different pieces of hardware.
