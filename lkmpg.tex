@@ -1024,7 +1024,7 @@ You do this by using the \cpp|register_chrdev| function, defined by \src{include
 int register_chrdev(unsigned int major, const char *name, struct file_operations *fops);
 \end{code}
 
-Where unsigned int major is the major number you want to request, \cpp|const char *name| is the name of the device as it will appear in \verb|/proc/devices| and \cpp|struct file_operations *fops| is a pointer to the \cpp|file_operations| table for your driver.
+Where \cpp|unsigned int major| is the major number you want to request, \cpp|const char *name| is the name of the device as it will appear in \verb|/proc/devices| and \cpp|struct file_operations *fops| is a pointer to the \cpp|file_operations| table for your driver.
 A negative return value means the registration failed. Note that we didn't pass the minor number to \cpp|register_chrdev|.
 That is because the kernel doesn't care about the minor number; only our driver uses it.
 
