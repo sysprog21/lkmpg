@@ -1270,29 +1270,29 @@ user program. So the es1370.ko sound card device driver might connect the
 mp3blaster can use <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/dev/sound</span></span></span> without ever knowing what kind of sound card is
 installed.
 </p><!-- l. 838 --><p class='indent'>   Let’s look at some device files. Here are device files which represent the first three
-partitions on the primary master IDE hard drive:
+partitions on the primary SCSI storage devices:
                                                                   
 
                                                                   
 </p>
    <pre class='verbatim' id='verbatim-12'>
-$ ls -l /dev/hda[1-3]
-brw-rw----  1 root  disk  3, 1 Jul  5  2000 /dev/hda1
-brw-rw----  1 root  disk  3, 2 Jul  5  2000 /dev/hda2
-brw-rw----  1 root  disk  3, 3 Jul  5  2000 /dev/hda3
+$ ls -l /dev/sda[1-3]
+brw-rw----  1 root  disk  8, 1 Apr  9  2025 /dev/sda1
+brw-rw----  1 root  disk  8, 2 Apr  9  2025 /dev/sda2
+brw-rw----  1 root  disk  8, 3 Apr  9  2025 /dev/sda3
 </pre>
-<!-- l. 847 --><p class='nopar'>
-</p><!-- l. 849 --><p class='indent'>   Notice the column of numbers separated by a comma. The first number is called
+<!-- l. 846 --><p class='nopar'>
+</p><!-- l. 848 --><p class='indent'>   Notice the column of numbers separated by a comma. The first number is called
 the device’s major number. The second number is the minor number. The major
 number tells you which driver is used to access the hardware. Each driver is assigned
 a unique major number; all device files with the same major number are controlled
-by the same driver. All the above major numbers are 3, because they’re all controlled
+by the same driver. All the above major numbers are 8, because they’re all controlled
 by the same driver.
-</p><!-- l. 856 --><p class='indent'>   The minor number is used by the driver to distinguish between the various
+</p><!-- l. 855 --><p class='indent'>   The minor number is used by the driver to distinguish between the various
 hardware it controls. Returning to the example above, although all three devices are
 handled by the same driver they have unique minor numbers because the driver sees
 them as being different pieces of hardware.
-</p><!-- l. 859 --><p class='indent'>   Devices are divided into two types: character devices and block devices. The
+</p><!-- l. 858 --><p class='indent'>   Devices are divided into two types: character devices and block devices. The
 difference is that block devices have a buffer for requests, so they can choose the best
 order in which to respond to the requests. This is important in the case of storage
 devices, where it is faster to read or write sectors which are close to each
@@ -1317,10 +1317,10 @@ crw-r-----  1 root  dial 4, 65 Nov 17 10:26 /dev/ttyS1
 crw-rw----  1 root  dial 4, 66 Jul  5  2000 /dev/ttyS2
 crw-rw----  1 root  dial 4, 67 Jul  5  2000 /dev/ttyS3
 </pre>
-<!-- l. 873 --><p class='nopar'>
-</p><!-- l. 875 --><p class='indent'>   If you want to see which major numbers have been assigned, you can look at
+<!-- l. 872 --><p class='nopar'>
+</p><!-- l. 874 --><p class='indent'>   If you want to see which major numbers have been assigned, you can look at
 <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/Documentation/admin-guide/devices.txt'>Documentation/admin-guide/devices.txt</a>.
-</p><!-- l. 877 --><p class='indent'>   When the system was installed, all of those device files were created by the
+</p><!-- l. 876 --><p class='indent'>   When the system was installed, all of those device files were created by the
 <code> <span class='ectt-1000'>mknod</span>
 </code> command. To create a new char device named <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>coffee</span></span></span> with major/minor number 12 and 2,
 simply do <code>  <span class='ectt-1000'>mknod /dev/coffee c 12 2</span>
@@ -1329,13 +1329,13 @@ Linus put his device files in <span class='obeylines-h'><span class='verb'><span
 device file for testing purposes, it is probably OK to place it in your working
 directory where you compile the kernel module. Just be sure to put it in the right
 place when you’re done writing the device driver.
-</p><!-- l. 884 --><p class='indent'>   A few final points, although implicit in the previous discussion, are worth stating
+</p><!-- l. 883 --><p class='indent'>   A few final points, although implicit in the previous discussion, are worth stating
 explicitly for clarity. When a device file is accessed, the kernel utilizes the file’s major
 number to identify the appropriate driver for handling the access. This indicates that
 the kernel does not necessarily rely on or need to be aware of the minor number. It is
 the driver that concerns itself with the minor number, using it to differentiate
 between various pieces of hardware.
-</p><!-- l. 889 --><p class='indent'>   It is important to note that when referring to <span class='ecti-1000'>“hardware”</span>, the term is used in a
+</p><!-- l. 888 --><p class='indent'>   It is important to note that when referring to <span class='ecti-1000'>“hardware”</span>, the term is used in a
 slightly more abstract sense than just a physical PCI card that can be held in hand.
 Consider the following two device files:
                                                                   
@@ -1347,24 +1347,24 @@ $ ls -l /dev/sda /dev/sdb
 brw-rw---- 1 root disk 8,  0 Jan  3 09:02 /dev/sda
 brw-rw---- 1 root disk 8, 16 Jan  3 09:02 /dev/sdb
 </pre>
-<!-- l. 897 --><p class='nopar'>
-</p><!-- l. 899 --><p class='indent'>   By now you can look at these two device files and know instantly that they are
+<!-- l. 896 --><p class='nopar'>
+</p><!-- l. 898 --><p class='indent'>   By now you can look at these two device files and know instantly that they are
 block devices and are handled by same driver (block major 8). Sometimes two device
 files with the same major but different minor number can actually represent the same
 piece of physical hardware. So just be aware that the word “hardware” in our
 discussion can mean something very abstract.
-</p><!-- l. 903 --><p class='noindent'>
+</p><!-- l. 902 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='character-device-drivers'><span class='titlemark'>6   </span> <a id='x1-260006'></a>Character Device drivers</h3>
-<!-- l. 905 --><p class='noindent'>
+<!-- l. 904 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='the-fileoperations-structure'><span class='titlemark'>6.1   </span> <a id='x1-270006.1'></a>The file_operations Structure</h4>
-<!-- l. 907 --><p class='noindent'>The <code>  <span class='ectt-1000'>file_operations</span>
+<!-- l. 906 --><p class='noindent'>The <code>  <span class='ectt-1000'>file_operations</span>
 </code> structure is defined in <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/fs.h'>include/linux/fs.h</a>, and holds pointers to functions defined by
 the driver that perform various operations on the device. Each field of the structure
 corresponds to the address of some function defined by the driver to handle a
 requested operation.
-</p><!-- l. 910 --><p class='indent'>   For example, every character driver needs to define a function that reads from the
+</p><!-- l. 909 --><p class='indent'>   For example, every character driver needs to define a function that reads from the
 device. The <code>  <span class='ectt-1000'>file_operations</span>
 </code> structure holds the address of the module’s function that performs that operation.
 Here is what the definition looks like for kernel 5.4:
@@ -1408,12 +1408,12 @@ Here is what the definition looks like for kernel 5.4:
 <a id='x1-27112r36'></a><span class='ecrm-0500'>36</span><span class='ectt-0800'>             loff_t len, </span><span id='textcolor390'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor391'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> remap_flags);</span> 
 <a id='x1-27114r37'></a><span class='ecrm-0500'>37</span><span class='ectt-0800'>    </span><span id='textcolor392'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> (*fadvise)(</span><span id='textcolor393'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file *, loff_t, loff_t, </span><span id='textcolor394'><span class='ectt-0800'>int</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-27116r38'></a><span class='ecrm-0500'>38</span><span class='ectt-0800'>} __randomize_layout;</span></pre>
-<!-- l. 955 --><p class='indent'>   Some operations are not implemented by a driver. For example, a driver that handles
+<!-- l. 954 --><p class='indent'>   Some operations are not implemented by a driver. For example, a driver that handles
 a video card will not need to read from a directory structure. The corresponding entries
 in the <code>  <span class='ectt-1000'>file_operations</span>
 </code> structure should be set to <code>  <span class='ectt-1000'>NULL</span>
 </code>.
-</p><!-- l. 959 --><p class='indent'>   There is a gcc extension that makes assigning to this structure more convenient.
+</p><!-- l. 958 --><p class='indent'>   There is a gcc extension that makes assigning to this structure more convenient.
 You will see it in modern drivers, and may catch you by surprise. This is what the
 new way of assigning to the structure looks like:
 </p><!-- l. 1 --><p class='indent'>
@@ -1427,7 +1427,7 @@ new way of assigning to the structure looks like:
 <a id='x1-27132r4'></a><span class='ecrm-0500'>4</span><span class='ectt-0800'>    open: device_open,</span> 
 <a id='x1-27134r5'></a><span class='ecrm-0500'>5</span><span class='ectt-0800'>    release: device_release</span> 
 <a id='x1-27136r6'></a><span class='ecrm-0500'>6</span><span class='ectt-0800'>};</span></pre>
-<!-- l. 972 --><p class='indent'>   However, there is also a C99 way of assigning to elements of a structure,
+<!-- l. 971 --><p class='indent'>   However, there is also a C99 way of assigning to elements of a structure,
 <a href='https://gcc.gnu.org/onlinedocs/gcc/Designated-Inits.html'>designated initializers</a>, and this is definitely preferred over using the GNU extension.
 You should use this syntax in case someone wants to port your driver. It will help
 with compatibility:
@@ -1439,31 +1439,31 @@ with compatibility:
 <a id='x1-27150r4'></a><span class='ecrm-0500'>4</span><span class='ectt-0800'>    .open = device_open,</span> 
 <a id='x1-27152r5'></a><span class='ecrm-0500'>5</span><span class='ectt-0800'>    .release = device_release</span> 
 <a id='x1-27154r6'></a><span class='ecrm-0500'>6</span><span class='ectt-0800'>};</span></pre>
-<!-- l. 985 --><p class='indent'>   The meaning is clear, and you should be aware that any member of
+<!-- l. 984 --><p class='indent'>   The meaning is clear, and you should be aware that any member of
 the structure which you do not explicitly assign will be initialized to
 <code> <span class='ectt-1000'>NULL</span>
 </code> by gcc.
-</p><!-- l. 987 --><p class='indent'>   An instance of <code>  <span id='textcolor397'><span class='ectt-1000'>struct</span></span><span class='ectt-1000'> file_operations</span>
+</p><!-- l. 986 --><p class='indent'>   An instance of <code>  <span id='textcolor397'><span class='ectt-1000'>struct</span></span><span class='ectt-1000'> file_operations</span>
 </code> containing pointers to functions that are used to implement
 <code> <span class='ectt-1000'>read</span>
 </code>, <code>  <span class='ectt-1000'>write</span>
 </code>, <code>  <span class='ectt-1000'>open</span>
 </code>, … system calls is commonly named <code>  <span class='ectt-1000'>fops</span>
 </code>.
-</p><!-- l. 989 --><p class='indent'>   Since Linux v3.14, the read, write and seek operations are guaranteed for thread-safe by
+</p><!-- l. 988 --><p class='indent'>   Since Linux v3.14, the read, write and seek operations are guaranteed for thread-safe by
 using the <code>  <span class='ectt-1000'>f_pos</span>
 </code> specific lock, which makes the file position update to become the mutual
 exclusion. So, we can safely implement those operations without unnecessary
 locking.
-</p><!-- l. 992 --><p class='indent'>   Additionally, since Linux v5.6, the <code>  <span class='ectt-1000'>proc_ops</span>
+</p><!-- l. 991 --><p class='indent'>   Additionally, since Linux v5.6, the <code>  <span class='ectt-1000'>proc_ops</span>
 </code> structure was introduced to replace the use of the
 <code> <span class='ectt-1000'>file_operations</span>
 </code> structure when registering proc handlers. See more information in the <a href='#the-procops-structure'>7.1<!-- tex4ht:ref: sec:proc_ops  --></a>
 section.
-</p><!-- l. 995 --><p class='noindent'>
+</p><!-- l. 994 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='the-file-structure'><span class='titlemark'>6.2   </span> <a id='x1-280006.2'></a>The file structure</h4>
-<!-- l. 998 --><p class='noindent'>Each device is represented in the kernel by a file structure, which is defined
+<!-- l. 997 --><p class='noindent'>Each device is represented in the kernel by a file structure, which is defined
 in <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/fs.h'>include/linux/fs.h</a>. Be aware that a file is a kernel level structure and
 never appears in a user space program. It is not the same thing as a
 <code> <span id='textcolor398'><span class='ectt-1000'>FILE</span></span>
@@ -1475,31 +1475,31 @@ function. Also, its name is a bit misleading; it represents an abstract open
                                                                   
 
                                                                   
-</p><!-- l. 1003 --><p class='indent'>   An instance of struct file is commonly named
+</p><!-- l. 1002 --><p class='indent'>   An instance of struct file is commonly named
 <code> <span class='ectt-1000'>filp</span>
 </code>. You’ll also see it referred to as a struct file object. Resist the temptation.
-</p><!-- l. 1007 --><p class='indent'>   Go ahead and look at the definition of file. Most of the entries you see, like struct
+</p><!-- l. 1006 --><p class='indent'>   Go ahead and look at the definition of file. Most of the entries you see, like struct
 dentry are not used by device drivers, and you can ignore them. This is because
 drivers do not fill file directly; they only use structures contained in file which are
 created elsewhere.
-</p><!-- l. 1011 --><p class='noindent'>
+</p><!-- l. 1010 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='registering-a-device'><span class='titlemark'>6.3   </span> <a id='x1-290006.3'></a>Registering A Device</h4>
-<!-- l. 1013 --><p class='noindent'>As discussed earlier, char devices are accessed through device files, usually located in
+<!-- l. 1012 --><p class='noindent'>As discussed earlier, char devices are accessed through device files, usually located in
 <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/dev</span></span></span>. This is by convention. When writing a driver, it is OK to put the
 device file in your current directory. Just make sure you place it in <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/dev</span></span></span> for a
 production driver. The major number tells you which driver handles which
 device file. The minor number is used only by the driver itself to differentiate
 which device it is operating on, just in case the driver handles more than one
 device.
-</p><!-- l. 1019 --><p class='indent'>   Adding a driver to your system means registering it with the kernel. This is synonymous
+</p><!-- l. 1018 --><p class='indent'>   Adding a driver to your system means registering it with the kernel. This is synonymous
 with assigning it a major number during the module’s initialization. You do this by
 using the <code>  <span class='ectt-1000'>register_chrdev</span>
 </code> function, defined by <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/fs.h'>include/linux/fs.h</a>.
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb40'><a id='x1-29004r1'></a><span class='ecrm-0500'>1</span><span id='textcolor399'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> register_chrdev(</span><span id='textcolor400'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor401'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> major, </span><span id='textcolor402'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor403'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *name, </span><span id='textcolor404'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file_operations *fops);</span></pre>
-<!-- l. 1027 --><p class='indent'>   Where <code>  <span id='textcolor405'><span class='ectt-1000'>unsigned</span></span><span class='ectt-1000'> </span><span id='textcolor406'><span class='ectt-1000'>int</span></span><span class='ectt-1000'> major</span>
+<!-- l. 1026 --><p class='indent'>   Where <code>  <span id='textcolor405'><span class='ectt-1000'>unsigned</span></span><span class='ectt-1000'> </span><span id='textcolor406'><span class='ectt-1000'>int</span></span><span class='ectt-1000'> major</span>
 </code> is the major number you want to request,
 <code> <span id='textcolor407'><span class='ectt-1000'>const</span></span><span class='ectt-1000'> </span><span id='textcolor408'><span class='ectt-1000'>char</span></span><span class='ectt-1000'> *name</span>
 </code> is the name of the device as it will appear in <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/devices</span></span></span> and
@@ -1510,13 +1510,13 @@ registration failed. Note that we didn’t pass the minor number to
 <code> <span class='ectt-1000'>register_chrdev</span>
 </code>. That is because the kernel doesn’t care about the minor number; only our driver
 uses it.
-</p><!-- l. 1031 --><p class='indent'>   Now the question is, how do you get a major number without hijacking
+</p><!-- l. 1030 --><p class='indent'>   Now the question is, how do you get a major number without hijacking
 one that’s already in use? The easiest way would be to look through
 <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/Documentation/admin-guide/devices.txt'>Documentation/admin-guide/devices.txt</a> and pick an unused one. That is a bad way
 of doing things because you will never be sure if the number you picked will be
 assigned later. The answer is that you can ask the kernel to assign you a dynamic
 major number.
-</p><!-- l. 1036 --><p class='indent'>   If you pass a major number of 0 to <code>  <span class='ectt-1000'>register_chrdev</span>
+</p><!-- l. 1035 --><p class='indent'>   If you pass a major number of 0 to <code>  <span class='ectt-1000'>register_chrdev</span>
 </code>, the return value will be the dynamically allocated major number. The
                                                                   
 
@@ -1533,11 +1533,11 @@ third method is that we can have our driver make the device file using the
 <code> <span class='ectt-1000'>device_destroy</span>
 </code> during the call to <code>  <span class='ectt-1000'>cleanup_module</span>
 </code>.
-</p><!-- l. 1043 --><p class='indent'>   However, <code>  <span class='ectt-1000'>register_chrdev()</span>
+</p><!-- l. 1042 --><p class='indent'>   However, <code>  <span class='ectt-1000'>register_chrdev()</span>
 </code> would occupy a range of minor numbers associated with the given major. The
 recommended way to reduce waste for char device registration is using cdev
 interface.
-</p><!-- l. 1046 --><p class='indent'>   The newer interface completes the char device registration in two distinct steps.
+</p><!-- l. 1045 --><p class='indent'>   The newer interface completes the char device registration in two distinct steps.
 First, we should register a range of device numbers, which can be completed with
 <code> <span class='ectt-1000'>register_chrdev_region</span>
 </code> or <code>  <span class='ectt-1000'>alloc_chrdev_region</span>
@@ -1546,13 +1546,13 @@ First, we should register a range of device numbers, which can be completed with
 </p>
    <pre class='fancyvrb' id='fancyvrb41'><a id='x1-29020r1'></a><span class='ecrm-0500'>1</span><span id='textcolor410'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> register_chrdev_region(</span><span id='textcolor411'><span class='ectt-0800'>dev_t</span></span><span class='ectt-0800'> from, </span><span id='textcolor412'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> count, </span><span id='textcolor413'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor414'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *name);</span> 
 <a id='x1-29022r2'></a><span class='ecrm-0500'>2</span><span id='textcolor415'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> alloc_chrdev_region(</span><span id='textcolor416'><span class='ectt-0800'>dev_t</span></span><span class='ectt-0800'> *dev, </span><span id='textcolor417'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> baseminor, </span><span id='textcolor418'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> count, </span><span id='textcolor419'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor420'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *name);</span></pre>
-<!-- l. 1054 --><p class='indent'>   The choice between two different functions depends on
+<!-- l. 1053 --><p class='indent'>   The choice between two different functions depends on
 whether you know the major numbers for your device. Using
 <code> <span class='ectt-1000'>register_chrdev_region</span>
 </code> if you know the device major number and
 <code> <span class='ectt-1000'>alloc_chrdev_region</span>
 </code> if you would like to allocate a dynamically-allocated major number.
-</p><!-- l. 1057 --><p class='indent'>   Second, we should initialize the data structure
+</p><!-- l. 1056 --><p class='indent'>   Second, we should initialize the data structure
 <code> <span id='textcolor421'><span class='ectt-1000'>struct</span></span><span class='ectt-1000'> cdev</span>
 </code> for our char device and associate it with the device numbers. To initialize the
 <code> <span id='textcolor422'><span class='ectt-1000'>struct</span></span><span class='ectt-1000'> cdev</span>
@@ -1561,7 +1561,7 @@ whether you know the major numbers for your device. Using
 </p>
    <pre class='fancyvrb' id='fancyvrb42'><a id='x1-29030r1'></a><span class='ecrm-0500'>1</span><span id='textcolor423'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> cdev *my_dev = cdev_alloc();</span> 
 <a id='x1-29032r2'></a><span class='ecrm-0500'>2</span><span class='ectt-0800'>my_cdev-&gt;ops = &amp;my_fops;</span></pre>
-<!-- l. 1065 --><p class='indent'>   However, the common usage pattern will embed the
+<!-- l. 1064 --><p class='indent'>   However, the common usage pattern will embed the
 <code> <span id='textcolor424'><span class='ectt-1000'>struct</span></span><span class='ectt-1000'> cdev</span>
 </code> within a device-specific structure of your own. In this case, we’ll need
 <code> <span class='ectt-1000'>cdev_init</span>
@@ -1572,18 +1572,18 @@ whether you know the major numbers for your device. Using
                                                                   
 </p>
    <pre class='fancyvrb' id='fancyvrb43'><a id='x1-29037r1'></a><span class='ecrm-0500'>1</span><span id='textcolor425'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> cdev_init(</span><span id='textcolor426'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> cdev *cdev, </span><span id='textcolor427'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor428'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file_operations *fops);</span></pre>
-<!-- l. 1072 --><p class='indent'>   Once we finish the initialization, we can add the char device to the system by using
+<!-- l. 1071 --><p class='indent'>   Once we finish the initialization, we can add the char device to the system by using
 the <code>  <span class='ectt-1000'>cdev_add</span>
 </code>.
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb44'><a id='x1-29041r1'></a><span class='ecrm-0500'>1</span><span id='textcolor429'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> cdev_add(</span><span id='textcolor430'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> cdev *p, </span><span id='textcolor431'><span class='ectt-0800'>dev_t</span></span><span class='ectt-0800'> dev, </span><span id='textcolor432'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> count);</span></pre>
-<!-- l. 1078 --><p class='indent'>   To find an example using the interface, you can see <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>ioctl.c</span></span></span> described in section
+<!-- l. 1077 --><p class='indent'>   To find an example using the interface, you can see <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>ioctl.c</span></span></span> described in section
 <a href='#talking-to-device-files'>9<!-- tex4ht:ref: sec:device_files  --></a>.
-</p><!-- l. 1080 --><p class='noindent'>
+</p><!-- l. 1079 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='unregistering-a-device'><span class='titlemark'>6.4   </span> <a id='x1-300006.4'></a>Unregistering A Device</h4>
-<!-- l. 1082 --><p class='noindent'>We can not allow the kernel module to be
+<!-- l. 1081 --><p class='noindent'>We can not allow the kernel module to be
 <code> <span class='ectt-1000'>rmmod</span>
 </code>’ed whenever root feels like it. If the device file is opened by a process and then we
 remove the kernel module, using the file would cause a call to the memory location
@@ -1593,7 +1593,7 @@ unlucky, another kernel module was loaded into the same location, which
 means a jump into the middle of another function within the kernel. The
 results of this would be impossible to predict, but they can not be very
 positive.
-</p><!-- l. 1088 --><p class='indent'>   Normally, when you do not want to allow something, you return an error code
+</p><!-- l. 1087 --><p class='indent'>   Normally, when you do not want to allow something, you return an error code
 (a negative number) from the function which is supposed to do it. With
 <code> <span class='ectt-1000'>cleanup_module</span>
 </code> that’s impossible because it is a void function. However, there is a counter
@@ -1622,26 +1622,26 @@ decrease and display this counter:
      </li>
      <li class='itemize'><code>  <span class='ectt-1000'>module_refcount(THIS_MODULE)</span>
      </code>: Return the value of reference count of current module.</li></ul>
-<!-- l. 1102 --><p class='indent'>   It is important to keep the counter accurate; if you ever do lose track of the
+<!-- l. 1101 --><p class='indent'>   It is important to keep the counter accurate; if you ever do lose track of the
 correct usage count, you will never be able to unload the module; it’s now reboot
 time, boys and girls. This is bound to happen to you sooner or later during a
 module’s development.
-</p><!-- l. 1105 --><p class='noindent'>
+</p><!-- l. 1104 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='chardevc'><span class='titlemark'>6.5   </span> <a id='x1-310006.5'></a>chardev.c</h4>
-<!-- l. 1107 --><p class='noindent'>The next code sample creates a char driver named <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>chardev</span></span></span>. You can dump its device
+<!-- l. 1106 --><p class='noindent'>The next code sample creates a char driver named <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>chardev</span></span></span>. You can dump its device
 file.
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb45'><a id='x1-31003r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>cat /proc/devices</span></pre>
-<!-- l. 1114 --><p class='indent'>   (or open the file with a program) and the driver will put the number of times the
+<!-- l. 1113 --><p class='indent'>   (or open the file with a program) and the driver will put the number of times the
 device file has been read from into the file. We do not support writing to the file (like
 <code> <span class='ectt-1000'>echo </span><span id='textcolor433'><span class='ectt-1000'>"hi"</span></span><span class='ectt-1000'> &gt; /dev/hello</span>
 </code>), but catch these attempts and tell the user that the operation is not supported.
 Don’t worry if you don’t see what we do with the data we read into the buffer; we
 don’t do much with it. We simply read in the data and print a message
 acknowledging that we received it.
-</p><!-- l. 1119 --><p class='indent'>   In the multiple-threaded environment, without any protection, concurrent access
+</p><!-- l. 1118 --><p class='indent'>   In the multiple-threaded environment, without any protection, concurrent access
 to the same memory may lead to the race condition, and will not preserve the
 performance. In the kernel module, this problem may happen due to multiple
 instances accessing the shared resources. Therefore, a solution is to enforce the
@@ -1823,32 +1823,32 @@ concurrency details in the <a href='#avoiding-collisions-and-deadlocks'>12<!-- t
 <a id='x1-31334r164'></a><span class='ecrm-0500'>164</span><span class='ectt-0800'>module_exit(chardev_exit);</span> 
 <a id='x1-31336r165'></a><span class='ecrm-0500'>165</span> 
 <a id='x1-31338r166'></a><span class='ecrm-0500'>166</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor590'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1128 --><p class='noindent'>
+<!-- l. 1127 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='writing-modules-for-multiple-kernel-versions'><span class='titlemark'>6.6   </span> <a id='x1-320006.6'></a>Writing Modules for Multiple Kernel Versions</h4>
-<!-- l. 1130 --><p class='noindent'>The system calls, which are the major interface the kernel shows to the processes,
+<!-- l. 1129 --><p class='noindent'>The system calls, which are the major interface the kernel shows to the processes,
 generally stay the same across versions. A new system call may be added, but
 usually the old ones will behave exactly like they used to. This is necessary for
 backward compatibility – a new kernel version is not supposed to break regular
 processes. In most cases, the device files will also remain the same. On the other
 hand, the internal interfaces within the kernel can and do change between
 versions.
-</p><!-- l. 1135 --><p class='indent'>   There are differences between different kernel versions, and if you want
+</p><!-- l. 1134 --><p class='indent'>   There are differences between different kernel versions, and if you want
 to support multiple kernel versions, you will find yourself having to code
 conditional compilation directives. The way to do this to compare the macro
 <code> <span class='ectt-1000'>LINUX_VERSION_CODE</span>
 </code> to the macro <code>  <span class='ectt-1000'>KERNEL_VERSION</span>
 </code>. In version <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>a.b.c</span></span></span> of the kernel, the value of this macro would be <img alt='216a+ 28b+ c  ' class='math' src='lkmpg-for-ht0x.svg' />.
-</p><!-- l. 1139 --><p class='noindent'>
+</p><!-- l. 1138 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='the-proc-file-system'><span class='titlemark'>7   </span> <a id='x1-330007'></a>The /proc File System</h3>
-<!-- l. 1141 --><p class='noindent'>In Linux, there is an additional mechanism for the kernel and kernel modules to send
+<!-- l. 1140 --><p class='noindent'>In Linux, there is an additional mechanism for the kernel and kernel modules to send
 information to processes — the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> file system. Originally designed to allow easy
 access to information about processes (hence the name), it is now used by every bit
 of the kernel which has something interesting to report, such as <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/modules</span></span></span>
 which provides the list of modules and <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/meminfo</span></span></span> which gathers memory usage
 statistics.
-</p><!-- l. 1144 --><p class='indent'>   The method to use the proc file system is very similar to the one used with device
+</p><!-- l. 1143 --><p class='indent'>   The method to use the proc file system is very similar to the one used with device
 drivers — a structure is created with all the information needed for the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> file,
 including pointers to any handler functions (in our case there is only one, the
 one called when somebody attempts to read from the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> file). Then,
@@ -1859,18 +1859,18 @@ one called when somebody attempts to read from the <span class='obeylines-h'><sp
                                                                   
 <code> <span class='ectt-1000'>cleanup_module</span>
 </code> unregisters it.
-</p><!-- l. 1147 --><p class='indent'>   Normal file systems are located on a disk, rather than just in memory (which is
+</p><!-- l. 1146 --><p class='indent'>   Normal file systems are located on a disk, rather than just in memory (which is
 where <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> is), and in that case the index-node (inode for short) number
 is a pointer to a disk location where the file’s inode is located. The inode
 contains information about the file, for example the file’s permissions, together
 with a pointer to the disk location or locations where the file’s data can be
 found.
-</p><!-- l. 1150 --><p class='indent'>   Because we don’t get called when the file is opened or closed, there’s nowhere for
+</p><!-- l. 1149 --><p class='indent'>   Because we don’t get called when the file is opened or closed, there’s nowhere for
 us to put <code>  <span class='ectt-1000'>try_module_get</span>
 </code> and <code>  <span class='ectt-1000'>module_put</span>
 </code> in this module, and if the file is opened and then the module is removed, there’s no
 way to avoid the consequences.
-</p><!-- l. 1152 --><p class='indent'>   Here a simple example showing how to use a <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> file. This is the HelloWorld for
+</p><!-- l. 1151 --><p class='indent'>   Here a simple example showing how to use a <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> file. This is the HelloWorld for
 the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> filesystem. There are three parts: create the file <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/helloworld</span></span></span> in the
 function <code>  <span class='ectt-1000'>init_module</span>
 </code>, return a value (and a buffer) when the file <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/helloworld</span></span></span> is read in the callback
@@ -1878,12 +1878,12 @@ function <code>  <span class='ectt-1000'>procfile_read</span>
 </code>, and delete the file <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/helloworld</span></span></span> in the function
 <code> <span class='ectt-1000'>cleanup_module</span>
 </code>.
-</p><!-- l. 1156 --><p class='indent'>   The <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/helloworld</span></span></span> is created when the module is loaded with the function
+</p><!-- l. 1155 --><p class='indent'>   The <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/helloworld</span></span></span> is created when the module is loaded with the function
 <code> <span class='ectt-1000'>proc_create</span>
 </code>. The return value is a pointer to <code>  <span id='textcolor591'><span class='ectt-1000'>struct</span></span><span class='ectt-1000'> proc_dir_entry</span>
 </code>, and it will be used to configure the file <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/helloworld</span></span></span> (for example, the owner
 of this file). A null return value means that the creation has failed.
-</p><!-- l. 1160 --><p class='indent'>   Every time the file <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/helloworld</span></span></span> is read, the function
+</p><!-- l. 1159 --><p class='indent'>   Every time the file <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/helloworld</span></span></span> is read, the function
 <code> <span class='ectt-1000'>procfile_read</span>
 </code> is called. Two parameters of this function are very important: the buffer
 (the second parameter) and the offset (the fourth one). The content of the
@@ -1900,7 +1900,7 @@ function, if it never returns zero, the read function is called endlessly.
 $ cat /proc/helloworld
 HelloWorld!
 </pre>
-<!-- l. 1170 --><p class='nopar'>
+<!-- l. 1169 --><p class='nopar'>
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb47'><a id='x1-33013r1'></a><span class='ecrm-0500'>1</span><span id='textcolor592'><span class='ectt-0800'>/*</span></span> 
@@ -1971,10 +1971,10 @@ HelloWorld!
 <a id='x1-33143r66'></a><span class='ecrm-0500'>66</span><span class='ectt-0800'>module_exit(procfs1_exit);</span> 
 <a id='x1-33145r67'></a><span class='ecrm-0500'>67</span> 
 <a id='x1-33147r68'></a><span class='ecrm-0500'>68</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor659'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1174 --><p class='noindent'>
+<!-- l. 1173 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='the-procops-structure'><span class='titlemark'>7.1   </span> <a id='x1-340007.1'></a>The proc_ops Structure</h4>
-<!-- l. 1176 --><p class='noindent'>The <code>  <span class='ectt-1000'>proc_ops</span>
+<!-- l. 1175 --><p class='noindent'>The <code>  <span class='ectt-1000'>proc_ops</span>
 </code> structure is defined in <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/proc_fs.h'>include/linux/proc_fs.h</a> in Linux v5.6+. In older kernels, it
 used <code>  <span class='ectt-1000'>file_operations</span>
 </code> for custom hooks in <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> file system, but it contains some
@@ -1986,10 +1986,10 @@ performance. For example, the file which never disappears in <span class='obeyli
 <code> <span class='ectt-1000'>proc_flag</span>
 </code> as <code>  <span class='ectt-1000'>PROC_ENTRY_PERMANENT</span>
 </code> to save 2 atomic ops, 1 allocation, 1 free in per open/read/close sequence.
-</p><!-- l. 1181 --><p class='noindent'>
+</p><!-- l. 1180 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='read-and-write-a-proc-file'><span class='titlemark'>7.2   </span> <a id='x1-350007.2'></a>Read and Write a /proc File</h4>
-<!-- l. 1183 --><p class='noindent'>We have seen a very simple example for a <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> file where we only read
+<!-- l. 1182 --><p class='noindent'>We have seen a very simple example for a <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> file where we only read
 the file <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/helloworld</span></span></span>. It is also possible to write in a <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> file. It
 works the same way as read, a function is called when the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> file
 is written. But there is a little difference with read, data comes from
@@ -1997,7 +1997,7 @@ user, so you have to import data from user space to kernel space (with
 <code> <span class='ectt-1000'>copy_from_user</span>
 </code> or <code>  <span class='ectt-1000'>get_user</span>
 </code>)
-</p><!-- l. 1188 --><p class='indent'>   The reason for <code>  <span class='ectt-1000'>copy_from_user</span>
+</p><!-- l. 1187 --><p class='indent'>   The reason for <code>  <span class='ectt-1000'>copy_from_user</span>
 </code> or <code>  <span class='ectt-1000'>get_user</span>
 </code> is that Linux memory (on Intel architecture, it may be different under some
                                                                   
@@ -2008,7 +2008,7 @@ not reference a unique location in memory, only a location in a memory
 segment, and you need to know which memory segment it is to be able to use
 it. There is one memory segment for the kernel, and one for each of the
 processes.
-</p><!-- l. 1192 --><p class='indent'>   The only memory segment accessible to a process is its own, so when
+</p><!-- l. 1191 --><p class='indent'>   The only memory segment accessible to a process is its own, so when
 writing regular programs to run as processes, there is no need to worry about
 segments. When you write a kernel module, normally you want to access
 the kernel memory segment, which is handled automatically by the system.
@@ -2123,22 +2123,22 @@ because data is already in kernel space.
 <a id='x1-35198r95'></a><span class='ecrm-0500'>95</span><span class='ectt-0800'>module_exit(procfs2_exit);</span> 
 <a id='x1-35200r96'></a><span class='ecrm-0500'>96</span> 
 <a id='x1-35202r97'></a><span class='ecrm-0500'>97</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor752'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1201 --><p class='noindent'>
+<!-- l. 1200 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='manage-proc-file-with-standard-filesystem'><span class='titlemark'>7.3   </span> <a id='x1-360007.3'></a>Manage /proc file with standard filesystem</h4>
-<!-- l. 1203 --><p class='noindent'>We have seen how to read and write a <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> file with the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> interface. But it is
+<!-- l. 1202 --><p class='noindent'>We have seen how to read and write a <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> file with the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> interface. But it is
 also possible to manage <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> file with inodes. The main concern is to use advanced
 functions, like permissions.
-</p><!-- l. 1207 --><p class='indent'>   In Linux, there is a standard mechanism for file system registration.
+</p><!-- l. 1206 --><p class='indent'>   In Linux, there is a standard mechanism for file system registration.
 Since every file system has to have its own functions to handle inode and file
 operations, there is a special structure to hold pointers to all those functions,
 <code> <span id='textcolor753'><span class='ectt-1000'>struct</span></span><span class='ectt-1000'> inode_operations</span>
 </code>, which includes a pointer to <code>  <span id='textcolor754'><span class='ectt-1000'>struct</span></span><span class='ectt-1000'> proc_ops</span>
 </code>.
-</p><!-- l. 1210 --><p class='indent'>   The difference between file and inode operations is that file operations deal with
+</p><!-- l. 1209 --><p class='indent'>   The difference between file and inode operations is that file operations deal with
 the file itself whereas inode operations deal with ways of referencing the file, such as
 creating links to it.
-</p><!-- l. 1212 --><p class='indent'>   In <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span>, whenever we register a new file, we’re allowed to specify which
+</p><!-- l. 1211 --><p class='indent'>   In <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span>, whenever we register a new file, we’re allowed to specify which
 <code> <span id='textcolor755'><span class='ectt-1000'>struct</span></span><span class='ectt-1000'> inode_operations</span>
 </code> will be used to access to it. This is the mechanism we use, a
 <code> <span id='textcolor756'><span class='ectt-1000'>struct</span></span><span class='ectt-1000'> inode_operations</span>
@@ -2149,7 +2149,7 @@ creating links to it.
 </code> which includes pointers to our <code>  <span class='ectt-1000'>procfs_read</span>
 </code> and <code>  <span class='ectt-1000'>procfs_write</span>
 </code> functions.
-</p><!-- l. 1215 --><p class='indent'>   Another interesting point here is the
+</p><!-- l. 1214 --><p class='indent'>   Another interesting point here is the
 <code> <span class='ectt-1000'>module_permission</span>
 </code> function. This function is called whenever a process tries to do something with the
 <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> file, and it can decide whether to allow access or not. Right now it is only
@@ -2158,7 +2158,7 @@ pointer to a structure which includes information on the currently running
 process), but it could be based on anything we like, such as what other
 processes are doing with the same file, the time of day, or the last input we
 received.
-</p><!-- l. 1219 --><p class='indent'>   It is important to note that the standard roles of read and write are reversed in
+</p><!-- l. 1218 --><p class='indent'>   It is important to note that the standard roles of read and write are reversed in
 the kernel. Read functions are used for output, whereas write functions are used for
 input. The reason for that is that read and write refer to the user’s point of view — if
 a process reads something from the kernel, then the kernel needs to output it, and
@@ -2271,14 +2271,14 @@ input.
 <a id='x1-36214r103'></a><span class='ecrm-0500'>103</span><span class='ectt-0800'>module_exit(procfs3_exit);</span> 
 <a id='x1-36216r104'></a><span class='ecrm-0500'>104</span> 
 <a id='x1-36218r105'></a><span class='ecrm-0500'>105</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor853'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1225 --><p class='indent'>   Still hungry for procfs examples? Well, first of all keep in mind, there are rumors
+<!-- l. 1224 --><p class='indent'>   Still hungry for procfs examples? Well, first of all keep in mind, there are rumors
 around, claiming that procfs is on its way out, consider using <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>sysfs</span></span></span> instead. Consider
 using this mechanism, in case you want to document something kernel related
 yourself.
-</p><!-- l. 1229 --><p class='noindent'>
+</p><!-- l. 1228 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='manage-proc-file-with-seqfile'><span class='titlemark'>7.4   </span> <a id='x1-370007.4'></a>Manage /proc file with seq_file</h4>
-<!-- l. 1231 --><p class='noindent'>As we have seen, writing a <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> file may be quite “complex”.
+<!-- l. 1230 --><p class='noindent'>As we have seen, writing a <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> file may be quite “complex”.
 So to help people writing <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> file, there is an API named
 <code> <span class='ectt-1000'>seq_file</span>
 </code> that helps formatting a <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> file for output. It is based on sequence, which is composed of
@@ -2287,7 +2287,7 @@ So to help people writing <span class='obeylines-h'><span class='verb'><span cla
 </code>, and <code>  <span class='ectt-1000'>stop()</span>
 </code>. The <code>  <span class='ectt-1000'>seq_file</span>
 </code> API starts a sequence when a user read the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> file.
-</p><!-- l. 1236 --><p class='indent'>   A sequence begins with the call of the function
+</p><!-- l. 1235 --><p class='indent'>   A sequence begins with the call of the function
 <code> <span class='ectt-1000'>start()</span>
 </code>. If the return is a non <code>  <span class='ectt-1000'>NULL</span>
 </code> value, the function <code>  <span class='ectt-1000'>next()</span>
@@ -2305,7 +2305,7 @@ Each time <code>  <span class='ectt-1000'>next()</span>
 </code> returns <code>  <span class='ectt-1000'>NULL</span>
 </code>, then the function <code>  <span class='ectt-1000'>stop()</span>
 </code> is called.
-</p><!-- l. 1244 --><p class='indent'>   BE CAREFUL: when a sequence is finished, another one starts. That means that at the end
+</p><!-- l. 1243 --><p class='indent'>   BE CAREFUL: when a sequence is finished, another one starts. That means that at the end
 of function <code>  <span class='ectt-1000'>stop()</span>
 </code>, the function <code>  <span class='ectt-1000'>start()</span>
 </code> is called again. This loop finishes when the function
@@ -2322,14 +2322,14 @@ of function <code>  <span class='ectt-1000'>stop()</span>
                                                                   
 
                                                                   
-<!-- l. 1251 --><p class='noindent'><img alt='srrsYNNYtaenetoeooertuetupsstrxr((ntn))( tis)istrr teeaNreNatUaUtmLtLmeLmLen?e?ntntt  ' src='lkmpg-for-ht1x.svg' />
+<!-- l. 1250 --><p class='noindent'><img alt='srrsYNNYtaenetoeooertuetupsstrxr((ntn))( tis)istrr teeaNreNatUaUtmLtLmeLmLen?e?ntntt  ' src='lkmpg-for-ht1x.svg' />
 </p>
 <figcaption class='caption'><span class='id'>Figure 1:</span><span class='content'>How seq_file works</span></figcaption><!-- tex4ht:label?: x1-37021r1  -->
                                                                   
 
                                                                   
    </figure>
-<!-- l. 1270 --><p class='indent'>   The <code>  <span class='ectt-1000'>seq_file</span>
+<!-- l. 1269 --><p class='indent'>   The <code>  <span class='ectt-1000'>seq_file</span>
 </code> provides basic functions for <code>  <span class='ectt-1000'>proc_ops</span>
 </code>, such as <code>  <span class='ectt-1000'>seq_read</span>
 </code>, <code>  <span class='ectt-1000'>seq_lseek</span>
@@ -2453,26 +2453,26 @@ the same way as in the previous example.
 <a id='x1-37255r115'></a><span class='ecrm-0500'>115</span><span class='ectt-0800'>module_exit(procfs4_exit);</span> 
 <a id='x1-37257r116'></a><span class='ecrm-0500'>116</span> 
 <a id='x1-37259r117'></a><span class='ecrm-0500'>117</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor951'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1276 --><p class='indent'>   If you want more information, you can read this web page:
+<!-- l. 1275 --><p class='indent'>   If you want more information, you can read this web page:
 </p>
      <ul class='itemize1'>
      <li class='itemize'><a class='url' href='https://lwn.net/Articles/22355/'><span class='ectt-1000'>https://lwn.net/Articles/22355/</span></a>
      </li>
      <li class='itemize'><a class='url' href='https://kernelnewbies.org/Documents/SeqFileHowTo'><span class='ectt-1000'>https://kernelnewbies.org/Documents/SeqFileHowTo</span></a></li></ul>
-<!-- l. 1283 --><p class='indent'>   You can also read the code of <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/fs/seq_file.c'>fs/seq_file.c</a> in the linux kernel.
+<!-- l. 1282 --><p class='indent'>   You can also read the code of <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/fs/seq_file.c'>fs/seq_file.c</a> in the linux kernel.
 </p>
    <h3 class='sectionHead' id='sysfs-interacting-with-your-module'><span class='titlemark'>8   </span> <a id='x1-380008'></a>sysfs: Interacting with your module</h3>
-<!-- l. 1287 --><p class='noindent'><span class='ecti-1000'>sysfs </span>allows you to interact with the running kernel from userspace by reading or
+<!-- l. 1286 --><p class='noindent'><span class='ecti-1000'>sysfs </span>allows you to interact with the running kernel from userspace by reading or
 setting variables inside of modules. This can be useful for debugging purposes, or just
 as an interface for applications or scripts. You can find sysfs directories and files
 under the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/sys</span></span></span> directory on your system.
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb51'><a id='x1-38003r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>ls -l /sys</span></pre>
-<!-- l. 1295 --><p class='indent'>   Attributes can be exported for kobjects in the form of regular files in the
+<!-- l. 1294 --><p class='indent'>   Attributes can be exported for kobjects in the form of regular files in the
 filesystem. Sysfs forwards file I/O operations to methods defined for the attributes,
 providing a means to read and write kernel attributes.
-</p><!-- l. 1298 --><p class='indent'>   An attribute definition in simply:
+</p><!-- l. 1297 --><p class='indent'>   An attribute definition in simply:
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb52'><a id='x1-38013r1'></a><span class='ecrm-0500'>1</span><span id='textcolor952'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> attribute {</span> 
@@ -2483,7 +2483,7 @@ providing a means to read and write kernel attributes.
 <a id='x1-38023r6'></a><span class='ecrm-0500'>6</span> 
 <a id='x1-38025r7'></a><span class='ecrm-0500'>7</span><span id='textcolor955'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> sysfs_create_file(</span><span id='textcolor956'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> kobject * kobj, </span><span id='textcolor957'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor958'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> attribute * attr);</span> 
 <a id='x1-38027r8'></a><span class='ecrm-0500'>8</span><span id='textcolor959'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> sysfs_remove_file(</span><span id='textcolor960'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> kobject * kobj, </span><span id='textcolor961'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor962'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> attribute * attr);</span></pre>
-<!-- l. 1311 --><p class='indent'>   For example, the driver model defines
+<!-- l. 1310 --><p class='indent'>   For example, the driver model defines
 <code> <span id='textcolor963'><span class='ectt-1000'>struct</span></span><span class='ectt-1000'> device_attribute</span>
 </code> like:
 </p><!-- l. 1 --><p class='indent'>
@@ -2501,7 +2501,7 @@ providing a means to read and write kernel attributes.
 <a id='x1-38054r8'></a><span class='ecrm-0500'>8</span> 
 <a id='x1-38056r9'></a><span class='ecrm-0500'>9</span><span id='textcolor976'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> device_create_file(</span><span id='textcolor977'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> device *, </span><span id='textcolor978'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor979'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> device_attribute *);</span> 
 <a id='x1-38058r10'></a><span class='ecrm-0500'>10</span><span id='textcolor980'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> device_remove_file(</span><span id='textcolor981'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> device *, </span><span id='textcolor982'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor983'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> device_attribute *);</span></pre>
-<!-- l. 1326 --><p class='indent'>   To read or write attributes, <code>  <span class='ectt-1000'>show()</span>
+<!-- l. 1325 --><p class='indent'>   To read or write attributes, <code>  <span class='ectt-1000'>show()</span>
 </code> or <code>  <span class='ectt-1000'>store()</span>
 </code> method must be specified when declaring the attribute. For the
 common cases <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/sysfs.h'>include/linux/sysfs.h</a> provides convenience macros
@@ -2510,7 +2510,7 @@ common cases <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/lin
 </code>, <code>  <span class='ectt-1000'>__ATTR_WO</span>
 </code>, etc.) to make defining attributes easier as well as making code more concise and
 readable.
-</p><!-- l. 1329 --><p class='indent'>   An example of a hello world module which includes the creation of a variable
+</p><!-- l. 1328 --><p class='indent'>   An example of a hello world module which includes the creation of a variable
 accessible via sysfs is given below.
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -2576,34 +2576,34 @@ accessible via sysfs is given below.
 <a id='x1-38183r60'></a><span class='ecrm-0500'>60</span><span class='ectt-0800'>module_exit(mymodule_exit);</span> 
 <a id='x1-38185r61'></a><span class='ecrm-0500'>61</span> 
 <a id='x1-38187r62'></a><span class='ecrm-0500'>62</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor1046'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1333 --><p class='indent'>   Make and install the module:
+<!-- l. 1332 --><p class='indent'>   Make and install the module:
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb55'><a id='x1-38191r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>make</span> 
 <a id='x1-38193r2'></a><span class='ecrm-0500'>2</span><span class='ectt-1000'>sudo insmod hello-sysfs.ko</span></pre>
-<!-- l. 1340 --><p class='indent'>   Check that it exists:
+<!-- l. 1339 --><p class='indent'>   Check that it exists:
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb56'><a id='x1-38196r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>lsmod | grep hello_sysfs</span></pre>
-<!-- l. 1346 --><p class='indent'>   What is the current value of <code>  <span class='ectt-1000'>myvariable</span>
+<!-- l. 1345 --><p class='indent'>   What is the current value of <code>  <span class='ectt-1000'>myvariable</span>
 </code> ?
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb57'><a id='x1-38200r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>cat /sys/kernel/mymodule/myvariable</span></pre>
-<!-- l. 1352 --><p class='indent'>   Set the value of <code>  <span class='ectt-1000'>myvariable</span>
+<!-- l. 1351 --><p class='indent'>   Set the value of <code>  <span class='ectt-1000'>myvariable</span>
 </code> and check that it changed.
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb58'><a id='x1-38205r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>echo </span><span id='textcolor1047'><span class='ectt-1000'>"32"</span></span><span class='ectt-1000'> | sudo tee /sys/kernel/mymodule/myvariable</span> 
 <a id='x1-38207r2'></a><span class='ecrm-0500'>2</span><span class='ectt-1000'>cat /sys/kernel/mymodule/myvariable</span></pre>
-<!-- l. 1359 --><p class='indent'>   Finally, remove the test module:
+<!-- l. 1358 --><p class='indent'>   Finally, remove the test module:
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb59'><a id='x1-38210r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>sudo rmmod hello_sysfs</span></pre>
                                                                   
 
                                                                   
-<!-- l. 1365 --><p class='indent'>   In the above case, we use a simple kobject to create a directory under
+<!-- l. 1364 --><p class='indent'>   In the above case, we use a simple kobject to create a directory under
 sysfs, and communicate with its attributes. Since Linux v2.6.0, the
 <code> <span class='ectt-1000'>kobject</span>
 </code> structure made its appearance. It was initially meant as a simple way of
@@ -2612,17 +2612,17 @@ bit of mission creep, it is now the glue that holds much of the device
 model and its sysfs interface together. For more information about kobject
 and sysfs, see <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/Documentation/driver-api/driver-model/driver.rst'>Documentation/driver-api/driver-model/driver.rst</a> and
 <a class='url' href='https://lwn.net/Articles/51437/'><span class='ectt-1000'>https://lwn.net/Articles/51437/</span></a>.
-</p><!-- l. 1371 --><p class='noindent'>
+</p><!-- l. 1370 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='talking-to-device-files'><span class='titlemark'>9   </span> <a id='x1-390009'></a>Talking To Device Files</h3>
-<!-- l. 1373 --><p class='noindent'>Device files are supposed to represent physical devices. Most physical devices are
+<!-- l. 1372 --><p class='noindent'>Device files are supposed to represent physical devices. Most physical devices are
 used for output as well as input, so there has to be some mechanism for
 device drivers in the kernel to get the output to send to the device from
 processes. This is done by opening the device file for output and writing to it,
 just like writing to a file. In the following example, this is implemented by
 <code> <span class='ectt-1000'>device_write</span>
 </code>.
-</p><!-- l. 1378 --><p class='indent'>   This is not always enough. Imagine you had a serial port connected to a modem
+</p><!-- l. 1377 --><p class='indent'>   This is not always enough. Imagine you had a serial port connected to a modem
 (even if you have an internal modem, it is still implemented from the CPU’s
 perspective as a serial port connected to a modem, so you don’t have to tax
 your imagination too hard). The natural thing to do would be to use the
@@ -2632,7 +2632,7 @@ responses for commands or the data received through the phone line). However,
 this leaves open the question of what to do when you need to talk to the
 serial port itself, for example to configure the rate at which data is sent and
 received.
-</p><!-- l. 1383 --><p class='indent'>   The answer in Unix is to use a special function called
+</p><!-- l. 1382 --><p class='indent'>   The answer in Unix is to use a special function called
 <code> <span class='ectt-1000'>ioctl</span>
 </code> (short for Input Output ConTroL). Every device can have its own
 <code> <span class='ectt-1000'>ioctl</span>
@@ -2641,7 +2641,7 @@ kernel), write ioctl’s (to return information to a process), both or neither. 
 here the roles of read and write are reversed again, so in ioctl’s read is to
 send information to the kernel and write is to receive information from the
 kernel.
-</p><!-- l. 1387 --><p class='indent'>   The ioctl function is called with three parameters: the file descriptor of the
+</p><!-- l. 1386 --><p class='indent'>   The ioctl function is called with three parameters: the file descriptor of the
 appropriate device file, the ioctl number, and a parameter, which is of type long so
 you can use a cast to use it to pass anything. You will not be able to pass a structure
 this way, but you will be able to pass a pointer to the structure. Here is an
@@ -2844,7 +2844,7 @@ example:
 <a id='x1-39385r191'></a><span class='ecrm-0500'>191</span> 
 <a id='x1-39387r192'></a><span class='ecrm-0500'>192</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor1191'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-39389r193'></a><span class='ecrm-0500'>193</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor1192'><span class='ectt-0800'>"This is test_ioctl module"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1393 --><p class='indent'>   You can see there is an argument called
+<!-- l. 1392 --><p class='indent'>   You can see there is an argument called
 <code> <span class='ectt-1000'>cmd</span>
 </code> in <code>  <span class='ectt-1000'>test_ioctl_ioctl()</span>
 </code> function. It is the ioctl number. The ioctl number encodes the major
@@ -2859,11 +2859,11 @@ included both by the programs which will use ioctl (so they can generate the
 appropriate ioctl’s) and by the kernel module (so it can understand it). In the
 example below, the header file is <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>chardev.h</span></span></span> and the program which uses it is
 <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>userspace_ioctl.c</span></span></span>.
-</p><!-- l. 1400 --><p class='indent'>   If you want to use ioctls in your own kernel modules, it is best to receive an
+</p><!-- l. 1399 --><p class='indent'>   If you want to use ioctls in your own kernel modules, it is best to receive an
 official ioctl assignment, so if you accidentally get somebody else’s ioctls, or if they
 get yours, you’ll know something is wrong. For more information, consult the kernel
 source tree at <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/Documentation/userspace-api/ioctl/ioctl-number.rst'>Documentation/userspace-api/ioctl/ioctl-number.rst</a>.
-</p><!-- l. 1403 --><p class='indent'>   Also, we need to be careful that concurrent access to the shared resources will
+</p><!-- l. 1402 --><p class='indent'>   Also, we need to be careful that concurrent access to the shared resources will
 lead to the race condition. The solution is using atomic Compare-And-Swap (CAS),
 which we mentioned at <a href='#chardevc'>6.5<!-- tex4ht:ref: sec:chardev_c  --></a> section, to enforce the exclusive access.
 </p><!-- l. 1 --><p class='indent'>
@@ -3260,10 +3260,10 @@ which we mentioned at <a href='#chardevc'>6.5<!-- tex4ht:ref: sec:chardev_c  -->
 <a id='x1-40163r101'></a><span class='ecrm-0500'>101</span><span class='ectt-0800'>    close(file_desc);</span> 
 <a id='x1-40165r102'></a><span class='ecrm-0500'>102</span><span class='ectt-0800'>    exit(EXIT_FAILURE);</span> 
 <a id='x1-40167r103'></a><span class='ecrm-0500'>103</span><span class='ectt-0800'>}</span></pre>
-<!-- l. 1412 --><p class='noindent'>
+<!-- l. 1411 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='system-calls'><span class='titlemark'>10   </span> <a id='x1-4100010'></a>System Calls</h3>
-<!-- l. 1414 --><p class='noindent'>So far, the only thing we’ve done was to use well defined kernel mechanisms to
+<!-- l. 1413 --><p class='noindent'>So far, the only thing we’ve done was to use well defined kernel mechanisms to
 register <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> files and device handlers. This is fine if you want to do something the
 kernel programmers thought you’d want, such as write a device driver. But what if
                                                                   
@@ -3271,7 +3271,7 @@ kernel programmers thought you’d want, such as write a device driver. But what
                                                                   
 you want to do something unusual, to change the behavior of the system in some
 way? Then, you are mostly on your own.
-</p><!-- l. 1419 --><p class='indent'>   Should one choose not to use a virtual machine, kernel programming
+</p><!-- l. 1418 --><p class='indent'>   Should one choose not to use a virtual machine, kernel programming
 can become risky. For example, while writing the code below, the
 <code> <span class='ectt-1000'>open()</span>
 </code> system call was inadvertently disrupted. This resulted in an inability to open any
@@ -3283,7 +3283,7 @@ execute <code>  <span class='ectt-1000'>sync</span>
 </code> right before using <code>  <span class='ectt-1000'>insmod</span>
 </code> and <code>  <span class='ectt-1000'>rmmod</span>
 </code>.
-</p><!-- l. 1426 --><p class='indent'>   Forget about <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> files, forget about device files. They are just minor details.
+</p><!-- l. 1425 --><p class='indent'>   Forget about <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> files, forget about device files. They are just minor details.
 Minutiae in the vast expanse of the universe. The real process to kernel
 communication mechanism, the one used by all processes, is <span class='ecti-1000'>system calls</span>. When a
 process requests a service from the kernel (such as opening a file, forking to a new
@@ -3292,11 +3292,11 @@ change the behaviour of the kernel in interesting ways, this is the place to do
 it. By the way, if you want to see which system calls a program uses, run
 <code> <span class='ectt-1000'>strace &lt;arguments&gt;</span>
 </code>.
-</p><!-- l. 1434 --><p class='indent'>   In general, a process is not supposed to be able to access the kernel. It can not
+</p><!-- l. 1433 --><p class='indent'>   In general, a process is not supposed to be able to access the kernel. It can not
 access kernel memory and it can’t call kernel functions. The hardware of the CPU
 enforces this (that is the reason why it is called “protected mode” or “page
 protection”).
-</p><!-- l. 1438 --><p class='indent'>   System calls are an exception to this general rule. What happens is that the
+</p><!-- l. 1437 --><p class='indent'>   System calls are an exception to this general rule. What happens is that the
 process fills the registers with the appropriate values and then calls a special
 instruction which jumps to a previously defined location in the kernel (of course, that
 location is readable by user processes, it is not writable by them). Under Intel CPUs,
@@ -3304,7 +3304,7 @@ this is done by means of interrupt 0x80. The hardware knows that once you jump t
 this location, you are no longer running in restricted user mode, but as the
 operating system kernel — and therefore you’re allowed to do whatever you
 want.
-</p><!-- l. 1443 --><p class='indent'>   The location in the kernel a process can jump to is called <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>system_call</span></span></span>. The
+</p><!-- l. 1442 --><p class='indent'>   The location in the kernel a process can jump to is called <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>system_call</span></span></span>. The
 procedure at that location checks the system call number, which tells the kernel what
 service the process requested. Then, it looks at the table of system calls
 (<code>  <span class='ectt-1000'>sys_call_table</span>
@@ -3314,7 +3314,7 @@ different process, if the process time ran out). If you want to read this code, 
 at the source file <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>arch/$(architecture)/kernel/entry.S</span></span></span>, after the line
 <code> <span class='ectt-1000'>ENTRY(system_call)</span>
 </code>.
-</p><!-- l. 1449 --><p class='indent'>   So, if we want to change the way a certain system call works, what we need to do
+</p><!-- l. 1448 --><p class='indent'>   So, if we want to change the way a certain system call works, what we need to do
                                                                   
 
                                                                   
@@ -3325,7 +3325,7 @@ code, and then calling the original function) and then change the pointer at
 don’t want to leave the system in an unstable state, it’s important for
 <code> <span class='ectt-1000'>cleanup_module</span>
 </code> to restore the table to its original state.
-</p><!-- l. 1452 --><p class='indent'>   To modify the content of <code>  <span class='ectt-1000'>sys_call_table</span>
+</p><!-- l. 1451 --><p class='indent'>   To modify the content of <code>  <span class='ectt-1000'>sys_call_table</span>
 </code>, we need to consider the control register. A control register is a processor
 register that changes or controls the general behavior of the CPU. For x86
 architecture, the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>cr0</span></span></span> register has various control flags that modify the basic
@@ -3338,11 +3338,11 @@ read-only sections Therefore, we must disable the <span class='obeylines-h'><spa
 issue, the attacker may write into CPU control registers to disable CPU protections
 like write protection. As a result, we have to provide the custom assembly routine to
 bypass it.
-</p><!-- l. 1461 --><p class='indent'>   However, <code>  <span class='ectt-1000'>sys_call_table</span>
+</p><!-- l. 1460 --><p class='indent'>   However, <code>  <span class='ectt-1000'>sys_call_table</span>
 </code> symbol is unexported to prevent misuse. But there have few ways to get the symbol, manual
 symbol lookup and <code>  <span class='ectt-1000'>kallsyms_lookup_name</span>
 </code>. Here we use both depend on the kernel version.
-</p><!-- l. 1465 --><p class='indent'>   Because of the <span class='ecti-1000'>control-flow integrity</span>, which is a technique to prevent the redirect
+</p><!-- l. 1464 --><p class='indent'>   Because of the <span class='ecti-1000'>control-flow integrity</span>, which is a technique to prevent the redirect
 execution code from the attacker, for making sure that the indirect calls go to the
 expected addresses and the return addresses are not changed. Since Linux v5.7, the
 kernel patched the series of <span class='ecti-1000'>control-flow enforcement </span>(CET) for x86, and some
@@ -3367,10 +3367,10 @@ COLLECT_GCC_OPTIONS='-v' '-Q' '-O2' '--help=target' '-mtune=generic' '-marc
  GNU C17 (Ubuntu 9.3.0-17ubuntu1~20.04) version 9.3.0 (x86_64-linux-gnu)
 ...
 </pre>
-<!-- l. 1482 --><p class='nopar'>But CET should not be enabled in the kernel, it may break the Kprobes and bpf.
+<!-- l. 1481 --><p class='nopar'>But CET should not be enabled in the kernel, it may break the Kprobes and bpf.
 Consequently, CET is disabled since v5.11. To guarantee the manual symbol lookup
 worked, we only use up to v5.4.
-</p><!-- l. 1487 --><p class='indent'>   Unfortunately, since Linux v5.7 <code>  <span class='ectt-1000'>kallsyms_lookup_name</span>
+</p><!-- l. 1486 --><p class='indent'>   Unfortunately, since Linux v5.7 <code>  <span class='ectt-1000'>kallsyms_lookup_name</span>
 </code> is also unexported, it needs certain trick to get the address of
 <code> <span class='ectt-1000'>kallsyms_lookup_name</span>
 </code>. If <code>  <span class='ectt-1000'>CONFIG_KPROBES</span>
@@ -3382,7 +3382,7 @@ passes the addresses of the saved registers and the Kprobe struct to the handler
 you defined, then executes it. Kprobes can be registered by symbol name
 or address. Within the symbol name, the address will be handled by the
 kernel.
-</p><!-- l. 1495 --><p class='indent'>   Otherwise, specify the address of <code>  <span class='ectt-1000'>sys_call_table</span>
+</p><!-- l. 1494 --><p class='indent'>   Otherwise, specify the address of <code>  <span class='ectt-1000'>sys_call_table</span>
 </code> from <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/kallsyms</span></span></span> and <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/boot/System.map</span></span></span> into
 <code> <span class='ectt-1000'>sym</span>
 </code> parameter. Following is the sample usage for <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/kallsyms</span></span></span>:
@@ -3397,8 +3397,8 @@ ffffffff820013a0 R sys_call_table
 ffffffff820023e0 R ia32_sys_call_table
 $ sudo insmod syscall-steal.ko sym=0xffffffff820013a0
 </pre>
-<!-- l. 1503 --><p class='nopar'>
-</p><!-- l. 1505 --><p class='indent'>   Using the address from <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/boot/System.map</span></span></span>, be careful about <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>KASLR</span></span></span> (Kernel
+<!-- l. 1502 --><p class='nopar'>
+</p><!-- l. 1504 --><p class='indent'>   Using the address from <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/boot/System.map</span></span></span>, be careful about <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>KASLR</span></span></span> (Kernel
 Address Space Layout Randomization). <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>KASLR</span></span></span> may randomize the address of
 kernel code and data at every boot time, such as the static address listed in
 <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/boot/System.map</span></span></span> will offset by some entropy. The purpose of <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>KASLR</span></span></span> is to protect
@@ -3427,7 +3427,7 @@ ffffffff82000300 R sys_call_table
 $ sudo grep sys_call_table /proc/kallsyms
 ffffffff86400300 R sys_call_table
 </pre>
-<!-- l. 1524 --><p class='nopar'>If <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>KASLR</span></span></span> is enabled, we have to take care of the address from <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/kallsyms</span></span></span> each
+<!-- l. 1523 --><p class='nopar'>If <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>KASLR</span></span></span> is enabled, we have to take care of the address from <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/kallsyms</span></span></span> each
 time we reboot the machine. In order to use the address from <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/boot/System.map</span></span></span>,
 make sure that <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>KASLR</span></span></span> is disabled. You can add the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>nokaslr</span></span></span> for disabling <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>KASLR</span></span></span> in
 next booting time:
@@ -3443,8 +3443,8 @@ $ grep quiet /etc/default/grub
 GRUB_CMDLINE_LINUX_DEFAULT="quiet nokaslr splash"
 $ sudo update-grub
 </pre>
-<!-- l. 1535 --><p class='nopar'>
-</p><!-- l. 1537 --><p class='indent'>   For more information, check out the following:
+<!-- l. 1534 --><p class='nopar'>
+</p><!-- l. 1536 --><p class='indent'>   For more information, check out the following:
 </p>
      <ul class='itemize1'>
      <li class='itemize'><a href='https://lwn.net/Articles/804849/'>Cook: Security things in Linux v5.3</a>
@@ -3458,7 +3458,7 @@ $ sudo update-grub
      <li class='itemize'><a href='https://www.kernel.org/doc/Documentation/kprobes.txt'>Kernel Probes (Kprobes)</a>
      </li>
      <li class='itemize'><a href='https://lwn.net/Articles/569635/'>Kernel address space layout randomization</a></li></ul>
-<!-- l. 1548 --><p class='indent'>   The source code here is an example of such a kernel module. We want to “spy” on a certain
+<!-- l. 1547 --><p class='indent'>   The source code here is an example of such a kernel module. We want to “spy” on a certain
 user, and to <code>  <span class='ectt-1000'>pr_info()</span>
 </code> a message whenever that user opens a file. Towards this end, we
 replace the system call to open a file with our own function, called
@@ -3471,7 +3471,7 @@ spy on, it calls <code>  <span class='ectt-1000'>pr_info()</span>
 </code> to display the name of the file to be opened. Then, either way, it calls the original
 <code> <span class='ectt-1000'>openat()</span>
 </code> function with the same parameters, to actually open the file.
-</p><!-- l. 1554 --><p class='indent'>   The <code>  <span class='ectt-1000'>init_module</span>
+</p><!-- l. 1553 --><p class='indent'>   The <code>  <span class='ectt-1000'>init_module</span>
 </code> function replaces the appropriate location in
 <code> <span class='ectt-1000'>sys_call_table</span>
 </code> and keeps the original pointer in a variable. The
@@ -3489,7 +3489,7 @@ with <code>  <span class='ectt-1000'>B_openat</span>
 </code>, which will call what it thinks is the original system call,
 <code> <span class='ectt-1000'>A_openat</span>
 </code>, when it’s done.
-</p><!-- l. 1561 --><p class='indent'>   Now, if B is removed first, everything will be well — it will simply restore the system
+</p><!-- l. 1560 --><p class='indent'>   Now, if B is removed first, everything will be well — it will simply restore the system
 call to <code>  <span class='ectt-1000'>A_openat</span>
 </code>, which calls the original. However, if A is removed and then B is removed, the
 system will crash. A’s removal will restore the system call to the original,
@@ -3509,7 +3509,7 @@ problem. When A is removed, it sees that the system call was changed to
 </code> will still try to call <code>  <span class='ectt-1000'>A_openat</span>
 </code> which is no longer there, so that even without removing B the system would
 crash.
-</p><!-- l. 1569 --><p class='indent'>   For x86 architecture, the system call table cannot be used to invoke a system call
+</p><!-- l. 1568 --><p class='indent'>   For x86 architecture, the system call table cannot be used to invoke a system call
 after commit <a href='https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=1e3ad78334a69b36e107232e337f9d693dcc9df2'>1e3ad78</a> since v6.9. This commit has been backported to long term
 stable kernels, like v5.15.154+, v6.1.85+, v6.6.26+ and v6.8.5+, see this <a href='https://stackoverflow.com/a/78607015'>answer</a> for
 more details. In this case, thanks to Kprobes, a hook can be used instead on the
@@ -3517,7 +3517,7 @@ more details. In this case, thanks to Kprobes, a hook can be used instead on the
 
                                                                   
 system call entry to intercept the system call.
-</p><!-- l. 1574 --><p class='indent'>   Note that all the related problems make syscall stealing unfeasible for
+</p><!-- l. 1573 --><p class='indent'>   Note that all the related problems make syscall stealing unfeasible for
 production use. In order to keep people from doing potential harmful things
 <code> <span class='ectt-1000'>sys_call_table</span>
 </code> is no longer exported. This means, if you want to do something more than a mere
@@ -3825,13 +3825,13 @@ dry run of this example, you will have to patch your current kernel in order to 
 <a id='x1-41636r297'></a><span class='ecrm-0500'>297</span><span class='ectt-0800'>module_exit(syscall_steal_end);</span> 
 <a id='x1-41638r298'></a><span class='ecrm-0500'>298</span> 
 <a id='x1-41640r299'></a><span class='ecrm-0500'>299</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor1825'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1580 --><p class='noindent'>
+<!-- l. 1579 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='blocking-processes-and-threads'><span class='titlemark'>11   </span> <a id='x1-4200011'></a>Blocking Processes and threads</h3>
-<!-- l. 1582 --><p class='noindent'>
+<!-- l. 1581 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='sleep'><span class='titlemark'>11.1   </span> <a id='x1-4300011.1'></a>Sleep</h4>
-<!-- l. 1584 --><p class='noindent'>What do you do when somebody asks you for something you can not do right
+<!-- l. 1583 --><p class='noindent'>What do you do when somebody asks you for something you can not do right
 away? If you are a human being and you are bothered by a human being, the
 only thing you can say is: "<span class='ecti-1000'>Not right now, I’m busy. Go away!</span>". But if you
 are a kernel module and you are bothered by a process, you have another
@@ -3839,14 +3839,14 @@ possibility. You can put the process to sleep until you can service it. After al
 processes are being put to sleep by the kernel and woken up all the time (that
 is the way multiple processes appear to run on the same time on a single
 CPU).
-</p><!-- l. 1590 --><p class='indent'>   This kernel module is an example of this. The file (called <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/sleep</span></span></span>) can only
+</p><!-- l. 1589 --><p class='indent'>   This kernel module is an example of this. The file (called <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/sleep</span></span></span>) can only
 be opened by a single process at a time. If the file is already open, the kernel module
 calls <code>  <span class='ectt-1000'>wait_event_interruptible</span>
 </code>. The easiest way to keep a file open is to open it with:
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb65'><a id='x1-43004r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>tail -f</span></pre>
-<!-- l. 1599 --><p class='indent'>   This function changes the status of the task (a task is the kernel data structure
+<!-- l. 1598 --><p class='indent'>   This function changes the status of the task (a task is the kernel data structure
 which holds information about a process and the system call it is in, if any) to
 <code> <span class='ectt-1000'>TASK_INTERRUPTIBLE</span>
 </code>, which means that the task will not run until it is woken up somehow, and adds it to
@@ -3856,7 +3856,7 @@ CPU.
                                                                   
 
                                                                   
-</p><!-- l. 1603 --><p class='indent'>   When a process is done with the file, it closes it, and
+</p><!-- l. 1602 --><p class='indent'>   When a process is done with the file, it closes it, and
 <code> <span class='ectt-1000'>module_close</span>
 </code> is called. That function wakes up all the processes in the queue (there’s no
 mechanism to only wake up one of them). It then returns and the process which just
@@ -3866,31 +3866,31 @@ Eventually, one of the processes which was in the queue will be given control
 of the CPU by the scheduler. It starts at the point right after the call to
 <code> <span class='ectt-1000'>wait_event_interruptible</span>
 </code>.
-</p><!-- l. 1610 --><p class='indent'>   This means that the process is still in kernel mode - as far as the process
+</p><!-- l. 1609 --><p class='indent'>   This means that the process is still in kernel mode - as far as the process
 is concerned, it issued the open system call and the system call has not
 returned yet. The process does not know somebody else used the CPU for
 most of the time between the moment it issued the call and the moment it
 returned.
-</p><!-- l. 1613 --><p class='indent'>   It can then proceed to set a global variable to tell all the other processes that the
+</p><!-- l. 1612 --><p class='indent'>   It can then proceed to set a global variable to tell all the other processes that the
 file is still open and go on with its life. When the other processes get a piece of the
 CPU, they’ll see that global variable and go back to sleep.
-</p><!-- l. 1616 --><p class='indent'>   So we will use <code>  <span class='ectt-1000'>tail -f</span>
+</p><!-- l. 1615 --><p class='indent'>   So we will use <code>  <span class='ectt-1000'>tail -f</span>
 </code> to keep the file open in the background, while trying to access it with another
 process (again in the background, so that we need not switch to a different vt). As
 soon as the first background process is killed with kill %1 , the second is woken up, is
 able to access the file and finally terminates.
-</p><!-- l. 1619 --><p class='indent'>   To make our life more interesting, <code>  <span class='ectt-1000'>module_close</span>
+</p><!-- l. 1618 --><p class='indent'>   To make our life more interesting, <code>  <span class='ectt-1000'>module_close</span>
 </code> does not have a monopoly on waking up the processes which wait to access the file.
 A signal, such as <span class='ecti-1000'>Ctrl +c </span>(<span class='ecbx-1000'>SIGINT</span>) can also wake up a process. This is because we
 used <code>  <span class='ectt-1000'>wait_event_interruptible</span>
 </code>. We could have used <code>  <span class='ectt-1000'>wait_event</span>
 </code> instead, but that would have resulted in extremely angry users whose <span class='ecti-1000'>Ctrl+c</span>’s are
 ignored.
-</p><!-- l. 1623 --><p class='indent'>   In that case, we want to return with
+</p><!-- l. 1622 --><p class='indent'>   In that case, we want to return with
 <code> <span class='ectt-1000'>-EINTR</span>
 </code> immediately. This is important so users can, for example, kill the process before it
 receives the file.
-</p><!-- l. 1625 --><p class='indent'>   There is one more point to remember. Some times processes don’t want to sleep, they want
+</p><!-- l. 1624 --><p class='indent'>   There is one more point to remember. Some times processes don’t want to sleep, they want
 either to get what they want immediately, or to be told it cannot be done. Such processes
 use the <code>  <span class='ectt-1000'>O_NONBLOCK</span>
 </code> flag when opening the file. The kernel is supposed to respond by returning with the error
@@ -3926,7 +3926,7 @@ $ cat_nonblock /proc/sleep
 Last input:
 $
 </pre>
-<!-- l. 1650 --><p class='nopar'>
+<!-- l. 1649 --><p class='nopar'>
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb66'><a id='x1-43018r1'></a><span class='ecrm-0500'>1</span><span id='textcolor1826'><span class='ectt-0800'>/*</span></span> 
@@ -4220,14 +4220,14 @@ $
 <a id='x1-43588r58'></a><span class='ecrm-0500'>58</span><span class='ectt-0800'>    close(fd);</span> 
 <a id='x1-43590r59'></a><span class='ecrm-0500'>59</span><span class='ectt-0800'>    </span><span id='textcolor2079'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
 <a id='x1-43592r60'></a><span class='ecrm-0500'>60</span><span class='ectt-0800'>}</span></pre>
-<!-- l. 1656 --><p class='noindent'>
+<!-- l. 1655 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='completions'><span class='titlemark'>11.2   </span> <a id='x1-4400011.2'></a>Completions</h4>
-<!-- l. 1658 --><p class='noindent'>Sometimes one thing should happen before another within a module having multiple threads.
+<!-- l. 1657 --><p class='noindent'>Sometimes one thing should happen before another within a module having multiple threads.
 Rather than using <code>  <span class='ectt-1000'>/bin/sleep</span>
 </code> commands, the kernel has another way to do this which allows timeouts or
 interrupts to also happen.
-</p><!-- l. 1661 --><p class='indent'>   Completions as code synchronization mechanism have three main parts, initialization
+</p><!-- l. 1660 --><p class='indent'>   Completions as code synchronization mechanism have three main parts, initialization
 of struct completion synchronization object, the waiting or barrier part through
 <code> <span class='ectt-1000'>wait_for_completion()</span>
                                                                   
@@ -4236,7 +4236,7 @@ of struct completion synchronization object, the waiting or barrier part through
 </code>, and the signalling side through a call to
 <code> <span class='ectt-1000'>complete()</span>
 </code>.
-</p><!-- l. 1663 --><p class='indent'>   In the subsequent example, two threads are initiated: crank and flywheel. It
+</p><!-- l. 1662 --><p class='indent'>   In the subsequent example, two threads are initiated: crank and flywheel. It
 is imperative that the crank thread starts before the flywheel thread. A
 completion state is established for each of these threads, with a distinct
 completion defined for both the crank and flywheel threads. At the exit
@@ -4245,12 +4245,12 @@ point of each thread the respective completion state is updated, and
 </code> is used by the flywheel thread to ensure that it does not begin prematurely. The crank thread
 uses the <code>  <span class='ectt-1000'>complete_all()</span>
 </code> function to update the completion, which lets the flywheel thread continue.
-</p><!-- l. 1669 --><p class='indent'>   So even though <code>  <span class='ectt-1000'>flywheel_thread</span>
+</p><!-- l. 1668 --><p class='indent'>   So even though <code>  <span class='ectt-1000'>flywheel_thread</span>
 </code> is started first you should notice when you load this module and run
 <code> <span class='ectt-1000'>dmesg</span>
 </code>, that turning the crank always happens first because the flywheel thread waits for
 the crank thread to complete.
-</p><!-- l. 1671 --><p class='indent'>   There are other variations of the <code>  <span class='ectt-1000'>wait_for_completion</span>
+</p><!-- l. 1670 --><p class='indent'>   There are other variations of the <code>  <span class='ectt-1000'>wait_for_completion</span>
 </code> function, which include timeouts or being interrupted, but this basic mechanism is
 enough for many common situations without adding a lot of complexity.
 </p><!-- l. 1 --><p class='indent'>
@@ -4339,17 +4339,17 @@ enough for many common situations without adding a lot of complexity.
 <a id='x1-44172r82'></a><span class='ecrm-0500'>82</span> 
 <a id='x1-44174r83'></a><span class='ecrm-0500'>83</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2141'><span class='ectt-0800'>"Completions example"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-44176r84'></a><span class='ecrm-0500'>84</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2142'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1675 --><p class='noindent'>
+<!-- l. 1674 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='avoiding-collisions-and-deadlocks'><span class='titlemark'>12   </span> <a id='x1-4500012'></a>Avoiding Collisions and Deadlocks</h3>
-<!-- l. 1677 --><p class='noindent'>If processes running on different CPUs or in different threads try to access the same
+<!-- l. 1676 --><p class='noindent'>If processes running on different CPUs or in different threads try to access the same
 memory, then it is possible that strange things can happen or your system can lock
 up. To avoid this, various types of mutual exclusion kernel functions are available.
 These indicate if a section of code is "locked" or "unlocked" so that simultaneous
 attempts to run it can not happen.
 </p>
    <h4 class='subsectionHead' id='mutex'><span class='titlemark'>12.1   </span> <a id='x1-4600012.1'></a>Mutex</h4>
-<!-- l. 1682 --><p class='noindent'>You can use kernel mutexes (mutual exclusions) in much the same manner that you
+<!-- l. 1681 --><p class='noindent'>You can use kernel mutexes (mutual exclusions) in much the same manner that you
 might deploy them in userland. This may be all that is needed to avoid collisions in
 most cases.
 </p><!-- l. 1 --><p class='indent'>
@@ -4397,15 +4397,15 @@ most cases.
                                                                   
 
                                                                   
-<!-- l. 1687 --><p class='noindent'>
+<!-- l. 1686 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='spinlocks'><span class='titlemark'>12.2   </span> <a id='x1-4700012.2'></a>Spinlocks</h4>
-<!-- l. 1689 --><p class='noindent'>As the name suggests, spinlocks lock up the CPU that the code is running on,
+<!-- l. 1688 --><p class='noindent'>As the name suggests, spinlocks lock up the CPU that the code is running on,
 taking 100% of its resources. Because of this you should only use the spinlock
 mechanism around code which is likely to take no more than a few milliseconds to
 run and so will not noticeably slow anything down from the user’s point of
 view.
-</p><!-- l. 1692 --><p class='indent'>   The example here is <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>"irq safe"</span></span></span> in that if interrupts happen during the lock then
+</p><!-- l. 1691 --><p class='indent'>   The example here is <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>"irq safe"</span></span></span> in that if interrupts happen during the lock then
 they will not be forgotten and will activate when the unlock happens, using the
 <code> <span class='ectt-1000'>flags</span>
 </code> variable to retain their state.
@@ -4473,14 +4473,14 @@ they will not be forgotten and will activate when the unlock happens, using the
 <a id='x1-47121r60'></a><span class='ecrm-0500'>60</span> 
 <a id='x1-47123r61'></a><span class='ecrm-0500'>61</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2238'><span class='ectt-0800'>"Spinlock example"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-47125r62'></a><span class='ecrm-0500'>62</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2239'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1696 --><p class='indent'>   Taking 100% of a CPU’s resources comes with greater responsibility. Situations
+<!-- l. 1695 --><p class='indent'>   Taking 100% of a CPU’s resources comes with greater responsibility. Situations
 where the kernel code monopolizes a CPU are called <span class='ecbx-1000'>atomic contexts</span>. Holding a
 spinlock is one of those situations. Sleeping in atomic contexts may leave the system
 hanging, as the occupied CPU devotes 100% of its resources doing nothing
 but sleeping. In some worse cases the system may crash. Thus, sleeping in
 atomic contexts is considered a bug in the kernel. They are sometimes called
 “sleep-in-atomic-context” in some materials.
-</p><!-- l. 1704 --><p class='indent'>   Note that sleeping here is not limited to calling the sleep functions explicitly.
+</p><!-- l. 1703 --><p class='indent'>   Note that sleeping here is not limited to calling the sleep functions explicitly.
 If subsequent function calls eventually invoke a function that sleeps, it is
 also considered sleeping. Thus, it is important to pay attention to functions
 being used in atomic context. There’s no documentation recording all such
@@ -4489,13 +4489,13 @@ kernel source code stating that a function “may sleep”, “might sleep”, o
 more explicitly “the caller should not hold a spinlock”. Those comments are
 hints that a function may implicitly sleep and must not be called in atomic
 contexts.
-</p><!-- l. 1711 --><p class='indent'>   Now, let’s differentiate between a few types of spinlock functions in Linux kernel:
+</p><!-- l. 1710 --><p class='indent'>   Now, let’s differentiate between a few types of spinlock functions in Linux kernel:
 <code> <span class='ectt-1000'>spin_lock()</span>
 </code>, <code>  <span class='ectt-1000'>spin_lock_irq()</span>
 </code>, <code>  <span class='ectt-1000'>spin_lock_irqsave()</span>
 </code>, and <code>  <span class='ectt-1000'>spin_lock_bh()</span>
 </code>.
-</p><!-- l. 1713 --><p class='indent'>   <code>  <span class='ectt-1000'>spin_lock()</span>
+</p><!-- l. 1712 --><p class='indent'>   <code>  <span class='ectt-1000'>spin_lock()</span>
 </code> does not allow the CPU to sleep while waiting for the lock, which makes it suitable
 for most use cases where the critical section is short. However, this is problematic for
 real-time Linux because spinlocks in this configuration behave as sleeping
@@ -4507,7 +4507,7 @@ become unresponsive. To address this in real-time Linux environments, a
 
                                                                   
 </code> but without causing the system to sleep.
-</p><!-- l. 1718 --><p class='indent'>   On the other hand, <code>  <span class='ectt-1000'>spin_lock_irq()</span>
+</p><!-- l. 1717 --><p class='indent'>   On the other hand, <code>  <span class='ectt-1000'>spin_lock_irq()</span>
 </code> disables interrupts while holding the lock, but it does not save the interrupt state. This
 means that if an interrupt occurs while the lock is held, the interrupt state could be lost. In
 contrast, <code>  <span class='ectt-1000'>spin_lock_irqsave()</span>
@@ -4515,23 +4515,23 @@ contrast, <code>  <span class='ectt-1000'>spin_lock_irqsave()</span>
 are restored to their previous state when the lock is released. This makes
 <code> <span class='ectt-1000'>spin_lock_irqsave()</span>
 </code> a safer option in scenarios where preserving the interrupt state is crucial.
-</p><!-- l. 1723 --><p class='indent'>   Next, <code>  <span class='ectt-1000'>spin_lock_bh()</span>
+</p><!-- l. 1722 --><p class='indent'>   Next, <code>  <span class='ectt-1000'>spin_lock_bh()</span>
 </code> disables softirqs (software interrupts) but allows hardware interrupts to continue. Unlike
 <code> <span class='ectt-1000'>spin_lock_irq()</span>
 </code> and <code>  <span class='ectt-1000'>spin_lock_irqsave()</span>
 </code>, which disable both hardware and software interrupts,
 <code> <span class='ectt-1000'>spin_lock_bh()</span>
 </code> is useful when hardware interrupts need to remain active.
-</p><!-- l. 1726 --><p class='indent'>   For more information about spinlock usage and lock types, see the following
+</p><!-- l. 1725 --><p class='indent'>   For more information about spinlock usage and lock types, see the following
 resources: </p>
      <ul class='itemize1'>
      <li class='itemize'><a href='https://www.kernel.org/doc/Documentation/locking/spinlocks.txt'>Lesson 1: Spin locks</a>
      </li>
      <li class='itemize'><a href='https://docs.kernel.org/locking/locktypes.html'>Lock types and their rules</a></li></ul>
-<!-- l. 1732 --><p class='noindent'>
+<!-- l. 1731 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='read-and-write-locks'><span class='titlemark'>12.3   </span> <a id='x1-4800012.3'></a>Read and write locks</h4>
-<!-- l. 1734 --><p class='noindent'>Read and write locks are specialised kinds of spinlocks so that you can exclusively
+<!-- l. 1733 --><p class='noindent'>Read and write locks are specialised kinds of spinlocks so that you can exclusively
 read from something or write to something. Like the earlier spinlocks example, the
 one below shows an "irq safe" situation in which if other functions were triggered
 from irqs which might also read and write to whatever you are concerned with
@@ -4596,7 +4596,7 @@ module.
 <a id='x1-48106r53'></a><span class='ecrm-0500'>53</span> 
 <a id='x1-48108r54'></a><span class='ecrm-0500'>54</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2287'><span class='ectt-0800'>"Read/Write locks example"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-48110r55'></a><span class='ecrm-0500'>55</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2288'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1740 --><p class='indent'>   Of course, if you know for sure that there are no functions triggered by irqs
+<!-- l. 1739 --><p class='indent'>   Of course, if you know for sure that there are no functions triggered by irqs
 which could possibly interfere with your logic then you can use the simpler
                                                                   
 
@@ -4606,7 +4606,7 @@ which could possibly interfere with your logic then you can use the simpler
 </code> or the corresponding write functions.
 </p>
    <h4 class='subsectionHead' id='atomic-operations'><span class='titlemark'>12.4   </span> <a id='x1-4900012.4'></a>Atomic operations</h4>
-<!-- l. 1743 --><p class='noindent'>If you are doing simple arithmetic: adding, subtracting or bitwise operations, then
+<!-- l. 1742 --><p class='noindent'>If you are doing simple arithmetic: adding, subtracting or bitwise operations, then
 there is another way in the multi-CPU and multi-hyperthreaded world to stop other
 parts of the system from messing with your mojo. By using atomic operations you
 can be confident that your addition, subtraction or bit flip did actually happen
@@ -4689,7 +4689,7 @@ below.
 <a id='x1-49146r73'></a><span class='ecrm-0500'>73</span> 
 <a id='x1-49148r74'></a><span class='ecrm-0500'>74</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2345'><span class='ectt-0800'>"Atomic operations example"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-49150r75'></a><span class='ecrm-0500'>75</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2346'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1749 --><p class='indent'>   Before the C11 standard adopts the built-in atomic types, the kernel already
+<!-- l. 1748 --><p class='indent'>   Before the C11 standard adopts the built-in atomic types, the kernel already
 provided a small set of atomic types by using a bunch of tricky architecture-specific
 codes. Implementing the atomic types by C11 atomics may allow the kernel to throw
 away the architecture-specific codes and letting the kernel code be more friendly to
@@ -4702,25 +4702,25 @@ For further details, see: </p>
      <li class='itemize'><a href='https://lwn.net/Articles/691128/'>Time to move to C11 atomics?</a>
      </li>
      <li class='itemize'><a href='https://lwn.net/Articles/698315/'>Atomic usage patterns in the kernel</a></li></ul>
-<!-- l. 1760 --><p class='noindent'>
+<!-- l. 1759 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='replacing-print-macros'><span class='titlemark'>13   </span> <a id='x1-5000013'></a>Replacing Print Macros</h3>
                                                                   
 
                                                                   
-<!-- l. 1762 --><p class='noindent'>
+<!-- l. 1761 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='replacement'><span class='titlemark'>13.1   </span> <a id='x1-5100013.1'></a>Replacement</h4>
-<!-- l. 1764 --><p class='noindent'>In Section <a href='#before-we-begin'>1.7<!-- tex4ht:ref: sec:preparation  --></a>, it was noted that the X Window System and kernel module
+<!-- l. 1763 --><p class='noindent'>In Section <a href='#before-we-begin'>1.7<!-- tex4ht:ref: sec:preparation  --></a>, it was noted that the X Window System and kernel module
 programming are not conducive to integration. This remains valid during the
 development of kernel modules. However, in practical scenarios, the necessity
 emerges to relay messages to the tty (teletype) originating the module load
 command.
-</p><!-- l. 1768 --><p class='indent'>   The term “tty” originates from <span class='ecti-1000'>teletype</span>, which initially referred to a combined
+</p><!-- l. 1767 --><p class='indent'>   The term “tty” originates from <span class='ecti-1000'>teletype</span>, which initially referred to a combined
 keyboard-printer for Unix system communication. Today, it signifies a text stream
 abstraction employed by Unix programs, encompassing physical terminals, xterms in
 X displays, and network connections like SSH.
-</p><!-- l. 1772 --><p class='indent'>   To achieve this, the “current” pointer is leveraged to access the active task’s tty
+</p><!-- l. 1771 --><p class='indent'>   To achieve this, the “current” pointer is leveraged to access the active task’s tty
 structure. Within this structure lies a pointer to a string write function, facilitating
 the string’s transmission to the tty.
 </p><!-- l. 1 --><p class='indent'>
@@ -4799,16 +4799,16 @@ the string’s transmission to the tty.
 <a id='x1-51144r72'></a><span class='ecrm-0500'>72</span><span class='ectt-0800'>module_exit(print_string_exit);</span> 
 <a id='x1-51146r73'></a><span class='ecrm-0500'>73</span> 
 <a id='x1-51148r74'></a><span class='ecrm-0500'>74</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2418'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1777 --><p class='noindent'>
+<!-- l. 1776 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='flashing-keyboard-leds'><span class='titlemark'>13.2   </span> <a id='x1-5200013.2'></a>Flashing keyboard LEDs</h4>
-<!-- l. 1779 --><p class='noindent'>In certain conditions, you may desire a simpler and more direct way to communicate
+<!-- l. 1778 --><p class='noindent'>In certain conditions, you may desire a simpler and more direct way to communicate
 to the external world. Flashing keyboard LEDs can be such a solution: It is an
 immediate way to attract attention or to display a status condition. Keyboard LEDs
 are present on every hardware, they are always visible, they do not need any setup,
 and their use is rather simple and non-intrusive, compared to writing to a tty or a
 file.
-</p><!-- l. 1783 --><p class='indent'>   From v4.14 to v4.15, the timer API made a series of changes
+</p><!-- l. 1782 --><p class='indent'>   From v4.14 to v4.15, the timer API made a series of changes
 to improve memory safety. A buffer overflow in the area of a
 <code> <span class='ectt-1000'>timer_list</span>
 </code> structure may be able to overwrite the
@@ -4834,7 +4834,7 @@ Thus, it is better to use a unique prototype to separate from the cluster that t
 <code> <span class='ectt-1000'>container_of</span>
 </code> macro instead of the <code>  <span id='textcolor2427'><span class='ectt-1000'>unsigned</span></span><span class='ectt-1000'> </span><span id='textcolor2428'><span class='ectt-1000'>long</span></span>
 </code> value. For more information see: <a href='https://lwn.net/Articles/735887/'>Improving the kernel timers API</a>.
-</p><!-- l. 1792 --><p class='indent'>   Before Linux v4.14, <code>  <span class='ectt-1000'>setup_timer</span>
+</p><!-- l. 1791 --><p class='indent'>   Before Linux v4.14, <code>  <span class='ectt-1000'>setup_timer</span>
 </code> was used to initialize the timer and the
 <code> <span class='ectt-1000'>timer_list</span>
 </code> structure looked like: 
@@ -4849,7 +4849,7 @@ Thus, it is better to use a unique prototype to separate from the cluster that t
 <a id='x1-52039r8'></a><span class='ecrm-0500'>8</span> 
 <a id='x1-52041r9'></a><span class='ecrm-0500'>9</span><span id='textcolor2438'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> setup_timer(</span><span id='textcolor2439'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> timer_list *timer, </span><span id='textcolor2440'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> (*callback)(</span><span id='textcolor2441'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor2442'><span class='ectt-0800'>long</span></span><span class='ectt-0800'>),</span> 
 <a id='x1-52043r10'></a><span class='ecrm-0500'>10</span><span class='ectt-0800'>                 </span><span id='textcolor2443'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor2444'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> data);</span></pre>
-<!-- l. 1806 --><p class='indent'>   Since Linux v4.14, <code>  <span class='ectt-1000'>timer_setup</span>
+<!-- l. 1805 --><p class='indent'>   Since Linux v4.14, <code>  <span class='ectt-1000'>timer_setup</span>
 </code> is adopted and the kernel step by step converting to
 <code> <span class='ectt-1000'>timer_setup</span>
 </code> from <code>  <span class='ectt-1000'>setup_timer</span>
@@ -4860,7 +4860,7 @@ Moreover, the <code>  <span class='ectt-1000'>timer_setup</span>
 </p>
    <pre class='fancyvrb' id='fancyvrb75'><a id='x1-52052r1'></a><span class='ecrm-0500'>1</span><span id='textcolor2445'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> timer_setup(</span><span id='textcolor2446'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> timer_list *timer,</span> 
 <a id='x1-52054r2'></a><span class='ecrm-0500'>2</span><span class='ectt-0800'>                 </span><span id='textcolor2447'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> (*callback)(</span><span id='textcolor2448'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> timer_list *), </span><span id='textcolor2449'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor2450'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> flags);</span></pre>
-<!-- l. 1814 --><p class='indent'>   The <code>  <span class='ectt-1000'>setup_timer</span>
+<!-- l. 1813 --><p class='indent'>   The <code>  <span class='ectt-1000'>setup_timer</span>
 </code> was then removed since v4.15. As a result, the
 <code> <span class='ectt-1000'>timer_list</span>
 </code> structure had changed to the following. 
@@ -4871,7 +4871,7 @@ Moreover, the <code>  <span class='ectt-1000'>timer_setup</span>
 <a id='x1-52070r4'></a><span class='ecrm-0500'>4</span><span class='ectt-0800'>    u32 flags;</span> 
 <a id='x1-52072r5'></a><span class='ecrm-0500'>5</span><span class='ectt-0800'>    </span><span id='textcolor2456'><span class='ectt-0800'>/* ... */</span></span> 
 <a id='x1-52074r6'></a><span class='ecrm-0500'>6</span><span class='ectt-0800'>};</span></pre>
-<!-- l. 1825 --><p class='indent'>   The following source code illustrates a minimal kernel module which, when
+<!-- l. 1824 --><p class='indent'>   The following source code illustrates a minimal kernel module which, when
 loaded, starts blinking the keyboard LEDs until it is unloaded.
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -4960,7 +4960,7 @@ loaded, starts blinking the keyboard LEDs until it is unloaded.
 <a id='x1-52240r83'></a><span class='ecrm-0500'>83</span><span class='ectt-0800'>module_exit(kbleds_cleanup);</span> 
 <a id='x1-52242r84'></a><span class='ecrm-0500'>84</span> 
 <a id='x1-52244r85'></a><span class='ecrm-0500'>85</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2533'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1829 --><p class='indent'>   If none of the examples in this chapter fit your debugging needs,
+<!-- l. 1828 --><p class='indent'>   If none of the examples in this chapter fit your debugging needs,
 there might yet be some other tricks to try. Ever wondered what
 <code> <span class='ectt-1000'>CONFIG_LL_DEBUG</span>
 </code> in <code>  <span class='ectt-1000'>make menuconfig</span>
@@ -4974,37 +4974,37 @@ everything what your code does over a serial line. If you find yourself porting 
 kernel to some new and former unsupported architecture, this is usually amongst the
 first things that should be implemented. Logging over a netconsole might also be
 worth a try.
-</p><!-- l. 1836 --><p class='indent'>   While you have seen lots of stuff that can be used to aid debugging here, there are
+</p><!-- l. 1835 --><p class='indent'>   While you have seen lots of stuff that can be used to aid debugging here, there are
 some things to be aware of. Debugging is almost always intrusive. Adding debug code
 can change the situation enough to make the bug seem to disappear. Thus, you
 should keep debug code to a minimum and make sure it does not show up in
 production code.
-</p><!-- l. 1840 --><p class='noindent'>
+</p><!-- l. 1839 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='gpio'><span class='titlemark'>14   </span> <a id='x1-5300014'></a>GPIO</h3>
-<!-- l. 1842 --><p class='noindent'>
+<!-- l. 1841 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='gpio1'><span class='titlemark'>14.1   </span> <a id='x1-5400014.1'></a>GPIO</h4>
-<!-- l. 1844 --><p class='noindent'>General Purpose Input/Output (GPIO) appears on the development board
+<!-- l. 1843 --><p class='noindent'>General Purpose Input/Output (GPIO) appears on the development board
 as pins. It acts as a bridge for communication between the development
 board and external devices. You can think of it like a switch: users can turn
 it on or off (Input), and the development board can also turn it on or off
 (Output).
-</p><!-- l. 1848 --><p class='indent'>   To implement a GPIO device driver, you use the
+</p><!-- l. 1847 --><p class='indent'>   To implement a GPIO device driver, you use the
 <code> <span class='ectt-1000'>gpio_request()</span>
 </code> function to enable a specific GPIO pin. After successfully enabling it, you can check
 that the pin is being used by looking at /sys/kernel/debug/gpio.
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb78'><a id='x1-54004r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>cat /sys/kernel/debug/gpio</span></pre>
-<!-- l. 1855 --><p class='indent'>   There are other ways to register GPIOs. For example, you can use
+<!-- l. 1854 --><p class='indent'>   There are other ways to register GPIOs. For example, you can use
 <code> <span class='ectt-1000'>gpio_request_one()</span>
 </code> to register a GPIO while setting its direction (input or output) and initial state at the same time.
 You can also use <code>  <span class='ectt-1000'>gpio_request_array()</span>
 </code> to register multiple GPIOs at once. However, note that
 <code> <span class='ectt-1000'>gpio_request_array()</span>
 </code> has been removed since Linux v6.10+.
-</p><!-- l. 1859 --><p class='indent'>   When using GPIO, you must set it as either output with
+</p><!-- l. 1858 --><p class='indent'>   When using GPIO, you must set it as either output with
 <code> <span class='ectt-1000'>gpio_direction_output()</span>
 </code> or input with <code>  <span class='ectt-1000'>gpio_direction_input()</span>
                                                                   
@@ -5018,12 +5018,12 @@ You can also use <code>  <span class='ectt-1000'>gpio_request_array()</span>
      </li>
      <li class='itemize'>when the GPIO is set as input, you can use <code>  <span class='ectt-1000'>gpio_get_value()</span>
      </code> to read whether the voltage is high or low.</li></ul>
-<!-- l. 1866 --><p class='noindent'>
+<!-- l. 1865 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='control-the-leds-onoff-state'><span class='titlemark'>14.2   </span> <a id='x1-5500014.2'></a>Control the LED’s on/off state</h4>
-<!-- l. 1868 --><p class='noindent'>In Section <a href='#talking-to-device-files'>9<!-- tex4ht:ref: sec:device_files  --></a>, we learned how to communicate with device files. Therefore, we will
+<!-- l. 1867 --><p class='noindent'>In Section <a href='#talking-to-device-files'>9<!-- tex4ht:ref: sec:device_files  --></a>, we learned how to communicate with device files. Therefore, we will
 further use device files to control the LED on and off.
-</p><!-- l. 1871 --><p class='indent'>   In the implementation, a pull-down resistor is used. The anode of the LED is
+</p><!-- l. 1870 --><p class='indent'>   In the implementation, a pull-down resistor is used. The anode of the LED is
 connected to GPIO4, and the cathode is connected to GND. For more details
 about the Raspberry Pi pin assignments, refer to <a href='https://pinout.xyz/'>Raspberry Pi Pinout</a>. The
 materials used include a Raspberry Pi 5, an LED, jumper wires, and a 220<span class='cmr-10'>Ω</span>
@@ -5223,37 +5223,37 @@ resistor.
 <a id='x1-55382r191'></a><span class='ecrm-0500'>191</span><span class='ectt-0800'>module_exit(led_exit);</span> 
 <a id='x1-55384r192'></a><span class='ecrm-0500'>192</span> 
 <a id='x1-55386r193'></a><span class='ecrm-0500'>193</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2676'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1878 --><p class='indent'>   Make and install the module: 
+<!-- l. 1877 --><p class='indent'>   Make and install the module: 
 </p>
    <pre class='fancyvrb' id='fancyvrb80'><a id='x1-55390r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>make</span> 
 <a id='x1-55392r2'></a><span class='ecrm-0500'>2</span><span class='ectt-1000'>sudo insmod led.ko</span></pre>
-<!-- l. 1884 --><p class='indent'>   Switch on the LED: 
+<!-- l. 1883 --><p class='indent'>   Switch on the LED: 
 </p>
    <pre class='fancyvrb' id='fancyvrb81'><a id='x1-55395r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>echo </span><span id='textcolor2677'><span class='ectt-1000'>"1"</span></span><span class='ectt-1000'> | sudo tee /dev/gpio_led</span></pre>
-<!-- l. 1889 --><p class='indent'>   Switch off the LED: 
+<!-- l. 1888 --><p class='indent'>   Switch off the LED: 
                                                                   
 
                                                                   
 </p>
    <pre class='fancyvrb' id='fancyvrb82'><a id='x1-55398r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>echo </span><span id='textcolor2678'><span class='ectt-1000'>"0"</span></span><span class='ectt-1000'> | sudo tee /dev/gpio_led</span></pre>
-<!-- l. 1894 --><p class='indent'>   Finally, remove the module: 
+<!-- l. 1893 --><p class='indent'>   Finally, remove the module: 
 </p>
    <pre class='fancyvrb' id='fancyvrb83'><a id='x1-55401r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>sudo rmmod led</span></pre>
-<!-- l. 1899 --><p class='noindent'>
+<!-- l. 1898 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='scheduling-tasks'><span class='titlemark'>15   </span> <a id='x1-5600015'></a>Scheduling Tasks</h3>
-<!-- l. 1901 --><p class='noindent'>There are two main ways of running tasks: tasklets and work queues. Tasklets are a
+<!-- l. 1900 --><p class='noindent'>There are two main ways of running tasks: tasklets and work queues. Tasklets are a
 quick and easy way of scheduling a single function to be run. For example, when
 triggered from an interrupt, whereas work queues are more complicated but also
 better suited to running multiple things in a sequence.
-</p><!-- l. 1905 --><p class='indent'>   It is possible that in future tasklets may be replaced by <span class='ecti-1000'>threaded irqs</span>. However,
+</p><!-- l. 1904 --><p class='indent'>   It is possible that in future tasklets may be replaced by <span class='ecti-1000'>threaded irqs</span>. However,
 discussion about that has been ongoing since 2007 (<a href='https://lwn.net/Articles/239633'>Eliminating tasklets</a>), so do
 not hold your breath. See the section <a href='#interrupt-handlers1'>16.1<!-- tex4ht:ref: sec:irq  --></a> if you wish to avoid the tasklet
 debate.
-</p><!-- l. 1909 --><p class='noindent'>
+</p><!-- l. 1908 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='tasklets'><span class='titlemark'>15.1   </span> <a id='x1-5700015.1'></a>Tasklets</h4>
-<!-- l. 1911 --><p class='noindent'>Here is an example tasklet module. The
+<!-- l. 1910 --><p class='noindent'>Here is an example tasklet module. The
 <code> <span class='ectt-1000'>tasklet_fn</span>
 </code> function runs for a few seconds. In the meantime, execution of the
 <code> <span class='ectt-1000'>example_tasklet_init</span>
@@ -5305,7 +5305,7 @@ debate.
 <a id='x1-57086r42'></a><span class='ecrm-0500'>42</span> 
 <a id='x1-57088r43'></a><span class='ecrm-0500'>43</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2723'><span class='ectt-0800'>"Tasklet example"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-57090r44'></a><span class='ecrm-0500'>44</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2724'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1917 --><p class='indent'>   So with this example loaded <code>  <span class='ectt-1000'>dmesg</span>
+<!-- l. 1916 --><p class='indent'>   So with this example loaded <code>  <span class='ectt-1000'>dmesg</span>
 </code> should show:
                                                                   
 
@@ -5317,23 +5317,23 @@ Example tasklet starts
 Example tasklet init continues...
 Example tasklet ends
 </pre>
-<!-- l. 1924 --><p class='nopar'>Although tasklet is easy to use, it comes with several drawbacks, and developers are
+<!-- l. 1923 --><p class='nopar'>Although tasklet is easy to use, it comes with several drawbacks, and developers are
 discussing about getting rid of tasklet in linux kernel. The tasklet callback
 runs in atomic context, inside a software interrupt, meaning that it cannot
 sleep or access user-space data, so not all work can be done in a tasklet
 handler. Also, the kernel only allows one instance of any given tasklet to be
 running at any given time; multiple different tasklet callbacks can run in
 parallel.
-</p><!-- l. 1929 --><p class='indent'>   In recent kernels, tasklets can be replaced by workqueues, timers, or threaded
+</p><!-- l. 1928 --><p class='indent'>   In recent kernels, tasklets can be replaced by workqueues, timers, or threaded
 interrupts.<span class='footnote-mark'><a href='#fn1x0' id='fn1x0-bk'><sup class='textsuperscript'>1</sup></a></span><a id='x1-57092f1'></a>
 While the removal of tasklets remains a longer-term goal, the current kernel contains more
 than a hundred uses of tasklets. Now developers are proceeding with the API changes and
 the macro <code>  <span class='ectt-1000'>DECLARE_TASKLET_OLD</span>
 </code> exists for compatibility. For further information, see <a class='url' href='https://lwn.net/Articles/830964/'><span class='ectt-1000'>https://lwn.net/Articles/830964/</span></a>.
-</p><!-- l. 1935 --><p class='noindent'>
+</p><!-- l. 1934 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='work-queues'><span class='titlemark'>15.2   </span> <a id='x1-5800015.2'></a>Work queues</h4>
-<!-- l. 1937 --><p class='noindent'>To add a task to the scheduler we can use a workqueue. The kernel then uses the
+<!-- l. 1936 --><p class='noindent'>To add a task to the scheduler we can use a workqueue. The kernel then uses the
 Completely Fair Scheduler (CFS) to execute work within the queue.
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -5370,36 +5370,36 @@ Completely Fair Scheduler (CFS) to execute work within the queue.
 <a id='x1-58062r31'></a><span class='ecrm-0500'>31</span> 
 <a id='x1-58064r32'></a><span class='ecrm-0500'>32</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2752'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-58066r33'></a><span class='ecrm-0500'>33</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2753'><span class='ectt-0800'>"Workqueue example"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1942 --><p class='noindent'>
+<!-- l. 1941 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='interrupt-handlers'><span class='titlemark'>16   </span> <a id='x1-5900016'></a>Interrupt Handlers</h3>
-<!-- l. 1944 --><p class='noindent'>
+<!-- l. 1943 --><p class='noindent'>
 </p>
                                                                   
 
                                                                   
    <h4 class='subsectionHead' id='interrupt-handlers1'><span class='titlemark'>16.1   </span> <a id='x1-6000016.1'></a>Interrupt Handlers</h4>
-<!-- l. 1946 --><p class='noindent'>Except for the last chapter, everything we did in the kernel so far we have done as a
+<!-- l. 1945 --><p class='noindent'>Except for the last chapter, everything we did in the kernel so far we have done as a
 response to a process asking for it, either by dealing with a special file, sending an
 <code> <span class='ectt-1000'>ioctl()</span>
 </code>, or issuing a system call. But the job of the kernel is not just to respond to process
 requests. Another job, which is every bit as important, is to speak to the hardware
 connected to the machine.
-</p><!-- l. 1950 --><p class='indent'>   There are two types of interaction between the CPU and the rest of the
+</p><!-- l. 1949 --><p class='indent'>   There are two types of interaction between the CPU and the rest of the
 computer’s hardware. The first type is when the CPU gives orders to the hardware,
 the other is when the hardware needs to tell the CPU something. The second, called
 interrupts, is much harder to implement because it has to be dealt with when
 convenient for the hardware, not the CPU. Hardware devices typically have a very
 small amount of RAM, and if you do not read their information when available, it is
 lost.
-</p><!-- l. 1955 --><p class='indent'>   Under Linux, hardware interrupts are called IRQ’s (Interrupt ReQuests). There
+</p><!-- l. 1954 --><p class='indent'>   Under Linux, hardware interrupts are called IRQ’s (Interrupt ReQuests). There
 are two types of IRQ’s, short and long. A short IRQ is one which is expected to take
 a very short period of time, during which the rest of the machine will be blocked and
 no other interrupts will be handled. A long IRQ is one which can take longer, and
 during which other interrupts may occur (but not interrupts from the same
 device). If at all possible, it is better to declare an interrupt handler to be
 long.
-</p><!-- l. 1961 --><p class='indent'>   When the CPU receives an interrupt, it stops whatever it is doing (unless it is
+</p><!-- l. 1960 --><p class='indent'>   When the CPU receives an interrupt, it stops whatever it is doing (unless it is
 processing a more important interrupt, in which case it will deal with this one only
 when the more important one is done), saves certain parameters on the stack and
 calls the interrupt handler. This means that certain things are not allowed in the
@@ -5411,10 +5411,10 @@ heavy work deferred from an interrupt handler. Historically, BH (Linux
 naming for <span class='ecti-1000'>Bottom Halves</span>) statistically book-keeps the deferred functions.
 <span class='ecbx-1000'>Softirq </span>and its higher level abstraction, <span class='ecbx-1000'>Tasklet</span>, replace BH since Linux
 2.3.
-</p><!-- l. 1971 --><p class='indent'>   The way to implement this is to call
+</p><!-- l. 1970 --><p class='indent'>   The way to implement this is to call
 <code> <span class='ectt-1000'>request_irq()</span>
 </code> to get your interrupt handler called when the relevant IRQ is received.
-</p><!-- l. 1973 --><p class='indent'>   In practice IRQ handling can be a bit more complex. Hardware is often designed
+</p><!-- l. 1972 --><p class='indent'>   In practice IRQ handling can be a bit more complex. Hardware is often designed
 in a way that chains two interrupt controllers, so that all the IRQs from
 interrupt controller B are cascaded to a certain IRQ from interrupt controller A.
 Of course, that requires that the kernel finds out which IRQ it really was
@@ -5431,11 +5431,11 @@ need to solve another truckload of problems. It is not enough to know if a
 certain IRQs has happened, it’s also important to know what CPU(s) it was
 for. People still interested in more details, might want to refer to "APIC"
 now.
-</p><!-- l. 1982 --><p class='indent'>   This function receives the IRQ number, the name of the function, flags, a name
+</p><!-- l. 1981 --><p class='indent'>   This function receives the IRQ number, the name of the function, flags, a name
 for <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/interrupts</span></span></span> and a parameter to be passed to the interrupt handler.
 Usually there is a certain number of IRQs available. How many IRQs there are is
 hardware-dependent.
-</p><!-- l. 1986 --><p class='indent'>   The flags can be used to specify behaviors of the IRQ. For example, use
+</p><!-- l. 1985 --><p class='indent'>   The flags can be used to specify behaviors of the IRQ. For example, use
 <code> <span class='ectt-1000'>IRQF_SHARED</span>
 </code> to indicate you are willing to share the IRQ with other interrupt handlers
 (usually because a number of hardware devices sit on the same IRQ); use the
@@ -5449,16 +5449,16 @@ that in some materials, you may encounter another set of IRQ flags named with th
 only the <code>  <span class='ectt-1000'>IRQF</span>
 </code> flags are in use. This function will only succeed if there is not already a handler on
 this IRQ, or if you are both willing to share.
-</p><!-- l. 1995 --><p class='noindent'>
+</p><!-- l. 1994 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='detecting-button-presses'><span class='titlemark'>16.2   </span> <a id='x1-6100016.2'></a>Detecting button presses</h4>
-<!-- l. 1997 --><p class='noindent'>Many popular single board computers, such as Raspberry Pi or Beagleboards, have a
+<!-- l. 1996 --><p class='noindent'>Many popular single board computers, such as Raspberry Pi or Beagleboards, have a
 bunch of GPIO pins. Attaching buttons to those and then having a button press do
 something is a classic case in which you might need to use interrupts, so that instead
 of having the CPU waste time and battery power polling for a change in input state,
 it is better for the input to trigger the CPU to then run a particular handling
 function.
-</p><!-- l. 2001 --><p class='indent'>   Here is an example where buttons are connected to GPIO numbers 17 and 18 and
+</p><!-- l. 2000 --><p class='indent'>   Here is an example where buttons are connected to GPIO numbers 17 and 18 and
 an LED is connected to GPIO 4. You can change those numbers to whatever is
 appropriate for your board.
 </p><!-- l. 1 --><p class='indent'>
@@ -5672,17 +5672,17 @@ appropriate for your board.
 <a id='x1-61414r207'></a><span class='ecrm-0500'>207</span> 
 <a id='x1-61416r208'></a><span class='ecrm-0500'>208</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2908'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-61418r209'></a><span class='ecrm-0500'>209</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2909'><span class='ectt-0800'>"Handle some GPIO interrupts"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 2006 --><p class='noindent'>
+<!-- l. 2005 --><p class='noindent'>
 </p>
                                                                   
 
                                                                   
    <h4 class='subsectionHead' id='bottom-half'><span class='titlemark'>16.3   </span> <a id='x1-6200016.3'></a>Bottom Half</h4>
-<!-- l. 2008 --><p class='noindent'>Suppose you want to do a bunch of stuff inside of an interrupt routine. A common
+<!-- l. 2007 --><p class='noindent'>Suppose you want to do a bunch of stuff inside of an interrupt routine. A common
 way to do that without rendering the interrupt unavailable for a significant duration
 is to combine it with a tasklet. This pushes the bulk of the work off into the
 scheduler.
-</p><!-- l. 2012 --><p class='indent'>   The example below modifies the previous example to also run an additional task
+</p><!-- l. 2011 --><p class='indent'>   The example below modifies the previous example to also run an additional task
 when an interrupt is triggered.
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -5919,10 +5919,10 @@ when an interrupt is triggered.
 <a id='x1-62462r231'></a><span class='ecrm-0500'>231</span> 
 <a id='x1-62464r232'></a><span class='ecrm-0500'>232</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor3086'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-62466r233'></a><span class='ecrm-0500'>233</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor3087'><span class='ectt-0800'>"Interrupt with top and bottom half"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 2016 --><p class='noindent'>
+<!-- l. 2015 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='threaded-irq'><span class='titlemark'>16.4   </span> <a id='x1-6300016.4'></a>Threaded IRQ</h4>
-<!-- l. 2018 --><p class='noindent'>Threaded IRQ is a mechanism to organize both top-half and bottom-half
+<!-- l. 2017 --><p class='noindent'>Threaded IRQ is a mechanism to organize both top-half and bottom-half
 of an IRQ at once. A threaded IRQ splits the one handler in
 <code> <span class='ectt-1000'>request_irq()</span>
 </code> into two: one for the top-half, the other for the bottom-half. The
@@ -5930,7 +5930,7 @@ of an IRQ at once. A threaded IRQ splits the one handler in
 </code> is the function for using threaded IRQs. Two handlers are registered at once in the
 <code> <span class='ectt-1000'>request_threaded_irq()</span>
 </code>.
-</p><!-- l. 2023 --><p class='indent'>   Those two handlers run in different context. The top-half handler runs
+</p><!-- l. 2022 --><p class='indent'>   Those two handlers run in different context. The top-half handler runs
 in interrupt context. It’s the equivalence of the handler passed to the
 <code> <span class='ectt-1000'>request_irq()</span>
 </code>. The bottom-half handler on the other hand runs in its own thread. This
@@ -5939,7 +5939,7 @@ this bottom-half handler. This is where a threaded IRQ is “threaded”. If
 <code> <span class='ectt-1000'>IRQ_WAKE_THREAD</span>
 </code> is returned by the top-half handler, that bottom-half serving thread will wake up.
 The thread then runs the bottom-half handler.
-</p><!-- l. 2033 --><p class='indent'>   Here is an example of how to do the same thing as before, with top and bottom
+</p><!-- l. 2032 --><p class='indent'>   Here is an example of how to do the same thing as before, with top and bottom
 halves, but using threads.
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -6158,7 +6158,7 @@ halves, but using threads.
 <a id='x1-63431r213'></a><span class='ecrm-0500'>213</span> 
 <a id='x1-63433r214'></a><span class='ecrm-0500'>214</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor3249'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-63435r215'></a><span class='ecrm-0500'>215</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor3250'><span class='ectt-0800'>"Interrupt with top and bottom half"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 2037 --><p class='indent'>   A threaded IRQ is registered using <code>  <span class='ectt-1000'>request_threaded_irq()</span>
+<!-- l. 2036 --><p class='indent'>   A threaded IRQ is registered using <code>  <span class='ectt-1000'>request_threaded_irq()</span>
 </code>. This function only takes one additional parameter than the
 <code> <span class='ectt-1000'>request_irq()</span>
 </code> – the bottom-half handling function that runs in its own thread. In this example it is
@@ -6169,7 +6169,7 @@ the <code>  <span class='ectt-1000'>button_bottom_half()</span>
 
                                                                   
 </code>.
-</p><!-- l. 2042 --><p class='indent'>   Presence of both handlers is not mandatory. If either of them is not needed, pass
+</p><!-- l. 2041 --><p class='indent'>   Presence of both handlers is not mandatory. If either of them is not needed, pass
 the <code>  <span class='ectt-1000'>NULL</span>
 </code> instead. A <code>  <span class='ectt-1000'>NULL</span>
 </code> top-half handler implies that no action is taken except to wake up the
@@ -6179,12 +6179,12 @@ bottom-half serving thread, which runs the bottom-half handler. Similarly, a
 <code> <span class='ectt-1000'>request_irq()</span>
 </code> were used. In fact, this is how <code>  <span class='ectt-1000'>request_irq()</span>
 </code> is implemented.
-</p><!-- l. 2048 --><p class='indent'>   Note that passing <code>  <span class='ectt-1000'>NULL</span>
+</p><!-- l. 2047 --><p class='indent'>   Note that passing <code>  <span class='ectt-1000'>NULL</span>
 </code> to both handlers is considered an error and will make registration fail.
-</p><!-- l. 2050 --><p class='noindent'>
+</p><!-- l. 2049 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='virtual-input-device-driver'><span class='titlemark'>17   </span> <a id='x1-6400017'></a>Virtual Input Device Driver</h3>
-<!-- l. 2052 --><p class='noindent'>The input device driver is a module that provides a way to communicate
+<!-- l. 2051 --><p class='noindent'>The input device driver is a module that provides a way to communicate
 with the interaction device via the event. For example, the keyboard
 can send the press or release event to tell the kernel what we want to
 do. The input device driver will allocate a new input structure with
@@ -6192,7 +6192,7 @@ do. The input device driver will allocate a new input structure with
 </code> and sets up input bitfields, device id, version, etc. After that, registers it by calling
 <code> <span class='ectt-1000'>input_register_device()</span>
 </code>.
-</p><!-- l. 2057 --><p class='indent'>   Here is an example, vinput, It is an API to allow easy
+</p><!-- l. 2056 --><p class='indent'>   Here is an example, vinput, It is an API to allow easy
 development of virtual input drivers. The drivers needs to export a
 <code> <span class='ectt-1000'>vinput_device()</span>
 </code> that contains the virtual device name and
@@ -6211,13 +6211,13 @@ development of virtual input drivers. The drivers needs to export a
      </li>
      <li class='itemize'>the readback function: <code>  <span class='ectt-1000'>read()</span>
      </code></li></ul>
-<!-- l. 2067 --><p class='indent'>   Then using <code>  <span class='ectt-1000'>vinput_register_device()</span>
+<!-- l. 2066 --><p class='indent'>   Then using <code>  <span class='ectt-1000'>vinput_register_device()</span>
 </code> and <code>  <span class='ectt-1000'>vinput_unregister_device()</span>
 </code> will add a new device to the list of support virtual input devices.
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb89'><a id='x1-64012r1'></a><span class='ecrm-0500'>1</span><span id='textcolor3251'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> init(</span><span id='textcolor3252'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> vinput *);</span></pre>
-<!-- l. 2073 --><p class='indent'>   This function is passed a <code>  <span id='textcolor3253'><span class='ectt-1000'>struct</span></span><span class='ectt-1000'> vinput</span>
+<!-- l. 2072 --><p class='indent'>   This function is passed a <code>  <span id='textcolor3253'><span class='ectt-1000'>struct</span></span><span class='ectt-1000'> vinput</span>
 </code> already initialized with an allocated <code>  <span id='textcolor3254'><span class='ectt-1000'>struct</span></span><span class='ectt-1000'> input_dev</span>
 </code>. The <code>  <span class='ectt-1000'>init()</span>
 </code> function is responsible for initializing the capabilities of the input device and register
@@ -6225,20 +6225,20 @@ it.
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb90'><a id='x1-64018r1'></a><span class='ecrm-0500'>1</span><span id='textcolor3255'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> send(</span><span id='textcolor3256'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> vinput *, </span><span id='textcolor3257'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *, </span><span id='textcolor3258'><span class='ectt-0800'>int</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 2080 --><p class='indent'>   This function will receive a user string to interpret and inject the event using the
+<!-- l. 2079 --><p class='indent'>   This function will receive a user string to interpret and inject the event using the
 <code> <span class='ectt-1000'>input_report_XXXX</span>
 </code> or <code>  <span class='ectt-1000'>input_event</span>
 </code> call. The string is already copied from user.
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb91'><a id='x1-64023r1'></a><span class='ecrm-0500'>1</span><span id='textcolor3259'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> read(</span><span id='textcolor3260'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> vinput *, </span><span id='textcolor3261'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *, </span><span id='textcolor3262'><span class='ectt-0800'>int</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 2087 --><p class='indent'>   This function is used for debugging and should fill the buffer parameter with the
+<!-- l. 2086 --><p class='indent'>   This function is used for debugging and should fill the buffer parameter with the
 last event sent in the virtual input device format. The buffer will then be copied to
 user.
-</p><!-- l. 2090 --><p class='indent'>   vinput devices are created and destroyed using sysfs. And, event injection is done
+</p><!-- l. 2089 --><p class='indent'>   vinput devices are created and destroyed using sysfs. And, event injection is done
 through a <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/dev</span></span></span> node. The device name will be used by the userland to export a new
 virtual input device.
-</p><!-- l. 2094 --><p class='indent'>   The <code>  <span class='ectt-1000'>class_attribute</span>
+</p><!-- l. 2093 --><p class='indent'>   The <code>  <span class='ectt-1000'>class_attribute</span>
 </code> structure is similar to other attribute types we talked about in section <a href='#sysfs-interacting-with-your-module'>8<!-- tex4ht:ref: sec:sysfs  --></a>:
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -6252,7 +6252,7 @@ virtual input device.
                                                                   
 
                                                                   
-<!-- l. 2106 --><p class='indent'>   In <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>vinput.c</span></span></span>, the macro <code>  <span class='ectt-1000'>CLASS_ATTR_WO(export/unexport)</span>
+<!-- l. 2105 --><p class='indent'>   In <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>vinput.c</span></span></span>, the macro <code>  <span class='ectt-1000'>CLASS_ATTR_WO(export/unexport)</span>
 </code> defined in <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/device.h'>include/linux/device.h</a> (in this case, <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>device.h</span></span></span> is included in <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/input.h'>include/linux/input.h</a>)
 will generate the <code>  <span class='ectt-1000'>class_attribute</span>
 </code> structures which are named <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>class_attr_export/unexport</span></span></span>. Then, put them into
@@ -6262,11 +6262,11 @@ will generate the <code>  <span class='ectt-1000'>class_attribute</span>
 </code> that should be assigned in <code>  <span class='ectt-1000'>vinput_class</span>
 </code>. Finally, call <code>  <span class='ectt-1000'>class_register(&amp;vinput_class)</span>
 </code> to create attributes in sysfs.
-</p><!-- l. 2110 --><p class='indent'>   To create a <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>vinputX</span></span></span> sysfs entry and <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/dev</span></span></span> node.
+</p><!-- l. 2109 --><p class='indent'>   To create a <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>vinputX</span></span></span> sysfs entry and <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/dev</span></span></span> node.
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb93'><a id='x1-64055r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>echo </span><span id='textcolor3276'><span class='ectt-1000'>"vkbd"</span></span><span class='ectt-1000'> | sudo tee /sys/class/vinput/export</span></pre>
-<!-- l. 2116 --><p class='indent'>   To unexport the device, just echo its id in unexport:
+<!-- l. 2115 --><p class='indent'>   To unexport the device, just echo its id in unexport:
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb94'><a id='x1-64058r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>echo </span><span id='textcolor3277'><span class='ectt-1000'>"0"</span></span><span class='ectt-1000'> | sudo tee /sys/class/vinput/unexport</span></pre>
@@ -6750,7 +6750,7 @@ will generate the <code>  <span class='ectt-1000'>class_attribute</span>
 <a id='x1-65002r423'></a><span class='ecrm-0500'>423</span> 
 <a id='x1-65004r424'></a><span class='ecrm-0500'>424</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor3602'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-65006r425'></a><span class='ecrm-0500'>425</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor3603'><span class='ectt-0800'>"Emulate input events"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 2125 --><p class='indent'>   Here the virtual keyboard is one of example to use vinput. It supports all
+<!-- l. 2124 --><p class='indent'>   Here the virtual keyboard is one of example to use vinput. It supports all
 <code> <span class='ectt-1000'>KEY_MAX</span>
 </code> keycodes. The injection format is the <code>  <span class='ectt-1000'>KEY_CODE</span>
 </code> such as defined in <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/input.h'>include/linux/input.h</a>. A positive value means
@@ -6758,12 +6758,12 @@ will generate the <code>  <span class='ectt-1000'>class_attribute</span>
 </code> while a negative value is a <code>  <span class='ectt-1000'>KEY_RELEASE</span>
 </code>. The keyboard supports repetition when the key stays pressed for too long. The
 following demonstrates how simulation work.
-</p><!-- l. 2132 --><p class='indent'>   Simulate a key press on "g" (<code>  <span class='ectt-1000'>KEY_G</span>
+</p><!-- l. 2131 --><p class='indent'>   Simulate a key press on "g" (<code>  <span class='ectt-1000'>KEY_G</span>
 </code> = 34):
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb97'><a id='x1-65014r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>echo </span><span id='textcolor3604'><span class='ectt-1000'>"+34"</span></span><span class='ectt-1000'> | sudo tee /dev/vinput0</span></pre>
-<!-- l. 2138 --><p class='indent'>   Simulate a key release on "g" (<code>  <span class='ectt-1000'>KEY_G</span>
+<!-- l. 2137 --><p class='indent'>   Simulate a key release on "g" (<code>  <span class='ectt-1000'>KEY_G</span>
 </code> = 34):
 </p><!-- l. 1 --><p class='indent'>
                                                                   
@@ -6884,10 +6884,10 @@ following demonstrates how simulation work.
 <a id='x1-65234r108'></a><span class='ecrm-0500'>108</span> 
 <a id='x1-65236r109'></a><span class='ecrm-0500'>109</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor3687'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-65238r110'></a><span class='ecrm-0500'>110</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor3688'><span class='ectt-0800'>"Emulate keyboard input events through /dev/vinput"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 2148 --><p class='noindent'>
+<!-- l. 2147 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='standardizing-the-interfaces-the-device-model'><span class='titlemark'>18   </span> <a id='x1-6600018'></a>Standardizing the interfaces: The Device Model</h3>
-<!-- l. 2150 --><p class='noindent'>Up to this point we have seen all kinds of modules doing all kinds of things, but there
+<!-- l. 2149 --><p class='noindent'>Up to this point we have seen all kinds of modules doing all kinds of things, but there
 was no consistency in their interfaces with the rest of the kernel. To impose some
 consistency such that there is at minimum a standardized way to start, suspend and
 resume a device model was added. An example is shown below, and you can
@@ -6998,13 +6998,13 @@ functions.
 <a id='x1-66202r101'></a><span class='ecrm-0500'>101</span> 
 <a id='x1-66204r102'></a><span class='ecrm-0500'>102</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor3773'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-66206r103'></a><span class='ecrm-0500'>103</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor3774'><span class='ectt-0800'>"Linux Device Model example"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 2156 --><p class='noindent'>
+<!-- l. 2155 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='optimizations'><span class='titlemark'>19   </span> <a id='x1-6700019'></a>Optimizations</h3>
-<!-- l. 2158 --><p class='noindent'>
+<!-- l. 2157 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='likely-and-unlikely-conditions'><span class='titlemark'>19.1   </span> <a id='x1-6800019.1'></a>Likely and Unlikely conditions</h4>
-<!-- l. 2160 --><p class='noindent'>Sometimes you might want your code to run as quickly as possible,
+<!-- l. 2159 --><p class='noindent'>Sometimes you might want your code to run as quickly as possible,
 especially if it is handling an interrupt or doing something which might
 cause noticeable latency. If your code contains boolean conditions and if
 you know that the conditions are almost always likely to evaluate as either
@@ -7026,16 +7026,16 @@ to succeed.
 <a id='x1-68018r4'></a><span class='ecrm-0500'>4</span><span class='ectt-0800'>    bio = NULL;</span> 
 <a id='x1-68020r5'></a><span class='ecrm-0500'>5</span><span class='ectt-0800'>    </span><span id='textcolor3776'><span class='ectt-0800'>goto</span></span><span class='ectt-0800'> out;</span> 
 <a id='x1-68022r6'></a><span class='ecrm-0500'>6</span><span class='ectt-0800'>}</span></pre>
-<!-- l. 2174 --><p class='indent'>   When the <code>  <span class='ectt-1000'>unlikely</span>
+<!-- l. 2173 --><p class='indent'>   When the <code>  <span class='ectt-1000'>unlikely</span>
 </code> macro is used, the compiler alters its machine instruction output, so that it
 continues along the false branch and only jumps if the condition is true. That
 avoids flushing the processor pipeline. The opposite happens if you use the
 <code> <span class='ectt-1000'>likely</span>
 </code> macro.
-</p><!-- l. 2178 --><p class='noindent'>
+</p><!-- l. 2177 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='static-keys'><span class='titlemark'>19.2   </span> <a id='x1-6900019.2'></a>Static keys</h4>
-<!-- l. 2180 --><p class='noindent'>Static keys allow us to enable or disable kernel code paths based on the runtime state
+<!-- l. 2179 --><p class='noindent'>Static keys allow us to enable or disable kernel code paths based on the runtime state
 of key. Its APIs have been available since 2010 (most architectures are already
 supported), use self-modifying code to eliminate the overhead of cache and branch
 prediction. The most typical use case of static keys is for performance-sensitive kernel
@@ -7049,7 +7049,7 @@ Before we can use static keys in the kernel, we need to make sure that gcc suppo
    <pre class='fancyvrb' id='fancyvrb102'><a id='x1-69006r1'></a><span class='ecrm-0500'>1</span><span class='ectt-0800'>CONFIG_JUMP_LABEL=y</span> 
 <a id='x1-69008r2'></a><span class='ecrm-0500'>2</span><span class='ectt-0800'>CONFIG_HAVE_ARCH_JUMP_LABEL=y</span> 
 <a id='x1-69010r3'></a><span class='ecrm-0500'>3</span><span class='ectt-0800'>CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE=y</span></pre>
-<!-- l. 2190 --><p class='indent'>   To declare a static key, we need to define a global variable using the
+<!-- l. 2189 --><p class='indent'>   To declare a static key, we need to define a global variable using the
 <code> <span class='ectt-1000'>DEFINE_STATIC_KEY_FALSE</span>
 </code> or <code>  <span class='ectt-1000'>DEFINE_STATIC_KEY_TRUE</span>
 </code> macro defined in <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/jump_label.h'>include/linux/jump_label.h</a>. This macro initializes the key with
@@ -7059,7 +7059,7 @@ code:
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb103'><a id='x1-69015r1'></a><span class='ecrm-0500'>1</span><span class='ectt-0800'>DEFINE_STATIC_KEY_FALSE(fkey);</span></pre>
-<!-- l. 2197 --><p class='indent'>   Once the static key has been declared, we need to add branching code to the
+<!-- l. 2196 --><p class='indent'>   Once the static key has been declared, we need to add branching code to the
 module that uses the static key. For example, the code includes a fastpath, where a
 no-op instruction will be generated at compile time as the key is initialized to false
 and the branch is unlikely to be taken.
@@ -7072,12 +7072,12 @@ and the branch is unlikely to be taken.
                                                                   
 
                                                                   
-<!-- l. 2207 --><p class='indent'>   If the key is enabled at runtime by calling
+<!-- l. 2206 --><p class='indent'>   If the key is enabled at runtime by calling
 <code> <span class='ectt-1000'>static_branch_enable(&amp;fkey)</span>
 </code>, the fastpath will be patched with an unconditional jump instruction to the slowpath
 code <code>  <span class='ectt-1000'>pr_alert</span>
 </code>, so the branch will always be taken until the key is disabled again.
-</p><!-- l. 2209 --><p class='indent'>   The following kernel module derived from <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>chardev.c</span></span></span>, demonstrates how the
+</p><!-- l. 2208 --><p class='indent'>   The following kernel module derived from <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>chardev.c</span></span></span>, demonstrates how the
 static key works.
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -7275,59 +7275,59 @@ static key works.
 <a id='x1-69413r192'></a><span class='ecrm-0500'>192</span><span class='ectt-0800'>module_exit(chardev_exit);</span> 
 <a id='x1-69415r193'></a><span class='ecrm-0500'>193</span> 
 <a id='x1-69417r194'></a><span class='ecrm-0500'>194</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor3971'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 2213 --><p class='indent'>   To check the state of the static key, we can use the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/dev/key_state</span></span></span>
+<!-- l. 2212 --><p class='indent'>   To check the state of the static key, we can use the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/dev/key_state</span></span></span>
 interface.
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb106'><a id='x1-69420r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>cat /dev/key_state</span></pre>
-<!-- l. 2219 --><p class='indent'>   This will display the current state of the key, which is disabled by default.
-</p><!-- l. 2221 --><p class='indent'>   To change the state of the static key, we can perform a write operation on the
+<!-- l. 2218 --><p class='indent'>   This will display the current state of the key, which is disabled by default.
+</p><!-- l. 2220 --><p class='indent'>   To change the state of the static key, we can perform a write operation on the
 file:
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb107'><a id='x1-69423r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>echo enable &gt; /dev/key_state</span></pre>
-<!-- l. 2227 --><p class='indent'>   This will enable the static key, causing the code path to switch from the fastpath
+<!-- l. 2226 --><p class='indent'>   This will enable the static key, causing the code path to switch from the fastpath
 to the slowpath.
-</p><!-- l. 2229 --><p class='indent'>   In some cases, the key is enabled or disabled at initialization and never changed,
+</p><!-- l. 2228 --><p class='indent'>   In some cases, the key is enabled or disabled at initialization and never changed,
 we can declare a static key as read-only, which means that it can only be toggled in
 the module init function. To declare a read-only static key, we can use the
 <code> <span class='ectt-1000'>DEFINE_STATIC_KEY_FALSE_RO</span>
 </code> or <code>  <span class='ectt-1000'>DEFINE_STATIC_KEY_TRUE_RO</span>
 </code> macro instead. Attempts to change the key at runtime will result in a page fault. For
 more information, see <a href='https://www.kernel.org/doc/Documentation/static-keys.txt'>Static keys</a>
-</p><!-- l. 2232 --><p class='noindent'>
+</p><!-- l. 2231 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='common-pitfalls'><span class='titlemark'>20   </span> <a id='x1-7000020'></a>Common Pitfalls</h3>
-<!-- l. 2235 --><p class='noindent'>
+<!-- l. 2234 --><p class='noindent'>
 </p>
                                                                   
 
                                                                   
    <h4 class='subsectionHead' id='using-standard-libraries'><span class='titlemark'>20.1   </span> <a id='x1-7100020.1'></a>Using standard libraries</h4>
-<!-- l. 2237 --><p class='noindent'>You can not do that. In a kernel module, you can only use kernel functions which are
+<!-- l. 2236 --><p class='noindent'>You can not do that. In a kernel module, you can only use kernel functions which are
 the functions you can see in <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/kallsyms</span></span></span>.
-</p><!-- l. 2240 --><p class='noindent'>
+</p><!-- l. 2239 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='disabling-interrupts'><span class='titlemark'>20.2   </span> <a id='x1-7200020.2'></a>Disabling interrupts</h4>
-<!-- l. 2242 --><p class='noindent'>You might need to do this for a short time and that is OK, but if you do not enable
+<!-- l. 2241 --><p class='noindent'>You might need to do this for a short time and that is OK, but if you do not enable
 them afterwards, your system will be stuck and you will have to power it
 off.
-</p><!-- l. 2244 --><p class='noindent'>
+</p><!-- l. 2243 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='where-to-go-from-here'><span class='titlemark'>21   </span> <a id='x1-7300021'></a>Where To Go From Here?</h3>
-<!-- l. 2246 --><p class='noindent'>For those deeply interested in kernel programming, <a href='https://kernelnewbies.org'>kernelnewbies.org</a> and the
+<!-- l. 2245 --><p class='noindent'>For those deeply interested in kernel programming, <a href='https://kernelnewbies.org'>kernelnewbies.org</a> and the
 <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/Documentation'>Documentation</a> subdirectory within the kernel source code are highly recommended.
 Although the latter may not always be straightforward, it serves as a valuable initial
 step for further exploration. Echoing Linus Torvalds’ perspective, the most effective
 method to understand the kernel is through personal examination of the source
 code.
-</p><!-- l. 2251 --><p class='indent'>   Contributions to this guide are welcome, especially if there are any significant
+</p><!-- l. 2250 --><p class='indent'>   Contributions to this guide are welcome, especially if there are any significant
 inaccuracies identified. To contribute or report an issue, please initiate an
 issue at <a class='url' href='https://github.com/sysprog21/lkmpg'><span class='ectt-1000'>https://github.com/sysprog21/lkmpg</span></a>. Pull requests are greatly
 appreciated.
-</p><!-- l. 2255 --><p class='indent'>   Happy hacking!
+</p><!-- l. 2254 --><p class='indent'>   Happy hacking!
 </p>
-   <div class='footnotes'><!-- l. 1930 --><p class='indent'>     <span class='footnote-mark'><a href='#fn1x0-bk' id='fn1x0'><sup class='textsuperscript'>1</sup></a></span><span class='ecrm-0800'>The goal of threaded interrupts is to push more of the work to separate threads, so that the
+   <div class='footnotes'><!-- l. 1929 --><p class='indent'>     <span class='footnote-mark'><a href='#fn1x0-bk' id='fn1x0'><sup class='textsuperscript'>1</sup></a></span><span class='ecrm-0800'>The goal of threaded interrupts is to push more of the work to separate threads, so that the
 </span><span class='ecrm-0800'>minimum needed for acknowledging an interrupt is reduced, and therefore the time spent handling
 </span><span class='ecrm-0800'>the interrupt (where it can’t handle any other interrupts at the same time) is reduced. See</span>
 <a class='url' href='https://lwn.net/Articles/302043/'><span class='ectt-0800'>https://lwn.net/Articles/302043/</span></a><span class='ecrm-0800'>.</span></p>                                                                         </div>
