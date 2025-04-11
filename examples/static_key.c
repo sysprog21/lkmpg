@@ -60,10 +60,10 @@ static int __init chardev_init(void)
 
     pr_info("I was assigned major number %d\n", major);
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 4, 0)
-    cls = class_create(THIS_MODULE, DEVICE_NAME);
-#else
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 4, 0)
     cls = class_create(DEVICE_NAME);
+#else
+    cls = class_create(THIS_MODULE, DEVICE_NAME);
 #endif
 
     device_create(cls, NULL, MKDEV(major, 0), NULL, DEVICE_NAME);
