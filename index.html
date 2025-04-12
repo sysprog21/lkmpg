@@ -147,21 +147,24 @@ document.
 </p>
 <div class='flushleft'>
 <!-- l. 97 --><p class='noindent'>
- Amit Dhingra, Andy Shevchenko, Arush Sharma, Benno Bielmeier, Bob Lee,
-Brad Baker, Che-Chia Chang, Cheng-Shian Yeh, Chih-En Lin, Chih-Hsuan
-Yang, Chih-Yu Chen, Ching-Hua (Vivian) Lin, Chin Yik Ming, cvvletter,
-Cyril Brulebois, Daniele Paolo Scarpazza, David Porter, demonsome, Dimo
-Velev, Ekang Monyet, Ethan Chan, Francois Audeon, Gilad Reti, heartofrain,
-Horst Schirmeier, Hsin-Hsiang Peng, Ignacio Martin, I-Hsin Cheng, Iûnn
-Kiàn-îng, Jian-Xing Wu, Johan Calle, keytouch, Kohei Otsuka, Kuan-Wei
+ Amit Dhingra, Andrew Kreimer, Andrew Lin, Andy Shevchenko, Arush
+Sharma, Aykhan Hagverdili, Benno Bielmeier, Bob Lee, Brad Baker, Che-Chia
+Chang, Cheng-Shian Yeh, Cheng-Yang Chou, Chih-En Lin, Chih-Hsuan Yang,
+Chih-Yu Chen, Ching-Hua (Vivian) Lin, Chin Yik Ming, Chung-Han Tsai,
+cvvletter, Cyril Brulebois, Daniele Paolo Scarpazza, David Porter,
+demonsome, Dimo Velev, Ekang Monyet, Ethan Chan, Francois Audeon, Gilad
+Reti, Hao.Dong, heartofrain, Horst Schirmeier, Hsin-Hsiang Peng, Hung-Jen
                                                                   
 
                                                                   
-Chiu, manbing, Marconi Jiang, mengxinayan, Meng-Zong Tsai, Peter Lin,
-Roman Lakeev, Sam Erickson, Shao-Tse Hung, Shih-Sheng Yang, Stacy
-Prowell, Steven Lung, Tristan Lelong, Tse-Wei Lin, Tucker Polomik, Tyler
-Fanelli, VxTeemo, Wei-Hsin Yeh, Wei-Lun Tsai, Xatierlike Lee, Yen-Yu Chen,
-Yin-Chiuan Chen, Yi-Wei Lin, Yo-Jung Lin, Yu-Hsiang Tseng, YYGO. </p></div>
+Pao, Ignacio Martin, I-Hsin Cheng, Integral, Iûnn Kiàn-îng, Jian-Xing
+Wu, Jimmy Ma, Johan Calle, keytouch, Kohei Otsuka, Kuan-Wei Chiu,
+manbing, Marconi Jiang, mengxinayan, Meng-Zong Tsai, Peter Lin, Roman
+Lakeev, Sam Erickson, Shao-Tse Hung, Shih-Sheng Yang, Stacy Prowell,
+Steven Lung, Tristan Lelong, Tse-Wei Lin, Tucker Polomik, Tyler Fanelli,
+VxTeemo, Wei-Hsin Yeh, Wei-Lun Tsai, Xatierlike Lee, Yan-Jie Chan, Yen-Yu
+Chen, Yin-Chiuan Chen, Yi-Wei Lin, Yo-Jung Lin, Yu-Chun Lin, Yu-Hsiang
+Tseng, YYGO. </p></div>
 <!-- l. 101 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='what-is-a-kernel-module'><span class='titlemark'>1.3   </span> <a id='x1-40001.3'></a>What Is A Kernel Module?</h4>
@@ -191,12 +194,12 @@ desired.
 </p><!-- l. 121 --><p class='indent'>   On Ubuntu/Debian GNU/Linux: 
 </p>
    <pre class='fancyvrb' id='fancyvrb1'><a id='x1-5006r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>sudo apt-get install build-essential kmod</span></pre>
-<!-- l. 126 --><p class='indent'>   On Arch Linux: 
-</p>
-   <pre class='fancyvrb' id='fancyvrb2'><a id='x1-5009r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>sudo pacman -S gcc kmod</span></pre>
                                                                   
 
                                                                   
+<!-- l. 126 --><p class='indent'>   On Arch Linux: 
+</p>
+   <pre class='fancyvrb' id='fancyvrb2'><a id='x1-5009r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>sudo pacman -S gcc kmod</span></pre>
 <!-- l. 131 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='what-modules-are-in-my-kernel'><span class='titlemark'>1.5   </span> <a id='x1-60001.5'></a>What Modules are in my Kernel?</h4>
@@ -220,6 +223,9 @@ To search for the <span class='obeylines-h'><span class='verb'><span class='ectt
 such actions. Nonetheless, a prudent approach involves executing the examples within
 a test distribution on a virtual machine, thus mitigating any potential risk of
 disrupting the system.
+                                                                  
+
+                                                                  
 </p><!-- l. 156 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='before-we-begin'><span class='titlemark'>1.7   </span> <a id='x1-80001.7'></a>Before We Begin</h4>
@@ -229,9 +235,6 @@ of successful compilation and loading of the inaugural “hello world” program
 times, present challenges. It is reassuring to note that overcoming the initial
 obstacle in the first attempt paves the way for subsequent endeavors to proceed
 seamlessly.
-                                                                  
-
-                                                                  
 </p><!-- l. 164 --><p class='indent'>
      </p><ol class='enumerate1'>
 <li class='enumerate' id='x1-8002x1'>Modversioning. A module compiled for one kernel will not load if a different
@@ -257,6 +260,9 @@ seamlessly.
      it is advisable to perform all tasks from the console.
      </p></li>
 <li class='enumerate' id='x1-8010x3'>
+                                                                  
+
+                                                                  
      <!-- l. 184 --><p class='noindent'>SecureBoot.  Numerous  modern  computers  arrive  pre-configured  with
      UEFI  SecureBoot  enabled—an  essential  security  standard  ensuring
      booting  exclusively  through  trusted  software  endorsed  by  the  original
@@ -266,9 +272,6 @@ seamlessly.
      </p><!-- l. 189 --><p class='noindent'>Failing this, an attempt to insert your first “hello world” module would
      result in the message: “<span class='ecti-1000'>ERROR: could not insert module</span>”. If this message
      <span class='ecti-1000'>Lockdown: insmod: unsigned module loading is restricted; see man kernel
-                                                                  
-
-                                                                  
      </span><span class='ecti-1000'>lockdown.7 </span>appears in the <code>  <span class='ectt-1000'>dmesg</span>
      </code> output, the simplest approach involves disabling UEFI SecureBoot from
      the boot menu of your PC or laptop, allowing the successful insertion
@@ -294,11 +297,11 @@ Then for example:
 </p>
    <pre class='fancyvrb' id='fancyvrb8'><a id='x1-9012r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>sudo pacman -S linux-headers</span></pre>
 <!-- l. 221 --><p class='indent'>   On Fedora: 
-</p>
-   <pre class='fancyvrb' id='fancyvrb9'><a id='x1-9015r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>sudo dnf install kernel-devel kernel-headers</span></pre>
                                                                   
 
                                                                   
+</p>
+   <pre class='fancyvrb' id='fancyvrb9'><a id='x1-9015r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>sudo dnf install kernel-devel kernel-headers</span></pre>
 <!-- l. 226 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='examples'><span class='titlemark'>3   </span> <a id='x1-100003'></a>Examples</h3>
@@ -359,14 +362,14 @@ to use <span class='ecti-1000'>tabs</span>, not spaces.
 <a id='x1-12069r7'></a><span class='ecrm-0500'>7</span> 
 <a id='x1-12071r8'></a><span class='ecrm-0500'>8</span><span class='ectt-0800'>clean:</span> 
 <a id='x1-12073r9'></a><span class='ecrm-0500'>9</span><span class='ectt-0800'>    </span><span class='colorbox' id='colorbox29'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(MAKE) -C /lib/modules/</span><span class='colorbox' id='colorbox30'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(shell uname -r)/build M=</span><span class='colorbox' id='colorbox31'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(PWD) clean</span></pre>
+                                                                  
+
+                                                                  
 <!-- l. 267 --><p class='indent'>   In <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>Makefile</span></span></span>, <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>$(CURDIR)</span></span></span> can set to the absolute pathname of the current working
 directory(after all <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>-C</span></span></span> options are processed, if any). See more about <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>CURDIR</span></span></span> in <a href='https://www.gnu.org/software/make/manual/make.html'>GNU
 make manual</a>.
 </p><!-- l. 270 --><p class='indent'>   And finally, just run <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>make</span></span></span> directly.
 </p><!-- l. 1 --><p class='indent'>
-                                                                  
-
-                                                                  
 </p>
    <pre class='fancyvrb' id='fancyvrb13'><a id='x1-12076r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>make</span></pre>
 <!-- l. 276 --><p class='indent'>   If there is no <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>PWD := $(CURDIR)</span></span></span> statement in Makefile, then it may not compile
