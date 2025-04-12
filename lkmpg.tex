@@ -1951,8 +1951,8 @@ The first type is when the CPU gives orders to the hardware, the other is when t
 The second, called interrupts, is much harder to implement because it has to be dealt with when convenient for the hardware, not the CPU.
 Hardware devices typically have a very small amount of RAM, and if you do not read their information when available, it is lost.
 
-Under Linux, hardware interrupts are called IRQ's (Interrupt ReQuests).
-There are two types of IRQ's, short and long.
+Under Linux, hardware interrupts are called IRQs (Interrupt ReQuests).
+There are two types of IRQs, short and long.
 A short IRQ is one which is expected to take a very short period of time, during which the rest of the machine will be blocked and no other interrupts will be handled.
 A long IRQ is one which can take longer, and during which other interrupts may occur (but not interrupts from the same device).
 If at all possible, it is better to declare an interrupt handler to be long.
