@@ -81,7 +81,9 @@ static ssize_t device_write(struct file *file, const char __user *buffer,
 }
 
 static struct file_operations fops = {
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 4, 0)
     .owner = THIS_MODULE,
+#endif
     .write = device_write,
     .open = device_open,
     .release = device_release,
@@ -112,7 +114,9 @@ static int __init led_init(void)
             MINOR(led_device.dev_num));
 
     /* Prevents module unloading while operations are in use */
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 4, 0)
     led_device.cdev.owner = THIS_MODULE;
+#endif
 
     cdev_init(&led_device.cdev, &fops);
     ret = cdev_add(&led_device.cdev, led_device.dev_num, 1);
