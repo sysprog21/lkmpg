@@ -30,16 +30,7 @@
 
 /* The in-kernel calls to the ksys_close() syscall were removed in Linux v5.11+.
  */
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 7, 0))
-
-#if LINUX_VERSION_CODE <= KERNEL_VERSION(5, 4, 0)
-#define HAVE_KSYS_CLOSE 1
-#include <linux/syscalls.h> /* For ksys_close() */
-#else
-#include <linux/kallsyms.h> /* For kallsyms_lookup_name */
-#endif
-
-#else
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 7, 0))
 
 #if defined(CONFIG_KPROBES)
 #define HAVE_KPROBES 1
@@ -64,7 +55,16 @@ static unsigned long sym = 0;
 module_param(sym, ulong, 0644);
 #endif /* CONFIG_KPROBES */
 
-#endif /* Version < v5.7 */
+#else
+
+#if LINUX_VERSION_CODE <= KERNEL_VERSION(5, 4, 0)
+#define HAVE_KSYS_CLOSE 1
+#include <linux/syscalls.h> /* For ksys_close() */
+#else
+#include <linux/kallsyms.h> /* For kallsyms_lookup_name */
+#endif
+
+#endif /* Version >= v5.7 */
 
 /* UID we want to spy on - will be filled from the command line. */
 static uid_t uid = -1;
