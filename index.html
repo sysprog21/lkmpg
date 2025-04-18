@@ -3561,41 +3561,41 @@ dry run of this example, you will have to patch your current kernel in order to 
 <a id='x1-41102r30'></a><span class='ecrm-0500'>30</span> 
 <a id='x1-41104r31'></a><span class='ecrm-0500'>31</span><span id='textcolor1550'><span class='ectt-0800'>/* The in-kernel calls to the ksys_close() syscall were removed in Linux v5.11+.</span></span> 
 <a id='x1-41106r32'></a><span class='ecrm-0500'>32</span><span id='textcolor1551'><span class='ectt-0800'> */</span></span> 
-<a id='x1-41108r33'></a><span class='ecrm-0500'>33</span><span id='textcolor1552'><span class='ectt-0800'>#if (LINUX_VERSION_CODE &lt; KERNEL_VERSION(5, 7, 0))</span></span> 
+<a id='x1-41108r33'></a><span class='ecrm-0500'>33</span><span id='textcolor1552'><span class='ectt-0800'>#if (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(5, 7, 0))</span></span> 
 <a id='x1-41110r34'></a><span class='ecrm-0500'>34</span> 
-<a id='x1-41112r35'></a><span class='ecrm-0500'>35</span><span id='textcolor1553'><span class='ectt-0800'>#if LINUX_VERSION_CODE &lt;= KERNEL_VERSION(5, 4, 0)</span></span> 
-<a id='x1-41114r36'></a><span class='ecrm-0500'>36</span><span id='textcolor1554'><span class='ectt-0800'>#define HAVE_KSYS_CLOSE 1</span></span> 
-<a id='x1-41116r37'></a><span class='ecrm-0500'>37</span><span id='textcolor1555'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1556'><span class='ectt-0800'>&lt;linux/syscalls.h&gt; /* For ksys_close() */</span></span> 
-<a id='x1-41118r38'></a><span class='ecrm-0500'>38</span><span id='textcolor1557'><span class='ectt-0800'>#else</span></span> 
-<a id='x1-41120r39'></a><span class='ecrm-0500'>39</span><span id='textcolor1558'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1559'><span class='ectt-0800'>&lt;linux/kallsyms.h&gt; /* For kallsyms_lookup_name */</span></span> 
-<a id='x1-41122r40'></a><span class='ecrm-0500'>40</span><span id='textcolor1560'><span class='ectt-0800'>#endif</span></span> 
-<a id='x1-41124r41'></a><span class='ecrm-0500'>41</span> 
-<a id='x1-41126r42'></a><span class='ecrm-0500'>42</span><span id='textcolor1561'><span class='ectt-0800'>#else</span></span> 
-<a id='x1-41128r43'></a><span class='ecrm-0500'>43</span> 
-<a id='x1-41130r44'></a><span class='ecrm-0500'>44</span><span id='textcolor1562'><span class='ectt-0800'>#if defined(CONFIG_KPROBES)</span></span> 
-<a id='x1-41132r45'></a><span class='ecrm-0500'>45</span><span id='textcolor1563'><span class='ectt-0800'>#define HAVE_KPROBES 1</span></span> 
-<a id='x1-41134r46'></a><span class='ecrm-0500'>46</span><span id='textcolor1564'><span class='ectt-0800'>#if defined(CONFIG_X86_64)</span></span> 
-<a id='x1-41136r47'></a><span class='ecrm-0500'>47</span><span id='textcolor1565'><span class='ectt-0800'>/* If you have tried to use the syscall table to intercept syscalls and it </span></span> 
-<a id='x1-41138r48'></a><span class='ecrm-0500'>48</span><span id='textcolor1566'><span class='ectt-0800'> * doesn</span><span class='tctt-0800'>'</span><span class='ectt-0800'>t work, you can try to use Kprobes to intercept syscalls.</span></span> 
-<a id='x1-41140r49'></a><span class='ecrm-0500'>49</span><span id='textcolor1567'><span class='ectt-0800'> * Set USE_KPROBES_PRE_HANDLER_BEFORE_SYSCALL to 1 to register a pre-handler</span></span> 
-<a id='x1-41142r50'></a><span class='ecrm-0500'>50</span><span id='textcolor1568'><span class='ectt-0800'> * before the syscall.</span></span> 
-<a id='x1-41144r51'></a><span class='ecrm-0500'>51</span><span id='textcolor1569'><span class='ectt-0800'> */</span></span> 
-<a id='x1-41146r52'></a><span class='ecrm-0500'>52</span><span id='textcolor1570'><span class='ectt-0800'>#define USE_KPROBES_PRE_HANDLER_BEFORE_SYSCALL 0</span></span> 
-<a id='x1-41148r53'></a><span class='ecrm-0500'>53</span><span id='textcolor1571'><span class='ectt-0800'>#endif</span></span> 
-<a id='x1-41150r54'></a><span class='ecrm-0500'>54</span><span id='textcolor1572'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1573'><span class='ectt-0800'>&lt;linux/kprobes.h&gt;</span></span> 
-<a id='x1-41152r55'></a><span class='ecrm-0500'>55</span><span id='textcolor1574'><span class='ectt-0800'>#else</span></span> 
-<a id='x1-41154r56'></a><span class='ecrm-0500'>56</span><span id='textcolor1575'><span class='ectt-0800'>#define HAVE_PARAM 1</span></span> 
-<a id='x1-41156r57'></a><span class='ecrm-0500'>57</span><span id='textcolor1576'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1577'><span class='ectt-0800'>&lt;linux/kallsyms.h&gt; /* For sprint_symbol */</span></span> 
-<a id='x1-41158r58'></a><span class='ecrm-0500'>58</span><span id='textcolor1578'><span class='ectt-0800'>/* The address of the sys_call_table, which can be obtained with looking up</span></span> 
-<a id='x1-41160r59'></a><span class='ecrm-0500'>59</span><span id='textcolor1579'><span class='ectt-0800'> * "/boot/System.map" or "/proc/kallsyms". When the kernel version is v5.7+,</span></span> 
-<a id='x1-41162r60'></a><span class='ecrm-0500'>60</span><span id='textcolor1580'><span class='ectt-0800'> * without CONFIG_KPROBES, you can input the parameter or the module will look</span></span> 
-<a id='x1-41164r61'></a><span class='ecrm-0500'>61</span><span id='textcolor1581'><span class='ectt-0800'> * up all the memory.</span></span> 
-<a id='x1-41166r62'></a><span class='ecrm-0500'>62</span><span id='textcolor1582'><span class='ectt-0800'> */</span></span> 
-<a id='x1-41168r63'></a><span class='ecrm-0500'>63</span><span id='textcolor1583'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1584'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1585'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> sym = 0;</span> 
-<a id='x1-41170r64'></a><span class='ecrm-0500'>64</span><span class='ectt-0800'>module_param(sym, ulong, 0644);</span> 
-<a id='x1-41172r65'></a><span class='ecrm-0500'>65</span><span id='textcolor1586'><span class='ectt-0800'>#endif </span></span><span id='textcolor1587'><span class='ectt-0800'>/* CONFIG_KPROBES */</span></span> 
+<a id='x1-41112r35'></a><span class='ecrm-0500'>35</span><span id='textcolor1553'><span class='ectt-0800'>#if defined(CONFIG_KPROBES)</span></span> 
+<a id='x1-41114r36'></a><span class='ecrm-0500'>36</span><span id='textcolor1554'><span class='ectt-0800'>#define HAVE_KPROBES 1</span></span> 
+<a id='x1-41116r37'></a><span class='ecrm-0500'>37</span><span id='textcolor1555'><span class='ectt-0800'>#if defined(CONFIG_X86_64)</span></span> 
+<a id='x1-41118r38'></a><span class='ecrm-0500'>38</span><span id='textcolor1556'><span class='ectt-0800'>/* If you have tried to use the syscall table to intercept syscalls and it </span></span> 
+<a id='x1-41120r39'></a><span class='ecrm-0500'>39</span><span id='textcolor1557'><span class='ectt-0800'> * doesn</span><span class='tctt-0800'>'</span><span class='ectt-0800'>t work, you can try to use Kprobes to intercept syscalls.</span></span> 
+<a id='x1-41122r40'></a><span class='ecrm-0500'>40</span><span id='textcolor1558'><span class='ectt-0800'> * Set USE_KPROBES_PRE_HANDLER_BEFORE_SYSCALL to 1 to register a pre-handler</span></span> 
+<a id='x1-41124r41'></a><span class='ecrm-0500'>41</span><span id='textcolor1559'><span class='ectt-0800'> * before the syscall.</span></span> 
+<a id='x1-41126r42'></a><span class='ecrm-0500'>42</span><span id='textcolor1560'><span class='ectt-0800'> */</span></span> 
+<a id='x1-41128r43'></a><span class='ecrm-0500'>43</span><span id='textcolor1561'><span class='ectt-0800'>#define USE_KPROBES_PRE_HANDLER_BEFORE_SYSCALL 0</span></span> 
+<a id='x1-41130r44'></a><span class='ecrm-0500'>44</span><span id='textcolor1562'><span class='ectt-0800'>#endif</span></span> 
+<a id='x1-41132r45'></a><span class='ecrm-0500'>45</span><span id='textcolor1563'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1564'><span class='ectt-0800'>&lt;linux/kprobes.h&gt;</span></span> 
+<a id='x1-41134r46'></a><span class='ecrm-0500'>46</span><span id='textcolor1565'><span class='ectt-0800'>#else</span></span> 
+<a id='x1-41136r47'></a><span class='ecrm-0500'>47</span><span id='textcolor1566'><span class='ectt-0800'>#define HAVE_PARAM 1</span></span> 
+<a id='x1-41138r48'></a><span class='ecrm-0500'>48</span><span id='textcolor1567'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1568'><span class='ectt-0800'>&lt;linux/kallsyms.h&gt; /* For sprint_symbol */</span></span> 
+<a id='x1-41140r49'></a><span class='ecrm-0500'>49</span><span id='textcolor1569'><span class='ectt-0800'>/* The address of the sys_call_table, which can be obtained with looking up</span></span> 
+<a id='x1-41142r50'></a><span class='ecrm-0500'>50</span><span id='textcolor1570'><span class='ectt-0800'> * "/boot/System.map" or "/proc/kallsyms". When the kernel version is v5.7+,</span></span> 
+<a id='x1-41144r51'></a><span class='ecrm-0500'>51</span><span id='textcolor1571'><span class='ectt-0800'> * without CONFIG_KPROBES, you can input the parameter or the module will look</span></span> 
+<a id='x1-41146r52'></a><span class='ecrm-0500'>52</span><span id='textcolor1572'><span class='ectt-0800'> * up all the memory.</span></span> 
+<a id='x1-41148r53'></a><span class='ecrm-0500'>53</span><span id='textcolor1573'><span class='ectt-0800'> */</span></span> 
+<a id='x1-41150r54'></a><span class='ecrm-0500'>54</span><span id='textcolor1574'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1575'><span class='ectt-0800'>unsigned</span></span><span class='ectt-0800'> </span><span id='textcolor1576'><span class='ectt-0800'>long</span></span><span class='ectt-0800'> sym = 0;</span> 
+<a id='x1-41152r55'></a><span class='ecrm-0500'>55</span><span class='ectt-0800'>module_param(sym, ulong, 0644);</span> 
+<a id='x1-41154r56'></a><span class='ecrm-0500'>56</span><span id='textcolor1577'><span class='ectt-0800'>#endif </span></span><span id='textcolor1578'><span class='ectt-0800'>/* CONFIG_KPROBES */</span></span> 
+<a id='x1-41156r57'></a><span class='ecrm-0500'>57</span> 
+<a id='x1-41158r58'></a><span class='ecrm-0500'>58</span><span id='textcolor1579'><span class='ectt-0800'>#else</span></span> 
+<a id='x1-41160r59'></a><span class='ecrm-0500'>59</span> 
+<a id='x1-41162r60'></a><span class='ecrm-0500'>60</span><span id='textcolor1580'><span class='ectt-0800'>#if LINUX_VERSION_CODE &lt;= KERNEL_VERSION(5, 4, 0)</span></span> 
+<a id='x1-41164r61'></a><span class='ecrm-0500'>61</span><span id='textcolor1581'><span class='ectt-0800'>#define HAVE_KSYS_CLOSE 1</span></span> 
+<a id='x1-41166r62'></a><span class='ecrm-0500'>62</span><span id='textcolor1582'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1583'><span class='ectt-0800'>&lt;linux/syscalls.h&gt; /* For ksys_close() */</span></span> 
+<a id='x1-41168r63'></a><span class='ecrm-0500'>63</span><span id='textcolor1584'><span class='ectt-0800'>#else</span></span> 
+<a id='x1-41170r64'></a><span class='ecrm-0500'>64</span><span id='textcolor1585'><span class='ectt-0800'>#include</span></span><span class='ectt-0800'> </span><span id='textcolor1586'><span class='ectt-0800'>&lt;linux/kallsyms.h&gt; /* For kallsyms_lookup_name */</span></span> 
+<a id='x1-41172r65'></a><span class='ecrm-0500'>65</span><span id='textcolor1587'><span class='ectt-0800'>#endif</span></span> 
 <a id='x1-41174r66'></a><span class='ecrm-0500'>66</span> 
-<a id='x1-41176r67'></a><span class='ecrm-0500'>67</span><span id='textcolor1588'><span class='ectt-0800'>#endif </span></span><span id='textcolor1589'><span class='ectt-0800'>/* Version &lt; v5.7 */</span></span> 
+<a id='x1-41176r67'></a><span class='ecrm-0500'>67</span><span id='textcolor1588'><span class='ectt-0800'>#endif </span></span><span id='textcolor1589'><span class='ectt-0800'>/* Version &gt;= v5.7 */</span></span> 
 <a id='x1-41178r68'></a><span class='ecrm-0500'>68</span> 
 <a id='x1-41180r69'></a><span class='ecrm-0500'>69</span><span id='textcolor1590'><span class='ectt-0800'>/* UID we want to spy on - will be filled from the command line. */</span></span> 
 <a id='x1-41182r70'></a><span class='ecrm-0500'>70</span><span id='textcolor1591'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor1592'><span class='ectt-0800'>uid_t</span></span><span class='ectt-0800'> uid = -1;</span> 
@@ -6927,10 +6927,10 @@ functions.
 <a id='x1-66046r23'></a><span class='ecrm-0500'>23</span> 
 <a id='x1-66048r24'></a><span class='ecrm-0500'>24</span><span class='ectt-0800'>    </span><span id='textcolor3721'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
 <a id='x1-66050r25'></a><span class='ecrm-0500'>25</span><span class='ectt-0800'>}</span> 
-<a id='x1-66052r26'></a><span class='ecrm-0500'>26</span><span id='textcolor3722'><span class='ectt-0800'>#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(6, 11, 0)</span></span> 
-<a id='x1-66054r27'></a><span class='ecrm-0500'>27</span><span id='textcolor3723'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3724'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> devicemodel_remove(</span><span id='textcolor3725'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> platform_device *dev)</span> 
+<a id='x1-66052r26'></a><span class='ecrm-0500'>26</span><span id='textcolor3722'><span class='ectt-0800'>#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(6, 11, 0)</span></span> 
+<a id='x1-66054r27'></a><span class='ecrm-0500'>27</span><span id='textcolor3723'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3724'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> devicemodel_remove(</span><span id='textcolor3725'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> platform_device *dev)</span> 
 <a id='x1-66056r28'></a><span class='ecrm-0500'>28</span><span id='textcolor3726'><span class='ectt-0800'>#else</span></span> 
-<a id='x1-66058r29'></a><span class='ecrm-0500'>29</span><span id='textcolor3727'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3728'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> devicemodel_remove(</span><span id='textcolor3729'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> platform_device *dev)</span> 
+<a id='x1-66058r29'></a><span class='ecrm-0500'>29</span><span id='textcolor3727'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor3728'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> devicemodel_remove(</span><span id='textcolor3729'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> platform_device *dev)</span> 
 <a id='x1-66060r30'></a><span class='ecrm-0500'>30</span><span id='textcolor3730'><span class='ectt-0800'>#endif</span></span> 
 <a id='x1-66062r31'></a><span class='ecrm-0500'>31</span><span class='ectt-0800'>{</span> 
 <a id='x1-66064r32'></a><span class='ecrm-0500'>32</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor3731'><span class='ectt-0800'>"devicemodel example removed</span></span><span id='textcolor3732'><span class='ectt-0800'>\n</span></span><span id='textcolor3733'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
@@ -7150,10 +7150,10 @@ static key works.
 <a id='x1-69149r60'></a><span class='ecrm-0500'>60</span> 
 <a id='x1-69151r61'></a><span class='ecrm-0500'>61</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor3862'><span class='ectt-0800'>"I was assigned major number %d</span></span><span id='textcolor3863'><span class='ectt-0800'>\n</span></span><span id='textcolor3864'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, major);</span> 
 <a id='x1-69153r62'></a><span class='ecrm-0500'>62</span> 
-<a id='x1-69155r63'></a><span class='ecrm-0500'>63</span><span id='textcolor3865'><span class='ectt-0800'>#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(6, 4, 0)</span></span> 
-<a id='x1-69157r64'></a><span class='ecrm-0500'>64</span><span class='ectt-0800'>    cls = class_create(THIS_MODULE, DEVICE_NAME);</span> 
+<a id='x1-69155r63'></a><span class='ecrm-0500'>63</span><span id='textcolor3865'><span class='ectt-0800'>#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(6, 4, 0)</span></span> 
+<a id='x1-69157r64'></a><span class='ecrm-0500'>64</span><span class='ectt-0800'>    cls = class_create(DEVICE_NAME);</span> 
 <a id='x1-69159r65'></a><span class='ecrm-0500'>65</span><span id='textcolor3866'><span class='ectt-0800'>#else</span></span> 
-<a id='x1-69161r66'></a><span class='ecrm-0500'>66</span><span class='ectt-0800'>    cls = class_create(DEVICE_NAME);</span> 
+<a id='x1-69161r66'></a><span class='ecrm-0500'>66</span><span class='ectt-0800'>    cls = class_create(THIS_MODULE, DEVICE_NAME);</span> 
 <a id='x1-69163r67'></a><span class='ecrm-0500'>67</span><span id='textcolor3867'><span class='ectt-0800'>#endif</span></span> 
 <a id='x1-69165r68'></a><span class='ecrm-0500'>68</span> 
 <a id='x1-69167r69'></a><span class='ecrm-0500'>69</span><span class='ectt-0800'>    device_create(cls, NULL, MKDEV(major, 0), NULL, DEVICE_NAME);</span> 
