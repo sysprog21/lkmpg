@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>April 15, 2025</span></div>
+<div class='date'><span class='ecrm-1200'>April 18, 2025</span></div>
                                                                   
 
                                                                   
@@ -2462,7 +2462,7 @@ the same way as in the previous example.
      <li class='itemize'><a class='url' href='https://lwn.net/Articles/22355/'><span class='ectt-1000'>https://lwn.net/Articles/22355/</span></a>
      </li>
      <li class='itemize'><a class='url' href='https://kernelnewbies.org/Documents/SeqFileHowTo'><span class='ectt-1000'>https://kernelnewbies.org/Documents/SeqFileHowTo</span></a></li></ul>
-<!-- l. 1282 --><p class='indent'>   You can also read the code of <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/fs/seq_file.c'>fs/seq_file.c</a> in the linux kernel.
+<!-- l. 1282 --><p class='indent'>   You can also read the code of <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/fs/seq_file.c'>fs/seq_file.c</a> in the Linux kernel.
 </p>
    <h3 class='sectionHead' id='sysfs-interacting-with-your-module'><span class='titlemark'>8   </span> <a id='x1-380008'></a>sysfs: Interacting with your module</h3>
 <!-- l. 1286 --><p class='noindent'><span class='ecti-1000'>sysfs </span>allows you to interact with the running kernel from userspace by reading or
@@ -5320,8 +5320,8 @@ Example tasklet starts
 Example tasklet init continues...
 Example tasklet ends
 </pre>
-<!-- l. 1923 --><p class='nopar'>Although tasklet is easy to use, it comes with several drawbacks, and developers are
-discussing about getting rid of tasklet in linux kernel. The tasklet callback
+<!-- l. 1923 --><p class='nopar'>Although tasklet is easy to use, it comes with several drawbacks, and developers have
+been discussing their removal from the Linux kernel. The tasklet callback
 runs in atomic context, inside a software interrupt, meaning that it cannot
 sleep or access user-space data, so not all work can be done in a tasklet
 handler. Also, the kernel only allows one instance of any given tasklet to be
