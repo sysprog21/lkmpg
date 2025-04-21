@@ -5254,14 +5254,14 @@ resistor.
 quick and easy way of scheduling a single function to be run. For example, when
 triggered from an interrupt, whereas work queues are more complicated but also
 better suited to running multiple things in a sequence.
-</p><!-- l. 1905 --><p class='indent'>   It is possible that in future tasklets may be replaced by <span class='ecti-1000'>threaded irqs</span>. However,
-discussion about that has been ongoing since 2007 (<a href='https://lwn.net/Articles/239633'>Eliminating tasklets</a>), so do
-not hold your breath. See the section <a href='#interrupt-handlers1'>16.1<!-- tex4ht:ref: sec:irq  --></a> if you wish to avoid the tasklet
-debate.
-</p><!-- l. 1909 --><p class='noindent'>
+</p><!-- l. 1906 --><p class='indent'>   It is possible that in future tasklets may be replaced by <span class='ecti-1000'>threaded IRQs</span>. However,
+discussion about that has been ongoing since 2007 (<a href='https://lwn.net/Articles/239633'>Eliminating tasklets</a> and <a href='https://lwn.net/Articles/960041/'>The end
+of tasklets</a>), so expecting immediate changes would be unwise. See the section <a href='#interrupt-handlers1'>16.1<!-- tex4ht:ref: sec:irq  --></a>
+for alternatives that avoid the tasklet debate.
+</p><!-- l. 1911 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='tasklets'><span class='titlemark'>15.1   </span> <a id='x1-5700015.1'></a>Tasklets</h4>
-<!-- l. 1911 --><p class='noindent'>Here is an example tasklet module. The
+<!-- l. 1913 --><p class='noindent'>Here is an example tasklet module. The
 <code> <span class='ectt-1000'>tasklet_fn</span>
 </code> function runs for a few seconds. In the meantime, execution of the
 <code> <span class='ectt-1000'>example_tasklet_init</span>
@@ -5313,7 +5313,7 @@ debate.
 <a id='x1-57086r42'></a><span class='ecrm-0500'>42</span> 
 <a id='x1-57088r43'></a><span class='ecrm-0500'>43</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2729'><span class='ectt-0800'>"Tasklet example"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-57090r44'></a><span class='ecrm-0500'>44</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2730'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1917 --><p class='indent'>   So with this example loaded <code>  <span class='ectt-1000'>dmesg</span>
+<!-- l. 1920 --><p class='indent'>   So with this example loaded <code>  <span class='ectt-1000'>dmesg</span>
 </code> should show:
                                                                   
 
@@ -5325,23 +5325,23 @@ Example tasklet starts
 Example tasklet init continues...
 Example tasklet ends
 </pre>
-<!-- l. 1924 --><p class='nopar'>Although tasklet is easy to use, it comes with several drawbacks, and developers have
+<!-- l. 1927 --><p class='nopar'>Although tasklet is easy to use, it comes with several drawbacks, and developers have
 been discussing their removal from the Linux kernel. The tasklet callback
 runs in atomic context, inside a software interrupt, meaning that it cannot
 sleep or access user-space data, so not all work can be done in a tasklet
 handler. Also, the kernel only allows one instance of any given tasklet to be
 running at any given time; multiple different tasklet callbacks can run in
 parallel.
-</p><!-- l. 1929 --><p class='indent'>   In recent kernels, tasklets can be replaced by workqueues, timers, or threaded
+</p><!-- l. 1932 --><p class='indent'>   In recent kernels, tasklets can be replaced by workqueues, timers, or threaded
 interrupts.<span class='footnote-mark'><a href='#fn1x0' id='fn1x0-bk'><sup class='textsuperscript'>1</sup></a></span><a id='x1-57092f1'></a>
 While the removal of tasklets remains a longer-term goal, the current kernel contains more
 than a hundred uses of tasklets. Now developers are proceeding with the API changes and
 the macro <code>  <span class='ectt-1000'>DECLARE_TASKLET_OLD</span>
 </code> exists for compatibility. For further information, see <a class='url' href='https://lwn.net/Articles/830964/'><span class='ectt-1000'>https://lwn.net/Articles/830964/</span></a>.
-</p><!-- l. 1935 --><p class='noindent'>
+</p><!-- l. 1938 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='work-queues'><span class='titlemark'>15.2   </span> <a id='x1-5800015.2'></a>Work queues</h4>
-<!-- l. 1937 --><p class='noindent'>To add a task to the scheduler we can use a workqueue. The kernel then uses the
+<!-- l. 1940 --><p class='noindent'>To add a task to the scheduler we can use a workqueue. The kernel then uses the
 Completely Fair Scheduler (CFS) to execute work within the queue.
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -5378,36 +5378,36 @@ Completely Fair Scheduler (CFS) to execute work within the queue.
 <a id='x1-58062r31'></a><span class='ecrm-0500'>31</span> 
 <a id='x1-58064r32'></a><span class='ecrm-0500'>32</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2758'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-58066r33'></a><span class='ecrm-0500'>33</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2759'><span class='ectt-0800'>"Workqueue example"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1942 --><p class='noindent'>
+<!-- l. 1945 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='interrupt-handlers'><span class='titlemark'>16   </span> <a id='x1-5900016'></a>Interrupt Handlers</h3>
-<!-- l. 1944 --><p class='noindent'>
+<!-- l. 1947 --><p class='noindent'>
 </p>
                                                                   
 
                                                                   
    <h4 class='subsectionHead' id='interrupt-handlers1'><span class='titlemark'>16.1   </span> <a id='x1-6000016.1'></a>Interrupt Handlers</h4>
-<!-- l. 1946 --><p class='noindent'>Except for the last chapter, everything we did in the kernel so far we have done as a
+<!-- l. 1949 --><p class='noindent'>Except for the last chapter, everything we did in the kernel so far we have done as a
 response to a process asking for it, either by dealing with a special file, sending an
 <code> <span class='ectt-1000'>ioctl()</span>
 </code>, or issuing a system call. But the job of the kernel is not just to respond to process
 requests. Another job, which is every bit as important, is to speak to the hardware
 connected to the machine.
-</p><!-- l. 1950 --><p class='indent'>   There are two types of interaction between the CPU and the rest of the
+</p><!-- l. 1953 --><p class='indent'>   There are two types of interaction between the CPU and the rest of the
 computer’s hardware. The first type is when the CPU gives orders to the hardware,
 the other is when the hardware needs to tell the CPU something. The second, called
 interrupts, is much harder to implement because it has to be dealt with when
 convenient for the hardware, not the CPU. Hardware devices typically have a very
 small amount of RAM, and if you do not read their information when available, it is
 lost.
-</p><!-- l. 1955 --><p class='indent'>   Under Linux, hardware interrupts are called IRQs (Interrupt ReQuests). There
+</p><!-- l. 1958 --><p class='indent'>   Under Linux, hardware interrupts are called IRQs (Interrupt ReQuests). There
 are two types of IRQs, short and long. A short IRQ is one which is expected to take a
 very short period of time, during which the rest of the machine will be blocked and
 no other interrupts will be handled. A long IRQ is one which can take longer, and
 during which other interrupts may occur (but not interrupts from the same
 device). If at all possible, it is better to declare an interrupt handler to be
 long.
-</p><!-- l. 1961 --><p class='indent'>   When the CPU receives an interrupt, it stops whatever it is doing (unless it is
+</p><!-- l. 1964 --><p class='indent'>   When the CPU receives an interrupt, it stops whatever it is doing (unless it is
 processing a more important interrupt, in which case it will deal with this one only
 when the more important one is done), saves certain parameters on the stack and
 calls the interrupt handler. This means that certain things are not allowed in the
@@ -5419,10 +5419,10 @@ heavy work deferred from an interrupt handler. Historically, BH (Linux
 naming for <span class='ecti-1000'>Bottom Halves</span>) statistically book-keeps the deferred functions.
 <span class='ecbx-1000'>Softirq </span>and its higher level abstraction, <span class='ecbx-1000'>Tasklet</span>, replace BH since Linux
 2.3.
-</p><!-- l. 1971 --><p class='indent'>   The way to implement this is to call
+</p><!-- l. 1974 --><p class='indent'>   The way to implement this is to call
 <code> <span class='ectt-1000'>request_irq()</span>
 </code> to get your interrupt handler called when the relevant IRQ is received.
-</p><!-- l. 1973 --><p class='indent'>   In practice IRQ handling can be a bit more complex. Hardware is often designed
+</p><!-- l. 1976 --><p class='indent'>   In practice IRQ handling can be a bit more complex. Hardware is often designed
 in a way that chains two interrupt controllers, so that all the IRQs from
 interrupt controller B are cascaded to a certain IRQ from interrupt controller A.
 Of course, that requires that the kernel finds out which IRQ it really was
@@ -5439,11 +5439,11 @@ need to solve another truckload of problems. It is not enough to know if a
 certain IRQs has happened, it’s also important to know what CPU(s) it was
 for. People still interested in more details, might want to refer to "APIC"
 now.
-</p><!-- l. 1982 --><p class='indent'>   This function receives the IRQ number, the name of the function, flags, a name
+</p><!-- l. 1985 --><p class='indent'>   This function receives the IRQ number, the name of the function, flags, a name
 for <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/interrupts</span></span></span> and a parameter to be passed to the interrupt handler.
 Usually there is a certain number of IRQs available. How many IRQs there are is
 hardware-dependent.
-</p><!-- l. 1986 --><p class='indent'>   The flags can be used to specify behaviors of the IRQ. For example, use
+</p><!-- l. 1989 --><p class='indent'>   The flags can be used to specify behaviors of the IRQ. For example, use
 <code> <span class='ectt-1000'>IRQF_SHARED</span>
 </code> to indicate you are willing to share the IRQ with other interrupt handlers
 (usually because a number of hardware devices sit on the same IRQ); use the
@@ -5457,16 +5457,16 @@ that in some materials, you may encounter another set of IRQ flags named with th
 only the <code>  <span class='ectt-1000'>IRQF</span>
 </code> flags are in use. This function will only succeed if there is not already a handler on
 this IRQ, or if you are both willing to share.
-</p><!-- l. 1995 --><p class='noindent'>
+</p><!-- l. 1998 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='detecting-button-presses'><span class='titlemark'>16.2   </span> <a id='x1-6100016.2'></a>Detecting button presses</h4>
-<!-- l. 1997 --><p class='noindent'>Many popular single board computers, such as Raspberry Pi or Beagleboards, have a
+<!-- l. 2000 --><p class='noindent'>Many popular single board computers, such as Raspberry Pi or Beagleboards, have a
 bunch of GPIO pins. Attaching buttons to those and then having a button press do
 something is a classic case in which you might need to use interrupts, so that instead
 of having the CPU waste time and battery power polling for a change in input state,
 it is better for the input to trigger the CPU to then run a particular handling
 function.
-</p><!-- l. 2001 --><p class='indent'>   Here is an example where buttons are connected to GPIO numbers 17 and 18 and
+</p><!-- l. 2004 --><p class='indent'>   Here is an example where buttons are connected to GPIO numbers 17 and 18 and
 an LED is connected to GPIO 4. You can change those numbers to whatever is
 appropriate for your board.
 </p><!-- l. 1 --><p class='indent'>
@@ -5680,17 +5680,17 @@ appropriate for your board.
 <a id='x1-61414r207'></a><span class='ecrm-0500'>207</span> 
 <a id='x1-61416r208'></a><span class='ecrm-0500'>208</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2914'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-61418r209'></a><span class='ecrm-0500'>209</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2915'><span class='ectt-0800'>"Handle some GPIO interrupts"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 2006 --><p class='noindent'>
+<!-- l. 2009 --><p class='noindent'>
 </p>
                                                                   
 
                                                                   
    <h4 class='subsectionHead' id='bottom-half'><span class='titlemark'>16.3   </span> <a id='x1-6200016.3'></a>Bottom Half</h4>
-<!-- l. 2008 --><p class='noindent'>Suppose you want to do a bunch of stuff inside of an interrupt routine. A common
+<!-- l. 2011 --><p class='noindent'>Suppose you want to do a bunch of stuff inside of an interrupt routine. A common
 way to do that without rendering the interrupt unavailable for a significant duration
 is to combine it with a tasklet. This pushes the bulk of the work off into the
 scheduler.
-</p><!-- l. 2012 --><p class='indent'>   The example below modifies the previous example to also run an additional task
+</p><!-- l. 2015 --><p class='indent'>   The example below modifies the previous example to also run an additional task
 when an interrupt is triggered.
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -5927,10 +5927,10 @@ when an interrupt is triggered.
 <a id='x1-62462r231'></a><span class='ecrm-0500'>231</span> 
 <a id='x1-62464r232'></a><span class='ecrm-0500'>232</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor3092'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-62466r233'></a><span class='ecrm-0500'>233</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor3093'><span class='ectt-0800'>"Interrupt with top and bottom half"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 2016 --><p class='noindent'>
+<!-- l. 2019 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='threaded-irq'><span class='titlemark'>16.4   </span> <a id='x1-6300016.4'></a>Threaded IRQ</h4>
-<!-- l. 2018 --><p class='noindent'>Threaded IRQ is a mechanism to organize both top-half and bottom-half
+<!-- l. 2021 --><p class='noindent'>Threaded IRQ is a mechanism to organize both top-half and bottom-half
 of an IRQ at once. A threaded IRQ splits the one handler in
 <code> <span class='ectt-1000'>request_irq()</span>
 </code> into two: one for the top-half, the other for the bottom-half. The
@@ -5938,7 +5938,7 @@ of an IRQ at once. A threaded IRQ splits the one handler in
 </code> is the function for using threaded IRQs. Two handlers are registered at once in the
 <code> <span class='ectt-1000'>request_threaded_irq()</span>
 </code>.
-</p><!-- l. 2023 --><p class='indent'>   Those two handlers run in different context. The top-half handler runs
+</p><!-- l. 2026 --><p class='indent'>   Those two handlers run in different context. The top-half handler runs
 in interrupt context. It’s the equivalence of the handler passed to the
 <code> <span class='ectt-1000'>request_irq()</span>
 </code>. The bottom-half handler on the other hand runs in its own thread. This
@@ -5947,7 +5947,7 @@ this bottom-half handler. This is where a threaded IRQ is “threaded”. If
 <code> <span class='ectt-1000'>IRQ_WAKE_THREAD</span>
 </code> is returned by the top-half handler, that bottom-half serving thread will wake up.
 The thread then runs the bottom-half handler.
-</p><!-- l. 2033 --><p class='indent'>   Here is an example of how to do the same thing as before, with top and bottom
+</p><!-- l. 2036 --><p class='indent'>   Here is an example of how to do the same thing as before, with top and bottom
 halves, but using threads.
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -6166,7 +6166,7 @@ halves, but using threads.
 <a id='x1-63431r213'></a><span class='ecrm-0500'>213</span> 
 <a id='x1-63433r214'></a><span class='ecrm-0500'>214</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor3255'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-63435r215'></a><span class='ecrm-0500'>215</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor3256'><span class='ectt-0800'>"Interrupt with top and bottom half"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 2037 --><p class='indent'>   A threaded IRQ is registered using <code>  <span class='ectt-1000'>request_threaded_irq()</span>
+<!-- l. 2040 --><p class='indent'>   A threaded IRQ is registered using <code>  <span class='ectt-1000'>request_threaded_irq()</span>
 </code>. This function only takes one additional parameter than the
 <code> <span class='ectt-1000'>request_irq()</span>
 </code> – the bottom-half handling function that runs in its own thread. In this example it is
@@ -6177,7 +6177,7 @@ the <code>  <span class='ectt-1000'>button_bottom_half()</span>
 
                                                                   
 </code>.
-</p><!-- l. 2042 --><p class='indent'>   Presence of both handlers is not mandatory. If either of them is not needed, pass
+</p><!-- l. 2045 --><p class='indent'>   Presence of both handlers is not mandatory. If either of them is not needed, pass
 the <code>  <span class='ectt-1000'>NULL</span>
 </code> instead. A <code>  <span class='ectt-1000'>NULL</span>
 </code> top-half handler implies that no action is taken except to wake up the
@@ -6187,12 +6187,12 @@ bottom-half serving thread, which runs the bottom-half handler. Similarly, a
 <code> <span class='ectt-1000'>request_irq()</span>
 </code> were used. In fact, this is how <code>  <span class='ectt-1000'>request_irq()</span>
 </code> is implemented.
-</p><!-- l. 2048 --><p class='indent'>   Note that passing <code>  <span class='ectt-1000'>NULL</span>
+</p><!-- l. 2051 --><p class='indent'>   Note that passing <code>  <span class='ectt-1000'>NULL</span>
 </code> to both handlers is considered an error and will make registration fail.
-</p><!-- l. 2050 --><p class='noindent'>
+</p><!-- l. 2053 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='virtual-input-device-driver'><span class='titlemark'>17   </span> <a id='x1-6400017'></a>Virtual Input Device Driver</h3>
-<!-- l. 2052 --><p class='noindent'>The input device driver is a module that provides a way to communicate
+<!-- l. 2055 --><p class='noindent'>The input device driver is a module that provides a way to communicate
 with the interaction device via the event. For example, the keyboard
 can send the press or release event to tell the kernel what we want to
 do. The input device driver will allocate a new input structure with
@@ -6200,7 +6200,7 @@ do. The input device driver will allocate a new input structure with
 </code> and sets up input bitfields, device id, version, etc. After that, registers it by calling
 <code> <span class='ectt-1000'>input_register_device()</span>
 </code>.
-</p><!-- l. 2057 --><p class='indent'>   Here is an example, vinput, It is an API to allow easy
+</p><!-- l. 2060 --><p class='indent'>   Here is an example, vinput, It is an API to allow easy
 development of virtual input drivers. The driver needs to export a
 <code> <span class='ectt-1000'>vinput_device()</span>
 </code> that contains the virtual device name and
@@ -6219,13 +6219,13 @@ development of virtual input drivers. The driver needs to export a
      </li>
      <li class='itemize'>the readback function: <code>  <span class='ectt-1000'>read()</span>
      </code></li></ul>
-<!-- l. 2067 --><p class='indent'>   Then using <code>  <span class='ectt-1000'>vinput_register_device()</span>
+<!-- l. 2070 --><p class='indent'>   Then using <code>  <span class='ectt-1000'>vinput_register_device()</span>
 </code> and <code>  <span class='ectt-1000'>vinput_unregister_device()</span>
 </code> will add a new device to the list of support virtual input devices.
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb89'><a id='x1-64012r1'></a><span class='ecrm-0500'>1</span><span id='textcolor3257'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> init(</span><span id='textcolor3258'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> vinput *);</span></pre>
-<!-- l. 2073 --><p class='indent'>   This function is passed a <code>  <span id='textcolor3259'><span class='ectt-1000'>struct</span></span><span class='ectt-1000'> vinput</span>
+<!-- l. 2076 --><p class='indent'>   This function is passed a <code>  <span id='textcolor3259'><span class='ectt-1000'>struct</span></span><span class='ectt-1000'> vinput</span>
 </code> already initialized with an allocated <code>  <span id='textcolor3260'><span class='ectt-1000'>struct</span></span><span class='ectt-1000'> input_dev</span>
 </code>. The <code>  <span class='ectt-1000'>init()</span>
 </code> function is responsible for initializing the capabilities of the input device and register
@@ -6233,20 +6233,20 @@ it.
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb90'><a id='x1-64018r1'></a><span class='ecrm-0500'>1</span><span id='textcolor3261'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> send(</span><span id='textcolor3262'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> vinput *, </span><span id='textcolor3263'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *, </span><span id='textcolor3264'><span class='ectt-0800'>int</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 2080 --><p class='indent'>   This function will receive a user string to interpret and inject the event using the
+<!-- l. 2083 --><p class='indent'>   This function will receive a user string to interpret and inject the event using the
 <code> <span class='ectt-1000'>input_report_XXXX</span>
 </code> or <code>  <span class='ectt-1000'>input_event</span>
 </code> call. The string is already copied from user.
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb91'><a id='x1-64023r1'></a><span class='ecrm-0500'>1</span><span id='textcolor3265'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> read(</span><span id='textcolor3266'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> vinput *, </span><span id='textcolor3267'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> *, </span><span id='textcolor3268'><span class='ectt-0800'>int</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 2087 --><p class='indent'>   This function is used for debugging and should fill the buffer parameter with the
+<!-- l. 2090 --><p class='indent'>   This function is used for debugging and should fill the buffer parameter with the
 last event sent in the virtual input device format. The buffer will then be copied to
 user.
-</p><!-- l. 2090 --><p class='indent'>   vinput devices are created and destroyed using sysfs. And, event injection is done
+</p><!-- l. 2093 --><p class='indent'>   vinput devices are created and destroyed using sysfs. And, event injection is done
 through a <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/dev</span></span></span> node. The device name will be used by the userland to export a new
 virtual input device.
-</p><!-- l. 2094 --><p class='indent'>   The <code>  <span class='ectt-1000'>class_attribute</span>
+</p><!-- l. 2097 --><p class='indent'>   The <code>  <span class='ectt-1000'>class_attribute</span>
 </code> structure is similar to other attribute types we talked about in section <a href='#sysfs-interacting-with-your-module'>8<!-- tex4ht:ref: sec:sysfs  --></a>:
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -6260,7 +6260,7 @@ virtual input device.
                                                                   
 
                                                                   
-<!-- l. 2106 --><p class='indent'>   In <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>vinput.c</span></span></span>, the macro <code>  <span class='ectt-1000'>CLASS_ATTR_WO(export/unexport)</span>
+<!-- l. 2109 --><p class='indent'>   In <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>vinput.c</span></span></span>, the macro <code>  <span class='ectt-1000'>CLASS_ATTR_WO(export/unexport)</span>
 </code> defined in <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/device.h'>include/linux/device.h</a> (in this case, <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>device.h</span></span></span> is included in <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/input.h'>include/linux/input.h</a>)
 will generate the <code>  <span class='ectt-1000'>class_attribute</span>
 </code> structures which are named <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>class_attr_export/unexport</span></span></span>. Then, put them into
@@ -6270,11 +6270,11 @@ will generate the <code>  <span class='ectt-1000'>class_attribute</span>
 </code> that should be assigned in <code>  <span class='ectt-1000'>vinput_class</span>
 </code>. Finally, call <code>  <span class='ectt-1000'>class_register(&amp;vinput_class)</span>
 </code> to create attributes in sysfs.
-</p><!-- l. 2110 --><p class='indent'>   To create a <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>vinputX</span></span></span> sysfs entry and <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/dev</span></span></span> node.
+</p><!-- l. 2113 --><p class='indent'>   To create a <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>vinputX</span></span></span> sysfs entry and <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/dev</span></span></span> node.
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb93'><a id='x1-64055r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>echo </span><span id='textcolor3282'><span class='ectt-1000'>"vkbd"</span></span><span class='ectt-1000'> | sudo tee /sys/class/vinput/export</span></pre>
-<!-- l. 2116 --><p class='indent'>   To unexport the device, just echo its id in unexport:
+<!-- l. 2119 --><p class='indent'>   To unexport the device, just echo its id in unexport:
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb94'><a id='x1-64058r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>echo </span><span id='textcolor3283'><span class='ectt-1000'>"0"</span></span><span class='ectt-1000'> | sudo tee /sys/class/vinput/unexport</span></pre>
@@ -6758,7 +6758,7 @@ will generate the <code>  <span class='ectt-1000'>class_attribute</span>
 <a id='x1-65002r423'></a><span class='ecrm-0500'>423</span> 
 <a id='x1-65004r424'></a><span class='ecrm-0500'>424</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor3608'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-65006r425'></a><span class='ecrm-0500'>425</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor3609'><span class='ectt-0800'>"Emulate input events"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 2125 --><p class='indent'>   Here the virtual keyboard is one of example to use vinput. It supports all
+<!-- l. 2128 --><p class='indent'>   Here the virtual keyboard is one of example to use vinput. It supports all
 <code> <span class='ectt-1000'>KEY_MAX</span>
 </code> keycodes. The injection format is the <code>  <span class='ectt-1000'>KEY_CODE</span>
 </code> such as defined in <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/input.h'>include/linux/input.h</a>. A positive value means
@@ -6766,12 +6766,12 @@ will generate the <code>  <span class='ectt-1000'>class_attribute</span>
 </code> while a negative value is a <code>  <span class='ectt-1000'>KEY_RELEASE</span>
 </code>. The keyboard supports repetition when the key stays pressed for too long. The
 following demonstrates how simulation work.
-</p><!-- l. 2132 --><p class='indent'>   Simulate a key press on "g" (<code>  <span class='ectt-1000'>KEY_G</span>
+</p><!-- l. 2135 --><p class='indent'>   Simulate a key press on "g" (<code>  <span class='ectt-1000'>KEY_G</span>
 </code> = 34):
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb97'><a id='x1-65014r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>echo </span><span id='textcolor3610'><span class='ectt-1000'>"+34"</span></span><span class='ectt-1000'> | sudo tee /dev/vinput0</span></pre>
-<!-- l. 2138 --><p class='indent'>   Simulate a key release on "g" (<code>  <span class='ectt-1000'>KEY_G</span>
+<!-- l. 2141 --><p class='indent'>   Simulate a key release on "g" (<code>  <span class='ectt-1000'>KEY_G</span>
 </code> = 34):
 </p><!-- l. 1 --><p class='indent'>
                                                                   
@@ -6892,10 +6892,10 @@ following demonstrates how simulation work.
 <a id='x1-65234r108'></a><span class='ecrm-0500'>108</span> 
 <a id='x1-65236r109'></a><span class='ecrm-0500'>109</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor3693'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-65238r110'></a><span class='ecrm-0500'>110</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor3694'><span class='ectt-0800'>"Emulate keyboard input events through /dev/vinput"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 2148 --><p class='noindent'>
+<!-- l. 2151 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='standardizing-the-interfaces-the-device-model'><span class='titlemark'>18   </span> <a id='x1-6600018'></a>Standardizing the interfaces: The Device Model</h3>
-<!-- l. 2150 --><p class='noindent'>Up to this point we have seen all kinds of modules doing all kinds of things, but there
+<!-- l. 2153 --><p class='noindent'>Up to this point we have seen all kinds of modules doing all kinds of things, but there
 was no consistency in their interfaces with the rest of the kernel. To impose some
 consistency such that there is at minimum a standardized way to start, suspend and
 resume a device model was added. An example is shown below, and you can
@@ -7006,13 +7006,13 @@ functions.
 <a id='x1-66202r101'></a><span class='ecrm-0500'>101</span> 
 <a id='x1-66204r102'></a><span class='ecrm-0500'>102</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor3779'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-66206r103'></a><span class='ecrm-0500'>103</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor3780'><span class='ectt-0800'>"Linux Device Model example"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 2156 --><p class='noindent'>
+<!-- l. 2159 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='optimizations'><span class='titlemark'>19   </span> <a id='x1-6700019'></a>Optimizations</h3>
-<!-- l. 2158 --><p class='noindent'>
+<!-- l. 2161 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='likely-and-unlikely-conditions'><span class='titlemark'>19.1   </span> <a id='x1-6800019.1'></a>Likely and Unlikely conditions</h4>
-<!-- l. 2160 --><p class='noindent'>Sometimes you might want your code to run as quickly as possible,
+<!-- l. 2163 --><p class='noindent'>Sometimes you might want your code to run as quickly as possible,
 especially if it is handling an interrupt or doing something which might
 cause noticeable latency. If your code contains boolean conditions and if
 you know that the conditions are almost always likely to evaluate as either
@@ -7034,16 +7034,16 @@ to succeed.
 <a id='x1-68018r4'></a><span class='ecrm-0500'>4</span><span class='ectt-0800'>    bio = NULL;</span> 
 <a id='x1-68020r5'></a><span class='ecrm-0500'>5</span><span class='ectt-0800'>    </span><span id='textcolor3782'><span class='ectt-0800'>goto</span></span><span class='ectt-0800'> out;</span> 
 <a id='x1-68022r6'></a><span class='ecrm-0500'>6</span><span class='ectt-0800'>}</span></pre>
-<!-- l. 2174 --><p class='indent'>   When the <code>  <span class='ectt-1000'>unlikely</span>
+<!-- l. 2177 --><p class='indent'>   When the <code>  <span class='ectt-1000'>unlikely</span>
 </code> macro is used, the compiler alters its machine instruction output, so that it
 continues along the false branch and only jumps if the condition is true. That
 avoids flushing the processor pipeline. The opposite happens if you use the
 <code> <span class='ectt-1000'>likely</span>
 </code> macro.
-</p><!-- l. 2178 --><p class='noindent'>
+</p><!-- l. 2181 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='static-keys'><span class='titlemark'>19.2   </span> <a id='x1-6900019.2'></a>Static keys</h4>
-<!-- l. 2180 --><p class='noindent'>Static keys allow us to enable or disable kernel code paths based on the runtime state
+<!-- l. 2183 --><p class='noindent'>Static keys allow us to enable or disable kernel code paths based on the runtime state
 of key. Its APIs have been available since 2010 (most architectures are already
 supported), use self-modifying code to eliminate the overhead of cache and branch
 prediction. The most typical use case of static keys is for performance-sensitive kernel
@@ -7057,7 +7057,7 @@ Before we can use static keys in the kernel, we need to make sure that gcc suppo
    <pre class='fancyvrb' id='fancyvrb102'><a id='x1-69006r1'></a><span class='ecrm-0500'>1</span><span class='ectt-0800'>CONFIG_JUMP_LABEL=y</span> 
 <a id='x1-69008r2'></a><span class='ecrm-0500'>2</span><span class='ectt-0800'>CONFIG_HAVE_ARCH_JUMP_LABEL=y</span> 
 <a id='x1-69010r3'></a><span class='ecrm-0500'>3</span><span class='ectt-0800'>CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE=y</span></pre>
-<!-- l. 2190 --><p class='indent'>   To declare a static key, we need to define a global variable using the
+<!-- l. 2193 --><p class='indent'>   To declare a static key, we need to define a global variable using the
 <code> <span class='ectt-1000'>DEFINE_STATIC_KEY_FALSE</span>
 </code> or <code>  <span class='ectt-1000'>DEFINE_STATIC_KEY_TRUE</span>
 </code> macro defined in <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/jump_label.h'>include/linux/jump_label.h</a>. This macro initializes the key with
@@ -7067,7 +7067,7 @@ code:
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb103'><a id='x1-69015r1'></a><span class='ecrm-0500'>1</span><span class='ectt-0800'>DEFINE_STATIC_KEY_FALSE(fkey);</span></pre>
-<!-- l. 2197 --><p class='indent'>   Once the static key has been declared, we need to add branching code to the
+<!-- l. 2200 --><p class='indent'>   Once the static key has been declared, we need to add branching code to the
 module that uses the static key. For example, the code includes a fastpath, where a
 no-op instruction will be generated at compile time as the key is initialized to false
 and the branch is unlikely to be taken.
@@ -7080,12 +7080,12 @@ and the branch is unlikely to be taken.
                                                                   
 
                                                                   
-<!-- l. 2207 --><p class='indent'>   If the key is enabled at runtime by calling
+<!-- l. 2210 --><p class='indent'>   If the key is enabled at runtime by calling
 <code> <span class='ectt-1000'>static_branch_enable(&amp;fkey)</span>
 </code>, the fastpath will be patched with an unconditional jump instruction to the slowpath
 code <code>  <span class='ectt-1000'>pr_alert</span>
 </code>, so the branch will always be taken until the key is disabled again.
-</p><!-- l. 2209 --><p class='indent'>   The following kernel module derived from <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>chardev.c</span></span></span>, demonstrates how the
+</p><!-- l. 2212 --><p class='indent'>   The following kernel module derived from <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>chardev.c</span></span></span>, demonstrates how the
 static key works.
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -7283,59 +7283,59 @@ static key works.
 <a id='x1-69413r192'></a><span class='ecrm-0500'>192</span><span class='ectt-0800'>module_exit(chardev_exit);</span> 
 <a id='x1-69415r193'></a><span class='ecrm-0500'>193</span> 
 <a id='x1-69417r194'></a><span class='ecrm-0500'>194</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor3977'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 2213 --><p class='indent'>   To check the state of the static key, we can use the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/dev/key_state</span></span></span>
+<!-- l. 2216 --><p class='indent'>   To check the state of the static key, we can use the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/dev/key_state</span></span></span>
 interface.
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb106'><a id='x1-69420r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>cat /dev/key_state</span></pre>
-<!-- l. 2219 --><p class='indent'>   This will display the current state of the key, which is disabled by default.
-</p><!-- l. 2221 --><p class='indent'>   To change the state of the static key, we can perform a write operation on the
+<!-- l. 2222 --><p class='indent'>   This will display the current state of the key, which is disabled by default.
+</p><!-- l. 2224 --><p class='indent'>   To change the state of the static key, we can perform a write operation on the
 file:
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb107'><a id='x1-69423r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>echo enable &gt; /dev/key_state</span></pre>
-<!-- l. 2227 --><p class='indent'>   This will enable the static key, causing the code path to switch from the fastpath
+<!-- l. 2230 --><p class='indent'>   This will enable the static key, causing the code path to switch from the fastpath
 to the slowpath.
-</p><!-- l. 2229 --><p class='indent'>   In some cases, the key is enabled or disabled at initialization and never changed,
+</p><!-- l. 2232 --><p class='indent'>   In some cases, the key is enabled or disabled at initialization and never changed,
 we can declare a static key as read-only, which means that it can only be toggled in
 the module init function. To declare a read-only static key, we can use the
 <code> <span class='ectt-1000'>DEFINE_STATIC_KEY_FALSE_RO</span>
 </code> or <code>  <span class='ectt-1000'>DEFINE_STATIC_KEY_TRUE_RO</span>
 </code> macro instead. Attempts to change the key at runtime will result in a page fault. For
 more information, see <a href='https://www.kernel.org/doc/Documentation/static-keys.txt'>Static keys</a>
-</p><!-- l. 2232 --><p class='noindent'>
+</p><!-- l. 2235 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='common-pitfalls'><span class='titlemark'>20   </span> <a id='x1-7000020'></a>Common Pitfalls</h3>
-<!-- l. 2235 --><p class='noindent'>
+<!-- l. 2238 --><p class='noindent'>
 </p>
                                                                   
 
                                                                   
    <h4 class='subsectionHead' id='using-standard-libraries'><span class='titlemark'>20.1   </span> <a id='x1-7100020.1'></a>Using standard libraries</h4>
-<!-- l. 2237 --><p class='noindent'>You can not do that. In a kernel module, you can only use kernel functions which are
+<!-- l. 2240 --><p class='noindent'>You can not do that. In a kernel module, you can only use kernel functions which are
 the functions you can see in <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/kallsyms</span></span></span>.
-</p><!-- l. 2240 --><p class='noindent'>
+</p><!-- l. 2243 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='disabling-interrupts'><span class='titlemark'>20.2   </span> <a id='x1-7200020.2'></a>Disabling interrupts</h4>
-<!-- l. 2242 --><p class='noindent'>You might need to do this for a short time and that is OK, but if you do not enable
+<!-- l. 2245 --><p class='noindent'>You might need to do this for a short time and that is OK, but if you do not enable
 them afterwards, your system will be stuck and you will have to power it
 off.
-</p><!-- l. 2244 --><p class='noindent'>
+</p><!-- l. 2247 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='where-to-go-from-here'><span class='titlemark'>21   </span> <a id='x1-7300021'></a>Where To Go From Here?</h3>
-<!-- l. 2246 --><p class='noindent'>For those deeply interested in kernel programming, <a href='https://kernelnewbies.org'>kernelnewbies.org</a> and the
+<!-- l. 2249 --><p class='noindent'>For those deeply interested in kernel programming, <a href='https://kernelnewbies.org'>kernelnewbies.org</a> and the
 <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/Documentation'>Documentation</a> subdirectory within the kernel source code are highly recommended.
 Although the latter may not always be straightforward, it serves as a valuable initial
 step for further exploration. Echoing Linus Torvalds’ perspective, the most effective
 method to understand the kernel is through personal examination of the source
 code.
-</p><!-- l. 2251 --><p class='indent'>   Contributions to this guide are welcome, especially if there are any significant
+</p><!-- l. 2254 --><p class='indent'>   Contributions to this guide are welcome, especially if there are any significant
 inaccuracies identified. To contribute or report an issue, please initiate an
 issue at <a class='url' href='https://github.com/sysprog21/lkmpg'><span class='ectt-1000'>https://github.com/sysprog21/lkmpg</span></a>. Pull requests are greatly
 appreciated.
-</p><!-- l. 2255 --><p class='indent'>   Happy hacking!
+</p><!-- l. 2258 --><p class='indent'>   Happy hacking!
 </p>
-   <div class='footnotes'><!-- l. 1930 --><p class='indent'>     <span class='footnote-mark'><a href='#fn1x0-bk' id='fn1x0'><sup class='textsuperscript'>1</sup></a></span><span class='ecrm-0800'>The goal of threaded interrupts is to push more of the work to separate threads, so that the
+   <div class='footnotes'><!-- l. 1933 --><p class='indent'>     <span class='footnote-mark'><a href='#fn1x0-bk' id='fn1x0'><sup class='textsuperscript'>1</sup></a></span><span class='ecrm-0800'>The goal of threaded interrupts is to push more of the work to separate threads, so that the
 </span><span class='ecrm-0800'>minimum needed for acknowledging an interrupt is reduced, and therefore the time spent handling
 </span><span class='ecrm-0800'>the interrupt (where it can’t handle any other interrupts at the same time) is reduced. See</span>
 <a class='url' href='https://lwn.net/Articles/302043/'><span class='ectt-0800'>https://lwn.net/Articles/302043/</span></a><span class='ecrm-0800'>.</span></p>                                                                         </div>
