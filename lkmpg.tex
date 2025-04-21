@@ -1900,17 +1900,20 @@ sudo rmmod led
 \label{sec:scheduling_tasks}
 There are two main ways of running tasks: tasklets and work queues.
 Tasklets are a quick and easy way of scheduling a single function to be run.
-For example, when triggered from an interrupt, whereas work queues are more complicated but also better suited to running multiple things in a sequence.
+For example, when triggered from an interrupt,
+whereas work queues are more complicated but also better suited to running multiple things in a sequence.
 
-It is possible that in future tasklets may be replaced by \textit{threaded irqs}.
-However, discussion about that has been ongoing since 2007 (\href{https://lwn.net/Articles/239633}{Eliminating tasklets}), so do not hold your breath.
-See the section \ref{sec:irq} if you wish to avoid the tasklet debate.
+It is possible that in future tasklets may be replaced by \textit{threaded IRQs}.
+However, discussion about that has been ongoing since 2007 (\href{https://lwn.net/Articles/239633}{Eliminating tasklets} and \href{https://lwn.net/Articles/960041/}{The end of tasklets}),
+so expecting immediate changes would be unwise.
+See the section \ref{sec:irq} for alternatives that avoid the tasklet debate.
 
 \subsection{Tasklets}
 \label{sec:tasklet}
 Here is an example tasklet module.
 The \cpp|tasklet_fn| function runs for a few seconds.
-In the meantime, execution of the \cpp|example_tasklet_init| function may continue to the exit point, depending on whether it is interrupted by \textbf{softirq}.
+In the meantime, execution of the \cpp|example_tasklet_init| function may continue to the exit point,
+depending on whether it is interrupted by \textbf{softirq}.
 
 \samplec{examples/example_tasklet.c}
 
@@ -2014,7 +2017,7 @@ The example below modifies the previous example to also run an additional task w
 \samplec{examples/bottomhalf.c}
 
 \subsection{Threaded IRQ}
-
+\label{sec:threaded_irq}
 Threaded IRQ is a mechanism to organize both top-half and bottom-half of an IRQ at once.
 A threaded IRQ splits the one handler in \cpp|request_irq()| into two: one for the top-half, the other for the bottom-half.
 The \cpp|request_threaded_irq()| is the function for using threaded IRQs.
