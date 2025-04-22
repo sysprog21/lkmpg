@@ -1682,7 +1682,40 @@ These indicate if a section of code is "locked" or "unlocked" so that simultaneo
 You can use kernel mutexes (mutual exclusions) in much the same manner that you might deploy them in userland.
 This may be all that is needed to avoid collisions in most cases.
 
+Mutexes in the Linux kernel enforce strict ownership: only the task that successfully acquired the mutex can release (or unlock) it.
+Attempting to release a mutex held by another task or releasing an unheld mutex multiple times by the same task typically leads to errors or undefined behavior.
+If a task tries to lock a mutex it already holds, it may be blocked or sleep, where the task waits for itself to release the lock.
+
+Before use, a mutex must be initialized through specific APIs (such as \cpp|mutex_init| or by using the \cpp|DEFINE_MUTEX| macro for compile-time initialization).
+And it is prohibited to directly modify the internal structure of a mutex using a memory manipulation function like \cpp|memset|.
+
 \samplec{examples/example_mutex.c}
+
+The various suffixes appended to mutex functions in the Linux kernel primarily dictate how a task waiting to acquire a lock will behave,
+particularly concerning its interruptibility.
+
+When a task calls \cpp|mutex_lock()|, and if the mutex is currently unavailable,
+the task enters a sleep state until it can successfully obtain the lock.
+During this period, the task cannot be interrupted.
+In contrast, functions with the \cpp|_interruptible| suffix, such as \cpp|mutex_lock_interruptible()|,
+behave similarly to \cpp|mutex_lock()| but allow the waiting process to be interrupted by signals.
+If a task receives a signal (like a termination signal) while waiting for the lock,
+it will exit the waiting state and return an error code (\cpp|-EINTR|).
+This is useful for applications that need to handle external events even while waiting for a lock.
+
+Beyond these fundamental locking behaviors, other mutex functions offer specialized capabilities.
+Functions like \cpp|mutex_lock_nested| and \cpp|mutex_lock_interruptible_nested()| incorporate the \cpp|__nested()| functionality,
+providing support for nested locking.
+This prior locking mechanism aids in managing lock acquisition and preventing deadlocks,
+often employing a subclass parameter for more precise deadlock detection.
+The latter variant combines nested locking with the ability for the waiting process to be interrupted by signals.
+Another function is \cpp|mutex_trylock()|, which attempts to acquire the mutex without blocking.
+It returns 1 if the lock is successfully acquired and 0 if the mutex is already held by another task.
+
+Despite the fact that \cpp|mutex_trylock| does not sleep,
+it is still generally not safe for use in interrupt context because its implementation isn't atomic.
+If an interrupt occurs between checking the lock's availability and its acquisition,
+this can lead to race conditions and potential data corruption.
 
 \subsection{Spinlocks}
 \label{sec:spinlock}
