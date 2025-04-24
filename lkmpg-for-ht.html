@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>April 21, 2025</span></div>
+<div class='date'><span class='ecrm-1200'>April 24, 2025</span></div>
                                                                   
 
                                                                   
@@ -70,7 +70,7 @@
                                                                   
 <br />     <span class='subsectionToc'>11.1 <a href='#sleep' id='QQ2-1-43'>Sleep</a></span>
 <br />     <span class='subsectionToc'>11.2 <a href='#completions' id='QQ2-1-44'>Completions</a></span>
-<br />    <span class='sectionToc'>12 <a href='#avoiding-collisions-and-deadlocks' id='QQ2-1-45'>Avoiding Collisions and Deadlocks</a></span>
+<br />    <span class='sectionToc'>12 <a href='#synchronization' id='QQ2-1-45'>Synchronization</a></span>
 <br />     <span class='subsectionToc'>12.1 <a href='#mutex' id='QQ2-1-46'>Mutex</a></span>
 <br />     <span class='subsectionToc'>12.2 <a href='#spinlocks' id='QQ2-1-47'>Spinlocks</a></span>
 <br />     <span class='subsectionToc'>12.3 <a href='#read-and-write-locks' id='QQ2-1-48'>Read and write locks</a></span>
@@ -1657,7 +1657,7 @@ exclusive access. We use atomic Compare-And-Swap (CAS) to maintain the states,
 </code>, to determine whether the file is currently opened by someone or not. CAS compares
 the contents of a memory location with the expected value and, only if they are the
 same, modifies the contents of that memory location to the desired value. See more
-concurrency details in the <a href='#avoiding-collisions-and-deadlocks'>12<!-- tex4ht:ref: sec:synchronization  --></a> section.
+concurrency details in the <a href='#synchronization'>12<!-- tex4ht:ref: sec:synchronization  --></a> section.
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb46'><a id='x1-31008r1'></a><span class='ecrm-0500'>1</span><span id='textcolor436'><span class='ectt-0800'>/*</span></span> 
@@ -4345,7 +4345,7 @@ enough for many common situations without adding a lot of complexity.
 <a id='x1-44176r84'></a><span class='ecrm-0500'>84</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2144'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
 <!-- l. 1675 --><p class='noindent'>
 </p>
-   <h3 class='sectionHead' id='avoiding-collisions-and-deadlocks'><span class='titlemark'>12   </span> <a id='x1-4500012'></a>Avoiding Collisions and Deadlocks</h3>
+   <h3 class='sectionHead' id='synchronization'><span class='titlemark'>12   </span> <a id='x1-4500012'></a>Synchronization</h3>
 <!-- l. 1677 --><p class='noindent'>If processes running on different CPUs or in different threads try to access the same
 memory, then it is possible that strange things can happen or your system can lock
 up. To avoid this, various types of mutual exclusion kernel functions are available.
