@@ -1672,7 +1672,7 @@ There are other variations of the \cpp|wait_for_completion| function, which incl
 
 \samplec{examples/completions.c}
 
-\section{Avoiding Collisions and Deadlocks}
+\section{Synchronization}
 \label{sec:synchronization}
 If processes running on different CPUs or in different threads try to access the same memory, then it is possible that strange things can happen or your system can lock up.
 To avoid this, various types of mutual exclusion kernel functions are available.
