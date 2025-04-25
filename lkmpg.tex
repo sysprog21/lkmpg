@@ -1383,8 +1383,8 @@ The answer in Unix is to use a special function called \cpp|ioctl| (short for In
 Every device can have its own \cpp|ioctl| commands, which can be read ioctl's (to send information from a process to the kernel), write ioctl's (to return information to a process), both or neither.
 Notice here the roles of read and write are reversed again, so in ioctl's read is to send information to the kernel and write is to receive information from the kernel.
 
-The ioctl function is called with three parameters: the file descriptor of the appropriate device file, the ioctl number, and a parameter, which is of type long so you can use a cast to use it to pass anything.
-You will not be able to pass a structure this way, but you will be able to pass a pointer to the structure.
+The ioctl function is called with three parameters: the file descriptor of the appropriate device file that is already open, the ioctl number, and a parameter, which is an untyped pointer to memory—traditionally declared as char *argp (from the days before void * was valid in C)—allowing you to cast it to pass various types of data.
+You cannot pass a structure by value this way, but you can pass a pointer to a structure, which the kernel can then dereference and access.
 Here is an example:
 
 \samplec{examples/ioctl.c}
