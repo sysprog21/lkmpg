@@ -1415,6 +1415,10 @@ This is fine if you want to do something the kernel programmers thought you'd wa
 But what if you want to do something unusual, to change the behavior of the system in some way?
 Then, you are mostly on your own.
 
+Notice that this example has been unavailable since Linux v6.9.
+Specifically after this \href{https://github.com/torvalds/linux/commit/1e3ad78334a69b36e107232e337f9d693dcc9df2#diff-4a16bf89a09b4f49669a30d54540f0b936ea0224dc6ee9edfa7700deb16c3e11R52}{commit}, due to the system call table changing the implementation from an indirect function call table to a switch statement for security issue, such as Branch History Injection (BHI) attack.
+See more information \href{https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2060909}{here}.
+
 Should one choose not to use a virtual machine, kernel programming can become risky.
 For example, while writing the code below, the \cpp|open()| system call was inadvertently disrupted.
 This resulted in an inability to open any files, run programs, or shut down the system, necessitating a restart of the virtual machine.
