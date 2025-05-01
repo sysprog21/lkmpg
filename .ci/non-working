@@ -4,3 +4,4 @@ intrpt
 vkbd
 syscall-steal
 led
+dht11
