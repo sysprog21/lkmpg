@@ -27,6 +27,7 @@ static int __init sched_init(void)
 
 static void __exit sched_exit(void)
 {
+    flush_workqueue(queue);
     destroy_workqueue(queue);
 }
 
