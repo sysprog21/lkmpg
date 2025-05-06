@@ -156,7 +156,7 @@ static int __init bottomhalf_init(void)
 /* cleanup what has been setup so far */
 #ifdef NO_GPIO_REQUEST_ARRAY
 fail4:
-    free_irq(button_irqs[0], NULL);
+    free_irq(button_irqs[0], &buttons[0]);
 
 fail3:
     gpio_free(buttons[1].gpio);
@@ -168,7 +168,7 @@ fail1:
     gpio_free(leds[0].gpio);
 #else
 fail3:
-    free_irq(button_irqs[0], NULL);
+    free_irq(button_irqs[0], &buttons[0]);
 
 fail2:
     gpio_free_array(buttons, ARRAY_SIZE(leds));
