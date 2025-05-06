@@ -16,6 +16,10 @@ static void work_handler(struct work_struct *data)
 static int __init sched_init(void)
 {
     queue = alloc_workqueue("HELLOWORLD", WQ_UNBOUND, 1);
+    if (!queue) {
+        pr_err("Failed to allocate workqueue\n");
+        return -ENOMEM;
+    }
     INIT_WORK(&work, work_handler);
     queue_work(queue, &work);
     return 0;
@@ -23,6 +27,7 @@ static int __init sched_init(void)
 
 static void __exit sched_exit(void)
 {
+    flush_workqueue(queue);
     destroy_workqueue(queue);
 }
 
