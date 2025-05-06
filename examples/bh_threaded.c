@@ -185,8 +185,8 @@ static void __exit bottomhalf_exit(void)
     pr_info("%s\n", __func__);
 
     /* free irqs */
-    free_irq(button_irqs[0], NULL);
-    free_irq(button_irqs[1], NULL);
+    free_irq(button_irqs[0], &buttons[0]);
+    free_irq(button_irqs[1], &buttons[1]);
 
 /* turn all LEDs off */
 #ifdef NO_GPIO_REQUEST_ARRAY
