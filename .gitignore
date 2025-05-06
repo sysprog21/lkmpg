@@ -12,6 +12,7 @@ modules.order
 
 # LaTeX
 _minted-lkmpg
+_minted
 *.aux
 *.log
 *.out
@@ -21,6 +22,7 @@ lkmpg.pdf
 *.blg
 *.fdb_latexmk 
 *.fls
+lkmpg.synctex.gz
 
 # make4ht
 *.html
