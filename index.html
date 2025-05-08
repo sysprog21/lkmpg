@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>May 6, 2025</span></div>
+<div class='date'><span class='ecrm-1200'>May 8, 2025</span></div>
                                                                   
 
                                                                   
@@ -6165,7 +6165,7 @@ halves, but using threads.
 <a id='x1-63317r156'></a><span class='ecrm-0500'>156</span><span id='textcolor3238'><span class='ectt-0800'>/* cleanup what has been setup so far */</span></span> 
 <a id='x1-63319r157'></a><span class='ecrm-0500'>157</span><span id='textcolor3239'><span class='ectt-0800'>#ifdef NO_GPIO_REQUEST_ARRAY</span></span> 
 <a id='x1-63321r158'></a><span class='ecrm-0500'>158</span><span class='ectt-0800'>fail4:</span> 
-<a id='x1-63323r159'></a><span class='ecrm-0500'>159</span><span class='ectt-0800'>    free_irq(button_irqs[0], NULL);</span> 
+<a id='x1-63323r159'></a><span class='ecrm-0500'>159</span><span class='ectt-0800'>    free_irq(button_irqs[0], &amp;buttons[0]);</span> 
 <a id='x1-63325r160'></a><span class='ecrm-0500'>160</span> 
 <a id='x1-63327r161'></a><span class='ecrm-0500'>161</span><span class='ectt-0800'>fail3:</span> 
 <a id='x1-63329r162'></a><span class='ecrm-0500'>162</span><span class='ectt-0800'>    gpio_free(buttons[1].gpio);</span> 
@@ -6177,7 +6177,7 @@ halves, but using threads.
 <a id='x1-63341r168'></a><span class='ecrm-0500'>168</span><span class='ectt-0800'>    gpio_free(leds[0].gpio);</span> 
 <a id='x1-63343r169'></a><span class='ecrm-0500'>169</span><span id='textcolor3240'><span class='ectt-0800'>#else</span></span> 
 <a id='x1-63345r170'></a><span class='ecrm-0500'>170</span><span class='ectt-0800'>fail3:</span> 
-<a id='x1-63347r171'></a><span class='ecrm-0500'>171</span><span class='ectt-0800'>    free_irq(button_irqs[0], NULL);</span> 
+<a id='x1-63347r171'></a><span class='ecrm-0500'>171</span><span class='ectt-0800'>    free_irq(button_irqs[0], &amp;buttons[0]);</span> 
 <a id='x1-63349r172'></a><span class='ecrm-0500'>172</span> 
 <a id='x1-63351r173'></a><span class='ecrm-0500'>173</span><span class='ectt-0800'>fail2:</span> 
 <a id='x1-63353r174'></a><span class='ecrm-0500'>174</span><span class='ectt-0800'>    gpio_free_array(buttons, ARRAY_SIZE(leds));</span> 
@@ -6194,8 +6194,8 @@ halves, but using threads.
 <a id='x1-63375r185'></a><span class='ecrm-0500'>185</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor3246'><span class='ectt-0800'>"%s</span></span><span id='textcolor3247'><span class='ectt-0800'>\n</span></span><span id='textcolor3248'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>, __func__);</span> 
 <a id='x1-63377r186'></a><span class='ecrm-0500'>186</span> 
 <a id='x1-63379r187'></a><span class='ecrm-0500'>187</span><span class='ectt-0800'>    </span><span id='textcolor3249'><span class='ectt-0800'>/* free irqs */</span></span> 
-<a id='x1-63381r188'></a><span class='ecrm-0500'>188</span><span class='ectt-0800'>    free_irq(button_irqs[0], NULL);</span> 
-<a id='x1-63383r189'></a><span class='ecrm-0500'>189</span><span class='ectt-0800'>    free_irq(button_irqs[1], NULL);</span> 
+<a id='x1-63381r188'></a><span class='ecrm-0500'>188</span><span class='ectt-0800'>    free_irq(button_irqs[0], &amp;buttons[0]);</span> 
+<a id='x1-63383r189'></a><span class='ecrm-0500'>189</span><span class='ectt-0800'>    free_irq(button_irqs[1], &amp;buttons[1]);</span> 
 <a id='x1-63385r190'></a><span class='ecrm-0500'>190</span> 
 <a id='x1-63387r191'></a><span class='ecrm-0500'>191</span><span id='textcolor3250'><span class='ectt-0800'>/* turn all LEDs off */</span></span> 
 <a id='x1-63389r192'></a><span class='ecrm-0500'>192</span><span id='textcolor3251'><span class='ectt-0800'>#ifdef NO_GPIO_REQUEST_ARRAY</span></span> 
