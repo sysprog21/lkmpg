@@ -1933,6 +1933,41 @@ Finally, remove the module:
 sudo rmmod led
 \end{codebash}
 
+\subsection{DHT11 sensor}
+\label{sec:gpio_dht11}
+The DHT11 sensor is a well-known entry-level sensor commonly used to measure humidity and temperature.
+In this subsection, we will use GPIO to communicate through a single data line.
+The DHT11 communication protocol can be referred to in the \href{https://www.mouser.com/datasheet/2/758/DHT11-Technical-Data-Sheet-Translated-Version-1143054.pdf?srsltid=AfmBOoppls-QTd864640bVtbK90sWBsFzJ_7SgjOD2EpwuLLGUSTyYnv}{datasheet}.
+
+In the implementation, the data pin of the DHT11 sensor is connected to GPIO4 on the Raspberry Pi.
+The sensor's VCC and GND pins are connected to 3.3V and GND, respectively.
+For more details about the Raspberry Pi pin assignments, refer to \href{https://pinout.xyz/}{Raspberry Pi Pinout}.
+The materials used include a Raspberry Pi 5, a DHT11 sensor, and jumper wires.
+
+\samplec{examples/dht11.c}
+Make and install the module:
+\begin{codebash}
+make
+sudo insmod dht11.ko
+\end{codebash}
+
+Check the Output of the DHT11 Sensor:
+\begin{codebash}
+sudo cat /dev/dht11 
+\end{codebash}
+
+Expected Output:
+\begin{verbatim}
+$ sudo cat /dev/dht11 
+Humidity: 61%
+Temperature: 30°C
+\end{verbatim}
+
+Finally, remove the module:
+\begin{codebash}
+sudo rmmod dht11
+\end{codebash}
+
 \section{Scheduling Tasks}
 \label{sec:scheduling_tasks}
 There are two main ways of running tasks: tasklets and work queues.
