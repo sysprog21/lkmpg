@@ -23,19 +23,21 @@ static int devicemodel_probe(struct platform_device *dev)
 
     return 0;
 }
+
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 11, 0)
 static void devicemodel_remove(struct platform_device *dev)
-#else
-static int devicemodel_remove(struct platform_device *dev)
-#endif
 {
     pr_info("devicemodel example removed\n");
-
     /* Your device removal code */
-#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 11, 0)
-    return 0;
-#endif
 }
+#else
+static int devicemodel_remove(struct platform_device *dev)
+{
+    pr_info("devicemodel example removed\n");
+    /* Your device removal code */
+    return 0;
+}
+#endif
 
 static int devicemodel_suspend(struct device *dev)
 {
