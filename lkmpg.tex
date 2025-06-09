@@ -1132,7 +1132,7 @@ This is necessary for backward compatibility -- a new kernel version is not supp
 In most cases, the device files will also remain the same. On the other hand, the internal interfaces within the kernel can and do change between versions.
 
 There are differences between different kernel versions, and if you want to support multiple kernel versions, you will find yourself having to code conditional compilation directives.
-The way to do this to compare the macro \cpp|LINUX_VERSION_CODE| to the macro \cpp|KERNEL_VERSION|.
+The way to do this is to compare the macro \cpp|LINUX_VERSION_CODE| to the macro \cpp|KERNEL_VERSION|.
 In version \verb|a.b.c| of the kernel, the value of this macro would be \(2^{16}a+2^{8}b+c\).
 
 \section{The /proc File System}
