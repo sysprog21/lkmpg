@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>June 9, 2025</span></div>
+<div class='date'><span class='ecrm-1200'>June 17, 2025</span></div>
                                                                   
 
                                                                   
@@ -1874,7 +1874,7 @@ us to put <code>  <span class='ectt-1000'>try_module_get</span>
 </code> and <code>  <span class='ectt-1000'>module_put</span>
 </code> in this module, and if the file is opened and then the module is removed, there’s no
 way to avoid the consequences.
-</p><!-- l. 1151 --><p class='indent'>   Here a simple example showing how to use a <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> file. This is the HelloWorld for
+</p><!-- l. 1151 --><p class='indent'>   Here is a simple example showing how to use a <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> file. This is the HelloWorld for
 the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc</span></span></span> filesystem. There are three parts: create the file <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/helloworld</span></span></span> in the
 function <code>  <span class='ectt-1000'>init_module</span>
 </code>, return a value (and a buffer) when the file <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/helloworld</span></span></span> is read in the callback
