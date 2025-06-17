@@ -1148,7 +1148,7 @@ The inode contains information about the file, for example the file's permission
 
 Because we don't get called when the file is opened or closed, there's nowhere for us to put \cpp|try_module_get| and \cpp|module_put| in this module, and if the file is opened and then the module is removed, there's no way to avoid the consequences.
 
-Here a simple example showing how to use a \verb|/proc| file.
+Here is a simple example showing how to use a \verb|/proc| file.
 This is the HelloWorld for the \verb|/proc| filesystem.
 There are three parts: create the file \verb|/proc/helloworld| in the function \cpp|init_module|, return a value (and a buffer) when the file \verb|/proc/helloworld| is read in the callback function \cpp|procfile_read|, and delete the file \verb|/proc/helloworld| in the function \cpp|cleanup_module|.
 
