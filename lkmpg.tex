@@ -62,7 +62,7 @@
 
 \section{Introduction}
 \label{sec:introduction}
-The Linux Kernel Module Programming Guide is a free book; you may reproduce and/or modify it under the terms of the \href{https://opensource.org/licenses/OSL-3.0}{Open Software License}, version 3.0.
+The Linux Kernel Module Programming Guide is a free book; you may reproduce or modify it under the terms of the \href{https://opensource.org/licenses/OSL-3.0}{Open Software License}, version 3.0.
 
 This book is distributed in the hope that it would be useful, but without any warranty, without even the implied warranty of merchantability or fitness for a particular purpose.
 
@@ -74,7 +74,7 @@ If you have contributed new material to this book, you must make the material an
 Please make revisions and updates available directly to the document maintainer, Jim Huang <jserv@ccns.ncku.edu.tw>.
 This will allow for the merging of updates and provide consistent revisions to the Linux community.
 
-If you publish or distribute this book commercially, donations, royalties, and/or printed copies are greatly appreciated by the author and the \href{https://tldp.org/}{Linux Documentation Project} (LDP).
+If you publish or distribute this book commercially, donations, royalties, or printed copies are greatly appreciated by the author and the \href{https://tldp.org/}{Linux Documentation Project} (LDP).
 Contributing in this way shows your support for free software and the LDP. If you have questions or comments, please contact the address above.
 
 \subsection{Authorship}
@@ -170,7 +170,7 @@ It is reassuring to note that overcoming the initial obstacle in the first attem
         However, most stock Linux distribution kernels come with modversioning enabled.
         If difficulties arise when loading the modules due to versioning errors, consider compiling a kernel with modversioning turned off.
 
-  \item Using X Window System.
+  \item Using the X Window System.
         It is highly recommended to extract, compile, and load all the examples discussed in this guide from a console.
         Working on these tasks within the X Window System is discouraged.
 
@@ -186,9 +186,9 @@ It is reassuring to note that overcoming the initial obstacle in the first attem
         Certain Linux distributions even ship with the default Linux kernel configured to support SecureBoot.
         In these cases, the kernel module necessitates a signed security key.
 
-        Failing this, an attempt to insert your first ``hello world'' module would result in the message: ``\emph{ERROR: could not insert module}''.
-        If this message \emph{Lockdown: insmod: unsigned module loading is restricted;
-        see man kernel lockdown.7} appears in the \sh|dmesg| output,
+        Failing that, an attempt to insert your first ``hello world'' module would result in the message: ``\emph{ERROR: could not insert module}''.
+        If this message ``\emph{Lockdown: insmod: unsigned module loading is restricted;
+        see man kernel lockdown.7}'' appears in the \sh|dmesg| output,
         the simplest approach involves disabling UEFI SecureBoot from the boot menu of your PC or laptop,
         allowing the successful insertion of ``hello world'' module.
         Naturally, an alternative involves undergoing intricate procedures such as generating keys, system key installation,
@@ -208,7 +208,7 @@ apt-cache search linux-headers-`uname -r`
 \end{codebash}
 
 The following command provides information on the available kernel header files.
-Then for example:
+Then, for example:
 \begin{codebash}
 sudo apt-get install linux-headers-`uname -r`
 \end{codebash}
@@ -264,7 +264,7 @@ clean:
 	$(MAKE) -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
 \end{code}
 
-In \verb|Makefile|, \verb|$(CURDIR)| can set to the absolute pathname of the current working directory(after all \verb|-C| options are processed, if any). 
+In \verb|Makefile|, \verb|$(CURDIR)| can be set to the absolute pathname of the current working directory (after all \verb|-C| options are processed, if any). 
 See more about \verb|CURDIR| in \href{https://www.gnu.org/software/make/manual/make.html}{GNU make manual}.
 
 And finally, just run \verb|make| directly.
@@ -292,7 +292,7 @@ all:
 	echo $(PWD)
 \end{code}
 
-Then, we can use \verb|-p| flag to print out the environment variable values from the Makefile.
+Then, we can use the \verb|-p| flag to print out the environment variable values from the Makefile.
 
 \begin{verbatim}
 $ make -p | grep PWD
@@ -806,13 +806,13 @@ The file \verb|/proc/kallsyms| holds all the symbols that the kernel knows about
 \subsection{Code space}
 \label{sec:codespace}
 Memory management is a very complicated subject and the majority of O'Reilly's \href{https://www.oreilly.com/library/view/understanding-the-linux/0596005652/}{Understanding The Linux Kernel} exclusively covers memory management!
-We are not setting out to be experts on memory managements, but we do need to know a couple of facts to even begin worrying about writing real modules.
+We are not setting out to be experts on memory management, but we do need to know a couple of facts to even begin worrying about writing real modules.
 
 If you have not thought about what a segfault really means, you may be surprised to hear that pointers do not actually point to memory locations.
 Not real ones, anyway.
 When a process is created, the kernel sets aside a portion of real physical memory and hands it to the process to use for its executing code, variables, stack, heap and other things which a computer scientist would know about.
 This memory begins with 0x00000000 and extends up to whatever it needs to be.
-Since the memory space for any two processes do not overlap, every process that can access a memory address, say 0xbffff978, would be accessing a different location in real physical memory! The processes would be accessing an index named 0xbffff978 which points to some kind of offset into the region of memory set aside for that particular process.
+Since the memory space for any two processes does not overlap, every process that can access a memory address, say 0xbffff978, would be accessing a different location in real physical memory! The processes would be accessing an index named 0xbffff978 which points to some kind of offset into the region of memory set aside for that particular process.
 For the most part, a process like our Hello, World program can't access the space of another process, although there are ways which we will talk about later.
 
 The kernel has its own space of memory as well. Since a module is code which can be dynamically inserted and removed in the kernel (as opposed to a semi-autonomous object), it shares the kernel's codespace rather than having its own.
@@ -1004,7 +1004,7 @@ You'll also see it referred to as a struct file object.
 Resist the temptation.
 
 Go ahead and look at the definition of file.
-Most of the entries you see, like struct dentry are not used by device drivers, and you can ignore them.
+Most of the entries you see, like struct dentry, are not used by device drivers, and you can ignore them.
 This is because drivers do not fill file directly; they only use structures contained in file which are created elsewhere.
 
 \subsection{Registering A Device}
@@ -1294,7 +1294,7 @@ ls -l /sys
 Attributes can be exported for kobjects in the form of regular files in the filesystem.
 Sysfs forwards file I/O operations to methods defined for the attributes, providing a means to read and write kernel attributes.
 
-An attribute definition in simply:
+A simple attribute definition:
 
 \begin{code}
 struct attribute {
@@ -1322,7 +1322,7 @@ int device_create_file(struct device *, const struct device_attribute *);
 void device_remove_file(struct device *, const struct device_attribute *);
 \end{code}
 
-To read or write attributes, \cpp|show()| or \cpp|store()| method must be specified when declaring the attribute.
+To read or write attributes, the \cpp|show()| or \cpp|store()| method must be specified when declaring the attribute.
 For the common cases \src{include/linux/sysfs.h} provides convenience macros (\cpp|__ATTR|, \cpp|__ATTR_RO|, \cpp|__ATTR_WO|, etc.) to make defining attributes easier as well as making code more concise and readable.
 
 An example of a hello world module which includes the creation of a variable accessible via sysfs is given below.
