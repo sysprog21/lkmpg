@@ -170,7 +170,7 @@ It is reassuring to note that overcoming the initial obstacle in the first attem
         However, most stock Linux distribution kernels come with modversioning enabled.
         If difficulties arise when loading the modules due to versioning errors, consider compiling a kernel with modversioning turned off.
 
-  \item Using X Window System.
+  \item Using the X Window System.
         It is highly recommended to extract, compile, and load all the examples discussed in this guide from a console.
         Working on these tasks within the X Window System is discouraged.
 
@@ -208,7 +208,7 @@ apt-cache search linux-headers-`uname -r`
 \end{codebash}
 
 The following command provides information on the available kernel header files.
-Then for example:
+Then, for example:
 \begin{codebash}
 sudo apt-get install linux-headers-`uname -r`
 \end{codebash}
@@ -264,7 +264,7 @@ clean:
 	$(MAKE) -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
 \end{code}
 
-In \verb|Makefile|, \verb|$(CURDIR)| can set to the absolute pathname of the current working directory(after all \verb|-C| options are processed, if any). 
+In \verb|Makefile|, \verb|$(CURDIR)| can be set to the absolute pathname of the current working directory (after all \verb|-C| options are processed, if any). 
 See more about \verb|CURDIR| in \href{https://www.gnu.org/software/make/manual/make.html}{GNU make manual}.
 
 And finally, just run \verb|make| directly.
@@ -292,7 +292,7 @@ all:
 	echo $(PWD)
 \end{code}
 
-Then, we can use \verb|-p| flag to print out the environment variable values from the Makefile.
+Then, we can use the \verb|-p| flag to print out the environment variable values from the Makefile.
 
 \begin{verbatim}
 $ make -p | grep PWD
@@ -806,13 +806,13 @@ The file \verb|/proc/kallsyms| holds all the symbols that the kernel knows about
 \subsection{Code space}
 \label{sec:codespace}
 Memory management is a very complicated subject and the majority of O'Reilly's \href{https://www.oreilly.com/library/view/understanding-the-linux/0596005652/}{Understanding The Linux Kernel} exclusively covers memory management!
-We are not setting out to be experts on memory managements, but we do need to know a couple of facts to even begin worrying about writing real modules.
+We are not setting out to be experts on memory management, but we do need to know a couple of facts to even begin worrying about writing real modules.
 
 If you have not thought about what a segfault really means, you may be surprised to hear that pointers do not actually point to memory locations.
 Not real ones, anyway.
 When a process is created, the kernel sets aside a portion of real physical memory and hands it to the process to use for its executing code, variables, stack, heap and other things which a computer scientist would know about.
 This memory begins with 0x00000000 and extends up to whatever it needs to be.
-Since the memory space for any two processes do not overlap, every process that can access a memory address, say 0xbffff978, would be accessing a different location in real physical memory! The processes would be accessing an index named 0xbffff978 which points to some kind of offset into the region of memory set aside for that particular process.
+Since the memory space for any two processes does not overlap, every process that can access a memory address, say 0xbffff978, would be accessing a different location in real physical memory! The processes would be accessing an index named 0xbffff978 which points to some kind of offset into the region of memory set aside for that particular process.
 For the most part, a process like our Hello, World program can't access the space of another process, although there are ways which we will talk about later.
 
 The kernel has its own space of memory as well. Since a module is code which can be dynamically inserted and removed in the kernel (as opposed to a semi-autonomous object), it shares the kernel's codespace rather than having its own.
@@ -1148,7 +1148,7 @@ The inode contains information about the file, for example the file's permission
 
 Because we don't get called when the file is opened or closed, there's nowhere for us to put \cpp|try_module_get| and \cpp|module_put| in this module, and if the file is opened and then the module is removed, there's no way to avoid the consequences.
 
-Here a simple example showing how to use a \verb|/proc| file.
+Here is a simple example showing how to use a \verb|/proc| file.
 This is the HelloWorld for the \verb|/proc| filesystem.
 There are three parts: create the file \verb|/proc/helloworld| in the function \cpp|init_module|, return a value (and a buffer) when the file \verb|/proc/helloworld| is read in the callback function \cpp|procfile_read|, and delete the file \verb|/proc/helloworld| in the function \cpp|cleanup_module|.
 
@@ -1294,7 +1294,7 @@ ls -l /sys
 Attributes can be exported for kobjects in the form of regular files in the filesystem.
 Sysfs forwards file I/O operations to methods defined for the attributes, providing a means to read and write kernel attributes.
 
-An attribute definition in simply:
+A simple attribute definition:
 
 \begin{code}
 struct attribute {
@@ -1322,7 +1322,7 @@ int device_create_file(struct device *, const struct device_attribute *);
 void device_remove_file(struct device *, const struct device_attribute *);
 \end{code}
 
-To read or write attributes, \cpp|show()| or \cpp|store()| method must be specified when declaring the attribute.
+To read or write attributes, the \cpp|show()| or \cpp|store()| method must be specified when declaring the attribute.
 For the common cases \src{include/linux/sysfs.h} provides convenience macros (\cpp|__ATTR|, \cpp|__ATTR_RO|, \cpp|__ATTR_WO|, etc.) to make defining attributes easier as well as making code more concise and readable.
 
 An example of a hello world module which includes the creation of a variable accessible via sysfs is given below.
