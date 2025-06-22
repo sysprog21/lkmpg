@@ -62,7 +62,7 @@
 
 \section{Introduction}
 \label{sec:introduction}
-The Linux Kernel Module Programming Guide is a free book; you may reproduce and/or modify it under the terms of the \href{https://opensource.org/licenses/OSL-3.0}{Open Software License}, version 3.0.
+The Linux Kernel Module Programming Guide is a free book; you may reproduce or modify it under the terms of the \href{https://opensource.org/licenses/OSL-3.0}{Open Software License}, version 3.0.
 
 This book is distributed in the hope that it would be useful, but without any warranty, without even the implied warranty of merchantability or fitness for a particular purpose.
 
@@ -74,7 +74,7 @@ If you have contributed new material to this book, you must make the material an
 Please make revisions and updates available directly to the document maintainer, Jim Huang <jserv@ccns.ncku.edu.tw>.
 This will allow for the merging of updates and provide consistent revisions to the Linux community.
 
-If you publish or distribute this book commercially, donations, royalties, and/or printed copies are greatly appreciated by the author and the \href{https://tldp.org/}{Linux Documentation Project} (LDP).
+If you publish or distribute this book commercially, donations, royalties, or printed copies are greatly appreciated by the author and the \href{https://tldp.org/}{Linux Documentation Project} (LDP).
 Contributing in this way shows your support for free software and the LDP. If you have questions or comments, please contact the address above.
 
 \subsection{Authorship}
@@ -186,9 +186,9 @@ It is reassuring to note that overcoming the initial obstacle in the first attem
         Certain Linux distributions even ship with the default Linux kernel configured to support SecureBoot.
         In these cases, the kernel module necessitates a signed security key.
 
-        Failing this, an attempt to insert your first ``hello world'' module would result in the message: ``\emph{ERROR: could not insert module}''.
-        If this message \emph{Lockdown: insmod: unsigned module loading is restricted;
-        see man kernel lockdown.7} appears in the \sh|dmesg| output,
+        Failing that, an attempt to insert your first ``hello world'' module would result in the message: ``\emph{ERROR: could not insert module}''.
+        If this message ``\emph{Lockdown: insmod: unsigned module loading is restricted;
+        see man kernel lockdown.7}'' appears in the \sh|dmesg| output,
         the simplest approach involves disabling UEFI SecureBoot from the boot menu of your PC or laptop,
         allowing the successful insertion of ``hello world'' module.
         Naturally, an alternative involves undergoing intricate procedures such as generating keys, system key installation,
@@ -1004,7 +1004,7 @@ You'll also see it referred to as a struct file object.
 Resist the temptation.
 
 Go ahead and look at the definition of file.
-Most of the entries you see, like struct dentry are not used by device drivers, and you can ignore them.
+Most of the entries you see, like struct dentry, are not used by device drivers, and you can ignore them.
 This is because drivers do not fill file directly; they only use structures contained in file which are created elsewhere.
 
 \subsection{Registering A Device}
