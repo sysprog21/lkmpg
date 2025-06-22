@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>June 17, 2025</span></div>
+<div class='date'><span class='ecrm-1200'>June 22, 2025</span></div>
                                                                   
 
                                                                   
@@ -101,9 +101,8 @@
 <br />    <span class='sectionToc'>21 <a href='#where-to-go-from-here' id='QQ2-1-73'>Where To Go From Here?</a></span>
    </div>
    <h3 class='sectionHead' id='introduction'><span class='titlemark'>1   </span> <a id='x1-10001'></a>Introduction</h3>
-<!-- l. 65 --><p class='noindent'>The Linux Kernel Module Programming Guide is a free book; you may reproduce
-and/or modify it under the terms of the <a href='https://opensource.org/licenses/OSL-3.0'>Open Software License</a>, version
-3.0.
+<!-- l. 65 --><p class='noindent'>The Linux Kernel Module Programming Guide is a free book; you may reproduce or
+modify it under the terms of the <a href='https://opensource.org/licenses/OSL-3.0'>Open Software License</a>, version 3.0.
 </p><!-- l. 67 --><p class='indent'>   This book is distributed in the hope that it would be useful, but without any
 warranty, without even the implied warranty of merchantability or fitness for a
 particular purpose.
@@ -123,7 +122,7 @@ code available for your revisions. Please make revisions and updates available d
 to the document maintainer, Jim Huang &lt;jserv@ccns.ncku.edu.tw&gt;. This will allow
 for the merging of updates and provide consistent revisions to the Linux
 community.
-</p><!-- l. 77 --><p class='indent'>   If you publish or distribute this book commercially, donations, royalties, and/or
+</p><!-- l. 77 --><p class='indent'>   If you publish or distribute this book commercially, donations, royalties, or
 printed copies are greatly appreciated by the author and the <a href='https://tldp.org/'>Linux Documentation
 Project</a> (LDP). Contributing in this way shows your support for free software and
 the LDP. If you have questions or comments, please contact the address
@@ -248,9 +247,9 @@ seamlessly.
      errors, consider compiling a kernel with modversioning turned off.
      </li>
 <li class='enumerate' id='x1-8005x2'>
-     <!-- l. 173 --><p class='noindent'>Using X Window System. It is highly recommended to extract, compile,
-     and load all the examples discussed in this guide from a console. Working
-     on these tasks within the X Window System is discouraged.
+     <!-- l. 173 --><p class='noindent'>Using  the  X  Window  System.  It  is  highly  recommended  to  extract,
+     compile, and load all the examples discussed in this guide from a console.
+     Working on these tasks within the X Window System is discouraged.
      </p><!-- l. 177 --><p class='noindent'>Modules cannot directly print to the screen like <code>  <span class='ectt-1000'>printf()</span>
      </code> can,  but  they  can  log  information  and  warnings  that  are  eventually
      displayed on the screen, specifically within a console. If a module is loaded
@@ -270,10 +269,10 @@ seamlessly.
      equipment manufacturer. Certain Linux distributions even ship with the
      default Linux kernel configured to support SecureBoot. In these cases, the
      kernel module necessitates a signed security key.
-     </p><!-- l. 189 --><p class='noindent'>Failing this, an attempt to insert your first “hello world” module would
+     </p><!-- l. 189 --><p class='noindent'>Failing that, an attempt to insert your first “hello world” module would
      result in the message: “<span class='ecti-1000'>ERROR: could not insert module</span>”. If this message
-     <span class='ecti-1000'>Lockdown: insmod: unsigned module loading is restricted; see man kernel
-     </span><span class='ecti-1000'>lockdown.7 </span>appears in the <code>  <span class='ectt-1000'>dmesg</span>
+     “<span class='ecti-1000'>Lockdown: insmod: unsigned module loading is restricted; see man kernel
+     </span><span class='ecti-1000'>lockdown.7</span>” appears in the <code>  <span class='ectt-1000'>dmesg</span>
      </code> output, the simplest approach involves disabling UEFI SecureBoot from
      the boot menu of your PC or laptop, allowing the successful insertion
      of  “hello  world”  module.  Naturally,  an  alternative  involves  undergoing
@@ -291,7 +290,7 @@ kernel.
    <pre class='fancyvrb' id='fancyvrb6'><a id='x1-9004r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>sudo apt-get update</span> 
 <a id='x1-9006r2'></a><span class='ecrm-0500'>2</span><span class='ectt-1000'>apt-cache search linux-headers-</span><span id='textcolor1'><span class='tctt-1000'>`</span></span><span class='ectt-1000'>uname -r</span><span id='textcolor2'><span class='tctt-1000'>`</span></span></pre>
 <!-- l. 210 --><p class='indent'>   The following command provides information on the available kernel header files.
-Then for example: 
+Then, for example: 
 </p>
    <pre class='fancyvrb' id='fancyvrb7'><a id='x1-9009r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>sudo apt-get install linux-headers-</span><span id='textcolor3'><span class='tctt-1000'>`</span></span><span class='ectt-1000'>uname -r</span><span id='textcolor4'><span class='tctt-1000'>`</span></span></pre>
 <!-- l. 216 --><p class='indent'>   On Arch Linux: 
@@ -340,7 +339,7 @@ aspects of writing a kernel module.
 <a id='x1-12022r8'></a><span class='ecrm-0500'>8</span><span class='ectt-0800'>{</span> 
 <a id='x1-12024r9'></a><span class='ecrm-0500'>9</span><span class='ectt-0800'>    pr_info(</span><span id='textcolor14'><span class='ectt-0800'>"Hello world 1.</span></span><span id='textcolor15'><span class='ectt-0800'>\n</span></span><span id='textcolor16'><span class='ectt-0800'>"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-12026r10'></a><span class='ecrm-0500'>10</span> 
-<a id='x1-12028r11'></a><span class='ecrm-0500'>11</span><span class='ectt-0800'>    </span><span id='textcolor17'><span class='ectt-0800'>/* A non 0 return means init_module failed; module can</span><span class='tctt-0800'>'</span><span class='ectt-0800'>t be loaded. */</span></span> 
+<a id='x1-12028r11'></a><span class='ecrm-0500'>11</span><span class='ectt-0800'>    </span><span id='textcolor17'><span class='ectt-0800'>/* A nonzero return means init_module failed; module can</span><span class='tctt-0800'>'</span><span class='ectt-0800'>t be loaded. */</span></span> 
 <a id='x1-12030r12'></a><span class='ecrm-0500'>12</span><span class='ectt-0800'>    </span><span id='textcolor18'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> 0;</span> 
 <a id='x1-12032r13'></a><span class='ecrm-0500'>13</span><span class='ectt-0800'>}</span> 
 <a id='x1-12034r14'></a><span class='ecrm-0500'>14</span> 
@@ -366,9 +365,9 @@ to use <span class='ecti-1000'>tabs</span>, not spaces.
                                                                   
 
                                                                   
-<!-- l. 267 --><p class='indent'>   In <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>Makefile</span></span></span>, <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>$(CURDIR)</span></span></span> can set to the absolute pathname of the current working
-directory(after all <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>-C</span></span></span> options are processed, if any). See more about <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>CURDIR</span></span></span> in <a href='https://www.gnu.org/software/make/manual/make.html'>GNU
-make manual</a>.
+<!-- l. 267 --><p class='indent'>   In <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>Makefile</span></span></span>, <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>$(CURDIR)</span></span></span> can be set to the absolute pathname of the current
+working directory (after all <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>-C</span></span></span> options are processed, if any). See more about <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>CURDIR</span></span></span>
+in <a href='https://www.gnu.org/software/make/manual/make.html'>GNU make manual</a>.
 </p><!-- l. 270 --><p class='indent'>   And finally, just run <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>make</span></span></span> directly.
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -396,8 +395,8 @@ above.
 </p>
    <pre class='fancyvrb' id='fancyvrb14'><a id='x1-12080r1'></a><span class='ecrm-0500'>1</span><span class='ectt-0800'>all:</span> 
 <a id='x1-12082r2'></a><span class='ecrm-0500'>2</span><span class='ectt-0800'>    echo </span><span class='colorbox' id='colorbox32'><span class='ectt-0800'>$</span></span><span class='ectt-0800'>(PWD)</span></pre>
-<!-- l. 295 --><p class='indent'>   Then, we can use <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>-p</span></span></span> flag to print out the environment variable values from the
-Makefile.
+<!-- l. 295 --><p class='indent'>   Then, we can use the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>-p</span></span></span> flag to print out the environment variable values from
+the Makefile.
                                                                   
 
                                                                   
@@ -1229,7 +1228,7 @@ codespace.
    <h4 class='subsectionHead' id='code-space'><span class='titlemark'>5.5   </span> <a id='x1-240005.5'></a>Code space</h4>
 <!-- l. 808 --><p class='noindent'>Memory management is a very complicated subject and the majority of O’Reilly’s
 <a href='https://www.oreilly.com/library/view/understanding-the-linux/0596005652/'>Understanding The Linux Kernel</a> exclusively covers memory management!
-We are not setting out to be experts on memory managements, but we do
+We are not setting out to be experts on memory management, but we do
 need to know a couple of facts to even begin worrying about writing real
 modules.
 </p><!-- l. 811 --><p class='indent'>   If you have not thought about what a segfault really means, you may be surprised
@@ -1241,7 +1240,7 @@ would know about. This memory begins with 0x00000000 and extends up to
                                                                   
 
                                                                   
-whatever it needs to be. Since the memory space for any two processes do not
+whatever it needs to be. Since the memory space for any two processes does not
 overlap, every process that can access a memory address, say 0xbffff978, would
 be accessing a different location in real physical memory! The processes
 would be accessing an index named 0xbffff978 which points to some kind of
@@ -1483,7 +1482,7 @@ function. Also, its name is a bit misleading; it represents an abstract open
 <code> <span class='ectt-1000'>filp</span>
 </code>. You’ll also see it referred to as a struct file object. Resist the temptation.
 </p><!-- l. 1006 --><p class='indent'>   Go ahead and look at the definition of file. Most of the entries you see, like struct
-dentry are not used by device drivers, and you can ignore them. This is because
+dentry, are not used by device drivers, and you can ignore them. This is because
 drivers do not fill file directly; they only use structures contained in file which are
 created elsewhere.
 </p><!-- l. 1010 --><p class='noindent'>
@@ -2476,7 +2475,7 @@ under the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/
 <!-- l. 1294 --><p class='indent'>   Attributes can be exported for kobjects in the form of regular files in the
 filesystem. Sysfs forwards file I/O operations to methods defined for the attributes,
 providing a means to read and write kernel attributes.
-</p><!-- l. 1297 --><p class='indent'>   An attribute definition in simply:
+</p><!-- l. 1297 --><p class='indent'>   A simple attribute definition:
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb52'><a id='x1-38013r1'></a><span class='ecrm-0500'>1</span><span id='textcolor954'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> attribute {</span> 
@@ -2505,7 +2504,7 @@ providing a means to read and write kernel attributes.
 <a id='x1-38054r8'></a><span class='ecrm-0500'>8</span> 
 <a id='x1-38056r9'></a><span class='ecrm-0500'>9</span><span id='textcolor978'><span class='ectt-0800'>int</span></span><span class='ectt-0800'> device_create_file(</span><span id='textcolor979'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> device *, </span><span id='textcolor980'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor981'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> device_attribute *);</span> 
 <a id='x1-38058r10'></a><span class='ecrm-0500'>10</span><span id='textcolor982'><span class='ectt-0800'>void</span></span><span class='ectt-0800'> device_remove_file(</span><span id='textcolor983'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> device *, </span><span id='textcolor984'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor985'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> device_attribute *);</span></pre>
-<!-- l. 1325 --><p class='indent'>   To read or write attributes, <code>  <span class='ectt-1000'>show()</span>
+<!-- l. 1325 --><p class='indent'>   To read or write attributes, the <code>  <span class='ectt-1000'>show()</span>
 </code> or <code>  <span class='ectt-1000'>store()</span>
 </code> method must be specified when declaring the attribute. For the
 common cases <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/sysfs.h'>include/linux/sysfs.h</a> provides convenience macros
