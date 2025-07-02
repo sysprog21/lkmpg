@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>June 22, 2025</span></div>
+<div class='date'><span class='ecrm-1200'>July 2, 2025</span></div>
                                                                   
 
                                                                   
@@ -4908,8 +4908,9 @@ Thus, it is better to use a unique prototype to separate from the cluster that t
 </code> is adopted and the kernel step by step converting to
 <code> <span class='ectt-1000'>timer_setup</span>
 </code> from <code>  <span class='ectt-1000'>setup_timer</span>
-</code>. One of the reasons why API was changed is it need to coexist with the old version interface.
-Moreover, the <code>  <span class='ectt-1000'>timer_setup</span>
+</code>. One of the reasons why the API was changed is that it needed
+to coexist with the old version of the interface. Moreover, the
+<code> <span class='ectt-1000'>timer_setup</span>
 </code> was implemented by <code>  <span class='ectt-1000'>setup_timer</span>
 </code> at first. 
 </p>
@@ -5019,10 +5020,10 @@ loaded, starts blinking the keyboard LEDs until it is unloaded.
 there might yet be some other tricks to try. Ever wondered what
 <code> <span class='ectt-1000'>CONFIG_LL_DEBUG</span>
 </code> in <code>  <span class='ectt-1000'>make menuconfig</span>
-</code> is good for? If you activate that you get low level access to the serial port. While this
                                                                   
 
                                                                   
+</code> is good for? If you activate that you get low level access to the serial port. While this
 might not sound very powerful by itself, you can patch <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/kernel/printk.c'>kernel/printk.c</a> or any other
 essential syscall to print ASCII characters, thus making it possible to trace virtually
 everything what your code does over a serial line. If you find yourself porting the
@@ -5061,10 +5062,10 @@ You can also use <code>  <span class='ectt-1000'>gpio_request_array()</span>
 </code> has been removed since Linux v6.10+.
 </p><!-- l. 1896 --><p class='indent'>   When using GPIO, you must set it as either output with
 <code> <span class='ectt-1000'>gpio_direction_output()</span>
-</code> or input with <code>  <span class='ectt-1000'>gpio_direction_input()</span>
                                                                   
 
                                                                   
+</code> or input with <code>  <span class='ectt-1000'>gpio_direction_input()</span>
 </code>.
 </p>
      <ul class='itemize1'>
