@@ -1841,7 +1841,7 @@ void setup_timer(struct timer_list *timer, void (*callback)(unsigned long),
 \end{code}
 
 Since Linux v4.14, \cpp|timer_setup| is adopted and the kernel step by step converting to \cpp|timer_setup| from \cpp|setup_timer|.
-One of the reasons why API was changed is it need to coexist with the old version interface.
+One of the reasons why the API was changed is that it needed to coexist with the old version of the interface.
 Moreover, the \cpp|timer_setup| was implemented by \cpp|setup_timer| at first.
 \begin{code}
 void timer_setup(struct timer_list *timer,
