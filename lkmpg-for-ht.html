@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>July 2, 2025</span></div>
+<div class='date'><span class='ecrm-1200'>July 24, 2025</span></div>
                                                                   
 
                                                                   
@@ -3525,7 +3525,7 @@ more details. In this case, thanks to Kprobes, a hook can be used instead on the
                                                                   
 system call entry to intercept the system call.
 </p><!-- l. 1577 --><p class='indent'>   Note that all the related problems make syscall stealing unfeasible for
-production use. In order to keep people from doing potential harmful things
+production use. In order to keep people from doing potentially harmful things
 <code> <span class='ectt-1000'>sys_call_table</span>
 </code> is no longer exported. This means, if you want to do something more than a mere
 dry run of this example, you will have to patch your current kernel in order to have
@@ -4544,7 +4544,7 @@ kernel source code stating that a function “may sleep”, “might sleep”, o
 more explicitly “the caller should not hold a spinlock”. Those comments are
 hints that a function may implicitly sleep and must not be called in atomic
 contexts.
-</p><!-- l. 1748 --><p class='indent'>   Now, let’s differentiate between a few types of spinlock functions in Linux kernel:
+</p><!-- l. 1748 --><p class='indent'>   Now, let’s differentiate between a few types of spinlock functions in the Linux kernel:
 <code> <span class='ectt-1000'>spin_lock()</span>
 </code>, <code>  <span class='ectt-1000'>spin_lock_irq()</span>
 </code>, <code>  <span class='ectt-1000'>spin_lock_irqsave()</span>
@@ -4744,11 +4744,11 @@ below.
 <a id='x1-49146r73'></a><span class='ecrm-0500'>73</span> 
 <a id='x1-49148r74'></a><span class='ecrm-0500'>74</span><span class='ectt-0800'>MODULE_DESCRIPTION(</span><span id='textcolor2347'><span class='ectt-0800'>"Atomic operations example"</span></span><span class='ectt-0800'>);</span> 
 <a id='x1-49150r75'></a><span class='ecrm-0500'>75</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor2348'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 1786 --><p class='indent'>   Before the C11 standard adopts the built-in atomic types, the kernel already
+<!-- l. 1786 --><p class='indent'>   Before the C11 standard adopted the built-in atomic types, the kernel already
 provided a small set of atomic types by using a bunch of tricky architecture-specific
 codes. Implementing the atomic types by C11 atomics may allow the kernel to throw
-away the architecture-specific codes and letting the kernel code be more friendly to
-the people who understand the standard. But there are some problems, such as the
+away the architecture-specific codes and make the kernel code be more friendly to the
+people who understand the standard. But there are some problems, such as the
 memory model of the kernel doesn’t match the model formed by the C11 atomics.
 For further details, see: </p>
      <ul class='itemize1'>
@@ -7402,13 +7402,14 @@ avoids flushing the processor pipeline. The opposite happens if you use the
 </p><!-- l. 2253 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='static-keys'><span class='titlemark'>19.2   </span> <a id='x1-7000019.2'></a>Static keys</h4>
-<!-- l. 2255 --><p class='noindent'>Static keys allow us to enable or disable kernel code paths based on the runtime state
-of key. Its APIs have been available since 2010 (most architectures are already
-supported), use self-modifying code to eliminate the overhead of cache and branch
-prediction. The most typical use case of static keys is for performance-sensitive kernel
-code, such as tracepoints, context switching, networking, etc. These hot paths of the
-kernel often contain branches and can be optimized easily using this technique.
-Before we can use static keys in the kernel, we need to make sure that gcc supports
+<!-- l. 2255 --><p class='noindent'>Static keys allow us to enable or disable kernel code paths based on the
+runtime state of a key. Their APIs have been available since 2010 (most
+architectures are already supported) and use self-modifying code to eliminate
+the overhead of cache and branch prediction. The most typical use case of
+static keys is for performance-sensitive kernel code, such as tracepoints,
+context switching, networking, etc. These hot paths of the kernel often contain
+branches and can be optimized easily using this technique. Before we can
+use static keys in the kernel, we need to make sure that gcc supports
 <code> <span id='textcolor3959'><span class='ectt-1000'>asm</span></span><span class='ectt-1000'> </span><span id='textcolor3960'><span class='ectt-1000'>goto</span></span>
 </code> inline assembly, and the following kernel configurations are set:
 </p><!-- l. 1 --><p class='indent'>
@@ -7416,7 +7417,7 @@ Before we can use static keys in the kernel, we need to make sure that gcc suppo
    <pre class='fancyvrb' id='fancyvrb106'><a id='x1-70006r1'></a><span class='ecrm-0500'>1</span><span class='ectt-0800'>CONFIG_JUMP_LABEL=y</span> 
 <a id='x1-70008r2'></a><span class='ecrm-0500'>2</span><span class='ectt-0800'>CONFIG_HAVE_ARCH_JUMP_LABEL=y</span> 
 <a id='x1-70010r3'></a><span class='ecrm-0500'>3</span><span class='ectt-0800'>CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE=y</span></pre>
-<!-- l. 2265 --><p class='indent'>   To declare a static key, we need to define a global variable using the
+<!-- l. 2266 --><p class='indent'>   To declare a static key, we need to define a global variable using the
 <code> <span class='ectt-1000'>DEFINE_STATIC_KEY_FALSE</span>
 </code> or <code>  <span class='ectt-1000'>DEFINE_STATIC_KEY_TRUE</span>
 </code> macro defined in <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/jump_label.h'>include/linux/jump_label.h</a>. This macro initializes the key with
@@ -7426,7 +7427,7 @@ code:
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb107'><a id='x1-70015r1'></a><span class='ecrm-0500'>1</span><span class='ectt-0800'>DEFINE_STATIC_KEY_FALSE(fkey);</span></pre>
-<!-- l. 2272 --><p class='indent'>   Once the static key has been declared, we need to add branching code to the
+<!-- l. 2273 --><p class='indent'>   Once the static key has been declared, we need to add branching code to the
 module that uses the static key. For example, the code includes a fastpath, where a
 no-op instruction will be generated at compile time as the key is initialized to false
 and the branch is unlikely to be taken.
@@ -7439,12 +7440,12 @@ and the branch is unlikely to be taken.
                                                                   
 
                                                                   
-<!-- l. 2282 --><p class='indent'>   If the key is enabled at runtime by calling
+<!-- l. 2283 --><p class='indent'>   If the key is enabled at runtime by calling
 <code> <span class='ectt-1000'>static_branch_enable(&amp;fkey)</span>
 </code>, the fastpath will be patched with an unconditional jump instruction to the slowpath
 code <code>  <span class='ectt-1000'>pr_alert</span>
 </code>, so the branch will always be taken until the key is disabled again.
-</p><!-- l. 2284 --><p class='indent'>   The following kernel module derived from <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>chardev.c</span></span></span>, demonstrates how the
+</p><!-- l. 2285 --><p class='indent'>   The following kernel module derived from <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>chardev.c</span></span></span>, demonstrates how the
 static key works.
 </p><!-- l. 1 --><p class='indent'>
 </p>
@@ -7642,57 +7643,57 @@ static key works.
 <a id='x1-70413r192'></a><span class='ecrm-0500'>192</span><span class='ectt-0800'>module_exit(chardev_exit);</span> 
 <a id='x1-70415r193'></a><span class='ecrm-0500'>193</span> 
 <a id='x1-70417r194'></a><span class='ecrm-0500'>194</span><span class='ectt-0800'>MODULE_LICENSE(</span><span id='textcolor4153'><span class='ectt-0800'>"GPL"</span></span><span class='ectt-0800'>);</span></pre>
-<!-- l. 2288 --><p class='indent'>   To check the state of the static key, we can use the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/dev/key_state</span></span></span>
+<!-- l. 2289 --><p class='indent'>   To check the state of the static key, we can use the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/dev/key_state</span></span></span>
 interface.
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb110'><a id='x1-70420r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>cat /dev/key_state</span></pre>
-<!-- l. 2294 --><p class='indent'>   This will display the current state of the key, which is disabled by default.
-</p><!-- l. 2296 --><p class='indent'>   To change the state of the static key, we can perform a write operation on the
+<!-- l. 2295 --><p class='indent'>   This will display the current state of the key, which is disabled by default.
+</p><!-- l. 2297 --><p class='indent'>   To change the state of the static key, we can perform a write operation on the
 file:
 </p><!-- l. 1 --><p class='indent'>
 </p>
    <pre class='fancyvrb' id='fancyvrb111'><a id='x1-70423r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>echo enable &gt; /dev/key_state</span></pre>
-<!-- l. 2302 --><p class='indent'>   This will enable the static key, causing the code path to switch from the fastpath
+<!-- l. 2303 --><p class='indent'>   This will enable the static key, causing the code path to switch from the fastpath
 to the slowpath.
-</p><!-- l. 2304 --><p class='indent'>   In some cases, the key is enabled or disabled at initialization and never changed,
+</p><!-- l. 2305 --><p class='indent'>   In some cases, the key is enabled or disabled at initialization and never changed,
 we can declare a static key as read-only, which means that it can only be toggled in
 the module init function. To declare a read-only static key, we can use the
 <code> <span class='ectt-1000'>DEFINE_STATIC_KEY_FALSE_RO</span>
 </code> or <code>  <span class='ectt-1000'>DEFINE_STATIC_KEY_TRUE_RO</span>
 </code> macro instead. Attempts to change the key at runtime will result in a page fault. For
 more information, see <a href='https://www.kernel.org/doc/Documentation/static-keys.txt'>Static keys</a>
-</p><!-- l. 2307 --><p class='noindent'>
+</p><!-- l. 2308 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='common-pitfalls'><span class='titlemark'>20   </span> <a id='x1-7100020'></a>Common Pitfalls</h3>
-<!-- l. 2310 --><p class='noindent'>
+<!-- l. 2311 --><p class='noindent'>
 </p>
                                                                   
 
                                                                   
    <h4 class='subsectionHead' id='using-standard-libraries'><span class='titlemark'>20.1   </span> <a id='x1-7200020.1'></a>Using standard libraries</h4>
-<!-- l. 2312 --><p class='noindent'>You can not do that. In a kernel module, you can only use kernel functions which are
+<!-- l. 2313 --><p class='noindent'>You can not do that. In a kernel module, you can only use kernel functions which are
 the functions you can see in <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/kallsyms</span></span></span>.
-</p><!-- l. 2315 --><p class='noindent'>
+</p><!-- l. 2316 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='disabling-interrupts'><span class='titlemark'>20.2   </span> <a id='x1-7300020.2'></a>Disabling interrupts</h4>
-<!-- l. 2317 --><p class='noindent'>You might need to do this for a short time and that is OK, but if you do not enable
+<!-- l. 2318 --><p class='noindent'>You might need to do this for a short time and that is OK, but if you do not enable
 them afterwards, your system will be stuck and you will have to power it
 off.
-</p><!-- l. 2319 --><p class='noindent'>
+</p><!-- l. 2320 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='where-to-go-from-here'><span class='titlemark'>21   </span> <a id='x1-7400021'></a>Where To Go From Here?</h3>
-<!-- l. 2321 --><p class='noindent'>For those deeply interested in kernel programming, <a href='https://kernelnewbies.org'>kernelnewbies.org</a> and the
+<!-- l. 2322 --><p class='noindent'>For those deeply interested in kernel programming, <a href='https://kernelnewbies.org'>kernelnewbies.org</a> and the
 <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/Documentation'>Documentation</a> subdirectory within the kernel source code are highly recommended.
 Although the latter may not always be straightforward, it serves as a valuable initial
 step for further exploration. Echoing Linus Torvalds’ perspective, the most effective
 method to understand the kernel is through personal examination of the source
 code.
-</p><!-- l. 2326 --><p class='indent'>   Contributions to this guide are welcome, especially if there are any significant
+</p><!-- l. 2327 --><p class='indent'>   Contributions to this guide are welcome, especially if there are any significant
 inaccuracies identified. To contribute or report an issue, please initiate an
 issue at <a class='url' href='https://github.com/sysprog21/lkmpg'><span class='ectt-1000'>https://github.com/sysprog21/lkmpg</span></a>. Pull requests are greatly
 appreciated.
-</p><!-- l. 2330 --><p class='indent'>   Happy hacking!
+</p><!-- l. 2331 --><p class='indent'>   Happy hacking!
 </p>
    <div class='footnotes'><!-- l. 2005 --><p class='indent'>     <span class='footnote-mark'><a href='#fn1x0-bk' id='fn1x0'><sup class='textsuperscript'>1</sup></a></span><span class='ecrm-0800'>The goal of threaded interrupts is to push more of the work to separate threads, so that the
 </span><span class='ecrm-0800'>minimum needed for acknowledging an interrupt is reduced, and therefore the time spent handling
