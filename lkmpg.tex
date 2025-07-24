@@ -1575,7 +1575,7 @@ This commit has been backported to long term stable kernels, like v5.15.154+, v6
 In this case, thanks to Kprobes, a hook can be used instead on the system call entry to intercept the system call.
 
 Note that all the related problems make syscall stealing unfeasible for production use.
-In order to keep people from doing potential harmful things \cpp|sys_call_table| is no longer exported.
+In order to keep people from doing potentially harmful things \cpp|sys_call_table| is no longer exported.
 This means, if you want to do something more than a mere dry run of this example, you will have to patch your current kernel in order to have \cpp|sys_call_table| exported.
 
 \samplec{examples/syscall-steal.c}
@@ -1745,7 +1745,7 @@ There's no documentation recording all such functions, but code comments may hel
 Sometimes you may find comments in kernel source code stating that a function ``may sleep'', ``might sleep'', or more explicitly ``the caller should not hold a spinlock''.
 Those comments are hints that a function may implicitly sleep and must not be called in atomic contexts.
 
-Now, let's differentiate between a few types of spinlock functions in Linux kernel: \cpp|spin_lock()|, \cpp|spin_lock_irq()|, \cpp|spin_lock_irqsave()|, and \cpp|spin_lock_bh()|.
+Now, let's differentiate between a few types of spinlock functions in the Linux kernel: \cpp|spin_lock()|, \cpp|spin_lock_irq()|, \cpp|spin_lock_irqsave()|, and \cpp|spin_lock_bh()|.
 
 \cpp|spin_lock()| does not allow the CPU to sleep while waiting for the lock, which makes it suitable for most use cases where the critical section is short.
 However, this is problematic for real-time Linux because spinlocks in this configuration behave as sleeping locks.
@@ -1783,8 +1783,8 @@ An example is shown below.
 
 \samplec{examples/example_atomic.c}
 
-Before the C11 standard adopts the built-in atomic types, the kernel already provided a small set of atomic types by using a bunch of tricky architecture-specific codes.
-Implementing the atomic types by C11 atomics may allow the kernel to throw away the architecture-specific codes and letting the kernel code be more friendly to the people who understand the standard.
+Before the C11 standard adopted the built-in atomic types, the kernel already provided a small set of atomic types by using a bunch of tricky architecture-specific codes.
+Implementing the atomic types by C11 atomics may allow the kernel to throw away the architecture-specific codes and make the kernel code be more friendly to the people who understand the standard.
 But there are some problems, such as the memory model of the kernel doesn't match the model formed by the C11 atomics.
 For further details, see:
 \begin{itemize}
@@ -2252,7 +2252,8 @@ The opposite happens if you use the \cpp|likely| macro.
 
 \subsection{Static keys}
 \label{sec:static_keys}
-Static keys allow us to enable or disable kernel code paths based on the runtime state of key. Its APIs have been available since 2010 (most architectures are already supported), use self-modifying code to eliminate the overhead of cache and branch prediction.
+Static keys allow us to enable or disable kernel code paths based on the runtime state of a key.
+Their APIs have been available since 2010 (most architectures are already supported) and use self-modifying code to eliminate the overhead of cache and branch prediction.
 The most typical use case of static keys is for performance-sensitive kernel code, such as tracepoints, context switching, networking, etc. These hot paths of the kernel often contain branches and can be optimized easily using this technique.
 Before we can use static keys in the kernel, we need to make sure that gcc supports \cpp|asm goto| inline assembly, and the following kernel configurations are set:
 
@@ -2305,7 +2306,7 @@ In some cases, the key is enabled or disabled at initialization and never change
 For more information, see \href{https://www.kernel.org/doc/Documentation/static-keys.txt}{Static keys}
 
 \section{Common Pitfalls}
-\label{sec:opitfall}
+\label{sec:pitfall}
 
 \subsection{Using standard libraries}
 \label{sec:using_stdlib}
