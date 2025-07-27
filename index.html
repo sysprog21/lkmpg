@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>July 24, 2025</span></div>
+<div class='date'><span class='ecrm-1200'>July 27, 2025</span></div>
                                                                   
 
                                                                   
@@ -1814,7 +1814,7 @@ concurrency details in the <a href='#synchronization'>12<!-- tex4ht:ref: sec:syn
 <a id='x1-31310r152'></a><span class='ecrm-0500'>152</span><span class='ectt-0800'>    </span><span id='textcolor580'><span class='ectt-0800'>return</span></span><span class='ectt-0800'> bytes_read;</span> 
 <a id='x1-31312r153'></a><span class='ecrm-0500'>153</span><span class='ectt-0800'>}</span> 
 <a id='x1-31314r154'></a><span class='ecrm-0500'>154</span> 
-<a id='x1-31316r155'></a><span class='ecrm-0500'>155</span><span id='textcolor581'><span class='ectt-0800'>/* Called when a process writes to dev file: echo "hi" &gt; /dev/hello */</span></span> 
+<a id='x1-31316r155'></a><span class='ecrm-0500'>155</span><span id='textcolor581'><span class='ectt-0800'>/* Called when a process writes to dev file: echo "hi" | sudo tee /dev/chardev */</span></span> 
 <a id='x1-31318r156'></a><span class='ecrm-0500'>156</span><span id='textcolor582'><span class='ectt-0800'>static</span></span><span class='ectt-0800'> </span><span id='textcolor583'><span class='ectt-0800'>ssize_t</span></span><span class='ectt-0800'> device_write(</span><span id='textcolor584'><span class='ectt-0800'>struct</span></span><span class='ectt-0800'> file *filp, </span><span id='textcolor585'><span class='ectt-0800'>const</span></span><span class='ectt-0800'> </span><span id='textcolor586'><span class='ectt-0800'>char</span></span><span class='ectt-0800'> __user *buff,</span> 
 <a id='x1-31320r157'></a><span class='ecrm-0500'>157</span><span class='ectt-0800'>                            </span><span id='textcolor587'><span class='ectt-0800'>size_t</span></span><span class='ectt-0800'> len, loff_t *off)</span> 
 <a id='x1-31322r158'></a><span class='ecrm-0500'>158</span><span class='ectt-0800'>{</span> 
