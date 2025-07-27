@@ -152,7 +152,7 @@ static ssize_t device_read(struct file *filp, /* see include/linux/fs.h   */
     return bytes_read;
 }
 
-/* Called when a process writes to dev file: echo "hi" > /dev/hello */
+/* Called when a process writes to dev file: echo "hi" | sudo tee /dev/chardev */
 static ssize_t device_write(struct file *filp, const char __user *buff,
                             size_t len, loff_t *off)
 {
