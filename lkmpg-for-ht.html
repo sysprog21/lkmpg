@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>July 27, 2025</span></div>
+<div class='date'><span class='ecrm-1200'>August 3, 2025</span></div>
                                                                   
 
                                                                   
@@ -1045,8 +1045,8 @@ EXTRAVERSION = -rc2
 <!-- l. 676 --><p class='nopar'>
 </p><!-- l. 678 --><p class='indent'>   In this case, you need to restore the value of symbol <span class='ecbx-1000'>EXTRAVERSION </span>to
 <span class='ecbx-1000'>-rc2</span>. We suggest keeping a backup copy of the makefile used to compile your kernel
-available in <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/lib/modules/5.14.0-rc2/build</span></span></span>. A simple command as following
-should suffice. 
+available in <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/lib/modules/5.14.0-rc2/build</span></span></span>. A simple command as follows should
+suffice. 
 </p>
    <pre class='fancyvrb' id='fancyvrb35'><a id='x1-18008r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>cp /lib/modules/</span><span id='textcolor260'><span class='tctt-1000'>`</span></span><span class='ectt-1000'>uname -r</span><span id='textcolor261'><span class='tctt-1000'>`</span></span><span class='ectt-1000'>/build/Makefile linux-</span><span id='textcolor262'><span class='tctt-1000'>`</span></span><span class='ectt-1000'>uname -r</span><span id='textcolor263'><span class='tctt-1000'>`</span></span></pre>
 <!-- l. 684 --><p class='noindent'>Here <code>  <span class='ectt-1000'>linux-</span><span id='textcolor264'><span class='tctt-1000'>`</span></span><span class='ectt-1000'>uname -r</span><span id='textcolor265'><span class='tctt-1000'>`</span></span>
