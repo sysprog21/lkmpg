@@ -88,6 +88,7 @@ leading to Michael Burian joining as a co-maintainer to bring the guide up to sp
 Bob Mottram contributed to the guide by updating examples for Linux v3.8 and later.
 Jim Huang then undertook the task of updating the guide for recent Linux versions (v5.0 and beyond),
 along with revising the LaTeX document.
+The guide continues to be maintained for compatibility with modern kernels (v6.x series) while ensuring examples work with older LTS kernels.
 
 \subsection{Acknowledgements}
 \label{sec:acknowledgements}
@@ -103,7 +104,7 @@ The following people have contributed corrections or good suggestions:
 
 Involvement in the development of Linux kernel modules requires a foundation in the C programming language and a track record of creating conventional programs intended for process execution.
 This pursuit delves into a domain where an unregulated pointer, if disregarded,
-may potentially trigger the total elimination of an entire file system,
+may potentially trigger the total elimination of an entire filesystem,
 resulting in a scenario that necessitates a complete system reboot.
 
 A Linux kernel module is precisely defined as a code segment capable of dynamic loading and unloading within the kernel as needed.
@@ -131,7 +132,7 @@ sudo pacman -S gcc kmod
 \subsection{What Modules are in my Kernel?}
 \label{sec:modutils}
 
-To discover what modules are already loaded within your current kernel use the command \sh|lsmod|.
+To discover what modules are already loaded within your current kernel, use the command \sh|lsmod|.
 \begin{codebash}
 lsmod
 \end{codebash}
@@ -190,7 +191,7 @@ It is reassuring to note that overcoming the initial obstacle in the first attem
         If this message ``\emph{Lockdown: insmod: unsigned module loading is restricted;
         see man kernel lockdown.7}'' appears in the \sh|dmesg| output,
         the simplest approach involves disabling UEFI SecureBoot from the boot menu of your PC or laptop,
-        allowing the successful insertion of ``hello world'' module.
+        allowing the successful insertion of the ``hello world'' module.
         Naturally, an alternative involves undergoing intricate procedures such as generating keys, system key installation,
         and module signing to achieve functionality.
         However, this intricate process is less appropriate for beginners. If interested,
@@ -273,11 +274,11 @@ And finally, just run \verb|make| directly.
 make
 \end{codebash}
 
-If there is no \verb|PWD := $(CURDIR)| statement in Makefile, then it may not compile correctly with \verb|sudo make|.
-Because some environment variables are specified by the security policy, they can't be inherited.
+If there is no \verb|PWD := $(CURDIR)| statement in the Makefile, then it may not compile correctly with \verb|sudo make|.
+This is because some environment variables are specified by the security policy and cannot be inherited.
 The default security policy is \verb|sudoers|.
 In the \verb|sudoers| security policy, \verb|env_reset| is enabled by default, which restricts environment variables. 
-Specifically, path variables are not retained from the user environment, they are set to default values (For more information see: \href{https://www.sudo.ws/docs/man/sudoers.man/}{sudoers manual}).
+Specifically, path variables are not retained from the user environment; they are set to default values (for more information see: \href{https://www.sudo.ws/docs/man/sudoers.man/}{sudoers manual}).
 You can see the environment variable settings by:
 
 \begin{verbatim}
@@ -301,7 +302,7 @@ OLDPWD = /home/ubuntu
 	echo $(PWD)
 \end{verbatim}
 
-The \verb|PWD| variable won't be inherited with \verb|sudo|.
+The \verb|PWD| variable will not be inherited with \verb|sudo|.
 
 \begin{verbatim}
 $ sudo make -p | grep PWD
@@ -323,7 +324,7 @@ However, there are three ways to solve this problem.
   }
 
   \item {
-  You can set the \verb|env_reset| disabled by editing the \verb|/etc/sudoers| with root and \verb|visudo|. 
+  You can disable \verb|env_reset| by editing \verb|/etc/sudoers| as root using \verb|visudo|. 
 
   \begin{code}
   ## sudoers file.
@@ -374,7 +375,7 @@ lsmod | grep hello
 \end{codebash}
 
 should return nothing.
-You can try loading your shiny new module with:
+You can try loading your new module with:
 \begin{codebash}
 sudo insmod hello-1.ko
 \end{codebash}
@@ -414,9 +415,9 @@ We needed to include \verb|<linux/printk.h>| only for the macro expansion for th
 
 \begin{enumerate}
   \item A point about coding style.
-        Another thing which may not be immediately obvious to anyone getting started with kernel programming is that indentation within your code should be using \textbf{tabs} and \textbf{not spaces}.
+        Another thing that may not be immediately obvious to anyone getting started with kernel programming is that indentation within your code should use \textbf{tabs} and \textbf{not spaces}.
         It is one of the coding conventions of the kernel.
-        You may not like it, but you'll need to get used to it if you ever submit a patch upstream.
+        You may not like it, but you will need to get used to it if you ever submit a patch upstream.
 
   \item Introducing print macros.
   \label{sec:printk}
@@ -447,7 +448,7 @@ What happens?
 \label{hello_n_goodbye}
 In early kernel versions you had to use the \cpp|init_module| and \cpp|cleanup_module| functions, as in the first hello world example, but these days you can name those anything you want by using the \cpp|module_init| and \cpp|module_exit| macros.
 These macros are defined in \src{include/linux/module.h}.
-The only requirement is that your init and cleanup functions must be defined before calling those macros, otherwise you'll get compilation errors.
+The only requirement is that your init and cleanup functions must be defined before calling those macros, otherwise you will get compilation errors.
 Here is an example of this technique:
 
 \samplec{examples/hello-2.c}
@@ -471,7 +472,7 @@ Now have a look at \src{drivers/char/Makefile} for a real world example.
 As you can see, some things got hardwired into the kernel (\verb|obj-y|) but where have all those \verb|obj-m| gone?
 Those familiar with shell scripts will easily be able to spot them.
 For those who are not, the \verb|obj-$(CONFIG_FOO)| entries you see everywhere expand into \verb|obj-y| or \verb|obj-m|, depending on whether the \verb|CONFIG_FOO| variable has been set to \verb|y| or \verb|m|.
-While we are at it, those were exactly the kind of variables that you have set in the \verb|.config| file in the top-level directory of Linux kernel source tree, the last time when you said \sh|make menuconfig| or something like that.
+While we are at it, those were exactly the kind of variables that you have set in the \verb|.config| file in the top-level directory of the Linux kernel source tree, the last time you ran \sh|make menuconfig| or something similar.
 
 \subsection{The \_\_init and \_\_exit Macros}
 \label{init_n_exit}
@@ -502,7 +503,7 @@ You can use a few macros to indicate the license for your module.
 Some examples are "GPL", "GPL v2", "GPL and additional rights", "Dual BSD/GPL", "Dual MIT/GPL", "Dual MPL/GPL" and "Proprietary".
 They are defined within \src{include/linux/module.h}.
 
-To reference what license you're using a macro is available called \cpp|MODULE_LICENSE|.
+To reference what license you are using, a macro is available called \cpp|MODULE_LICENSE|.
 This and a few other macros describing the module are illustrated in the below example.
 
 \samplec{examples/hello-4.c}
@@ -517,7 +518,7 @@ The variable declarations and macros should be placed at the beginning of the mo
 The example code should clear up my admittedly lousy explanation.
 
 The \cpp|module_param()| macro takes 3 arguments: the name of the variable, its type and permissions for the corresponding file in sysfs.
-Integer types can be signed as usual or unsigned. If you'd like to use arrays of integers or strings see \cpp|module_param_array()| and \cpp|module_param_string()|.
+Integer types can be signed as usual or unsigned. If you would like to use arrays of integers or strings, see \cpp|module_param_array()| and \cpp|module_param_string()|.
 
 \begin{code}
 int myint = 3;
@@ -812,8 +813,9 @@ If you have not thought about what a segfault really means, you may be surprised
 Not real ones, anyway.
 When a process is created, the kernel sets aside a portion of real physical memory and hands it to the process to use for its executing code, variables, stack, heap and other things which a computer scientist would know about.
 This memory begins with 0x00000000 and extends up to whatever it needs to be.
-Since the memory space for any two processes does not overlap, every process that can access a memory address, say 0xbffff978, would be accessing a different location in real physical memory! The processes would be accessing an index named 0xbffff978 which points to some kind of offset into the region of memory set aside for that particular process.
-For the most part, a process like our Hello, World program can't access the space of another process, although there are ways which we will talk about later.
+Since the memory space for any two processes does not overlap, every process that can access a memory address, say 0xbffff978, would be accessing a different location in real physical memory!
+The processes would be accessing an index named 0xbffff978 which points to some kind of offset into the region of memory set aside for that particular process.
+For the most part, a process like our Hello, World program cannot access the space of another process, although there are ways which we will talk about later.
 
 The kernel has its own space of memory as well. Since a module is code which can be dynamically inserted and removed in the kernel (as opposed to a semi-autonomous object), it shares the kernel's codespace rather than having its own.
 Therefore, if your module segfaults, the kernel segfaults.
@@ -908,7 +910,7 @@ Each field of the structure corresponds to the address of some function defined 
 
 For example, every character driver needs to define a function that reads from the device.
 The \cpp|file_operations| structure holds the address of the module's function that performs that operation.
-Here is what the definition looks like for kernel 5.4:
+Here is what the definition looks like for kernel 5.4 and later versions:
 
 \begin{code}
 struct file_operations {
@@ -1098,7 +1100,7 @@ You should not use this counter directly, but there are functions defined in \sr
   \item \cpp|module_refcount(THIS_MODULE)|: Return the value of reference count of current module.
 \end{itemize}
 
-It is important to keep the counter accurate; if you ever do lose track of the correct usage count, you will never be able to unload the module; it's now reboot time, boys and girls.
+It is important to keep the counter accurate; if you ever lose track of the correct usage count, you will never be able to unload the module; it is now reboot time.
 This is bound to happen to you sooner or later during a module's development.
 
 \subsection{chardev.c}
@@ -1112,12 +1114,12 @@ cat /proc/devices
 
 (or open the file with a program) and the driver will put the number of times the device file has been read from into the file.
 We do not support writing to the file (like \sh|echo "hi" > /dev/hello|), but catch these attempts and tell the user that the operation is not supported.
-Don't worry if you don't see what we do with the data we read into the buffer; we don't do much with it.
+Do not worry if you do not see what we do with the data we read into the buffer; we do not do much with it.
 We simply read in the data and print a message acknowledging that we received it.
 
-In the multiple-threaded environment, without any protection, concurrent access to the same memory may lead to the race condition, and will not preserve the performance.
+In a multi-threaded environment, without any protection, concurrent access to the same memory may lead to race conditions and will not preserve performance.
 In the kernel module, this problem may happen due to multiple instances accessing the shared resources.
-Therefore, a solution is to enforce the exclusive access.
+Therefore, a solution is to enforce exclusive access.
 We use atomic Compare-And-Swap (CAS) to maintain the states, \cpp|CDEV_NOT_USED| and \cpp|CDEV_EXCLUSIVE_OPEN|, to determine whether the file is currently opened by someone or not.
 CAS compares the contents of a memory location with the expected value and, only if they are the same, modifies the contents of that memory location to the desired value.
 See more concurrency details in the \ref{sec:synchronization} section.
@@ -1135,18 +1137,18 @@ There are differences between different kernel versions, and if you want to supp
 The way to do this is to compare the macro \cpp|LINUX_VERSION_CODE| to the macro \cpp|KERNEL_VERSION|.
 In version \verb|a.b.c| of the kernel, the value of this macro would be \(2^{16}a+2^{8}b+c\).
 
-\section{The /proc File System}
+\section{The /proc Filesystem}
 \label{sec:procfs}
-In Linux, there is an additional mechanism for the kernel and kernel modules to send information to processes --- the \verb|/proc| file system.
+In Linux, there is an additional mechanism for the kernel and kernel modules to send information to processes --- the \verb|/proc| filesystem.
 Originally designed to allow easy access to information about processes (hence the name), it is now used by every bit of the kernel which has something interesting to report, such as \verb|/proc/modules| which provides the list of modules and \verb|/proc/meminfo| which gathers memory usage statistics.
 
-The method to use the proc file system is very similar to the one used with device drivers --- a structure is created with all the information needed for the \verb|/proc| file, including pointers to any handler functions (in our case there is only one, the one called when somebody attempts to read from the \verb|/proc| file).
+The method to use the proc filesystem is very similar to the one used with device drivers --- a structure is created with all the information needed for the \verb|/proc| file, including pointers to any handler functions (in our case there is only one, the one called when somebody attempts to read from the \verb|/proc| file).
 Then, \cpp|init_module| registers the structure with the kernel and \cpp|cleanup_module| unregisters it.
 
-Normal file systems are located on a disk, rather than just in memory (which is where \verb|/proc| is), and in that case the index-node (inode for short) number is a pointer to a disk location where the file's inode is located.
+Normal filesystems are located on a disk, rather than just in memory (which is where \verb|/proc| is), and in that case the index-node (inode for short) number is a pointer to a disk location where the file's inode is located.
 The inode contains information about the file, for example the file's permissions, together with a pointer to the disk location or locations where the file's data can be found.
 
-Because we don't get called when the file is opened or closed, there's nowhere for us to put \cpp|try_module_get| and \cpp|module_put| in this module, and if the file is opened and then the module is removed, there's no way to avoid the consequences.
+Because we do not get called when the file is opened or closed, there is nowhere for us to put \cpp|try_module_get| and \cpp|module_put| in this module, and if the file is opened and then the module is removed, there is no way to avoid the consequences.
 
 Here is a simple example showing how to use a \verb|/proc| file.
 This is the HelloWorld for the \verb|/proc| filesystem.
@@ -1173,7 +1175,7 @@ HelloWorld!
 \subsection{The proc\_ops Structure}
 \label{sec:proc_ops}
 The \cpp|proc_ops| structure is defined in \src{include/linux/proc\_fs.h} in Linux v5.6+.
-In older kernels, it used \cpp|file_operations| for custom hooks in \verb|/proc| file system, but it contains some members that are unnecessary in VFS, and every time VFS expands \cpp|file_operations| set, \verb|/proc| code comes bloated.
+In older kernels, it used \cpp|file_operations| for custom hooks in \verb|/proc| filesystem, but it contains some members that are unnecessary in VFS, and every time VFS expands \cpp|file_operations| set, \verb|/proc| code comes bloated.
 On the other hand, not only the space, but also some operations were saved by this structure to improve its performance.
 For example, the file which never disappears in \verb|/proc| can set the \cpp|proc_flag| as \cpp|PROC_ENTRY_PERMANENT| to save 2 atomic ops, 1 allocation, 1 free in per open/read/close sequence.
 
@@ -1203,8 +1205,8 @@ We have seen how to read and write a \verb|/proc| file with the \verb|/proc| int
 But it is also possible to manage \verb|/proc| file with inodes.
 The main concern is to use advanced functions, like permissions.
 
-In Linux, there is a standard mechanism for file system registration.
-Since every file system has to have its own functions to handle inode and file operations, there is a special structure to hold pointers to all those functions, \cpp|struct inode_operations|, which includes a pointer to \cpp|struct proc_ops|.
+In Linux, there is a standard mechanism for filesystem registration.
+Since every filesystem has to have its own functions to handle inode and file operations, there is a special structure to hold pointers to all those functions, \cpp|struct inode_operations|, which includes a pointer to \cpp|struct proc_ops|.
 
 The difference between file and inode operations is that file operations deal with the file itself whereas inode operations deal with ways of referencing the file, such as creating links to it.
 
@@ -1416,7 +1418,7 @@ But what if you want to do something unusual, to change the behavior of the syst
 Then, you are mostly on your own.
 
 Notice that this example has been unavailable since Linux v6.9.
-Specifically after this \href{https://github.com/torvalds/linux/commit/1e3ad78334a69b36e107232e337f9d693dcc9df2#diff-4a16bf89a09b4f49669a30d54540f0b936ea0224dc6ee9edfa7700deb16c3e11R52}{commit}, due to the system call table changing the implementation from an indirect function call table to a switch statement for security issue, such as Branch History Injection (BHI) attack.
+Specifically after this \href{https://github.com/torvalds/linux/commit/1e3ad78334a69b36e107232e337f9d693dcc9df2#diff-4a16bf89a09b4f49669a30d54540f0b936ea0224dc6ee9edfa7700deb16c3e11R52}{commit}, due to the system call table changing the implementation from an indirect function call table to a switch statement for security issues, such as Branch History Injection (BHI) attack.
 See more information \href{https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2060909}{here}.
 
 Should one choose not to use a virtual machine, kernel programming can become risky.
@@ -1891,7 +1893,7 @@ cat /sys/kernel/debug/gpio
 
 There are other ways to register GPIOs.
 For example, you can use \cpp|gpio_request_one()| to register a GPIO while setting its direction (input or output) and initial state at the same time.
-You can also use \cpp|gpio_request_array()| to register multiple GPIOs at once. However, note that \cpp|gpio_request_array()| has been removed since Linux v6.10+.
+You can also use \cpp|gpio_request_array()| to register multiple GPIOs at once. However, note that \cpp|gpio_request_array()| has been removed since Linux v6.10.
 
 When using GPIO, you must set it as either output with \cpp|gpio_direction_output()| or input with \cpp|gpio_direction_input()|.
 
