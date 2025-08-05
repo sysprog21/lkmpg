@@ -100,8 +100,6 @@ static int device_open(struct inode *inode, struct file *file)
         pr_alert("do unlikely thing\n");
     pr_info("fastpath 2\n");
 
-    try_module_get(THIS_MODULE);
-
     return 0;
 }
 
@@ -112,12 +110,6 @@ static int device_release(struct inode *inode, struct file *file)
 {
     /* We are now ready for our next caller. */
     atomic_set(&already_open, CDEV_NOT_USED);
-
-    /**
-     * Decrement the usage count, or else once you opened the file, you will
-     * never get rid of the module.
-     */
-    module_put(THIS_MODULE);
 
     return 0;
 }

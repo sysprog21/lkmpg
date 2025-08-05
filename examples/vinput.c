@@ -157,8 +157,6 @@ static void vinput_destroy_vdevice(struct vinput *vinput)
     clear_bit(vinput->id, vinput_ids);
     spin_unlock(&vinput_lock);
 
-    module_put(THIS_MODULE);
-
     kfree(vinput);
 }
 
@@ -181,8 +179,6 @@ static struct vinput *vinput_alloc_vdevice(void)
         pr_err("vinput: Cannot allocate vinput input device\n");
         return ERR_PTR(-ENOMEM);
     }
-
-    try_module_get(THIS_MODULE);
 
     spin_lock_init(&vinput->lock);
 
@@ -217,7 +213,6 @@ fail_input_dev:
     list_del(&vinput->list);
 fail_id:
     spin_unlock(&vinput_lock);
-    module_put(THIS_MODULE);
     kfree(vinput);
 
     return ERR_PTR(err);

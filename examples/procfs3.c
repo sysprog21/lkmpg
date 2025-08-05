@@ -52,12 +52,10 @@ static ssize_t procfs_write(struct file *file, const char __user *buffer,
 }
 static int procfs_open(struct inode *inode, struct file *file)
 {
-    try_module_get(THIS_MODULE);
     return 0;
 }
 static int procfs_close(struct inode *inode, struct file *file)
 {
-    module_put(THIS_MODULE);
     return 0;
 }
 
