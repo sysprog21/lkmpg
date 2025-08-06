@@ -93,7 +93,7 @@ The guide continues to be maintained for compatibility with modern kernels (v6.x
 \subsection{Acknowledgements}
 \label{sec:acknowledgements}
 
-The following people have contributed corrections or good suggestions: 
+The following people have contributed corrections or good suggestions:
 
 \begin{flushleft}
 \input{contrib}
@@ -176,12 +176,12 @@ It is reassuring to note that overcoming the initial obstacle in the first attem
         Working on these tasks within the X Window System is discouraged.
 
         Modules cannot directly print to the screen like \cpp|printf()| can,
-        but they can log information and warnings that are eventually displayed on the screen,
-        specifically within a console.
-        If a module is loaded from an \sh|xterm|, the information and warnings will be logged,
-        but solely within the systemd journal. These logs will not be visible unless consulting the \sh|journalctl|.
+        but they can log information and warnings to the kernel's log ring buffer.
+        This output is \emph{not} automatically displayed on any console or terminal.
+        To view kernel module messages, you must use \sh|dmesg| to read the kernel log ring buffer,
+        or check the systemd journal with \sh|journalctl -k| for kernel messages.
         Refer to \ref{sec:helloworld} for more information.
-        For instant access to this information, it is advisable to perform all tasks from the console.
+        The terminal or environment from which you load the module does not affect where the output goes—it always goes to the kernel log.
   \item SecureBoot.
         Numerous modern computers arrive pre-configured with UEFI SecureBoot enabled—an essential security standard ensuring booting exclusively through trusted software endorsed by the original equipment manufacturer.
         Certain Linux distributions even ship with the default Linux kernel configured to support SecureBoot.
@@ -265,7 +265,7 @@ clean:
 	$(MAKE) -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
 \end{code}
 
-In \verb|Makefile|, \verb|$(CURDIR)| can be set to the absolute pathname of the current working directory (after all \verb|-C| options are processed, if any). 
+In \verb|Makefile|, \verb|$(CURDIR)| can be set to the absolute pathname of the current working directory (after all \verb|-C| options are processed, if any).
 See more about \verb|CURDIR| in \href{https://www.gnu.org/software/make/manual/make.html}{GNU make manual}.
 
 And finally, just run \verb|make| directly.
@@ -277,7 +277,7 @@ make
 If there is no \verb|PWD := $(CURDIR)| statement in the Makefile, then it may not compile correctly with \verb|sudo make|.
 This is because some environment variables are specified by the security policy and cannot be inherited.
 The default security policy is \verb|sudoers|.
-In the \verb|sudoers| security policy, \verb|env_reset| is enabled by default, which restricts environment variables. 
+In the \verb|sudoers| security policy, \verb|env_reset| is enabled by default, which restricts environment variables.
 Specifically, path variables are not retained from the user environment; they are set to default values (for more information see: \href{https://www.sudo.ws/docs/man/sudoers.man/}{sudoers manual}).
 You can see the environment variable settings by:
 
@@ -314,7 +314,7 @@ However, there are three ways to solve this problem.
 \begin{enumerate}
   \item {
   You can use the \verb|-E| flag to temporarily preserve them.
-  
+
   \begin{codebash}
     $ sudo -E make -p | grep PWD
     PWD = /home/ubuntu/temp
@@ -324,11 +324,11 @@ However, there are three ways to solve this problem.
   }
 
   \item {
-  You can disable \verb|env_reset| by editing \verb|/etc/sudoers| as root using \verb|visudo|. 
+  You can disable \verb|env_reset| by editing \verb|/etc/sudoers| as root using \verb|visudo|.
 
   \begin{code}
   ## sudoers file.
-  ## 
+  ##
   ...
   Defaults env_reset
   ## Change env_reset to !env_reset in previous line to keep all environment variables
@@ -345,11 +345,11 @@ However, there are three ways to solve this problem.
     echo "root:" >> env_reset.log; sudo env >> env_reset.log
   \end{codebash}
 
-  You can view and compare these logs to find differences between \verb|env_reset| and \verb|!env_reset|. 
+  You can view and compare these logs to find differences between \verb|env_reset| and \verb|!env_reset|.
   }
 
-  \item {You can preserve environment variables by appending them to \verb|env_keep| in \verb|/etc/sudoers|. 
-  
+  \item {You can preserve environment variables by appending them to \verb|env_keep| in \verb|/etc/sudoers|.
+
   \begin{code}
   Defaults env_keep += "PWD"
   \end{code}
@@ -391,7 +391,13 @@ sudo rmmod hello_1
 \end{codebash}
 
 Notice that the dash was replaced by an underscore.
-To see what just happened in the logs:
+To see the module's output messages, use \sh|dmesg| to view the kernel log ring buffer:
+\begin{codebash}
+sudo dmesg | tail -10
+\end{codebash}
+
+You should see messages like ``Hello world 1.'' and ``Goodbye world 1.'' from your module.
+Alternatively, you can check the systemd journal for kernel messages:
 \begin{codebash}
 journalctl --since "1 hour ago" | grep kernel
 \end{codebash}
@@ -426,6 +432,9 @@ We needed to include \verb|<linux/printk.h>| only for the macro expansion for th
         This just saves some mindless keyboard bashing and looks a bit neater.
         They can be found within \src{include/linux/printk.h}.
         Take time to read through the available priority macros.
+
+        \textbf{Important:} These functions write to the kernel log ring buffer, \emph{not} directly to any terminal or console.
+        To view the output from your kernel modules, you must use \sh|dmesg| or \sh|journalctl -k|.
 
   \item About Compiling.
         Kernel modules need to be compiled a bit differently from regular userspace apps.
@@ -526,7 +535,7 @@ module_param(myint, int, 0);
 \end{code}
 
 Arrays are supported too, but things are a bit different now than they were in the olden days.
-To keep track of the number of parameters you need to pass a pointer to a count variable as third parameter. 
+To keep track of the number of parameters you need to pass a pointer to a count variable as third parameter.
 At your option, you could also ignore the count and pass \cpp|NULL| instead. We show both possibilities here:
 
 \begin{code}
@@ -1530,7 +1539,7 @@ ffffffff820013a0 R sys_call_table
 # Reboot
 $ sudo grep sys_call_table /boot/System.map-$(uname -r)
 ffffffff82000300 R sys_call_table
-$ sudo grep sys_call_table /proc/kallsyms 
+$ sudo grep sys_call_table /proc/kallsyms
 ffffffff86400300 R sys_call_table
 \end{verbatim}
 If \verb|KASLR| is enabled, we have to take care of the address from \verb|/proc/kallsyms| each time we reboot the machine.
@@ -1577,8 +1586,8 @@ At first glance, it appears we could solve this particular problem by checking i
 When A is removed, it sees that the system call was changed to \cpp|B_openat| so that it is no longer pointing to \cpp|A_openat|, so it will not restore it to \cpp|sys_openat| before it is removed from memory.
 Unfortunately, \cpp|B_openat| will still try to call \cpp|A_openat| which is no longer there, so that even without removing B the system would crash.
 
-For x86 architecture, the system call table cannot be used to invoke a system call after commit 
-\href{https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=1e3ad78334a69b36e107232e337f9d693dcc9df2}{1e3ad78} since v6.9. 
+For x86 architecture, the system call table cannot be used to invoke a system call after commit
+\href{https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=1e3ad78334a69b36e107232e337f9d693dcc9df2}{1e3ad78} since v6.9.
 This commit has been backported to long term stable kernels, like v5.15.154+, v6.1.85+, v6.6.26+ and v6.8.5+, see this \href{https://stackoverflow.com/a/78607015}{answer} for more details.
 In this case, thanks to Kprobes, a hook can be used instead on the system call entry to intercept the system call.
 
@@ -1672,8 +1681,8 @@ Rather than using \sh|/bin/sleep| commands, the kernel has another way to do thi
 
 Completions as code synchronization mechanism have three main parts, initialization of struct completion synchronization object, the waiting or barrier part through \cpp|wait_for_completion()|, and the signalling side through a call to \cpp|complete()|.
 
-In the subsequent example, two threads are initiated: crank and flywheel. 
-It is imperative that the crank thread starts before the flywheel thread. 
+In the subsequent example, two threads are initiated: crank and flywheel.
+It is imperative that the crank thread starts before the flywheel thread.
 A completion state is established for each of these threads, with a distinct completion defined for both the crank and flywheel threads.
 At the exit point of each thread the respective completion state is updated, and \cpp|wait_for_completion| is used by the flywheel thread to ensure that it does not begin prematurely.
 The crank thread uses the \cpp|complete_all()| function to update the completion, which lets the flywheel thread continue.
@@ -1961,12 +1970,12 @@ sudo insmod dht11.ko
 
 Check the Output of the DHT11 Sensor:
 \begin{codebash}
-sudo cat /dev/dht11 
+sudo cat /dev/dht11
 \end{codebash}
 
 Expected Output:
 \begin{verbatim}
-$ sudo cat /dev/dht11 
+$ sudo cat /dev/dht11
 Humidity: 61%
 Temperature: 30°C
 \end{verbatim}
