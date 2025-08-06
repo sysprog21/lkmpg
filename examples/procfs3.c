@@ -61,6 +61,25 @@ static int procfs_close(struct inode *inode, struct file *file)
     return 0;
 }
 
+/* 
+ * In recent kernels, this would typically be handled through other mechanisms
+ * like security modules, but we keep it here for educational purposes.
+ */
+static int module_permission(struct mnt_idmap *idmap, struct inode *inode,
+                             int mask)
+{
+    pr_info("procfs: permission called with mask %d\n", mask);
+    return 0;
+}
+
+/*
+ * inode_operations structure to demonstrate the relationship between
+ * file operations and inode operations as mentioned in the documentation
+ */
+static struct inode_operations procfs_inode_operations = {
+    .permission = module_permission,
+};
+
 #ifdef HAVE_PROC_OPS
 static struct proc_ops file_ops_4_our_proc_file = {
     .proc_read = procfs_read,
