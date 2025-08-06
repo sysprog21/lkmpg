@@ -34,6 +34,7 @@ obj-m += static_key.o
 obj-m += led.o
 obj-m += dht11.o
 
+KDIR ?= /lib/modules/$(shell uname -r)/build
 PWD := $(CURDIR)
 
 ifeq ($(CONFIG_STATUS_CHECK_GCC),y)
@@ -42,10 +43,10 @@ ccflags-y += -fanalyzer
 endif
 
 all:
-	$(MAKE) -C /lib/modules/$(shell uname -r)/build CC=$(CC) M=$(PWD) modules
+	$(MAKE) -C $(KDIR) CC=$(CC) M=$(PWD) modules
 
 clean:
-	$(MAKE) -C /lib/modules/$(shell uname -r)/build CC=$(CC) M=$(PWD) clean
+	$(MAKE) -C $(KDIR) CC=$(CC) M=$(PWD) clean
 	$(RM) other/cat_noblock *.plist
 
 indent:
