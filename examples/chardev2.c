@@ -40,7 +40,6 @@ static int device_open(struct inode *inode, struct file *file)
 {
     pr_info("device_open(%p)\n", file);
 
-    try_module_get(THIS_MODULE);
     return 0;
 }
 
@@ -48,7 +47,6 @@ static int device_release(struct inode *inode, struct file *file)
 {
     pr_info("device_release(%p,%p)\n", inode, file);
 
-    module_put(THIS_MODULE);
     return 0;
 }
 

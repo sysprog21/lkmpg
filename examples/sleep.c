@@ -95,7 +95,6 @@ static int module_open(struct inode *inode, struct file *file)
     /* Try to get without blocking  */
     if (!atomic_cmpxchg(&already_open, 0, 1)) {
         /* Success without blocking, allow the access */
-        try_module_get(THIS_MODULE);
         return 0;
     }
     /* If the file's flags include O_NONBLOCK, it means the process does not
@@ -105,12 +104,6 @@ static int module_open(struct inode *inode, struct file *file)
      */
     if (file->f_flags & O_NONBLOCK)
         return -EAGAIN;
-
-    /* This is the correct place for try_module_get(THIS_MODULE) because if
-     * a process is in the loop, which is within the kernel module,
-     * the kernel module must not be removed.
-     */
-    try_module_get(THIS_MODULE);
 
     while (atomic_cmpxchg(&already_open, 0, 1)) {
         int i, is_sig = 0;
@@ -132,15 +125,7 @@ static int module_open(struct inode *inode, struct file *file)
             is_sig = current->pending.signal.sig[i] & ~current->blocked.sig[i];
 
         if (is_sig) {
-            /* It is important to put module_put(THIS_MODULE) here, because
-             * for processes where the open is interrupted there will never
-             * be a corresponding close. If we do not decrement the usage
-             * count here, we will be left with a positive usage count
-             * which we will have no way to bring down to zero, giving us
-             * an immortal module, which can only be killed by rebooting
-             * the machine.
-             */
-            module_put(THIS_MODULE);
+            /* Return -EINTR if we got a signal */
             return -EINTR;
         }
     }
@@ -162,8 +147,6 @@ static int module_close(struct inode *inode, struct file *file)
      * file, they can have it.
      */
     wake_up(&waitq);
-
-    module_put(THIS_MODULE);
 
     return 0; /* success */
 }

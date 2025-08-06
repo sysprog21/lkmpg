@@ -1095,16 +1095,17 @@ However, there is a counter which keeps track of how many processes are using yo
 You can see what its value is by looking at the 3rd field with the command \sh|cat /proc/modules| or \sh|lsmod|.
 If this number isn't zero, \sh|rmmod| will fail.
 Note that you do not have to check the counter within \cpp|cleanup_module| because the check will be performed for you by the system call \cpp|sys_delete_module|, defined in \src{include/linux/syscalls.h}.
-You should not use this counter directly, but there are functions defined in \src{include/linux/module.h} which let you increase, decrease and display this counter:
+You should not use this counter directly, but there are functions defined in \src{include/linux/module.h} which let you display this counter:
 
 \begin{itemize}
-  \item \cpp|try_module_get(THIS_MODULE)|: Increment the reference count of current module.
-  \item \cpp|module_put(THIS_MODULE)|: Decrement the reference count of current module.
   \item \cpp|module_refcount(THIS_MODULE)|: Return the value of reference count of current module.
 \end{itemize}
 
-It is important to keep the counter accurate; if you ever lose track of the correct usage count, you will never be able to unload the module; it is now reboot time.
-This is bound to happen to you sooner or later during a module's development.
+Note: The use of \cpp|try_module_get(THIS_MODULE)| and \cpp|module_put(THIS_MODULE)| within a module's own code is considered unsafe and should be avoided.
+The kernel automatically manages the reference count when file operations are in progress,
+so manual reference counting is unnecessary and can lead to race conditions.
+For a deeper understanding of when and how to properly use module reference counting,
+see \url{https://stackoverflow.com/questions/1741415/linux-kernel-modules-when-to-use-try-module-get-module-put}.
 
 \subsection{chardev.c}
 \label{sec:chardev_c}
@@ -1152,6 +1153,8 @@ Normal filesystems are located on a disk, rather than just in memory (which is w
 The inode contains information about the file, for example the file's permissions, together with a pointer to the disk location or locations where the file's data can be found.
 
 Because we do not get called when the file is opened or closed, there is nowhere for us to put \cpp|try_module_get| and \cpp|module_put| in this module, and if the file is opened and then the module is removed, there is no way to avoid the consequences.
+The kernel's automatic reference counting for file operations helps prevent module removal while files are in use,
+but \verb|/proc| files require careful handling due to their different lifecycle.
 
 Here is a simple example showing how to use a \verb|/proc| file.
 This is the HelloWorld for the \verb|/proc| filesystem.
