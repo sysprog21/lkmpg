@@ -956,6 +956,9 @@ struct file_operations {
 Some operations are not implemented by a driver.
 For example, a driver that handles a video card will not need to read from a directory structure.
 The corresponding entries in the \cpp|file_operations| structure should be set to \cpp|NULL|.
+\footnote{
+As of Linux kernel 6.12, several member fields have been added, removed, or had their prototypes changed. For example, additions include \texttt{fop\_flags}, \texttt{splice\_eof}, and \texttt{uring\_cmd}; removals include \texttt{iterate} and \texttt{sendpage}; and the prototype for \texttt{iopoll} was modified.
+}
 
 There is a gcc extension that makes assigning to this structure more convenient.
 You will see it in modern drivers, and may catch you by surprise.
