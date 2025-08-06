@@ -33,6 +33,7 @@ obj-m += vkbd.o
 obj-m += static_key.o
 obj-m += led.o
 obj-m += dht11.o
+obj-m += devicetree.o
 
 PWD := $(CURDIR)
 
