@@ -155,7 +155,7 @@ static int module_close(struct inode *inode, struct file *file)
  * functions.
  */
 
-/* File operations for our proc file. This is where we place pointers to all
+/* File operations for our /proc file. This is where we place pointers to all
  * the functions called when somebody tries to do something to our file. NULL
  * means we don't want to deal with something.
  */
@@ -177,7 +177,7 @@ static const struct file_operations file_ops_4_our_proc_file = {
 };
 #endif
 
-/* Initialize the module - register the proc file */
+/* Initialize the module - register the /proc file */
 static int __init sleep_init(void)
 {
     our_proc_file =
