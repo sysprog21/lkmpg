@@ -47,7 +47,7 @@ all:
 
 clean:
 	$(MAKE) -C $(KDIR) CC=$(CC) M=$(PWD) clean
-	$(RM) other/cat_noblock *.plist
+	$(RM) other/cat_nonblock *.plist
 
 indent:
 	clang-format -i *.[ch]
