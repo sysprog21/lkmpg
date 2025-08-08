@@ -2252,6 +2252,97 @@ An example is shown below, and you can use this as a template to add your own su
 
 \samplec{examples/devicemodel.c}
 
+\section{Device Tree}
+\label{sec:device_tree}
+\subsection{Introduction to Device Tree}
+\label{sec:dt_intro}
+Device Tree is a data structure that describes hardware components in a system, particularly in embedded systems and ARM-based platforms.
+Instead of hard-coding hardware details in the kernel source, Device Tree provides a separate, human-readable description that the kernel can parse at boot time.
+This separation allows the same kernel binary to support multiple hardware platforms,
+making development and maintenance significantly easier.
+
+Device Tree files (with \verb|.dts| extension for source files and \verb|.dtb| for compiled binary files) use a hierarchical structure similar to a filesystem to represent the hardware topology.
+Each hardware component is represented as a node with properties that describe its characteristics,
+such as memory addresses, interrupt numbers, and device-specific parameters.
+
+\subsection{Device Tree and Kernel Modules}
+\label{sec:dt_modules}
+While Device Tree is primarily used during kernel initialization, kernel modules can also interact with Device Tree nodes through the platform device framework.
+When the kernel parses the Device Tree at boot, it creates platform devices for nodes that have compatible strings.
+Kernel modules can then register platform drivers that match these compatible strings, allowing them to be automatically probed when the corresponding hardware is detected.
+
+The key concepts for Device Tree interaction in kernel modules include:
+\begin{itemize}
+\item \textbf{Compatible strings}: Unique identifiers that match Device Tree nodes to their drivers
+\item \textbf{Property reading}: Functions to extract configuration data from Device Tree nodes
+\item \textbf{Platform driver framework}: Infrastructure for binding drivers to devices described in Device Tree
+\item \textbf{Device-specific data}: Custom properties that can be defined for specific hardware
+\end{itemize}
+
+\subsection{Example: Device Tree Module}
+\label{sec:dt_example}
+The following example demonstrates how a kernel module can interact with Device Tree nodes.
+This module registers a platform driver that matches specific compatible strings and extracts properties from the matched Device Tree nodes.
+
+\samplec{examples/devicetree.c}
+
+\subsection{Device Tree Source Example}
+\label{sec:dt_source}
+To use the above module, you would need a Device Tree entry like this:
+
+\begin{code}
+/* Example device tree fragment */
+lkmpg_device@0 {
+    compatible = "lkmpg,example-device";
+    reg = <0x40000000 0x1000>;
+    label = "LKMPG Test Device";
+    lkmpg,custom-value = <100>;
+    lkmpg,has-clock;
+};
+\end{code}
+
+The properties in this Device Tree node would be read by the module's probe function when the device is matched.
+The \verb|compatible| property is used to match the device with the driver, while other properties provide device-specific configuration.
+
+\subsection{Testing Device Tree Modules}
+\label{sec:dt_testing}
+Testing Device Tree modules can be done in several ways:
+
+\begin{enumerate}
+\item \textbf{Using Device Tree overlays}: On systems that support it (like Raspberry Pi), you can load Device Tree overlays at runtime to add new devices without rebooting.
+
+\item \textbf{Modifying the main Device Tree}: Add your device nodes to the system's main Device Tree source file and recompile it.
+
+\item \textbf{Using QEMU}: For development and testing, QEMU can emulate systems with custom Device Trees, allowing you to test your modules without physical hardware.
+\end{enumerate}
+
+To check if your device was properly detected, you can examine the sysfs filesystem:
+
+\begin{codebash}
+# List all platform devices
+ls /sys/bus/platform/devices/
+
+# Check device tree nodes
+ls /proc/device-tree/
+\end{codebash}
+
+\subsection{Common Device Tree Functions}
+\label{sec:dt_functions}
+Here are some commonly used Device Tree functions in kernel modules:
+
+\begin{itemize}
+\item \cpp|of_property_read_string()| - Read a string property
+\item \cpp|of_property_read_u32()| - Read a 32-bit integer property
+\item \cpp|of_property_read_bool()| - Check if a boolean property exists
+\item \cpp|of_find_property()| - Find a property by name
+\item \cpp|of_get_property()| - Get a property's raw value
+\item \cpp|of_match_device()| - Match a device against a match table
+\item \cpp|of_parse_phandle()| - Parse a phandle reference to another node
+\end{itemize}
+
+These functions provide a robust interface for extracting configuration data from Device Tree nodes,
+allowing modules to be highly configurable without code changes.
+
 \section{Optimizations}
 \label{sec:optimization}
 \subsection{Likely and Unlikely conditions}

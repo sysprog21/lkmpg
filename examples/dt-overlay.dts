@@ -1,0 +1,42 @@
+/*
+ * Device Tree Overlay for LKMPG Device Tree Example
+ * 
+ * This overlay can be compiled and loaded on systems that support
+ * runtime device tree overlays (like Raspberry Pi).
+ *
+ * Compile with:
+ *   dtc -@ -I dts -O dtb -o dt-overlay.dtbo dt-overlay.dts
+ *
+ * Load with (on Raspberry Pi):
+ *   sudo dtoverlay dt-overlay.dtbo
+ */
+
+/dts-v1/;
+/plugin/;
+
+/ {
+    compatible = "brcm,bcm2835";
+
+    fragment@0 {
+        target-path = "/";
+        __overlay__ {
+            lkmpg_device@0 {
+                compatible = "lkmpg,example-device";
+                reg = <0x40000000 0x1000>;
+                label = "LKMPG Test Device";
+                lkmpg,custom-value = <100>;
+                lkmpg,has-clock;
+                status = "okay";
+            };
+
+            lkmpg_device@1 {
+                compatible = "lkmpg,another-device";
+                reg = <0x40001000 0x1000>;
+                label = "LKMPG Secondary Device";
+                lkmpg,custom-value = <200>;
+                /* no has-clock property for this one */
+                status = "okay";
+            };
+        };
+    };
+};
