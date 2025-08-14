@@ -1475,7 +1475,7 @@ To modify the content of \cpp|sys_call_table|, we need to consider the control r
 A control register is a processor register that changes or controls the general behavior of the CPU.
 For x86 architecture, the \verb|cr0| register has various control flags that modify the basic operation of the processor.
 The \verb|WP| flag in \verb|cr0| stands for write protection.
-Once the \verb|WP| flag is set, the processor disallows further write attempts to the read-only sections
+Once the \verb|WP| flag is set, the processor disallows further write attempts to the read-only sections.
 Therefore, we must disable the \verb|WP| flag before modifying \cpp|sys_call_table|.
 Since Linux v5.3, the \cpp|write_cr0| function cannot be used because of the sensitive \verb|cr0| bits pinned by the security issue, the attacker may write into CPU control registers to disable CPU protections like write protection.
 As a result, we have to provide the custom assembly routine to bypass it.
