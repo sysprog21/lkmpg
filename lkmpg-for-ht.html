@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>August 8, 2025</span></div>
+<div class='date'><span class='ecrm-1200'>August 14, 2025</span></div>
                                                                   
 
                                                                   
@@ -3349,7 +3349,7 @@ register that changes or controls the general behavior of the CPU. For x86
 architecture, the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>cr0</span></span></span> register has various control flags that modify the basic
 operation of the processor. The <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>WP</span></span></span> flag in <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>cr0</span></span></span> stands for write protection.
 Once the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>WP</span></span></span> flag is set, the processor disallows further write attempts to the
-read-only sections Therefore, we must disable the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>WP</span></span></span> flag before modifying
+read-only sections. Therefore, we must disable the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>WP</span></span></span> flag before modifying
 <code> <span class='ectt-1000'>sys_call_table</span>
 </code>. Since Linux v5.3, the <code>  <span class='ectt-1000'>write_cr0</span>
 </code> function cannot be used because of the sensitive <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>cr0</span></span></span> bits pinned by the security
