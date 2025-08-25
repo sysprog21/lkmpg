@@ -1121,14 +1121,16 @@ see \url{https://stackoverflow.com/questions/1741415/linux-kernel-modules-when-t
 \subsection{chardev.c}
 \label{sec:chardev_c}
 The next code sample creates a char driver named \verb|chardev|.
-You can dump its device file.
+You can verify it has been registered by checking:
 
 \begin{codebash}
 cat /proc/devices
 \end{codebash}
 
-(or open the file with a program) and the driver will put the number of times the device file has been read from into the file.
-We do not support writing to the file (like \sh|echo "hi" > /dev/hello|), but catch these attempts and tell the user that the operation is not supported.
+This will show the device's major number.
+To actually use the device, you need to read from \verb|/dev/chardev| (or open the file with a program) and the driver will put the number of times the device file has been read from into the file.
+We do not support writing to the file (like \sh|echo "hi" > /dev/chardev|),
+but catch these attempts and tell the user that the operation is not supported.
 Do not worry if you do not see what we do with the data we read into the buffer; we do not do much with it.
 We simply read in the data and print a message acknowledging that we received it.
 
