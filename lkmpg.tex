@@ -2107,11 +2107,21 @@ You can change those numbers to whatever is appropriate for your board.
 \subsection{Bottom Half}
 \label{sec:bottom_half}
 Suppose you want to do a bunch of stuff inside of an interrupt routine.
-A common way to do that without rendering the interrupt unavailable for a significant duration is to combine it with a tasklet.
+A common way to avoid blocking the interrupt for a significant duration
+is to defer the time-consuming part to a workqueue.
 This pushes the bulk of the work off into the scheduler.
+This approach helps speed up the interrupt handling process itself,
+allowing the system to respond to the next hardware interrupt more quickly.
 
-The example below modifies the previous example to also run an additional task when an interrupt is triggered.
+Kernel developers generally discourage using tasklets due to their design limitations,
+such as memory management issues and unpredictable latencies.
+Instead, they recommend more robust mechanisms like workqueues or \textbf{softirqs}.
+To address tasklet shortcomings, Linux contributors introduced the BH workqueue,
+activated with the \cpp|WQ_BH| flag.
+This workqueue retains critical features,
+such as execution in atomic (\textbf{softirq}) context on the same CPU and the inability to sleep.
 
+The example below extends the previous code to include an additional task executed in process context when an interrupt is triggered.
 \samplec{examples/bottomhalf.c}
 
 \subsection{Threaded IRQ}
