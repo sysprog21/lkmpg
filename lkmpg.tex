@@ -1778,7 +1778,7 @@ This means that if an interrupt occurs while the lock is held, the interrupt sta
 In contrast, \cpp|spin_lock_irqsave()| disables interrupts and also saves the interrupt state, ensuring that interrupts are restored to their previous state when the lock is released.
 This makes \cpp|spin_lock_irqsave()| a safer option in scenarios where preserving the interrupt state is crucial.
 
-Next, \cpp|spin_lock_bh()| disables softirqs (software interrupts) but allows hardware interrupts to continue.
+Next, \cpp|spin_lock_bh()| disables \textbf{softirqs} (software interrupts) but allows hardware interrupts to continue.
 Unlike \cpp|spin_lock_irq()| and \cpp|spin_lock_irqsave()|, which disable both hardware and software interrupts, \cpp|spin_lock_bh()| is useful when hardware interrupts need to remain active.
 
 For more information about spinlock usage and lock types, see the following resources:
