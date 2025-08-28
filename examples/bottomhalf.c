@@ -189,7 +189,7 @@ fail3:
     free_irq(button_irqs[0], NULL);
 
 fail2:
-    gpio_free_array(buttons, ARRAY_SIZE(leds));
+    gpio_free_array(buttons, ARRAY_SIZE(buttons));
 
 fail1:
     gpio_free_array(leds, ARRAY_SIZE(leds));
