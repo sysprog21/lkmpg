@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>August 25, 2025</span></div>
+<div class='date'><span class='ecrm-1200'>August 28, 2025</span></div>
                                                                   
 
                                                                   
@@ -4566,8 +4566,8 @@ are restored to their previous state when the lock is released. This makes
 <code> <span class='ectt-1000'>spin_lock_irqsave()</span>
 </code> a safer option in scenarios where preserving the interrupt state is crucial.
 </p><!-- l. 1781 --><p class='indent'>   Next, <code>  <span class='ectt-1000'>spin_lock_bh()</span>
-</code> disables softirqs (software interrupts) but allows hardware interrupts to continue. Unlike
-<code> <span class='ectt-1000'>spin_lock_irq()</span>
+</code> disables <span class='ecbx-1000'>softirqs </span>(software interrupts) but allows hardware interrupts to continue.
+Unlike <code>  <span class='ectt-1000'>spin_lock_irq()</span>
 </code> and <code>  <span class='ectt-1000'>spin_lock_irqsave()</span>
 </code>, which disable both hardware and software interrupts,
 <code> <span class='ectt-1000'>spin_lock_bh()</span>
@@ -5990,7 +5990,7 @@ appropriate for your board.
 <a id='x1-62330r165'></a><span class='ecrm-0500'>165</span><span class='ectt-0800'>    free_irq(button_irqs[0], NULL);</span> 
 <a id='x1-62332r166'></a><span class='ecrm-0500'>166</span> 
 <a id='x1-62334r167'></a><span class='ecrm-0500'>167</span><span class='ectt-0800'>fail2:</span> 
-<a id='x1-62336r168'></a><span class='ecrm-0500'>168</span><span class='ectt-0800'>    gpio_free_array(buttons, ARRAY_SIZE(leds));</span> 
+<a id='x1-62336r168'></a><span class='ecrm-0500'>168</span><span class='ectt-0800'>    gpio_free_array(buttons, ARRAY_SIZE(buttons));</span> 
 <a id='x1-62338r169'></a><span class='ecrm-0500'>169</span> 
 <a id='x1-62340r170'></a><span class='ecrm-0500'>170</span><span class='ectt-0800'>fail1:</span> 
 <a id='x1-62342r171'></a><span class='ecrm-0500'>171</span><span class='ectt-0800'>    gpio_free_array(leds, ARRAY_SIZE(leds));</span> 
@@ -6237,7 +6237,7 @@ when an interrupt is triggered.
 <a id='x1-63378r189'></a><span class='ecrm-0500'>189</span><span class='ectt-0800'>    free_irq(button_irqs[0], NULL);</span> 
 <a id='x1-63380r190'></a><span class='ecrm-0500'>190</span> 
 <a id='x1-63382r191'></a><span class='ecrm-0500'>191</span><span class='ectt-0800'>fail2:</span> 
-<a id='x1-63384r192'></a><span class='ecrm-0500'>192</span><span class='ectt-0800'>    gpio_free_array(buttons, ARRAY_SIZE(leds));</span> 
+<a id='x1-63384r192'></a><span class='ecrm-0500'>192</span><span class='ectt-0800'>    gpio_free_array(buttons, ARRAY_SIZE(buttons));</span> 
 <a id='x1-63386r193'></a><span class='ecrm-0500'>193</span> 
 <a id='x1-63388r194'></a><span class='ecrm-0500'>194</span><span class='ectt-0800'>fail1:</span> 
 <a id='x1-63390r195'></a><span class='ecrm-0500'>195</span><span class='ectt-0800'>    gpio_free_array(leds, ARRAY_SIZE(leds));</span> 
@@ -6476,7 +6476,7 @@ halves, but using threads.
 <a id='x1-64347r171'></a><span class='ecrm-0500'>171</span><span class='ectt-0800'>    free_irq(button_irqs[0], &amp;buttons[0]);</span> 
 <a id='x1-64349r172'></a><span class='ecrm-0500'>172</span> 
 <a id='x1-64351r173'></a><span class='ecrm-0500'>173</span><span class='ectt-0800'>fail2:</span> 
-<a id='x1-64353r174'></a><span class='ecrm-0500'>174</span><span class='ectt-0800'>    gpio_free_array(buttons, ARRAY_SIZE(leds));</span> 
+<a id='x1-64353r174'></a><span class='ecrm-0500'>174</span><span class='ectt-0800'>    gpio_free_array(buttons, ARRAY_SIZE(buttons));</span> 
 <a id='x1-64355r175'></a><span class='ecrm-0500'>175</span> 
 <a id='x1-64357r176'></a><span class='ecrm-0500'>176</span><span class='ectt-0800'>fail1:</span> 
 <a id='x1-64359r177'></a><span class='ecrm-0500'>177</span><span class='ectt-0800'>    gpio_free_array(leds, ARRAY_SIZE(leds));</span> 
