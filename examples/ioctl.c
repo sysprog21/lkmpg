@@ -152,29 +152,25 @@ static struct file_operations fops = {
 static int __init ioctl_init(void)
 {
     dev_t dev;
-    int alloc_ret = -1;
-    int cdev_ret = -1;
-    alloc_ret = alloc_chrdev_region(&dev, 0, num_of_dev, DRIVER_NAME);
+    int ret;
 
-    if (alloc_ret)
-        goto error;
+    ret = alloc_chrdev_region(&dev, 0, num_of_dev, DRIVER_NAME);
+
+    if (ret)
+        return ret;
 
     test_ioctl_major = MAJOR(dev);
     cdev_init(&test_ioctl_cdev, &fops);
-    cdev_ret = cdev_add(&test_ioctl_cdev, dev, num_of_dev);
+    ret = cdev_add(&test_ioctl_cdev, dev, num_of_dev);
 
-    if (cdev_ret)
-        goto error;
+    if (ret) {
+        unregister_chrdev_region(dev, num_of_dev);
+        return ret;
+    }
 
     pr_alert("%s driver(major: %d) installed.\n", DRIVER_NAME,
              test_ioctl_major);
     return 0;
-error:
-    if (cdev_ret == 0)
-        cdev_del(&test_ioctl_cdev);
-    if (alloc_ret == 0)
-        unregister_chrdev_region(dev, num_of_dev);
-    return -1;
 }
 
 static void __exit ioctl_exit(void)
