@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>August 28, 2025</span></div>
+<div class='date'><span class='ecrm-1200'>September 3, 2025</span></div>
                                                                   
 
                                                                   
@@ -241,8 +241,8 @@ disrupting the system.
 <!-- l. 159 --><p class='noindent'>Before delving into code, certain matters require attention. Variances exist among
 individuals’ systems, and distinct personal approaches are evident. The achievement
 of successful compilation and loading of the inaugural “hello world” program may, at
-times, present challenges. It is reassuring to note that overcoming the initial
-obstacle in the first attempt paves the way for subsequent endeavors to proceed
+times, present challenges. It is reassuring to note that overcoming the initial obstacle
+on the first attempt paves the way for subsequent endeavors to proceed
 seamlessly.
 </p><!-- l. 165 --><p class='indent'>
      </p><ol class='enumerate1'>
@@ -299,8 +299,8 @@ kernel.
 </p>
    <pre class='fancyvrb' id='fancyvrb6'><a id='x1-9004r1'></a><span class='ecrm-0500'>1</span><span class='ectt-1000'>sudo apt-get update</span> 
 <a id='x1-9006r2'></a><span class='ecrm-0500'>2</span><span class='ectt-1000'>apt-cache search linux-headers-</span><span id='textcolor1'><span class='tctt-1000'>`</span></span><span class='ectt-1000'>uname -r</span><span id='textcolor2'><span class='tctt-1000'>`</span></span></pre>
-<!-- l. 211 --><p class='indent'>   The following command provides information on the available kernel header files.
-Then, for example: 
+<!-- l. 211 --><p class='indent'>   The following command provides information about the available kernel header
+files. Then, for example: 
                                                                   
 
                                                                   
@@ -388,7 +388,7 @@ specified by the security policy and cannot be inherited. The default security p
 <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>sudoers</span></span></span>. In the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>sudoers</span></span></span> security policy, <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>env_reset</span></span></span> is enabled by default,
 which restricts environment variables. Specifically, path variables are not
 retained from the user environment; they are set to default values (for more
-information see: <a href='https://www.sudo.ws/docs/man/sudoers.man/'>sudoers manual</a>). You can see the environment variable settings
+information, see: <a href='https://www.sudo.ws/docs/man/sudoers.man/'>sudoers manual</a>). You can see the environment variable settings
 by:
                                                                   
 
@@ -3286,7 +3286,7 @@ kernel programmers thought you’d want, such as write a device driver. But what
                                                                   
 you want to do something unusual, to change the behavior of the system in some
 way? Then, you are mostly on your own.
-</p><!-- l. 1439 --><p class='indent'>   Notice that this example has been unavailable since Linux v6.9. Specifically after
+</p><!-- l. 1439 --><p class='indent'>   Notice that this example has been unavailable since Linux v6.9. Specifically, after
 this <a href='https://github.com/torvalds/linux/commit/1e3ad78334a69b36e107232e337f9d693dcc9df2#diff-4a16bf89a09b4f49669a30d54540f0b936ea0224dc6ee9edfa7700deb16c3e11R52'>commit</a>, due to the system call table changing the implementation from an
 indirect function call table to a switch statement for security issues, such as Branch
 History Injection (BHI) attack. See more information <a href='https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2060909'>here</a>.
@@ -4883,7 +4883,7 @@ Thus, it is better to use a unique prototype to separate from the cluster that t
 </code> structure, into a larger structure, and it can use the
 <code> <span class='ectt-1000'>container_of</span>
 </code> macro instead of the <code>  <span id='textcolor2415'><span class='ectt-1000'>unsigned</span></span><span class='ectt-1000'> </span><span id='textcolor2416'><span class='ectt-1000'>long</span></span>
-</code> value. For more information see: <a href='https://lwn.net/Articles/735887/'>Improving the kernel timers API</a>.
+</code> value. For more information, see: <a href='https://lwn.net/Articles/735887/'>Improving the kernel timers API</a>.
 </p><!-- l. 1850 --><p class='indent'>   Before Linux v4.14, <code>  <span class='ectt-1000'>setup_timer</span>
 </code> was used to initialize the timer and the
 <code> <span class='ectt-1000'>timer_list</span>
