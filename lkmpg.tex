@@ -160,7 +160,7 @@ Before delving into code, certain matters require attention.
 Variances exist among individuals' systems, and distinct personal approaches are evident.
 The achievement of successful compilation and loading of the inaugural ``hello world'' program may,
 at times, present challenges.
-It is reassuring to note that overcoming the initial obstacle in the first attempt paves the way for subsequent endeavors to proceed seamlessly.
+It is reassuring to note that overcoming the initial obstacle on the first attempt paves the way for subsequent endeavors to proceed seamlessly.
 
 \begin{enumerate}
   \item Modversioning.
@@ -208,7 +208,7 @@ sudo apt-get update
 apt-cache search linux-headers-`uname -r`
 \end{codebash}
 
-The following command provides information on the available kernel header files.
+The following command provides information about the available kernel header files.
 Then, for example:
 \begin{codebash}
 sudo apt-get install linux-headers-`uname -r`
@@ -278,7 +278,7 @@ If there is no \verb|PWD := $(CURDIR)| statement in the Makefile, then it may no
 This is because some environment variables are specified by the security policy and cannot be inherited.
 The default security policy is \verb|sudoers|.
 In the \verb|sudoers| security policy, \verb|env_reset| is enabled by default, which restricts environment variables.
-Specifically, path variables are not retained from the user environment; they are set to default values (for more information see: \href{https://www.sudo.ws/docs/man/sudoers.man/}{sudoers manual}).
+Specifically, path variables are not retained from the user environment; they are set to default values (for more information, see: \href{https://www.sudo.ws/docs/man/sudoers.man/}{sudoers manual}).
 You can see the environment variable settings by:
 
 \begin{verbatim}
@@ -1437,7 +1437,7 @@ But what if you want to do something unusual, to change the behavior of the syst
 Then, you are mostly on your own.
 
 Notice that this example has been unavailable since Linux v6.9.
-Specifically after this \href{https://github.com/torvalds/linux/commit/1e3ad78334a69b36e107232e337f9d693dcc9df2#diff-4a16bf89a09b4f49669a30d54540f0b936ea0224dc6ee9edfa7700deb16c3e11R52}{commit}, due to the system call table changing the implementation from an indirect function call table to a switch statement for security issues, such as Branch History Injection (BHI) attack.
+Specifically, after this \href{https://github.com/torvalds/linux/commit/1e3ad78334a69b36e107232e337f9d693dcc9df2#diff-4a16bf89a09b4f49669a30d54540f0b936ea0224dc6ee9edfa7700deb16c3e11R52}{commit}, due to the system call table changing the implementation from an indirect function call table to a switch statement for security issues, such as Branch History Injection (BHI) attack.
 See more information \href{https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2060909}{here}.
 
 Should one choose not to use a virtual machine, kernel programming can become risky.
@@ -1845,7 +1845,7 @@ Furthermore, the function prototype with \cpp|unsigned long| argument may be an 
 Thus, it is better to use a unique prototype to separate from the cluster that takes an \cpp|unsigned long| argument.
 The timer callback should be passed a pointer to the \cpp|timer_list| structure rather than an \cpp|unsigned long| argument.
 Then, it wraps all the information the callback needs, including the \cpp|timer_list| structure, into a larger structure, and it can use the \cpp|container_of| macro instead of the \cpp|unsigned long| value.
-For more information see: \href{https://lwn.net/Articles/735887/}{Improving the kernel timers API}.
+For more information, see: \href{https://lwn.net/Articles/735887/}{Improving the kernel timers API}.
 
 Before Linux v4.14, \cpp|setup_timer| was used to initialize the timer and the \cpp|timer_list| structure looked like:
 \begin{code}
