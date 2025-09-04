@@ -21,13 +21,6 @@
 #define NO_GPIO_REQUEST_ARRAY
 #endif
 
-/* Macro DECLARE_TASKLET_OLD exists for compatibility.
- * See https://lwn.net/Articles/830964/
- */
-#ifndef DECLARE_TASKLET_OLD
-#define DECLARE_TASKLET_OLD(arg1, arg2) DECLARE_TASKLET(arg1, arg2, 0L)
-#endif
-
 static int button_irqs[] = { -1, -1 };
 
 /* Define GPIOs for LEDs.
