@@ -1561,12 +1561,12 @@ $ sudo update-grub
 For more information, check out the following:
 
 \begin{itemize}
- \item \href{https://lwn.net/Articles/804849/}{Cook: Security things in Linux v5.3}
- \item \href{https://lwn.net/Articles/12211/}{Unexporting the system call table}
- \item \href{https://lwn.net/Articles/810077/}{Control-flow integrity for the kernel}
- \item \href{https://lwn.net/Articles/813350/}{Unexporting kallsyms\_lookup\_name()}
- \item \href{https://www.kernel.org/doc/Documentation/kprobes.txt}{Kernel Probes (Kprobes)}
- \item \href{https://lwn.net/Articles/569635/}{Kernel address space layout randomization}
+  \item \href{https://lwn.net/Articles/804849/}{Cook: Security things in Linux v5.3}
+  \item \href{https://lwn.net/Articles/12211/}{Unexporting the system call table}
+  \item \href{https://lwn.net/Articles/810077/}{Control-flow integrity for the kernel}
+  \item \href{https://lwn.net/Articles/813350/}{Unexporting kallsyms\_lookup\_name()}
+  \item \href{https://www.kernel.org/doc/Documentation/kprobes.txt}{Kernel Probes (Kprobes)}
+  \item \href{https://lwn.net/Articles/569635/}{Kernel address space layout randomization}
 \end{itemize}
 
 The source code here is an example of such a kernel module.
@@ -1782,10 +1782,10 @@ Next, \cpp|spin_lock_bh()| disables \textbf{softirqs} (software interrupts) but 
 Unlike \cpp|spin_lock_irq()| and \cpp|spin_lock_irqsave()|, which disable both hardware and software interrupts, \cpp|spin_lock_bh()| is useful when hardware interrupts need to remain active.
 
 For more information about spinlock usage and lock types, see the following resources:
- \begin{itemize}
+\begin{itemize}
   \item \href{https://www.kernel.org/doc/Documentation/locking/spinlocks.txt}{Lesson 1: Spin locks}
-  \item\href{https://docs.kernel.org/locking/locktypes.html}{Lock types and their rules}
- \end{itemize}
+  \item \href{https://docs.kernel.org/locking/locktypes.html}{Lock types and their rules}
+\end{itemize}
 
 \subsection{Read and write locks}
 \label{sec:rwlock}
@@ -1809,9 +1809,9 @@ Implementing the atomic types by C11 atomics may allow the kernel to throw away 
 But there are some problems, such as the memory model of the kernel doesn't match the model formed by the C11 atomics.
 For further details, see:
 \begin{itemize}
- \item \href{https://www.kernel.org/doc/Documentation/atomic_t.txt}{kernel documentation of atomic types}
- \item \href{https://lwn.net/Articles/691128/}{Time to move to C11 atomics?}
- \item \href{https://lwn.net/Articles/698315/}{Atomic usage patterns in the kernel}
+  \item \href{https://www.kernel.org/doc/Documentation/atomic_t.txt}{kernel documentation of atomic types}
+  \item \href{https://lwn.net/Articles/691128/}{Time to move to C11 atomics?}
+  \item \href{https://lwn.net/Articles/698315/}{Atomic usage patterns in the kernel}
 \end{itemize}
 
 % FIXME: we should rewrite this section
@@ -2170,9 +2170,9 @@ It is an API to allow easy development of virtual input drivers.
 The driver needs to export a \cpp|vinput_device()| that contains the virtual device name and \cpp|vinput_ops| structure that describes:
 
 \begin{itemize}
-    \item the init function: \cpp|init()|
-    \item the input event injection function: \cpp|send()|
-    \item the readback function: \cpp|read()|
+  \item the init function: \cpp|init()|
+  \item the input event injection function: \cpp|send()|
+  \item the readback function: \cpp|read()|
 \end{itemize}
 
 Then using \cpp|vinput_register_device()| and \cpp|vinput_unregister_device()| will add a new device to the list of support virtual input devices.
@@ -2285,10 +2285,10 @@ Kernel modules can then register platform drivers that match these compatible st
 
 The key concepts for Device Tree interaction in kernel modules include:
 \begin{itemize}
-\item \textbf{Compatible strings}: Unique identifiers that match Device Tree nodes to their drivers
-\item \textbf{Property reading}: Functions to extract configuration data from Device Tree nodes
-\item \textbf{Platform driver framework}: Infrastructure for binding drivers to devices described in Device Tree
-\item \textbf{Device-specific data}: Custom properties that can be defined for specific hardware
+  \item \textbf{Compatible strings}: Unique identifiers that match Device Tree nodes to their drivers
+  \item \textbf{Property reading}: Functions to extract configuration data from Device Tree nodes
+  \item \textbf{Platform driver framework}: Infrastructure for binding drivers to devices described in Device Tree
+  \item \textbf{Device-specific data}: Custom properties that can be defined for specific hardware
 \end{itemize}
 
 \subsection{Example: Device Tree Module}
@@ -2321,11 +2321,11 @@ The \verb|compatible| property is used to match the device with the driver, whil
 Testing Device Tree modules can be done in several ways:
 
 \begin{enumerate}
-\item \textbf{Using Device Tree overlays}: On systems that support it (like Raspberry Pi), you can load Device Tree overlays at runtime to add new devices without rebooting.
+  \item \textbf{Using Device Tree overlays}: On systems that support it (like Raspberry Pi), you can load Device Tree overlays at runtime to add new devices without rebooting.
 
-\item \textbf{Modifying the main Device Tree}: Add your device nodes to the system's main Device Tree source file and recompile it.
+  \item \textbf{Modifying the main Device Tree}: Add your device nodes to the system's main Device Tree source file and recompile it.
 
-\item \textbf{Using QEMU}: For development and testing, QEMU can emulate systems with custom Device Trees, allowing you to test your modules without physical hardware.
+  \item \textbf{Using QEMU}: For development and testing, QEMU can emulate systems with custom Device Trees, allowing you to test your modules without physical hardware.
 \end{enumerate}
 
 To check if your device was properly detected, you can examine the sysfs filesystem:
@@ -2343,13 +2343,13 @@ ls /proc/device-tree/
 Here are some commonly used Device Tree functions in kernel modules:
 
 \begin{itemize}
-\item \cpp|of_property_read_string()| - Read a string property
-\item \cpp|of_property_read_u32()| - Read a 32-bit integer property
-\item \cpp|of_property_read_bool()| - Check if a boolean property exists
-\item \cpp|of_find_property()| - Find a property by name
-\item \cpp|of_get_property()| - Get a property's raw value
-\item \cpp|of_match_device()| - Match a device against a match table
-\item \cpp|of_parse_phandle()| - Parse a phandle reference to another node
+  \item \cpp|of_property_read_string()| - Read a string property
+  \item \cpp|of_property_read_u32()| - Read a 32-bit integer property
+  \item \cpp|of_property_read_bool()| - Check if a boolean property exists
+  \item \cpp|of_find_property()| - Find a property by name
+  \item \cpp|of_get_property()| - Get a property's raw value
+  \item \cpp|of_match_device()| - Match a device against a match table
+  \item \cpp|of_parse_phandle()| - Parse a phandle reference to another node
 \end{itemize}
 
 These functions provide a robust interface for extracting configuration data from Device Tree nodes,
