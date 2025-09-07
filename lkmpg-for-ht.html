@@ -18,7 +18,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>September 5, 2025</span></div>
+<div class='date'><span class='ecrm-1200'>September 7, 2025</span></div>
                                                                   
 
                                                                   
@@ -4860,9 +4860,9 @@ to improve memory safety. A buffer overflow in the area of a
 </code> structure may be able to overwrite the
 <code> <span class='ectt-1000'>function</span>
 </code> and <code>  <span class='ectt-1000'>data</span>
-</code> fields, providing the attacker with a way to use return-oriented programming (ROP)
-to call arbitrary functions within the kernel. Also, the function prototype of the callback,
-containing a <code>  <span id='textcolor2403'><span class='ectt-1000'>unsigned</span></span><span class='ectt-1000'> </span><span id='textcolor2404'><span class='ectt-1000'>long</span></span>
+</code> fields, providing the attacker with a way to use return-oriented programming (ROP) to call
+arbitrary functions within the kernel. Also, the function prototype of the callback, containing
+an <code>  <span id='textcolor2403'><span class='ectt-1000'>unsigned</span></span><span class='ectt-1000'> </span><span id='textcolor2404'><span class='ectt-1000'>long</span></span>
 </code> argument, will prevent work from any type checking. Furthermore, the function prototype
 with <code>  <span id='textcolor2405'><span class='ectt-1000'>unsigned</span></span><span class='ectt-1000'> </span><span id='textcolor2406'><span class='ectt-1000'>long</span></span>
 </code> argument may be an obstacle to the forward-edge protection of <span class='ecti-1000'>control-flow integrity</span>.
