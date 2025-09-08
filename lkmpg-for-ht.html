@@ -4863,8 +4863,8 @@ to improve memory safety. A buffer overflow in the area of a
 </code> fields, providing the attacker with a way to use return-oriented programming (ROP) to call
 arbitrary functions within the kernel. Also, the function prototype of the callback, containing
 an <code>  <span id='textcolor2403'><span class='ectt-1000'>unsigned</span></span><span class='ectt-1000'> </span><span id='textcolor2404'><span class='ectt-1000'>long</span></span>
-</code> argument, will prevent work from any type checking. Furthermore, the function prototype
-with <code>  <span id='textcolor2405'><span class='ectt-1000'>unsigned</span></span><span class='ectt-1000'> </span><span id='textcolor2406'><span class='ectt-1000'>long</span></span>
+</code> argument, will prevent the compiler from performing type checking. Furthermore, the function
+prototype with <code>  <span id='textcolor2405'><span class='ectt-1000'>unsigned</span></span><span class='ectt-1000'> </span><span id='textcolor2406'><span class='ectt-1000'>long</span></span>
 </code> argument may be an obstacle to the forward-edge protection of <span class='ecti-1000'>control-flow integrity</span>.
 Thus, it is better to use a unique prototype to separate from the cluster that takes an
 <code> <span id='textcolor2407'><span class='ectt-1000'>unsigned</span></span><span class='ectt-1000'> </span><span id='textcolor2408'><span class='ectt-1000'>long</span></span>
