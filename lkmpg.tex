@@ -1840,7 +1840,7 @@ Keyboard LEDs are present on every hardware, they are always visible, they do no
 
 From v4.14 to v4.15, the timer API made a series of changes to improve memory safety.
 A buffer overflow in the area of a \cpp|timer_list| structure may be able to overwrite the \cpp|function| and \cpp|data| fields, providing the attacker with a way to use return-oriented programming (ROP) to call arbitrary functions within the kernel.
-Also, the function prototype of the callback, containing an \cpp|unsigned long| argument, will prevent work from any type checking.
+Also, the function prototype of the callback, containing an \cpp|unsigned long| argument, will prevent the compiler from performing type checking.
 Furthermore, the function prototype with \cpp|unsigned long| argument may be an obstacle to the forward-edge protection of \textit{control-flow integrity}.
 Thus, it is better to use a unique prototype to separate from the cluster that takes an \cpp|unsigned long| argument.
 The timer callback should be passed a pointer to the \cpp|timer_list| structure rather than an \cpp|unsigned long| argument.
