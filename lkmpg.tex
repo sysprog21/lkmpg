@@ -278,7 +278,8 @@ If there is no \verb|PWD := $(CURDIR)| statement in the Makefile, then it may no
 This is because some environment variables are specified by the security policy and cannot be inherited.
 The default security policy is \verb|sudoers|.
 In the \verb|sudoers| security policy, \verb|env_reset| is enabled by default, which restricts environment variables.
-Specifically, path variables are not retained from the user environment; they are set to default values (for more information, see: \href{https://www.sudo.ws/docs/man/sudoers.man/}{sudoers manual}).
+Specifically, path variables are not retained from the user environment;
+they are set to default values (for more information, see: \href{https://www.sudo.ws/docs/man/sudoers.man/}{sudoers manual}).
 You can see the environment variable settings by:
 
 \begin{verbatim}
@@ -405,14 +406,17 @@ journalctl --since "1 hour ago" | grep kernel
 You now know the basics of creating, compiling, installing and removing modules.
 Now for more of a description of how this module works.
 
-Kernel modules must have at least two functions: a "start" (initialization) function called \cpp|init_module()| which is called when the module is \sh|insmod|ed into the kernel, and an "end" (cleanup) function called \cpp|cleanup_module()| which is called just before it is removed from the kernel.
+Kernel modules must have at least two functions: a "start" (initialization) function called \cpp|init_module()| which is called when the module is \sh|insmod|ed into the kernel,
+and an "end" (cleanup) function called \cpp|cleanup_module()| which is called just before it is removed from the kernel.
 Actually, things have changed starting with kernel 2.3.13.
 % TODO: adjust the section anchor
-You can now use whatever name you like for the start and end functions of a module, and you will learn how to do this in Section \ref{hello_n_goodbye}.
+You can now use whatever name you like for the start and end functions of a module,
+and you will learn how to do this in Section \ref{hello_n_goodbye}.
 In fact, the new method is the preferred method.
 However, many people still use \cpp|init_module()| and \cpp|cleanup_module()| for their start and end functions.
 
-Typically, \cpp|init_module()| either registers a handler for something with the kernel, or it replaces one of the kernel functions with its own code (usually code to do something and then call the original function).
+Typically, \cpp|init_module()| either registers a handler for something with the kernel, 
+or it replaces one of the kernel functions with its own code (usually code to do something and then call the original function).
 The \cpp|cleanup_module()| function is supposed to undo whatever \cpp|init_module()| did, so the module can be unloaded safely.
 
 Lastly, every kernel module needs to include \verb|<linux/module.h>|.
@@ -428,7 +432,7 @@ We needed to include \verb|<linux/printk.h>| only for the macro expansion for th
   \item Introducing print macros.
   \label{sec:printk}
         In the beginning there was \cpp|printk|, usually followed by a priority such as \cpp|KERN_INFO| or \cpp|KERN_DEBUG|.
-        More recently this can also be expressed in abbreviated form using a set of print macros, such as \cpp|pr_info| and \cpp|pr_debug|.
+        More recently, this can also be expressed in abbreviated form using a set of print macros, such as \cpp|pr_info| and \cpp|pr_debug|.
         This just saves some mindless keyboard bashing and looks a bit neater.
         They can be found within \src{include/linux/printk.h}.
         Take time to read through the available priority macros.
@@ -441,9 +445,10 @@ We needed to include \verb|<linux/printk.h>| only for the macro expansion for th
         Former kernel versions required us to care much about these settings, which are usually stored in Makefiles.
         Although hierarchically organized, many redundant settings accumulated in sublevel Makefiles and made them large and rather difficult to maintain.
         Fortunately, there is a new way of doing these things, called kbuild, and the build process for external loadable modules is now fully integrated into the standard kernel build mechanism.
-        To learn more on how to compile modules which are not part of the official kernel (such as all the examples you will find in this guide), see file \src{Documentation/kbuild/modules.rst}.
+        To learn more about how to compile modules which are not part of the official kernel (such as all the examples you will find in this guide), see file \src{Documentation/kbuild/modules.rst}.
 
-        Additional details about Makefiles for kernel modules are available in \src{Documentation/kbuild/makefiles.rst}. Be sure to read this and the related files before starting to hack Makefiles. It will probably save you lots of work.
+        Additional details about Makefiles for kernel modules are available in \src{Documentation/kbuild/makefiles.rst}.
+        Be sure to read this and the related files before starting to hack Makefiles. It will probably save you lots of work.
 
 \begin{quote}
 Here is another exercise for the reader.
@@ -455,7 +460,8 @@ What happens?
 
 \subsection{Hello and Goodbye}
 \label{hello_n_goodbye}
-In early kernel versions you had to use the \cpp|init_module| and \cpp|cleanup_module| functions, as in the first hello world example, but these days you can name those anything you want by using the \cpp|module_init| and \cpp|module_exit| macros.
+In early kernel versions you had to use the \cpp|init_module| and \cpp|cleanup_module| functions, as in the first hello world example,
+but these days you can name those anything you want by using the \cpp|module_init| and \cpp|module_exit| macros.
 These macros are defined in \src{include/linux/module.h}.
 The only requirement is that your init and cleanup functions must be defined before calling those macros, otherwise you will get compilation errors.
 Here is an example of this technique:
@@ -480,8 +486,10 @@ clean:
 Now have a look at \src{drivers/char/Makefile} for a real world example.
 As you can see, some things got hardwired into the kernel (\verb|obj-y|) but where have all those \verb|obj-m| gone?
 Those familiar with shell scripts will easily be able to spot them.
-For those who are not, the \verb|obj-$(CONFIG_FOO)| entries you see everywhere expand into \verb|obj-y| or \verb|obj-m|, depending on whether the \verb|CONFIG_FOO| variable has been set to \verb|y| or \verb|m|.
-While we are at it, those were exactly the kind of variables that you have set in the \verb|.config| file in the top-level directory of the Linux kernel source tree, the last time you ran \sh|make menuconfig| or something similar.
+For those who are not, the \verb|obj-$(CONFIG_FOO)| entries you see everywhere expand into \verb|obj-y| or \verb|obj-m|,
+depending on whether the \verb|CONFIG_FOO| variable has been set to \verb|y| or \verb|m|.
+While we are at it, those were exactly the kind of variables that you have set in the \verb|.config| file in the top-level directory of the Linux kernel source tree,
+the last time you ran \sh|make menuconfig| or something similar.
 
 \subsection{The \_\_init and \_\_exit Macros}
 \label{init_n_exit}
@@ -513,7 +521,7 @@ Some examples are "GPL", "GPL v2", "GPL and additional rights", "Dual BSD/GPL", 
 They are defined within \src{include/linux/module.h}.
 
 To reference what license you are using, a macro is available called \cpp|MODULE_LICENSE|.
-This and a few other macros describing the module are illustrated in the below example.
+This and a few other macros describing the module are illustrated in the example below.
 
 \samplec{examples/hello-4.c}
 
@@ -521,7 +529,7 @@ This and a few other macros describing the module are illustrated in the below e
 \label{modparam}
 Modules can take command line arguments, but not with the argc/argv you might be used to.
 
-To allow arguments to be passed to your module, declare the variables that will take the values of the command line arguments as global and then use the \cpp|module_param()| macro, (defined in \src{include/linux/moduleparam.h}) to set the mechanism up.
+To allow arguments to be passed to your module, declare the variables that will take the values of the command line arguments as global and then use the \cpp|module_param()| macro (defined in \src{include/linux/moduleparam.h}) to set the mechanism up.
 At runtime, \sh|insmod| will fill the variables with any command line arguments that are given, like \sh|insmod mymodule.ko myvariable=5|.
 The variable declarations and macros should be placed at the beginning of the module for clarity.
 The example code should clear up my admittedly lousy explanation.
@@ -535,7 +543,7 @@ module_param(myint, int, 0);
 \end{code}
 
 Arrays are supported too, but things are a bit different now than they were in the olden days.
-To keep track of the number of parameters you need to pass a pointer to a count variable as third parameter.
+To keep track of the number of parameters, you need to pass a pointer to a count variable as the third parameter.
 At your option, you could also ignore the count and pass \cpp|NULL| instead. We show both possibilities here:
 
 \begin{code}
