@@ -25,6 +25,7 @@
 % citation
 \usepackage{cite}
 \usepackage[colorlinks,citecolor=green]{hyperref}
+\usepackage{cleveref}
 
 \usepackage{xcolor}
 \hypersetup{
@@ -180,7 +181,7 @@ It is reassuring to note that overcoming the initial obstacle on the first attem
         This output is \emph{not} automatically displayed on any console or terminal.
         To view kernel module messages, you must use \sh|dmesg| to read the kernel log ring buffer,
         or check the systemd journal with \sh|journalctl -k| for kernel messages.
-        Refer to \ref{sec:helloworld} for more information.
+        Refer to \Cref{sec:helloworld} for more information.
         The terminal or environment from which you load the module does not affect where the output goes—it always goes to the kernel log.
   \item SecureBoot.
         Numerous modern computers arrive pre-configured with UEFI SecureBoot enabled—an essential security standard ensuring booting exclusively through trusted software endorsed by the original equipment manufacturer.
@@ -411,7 +412,7 @@ and an "end" (cleanup) function called \cpp|cleanup_module()| which is called ju
 Actually, things have changed starting with kernel 2.3.13.
 % TODO: adjust the section anchor
 You can now use whatever name you like for the start and end functions of a module,
-and you will learn how to do this in Section \ref{hello_n_goodbye}.
+and you will learn how to do this in \Cref{sec:hello_n_goodbye}.
 In fact, the new method is the preferred method.
 However, many people still use \cpp|init_module()| and \cpp|cleanup_module()| for their start and end functions.
 
@@ -421,7 +422,7 @@ The \cpp|cleanup_module()| function is supposed to undo whatever \cpp|init_modul
 
 Lastly, every kernel module needs to include \verb|<linux/module.h>|.
 % TODO: adjust the section anchor
-We needed to include \verb|<linux/printk.h>| only for the macro expansion for the \cpp|pr_alert()| log level, which you'll learn about in Section \ref{sec:printk}.
+We needed to include \verb|<linux/printk.h>| only for the macro expansion for the \cpp|pr_alert()| log level, which you'll learn about in \Cref{sec:printk}.
 
 \begin{enumerate}
   \item A point about coding style.
@@ -459,7 +460,7 @@ What happens?
 \end{enumerate}
 
 \subsection{Hello and Goodbye}
-\label{hello_n_goodbye}
+\label{sec:hello_n_goodbye}
 In early kernel versions you had to use the \cpp|init_module| and \cpp|cleanup_module| functions, as in the first hello world example,
 but these days you can name those anything you want by using the \cpp|module_init| and \cpp|module_exit| macros.
 These macros are defined in \src{include/linux/module.h}.
@@ -1013,7 +1014,7 @@ Since Linux v3.14, the read, write and seek operations are guaranteed for thread
 So, we can safely implement those operations without unnecessary locking.
 
 Additionally, since Linux v5.6, the \cpp|proc_ops| structure was introduced to replace the use of the \cpp|file_operations| structure when registering proc handlers.
-See more information in the \ref{sec:proc_ops} section.
+See more information in the \Cref{sec:proc_ops}.
 
 \subsection{The file structure}
 \label{sec:file_struct}
@@ -1098,7 +1099,7 @@ Once we finish the initialization, we can add the char device to the system by u
 int cdev_add(struct cdev *p, dev_t dev, unsigned count);
 \end{code}
 
-To find an example using the interface, you can see \verb|ioctl.c| described in section \ref{sec:device_files}.
+To find an example using the interface, you can see \verb|ioctl.c| described in \Cref{sec:device_files}.
 
 \subsection{Unregistering A Device}
 \label{sec:unregister_device}
@@ -1147,7 +1148,7 @@ In the kernel module, this problem may happen due to multiple instances accessin
 Therefore, a solution is to enforce exclusive access.
 We use atomic Compare-And-Swap (CAS) to maintain the states, \cpp|CDEV_NOT_USED| and \cpp|CDEV_EXCLUSIVE_OPEN|, to determine whether the file is currently opened by someone or not.
 CAS compares the contents of a memory location with the expected value and, only if they are the same, modifies the contents of that memory location to the desired value.
-See more concurrency details in the \ref{sec:synchronization} section.
+See more concurrency details in the \Cref{sec:synchronization}.
 
 \samplec{examples/chardev.c}
 
@@ -1272,7 +1273,7 @@ The sequence ends when \cpp|next()| returns \cpp|NULL|, then the function \cpp|s
 BE CAREFUL: when a sequence is finished, another one starts.
 That means that at the end of function \cpp|stop()|, the function \cpp|start()| is called again.
 This loop finishes when the function \cpp|start()| returns \cpp|NULL|.
-You can see a scheme of this in the Figure~\ref{img:seqfile}.
+You can see a scheme of this in the \Cref{img:seqfile}.
 
 \begin{figure}[h]
   \center
@@ -1429,7 +1430,7 @@ If you want to use ioctls in your own kernel modules, it is best to receive an o
 For more information, consult the kernel source tree at \src{Documentation/userspace-api/ioctl/ioctl-number.rst}.
 
 Also, we need to be careful that concurrent access to the shared resources will lead to the race condition.
-The solution is using atomic Compare-And-Swap (CAS), which we mentioned at \ref{sec:chardev_c} section, to enforce the exclusive access.
+The solution is using atomic Compare-And-Swap (CAS), which we mentioned at \Cref{sec:chardev_c}, to enforce the exclusive access.
 
 \samplec{examples/chardev2.c}
 
@@ -1827,7 +1828,7 @@ For further details, see:
 \label{sec:print_macros}
 \subsection{Replacement}
 % FIXME: cross-reference
-In Section \ref{sec:preparation}, it was noted that the X Window System and kernel module programming are not conducive to integration.
+In \Cref{sec:preparation}, it was noted that the X Window System and kernel module programming are not conducive to integration.
 This remains valid during the development of kernel modules.
 However, in practical scenarios, the necessity emerges to relay messages to the tty (teletype) originating the module load command.
 
@@ -1931,7 +1932,7 @@ When using GPIO, you must set it as either output with \cpp|gpio_direction_outpu
 
 \subsection{Control the LED's on/off state}
 \label{sec:gpio_led}
-In Section \ref{sec:device_files}, we learned how to communicate with device files.
+In \Cref{sec:device_files}, we learned how to communicate with device files.
 Therefore, we will further use device files to control the LED on and off.
 
 In the implementation, a pull-down resistor is used.
@@ -2007,7 +2008,7 @@ whereas work queues are more complicated but also better suited to running multi
 It is possible that in future tasklets may be replaced by \textit{threaded IRQs}.
 However, discussion about that has been ongoing since 2007 (\href{https://lwn.net/Articles/239633}{Eliminating tasklets} and \href{https://lwn.net/Articles/960041/}{The end of tasklets}),
 so expecting immediate changes would be unwise.
-See the section \ref{sec:irq} for alternatives that avoid the tasklet debate.
+See the \Cref{sec:irq} for alternatives that avoid the tasklet debate.
 
 \subsection{Tasklets}
 \label{sec:tasklet}
@@ -2210,7 +2211,7 @@ vinput devices are created and destroyed using sysfs.
 And, event injection is done through a \verb|/dev| node.
 The device name will be used by the userland to export a new virtual input device.
 
-The \cpp|class_attribute| structure is similar to other attribute types we talked about in section \ref{sec:sysfs}:
+The \cpp|class_attribute| structure is similar to other attribute types we talked about in \Cref{sec:sysfs}:
 
 \begin{code}
 struct class_attribute {
