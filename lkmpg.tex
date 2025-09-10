@@ -493,7 +493,7 @@ While we are at it, those were exactly the kind of variables that you have set i
 the last time you ran \sh|make menuconfig| or something similar.
 
 \subsection{The \_\_init and \_\_exit Macros}
-\label{init_n_exit}
+\label{sec:init_n_exit}
 The \cpp|__init| macro causes the init function to be discarded and its memory freed once the init function finishes for built-in drivers, but not loadable modules.
 If you think about when the init function is invoked, this makes perfect sense.
 
@@ -508,7 +508,7 @@ When you boot your kernel and see something like Freeing unused kernel memory: 2
 \samplec{examples/hello-3.c}
 
 \subsection{Licensing and Module Documentation}
-\label{modlicense}
+\label{sec:modlicense}
 Honestly, who loads or even cares about proprietary modules?
 If you do then you might have seen something like this:
 \begin{verbatim}
@@ -527,7 +527,7 @@ This and a few other macros describing the module are illustrated in the example
 \samplec{examples/hello-4.c}
 
 \subsection{Passing Command Line Arguments to a Module}
-\label{modparam}
+\label{sec:modparam}
 Modules can take command line arguments, but not with the argc/argv you might be used to.
 
 To allow arguments to be passed to your module, declare the variables that will take the values of the command line arguments as global and then use the \cpp|module_param()| macro (defined in \src{include/linux/moduleparam.h}) to set the mechanism up.
@@ -600,7 +600,7 @@ insmod: ERROR: could not insert module hello-5.ko: Invalid parameters
 \end{verbatim}
 
 \subsection{Modules Spanning Multiple Files}
-\label{modfiles}
+\label{sec:modfiles}
 Sometimes it makes sense to divide a kernel module between several source files.
 
 Here is an example of such a kernel module.
@@ -634,7 +634,7 @@ The first five lines are nothing special, but for the last example we will need 
 First we invent an object name for our combined module, second we tell \sh|make| what object files are part of that module.
 
 \subsection{Building modules for a precompiled kernel}
-\label{precompiled}
+\label{sec:precompiled}
 Obviously, we strongly suggest you to recompile your kernel, so that you can enable a number of useful debugging features, such as forced module unloading (\cpp|MODULE_FORCE_UNLOAD|): when this option is enabled, you can force the kernel to unload a module even when it believes it is unsafe, via a \sh|sudo rmmod -f module| command.
 This option can save you a lot of time and a number of reboots during the development of a module.
 If you do not want to recompile your kernel then you should consider running the examples within a test distribution on a virtual machine.
