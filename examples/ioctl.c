@@ -140,9 +140,7 @@ static int test_ioctl_open(struct inode *inode, struct file *filp)
 }
 
 static struct file_operations fops = {
-#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 4, 0)
     .owner = THIS_MODULE,
-#endif
     .open = test_ioctl_open,
     .release = test_ioctl_close,
     .read = test_ioctl_read,

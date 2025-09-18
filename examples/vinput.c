@@ -133,9 +133,7 @@ static ssize_t vinput_write(struct file *file, const char __user *buffer,
 }
 
 static const struct file_operations vinput_fops = {
-#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 4, 0)
     .owner = THIS_MODULE,
-#endif
     .open = vinput_open,
     .release = vinput_release,
     .read = vinput_read,
@@ -337,6 +335,9 @@ ATTRIBUTE_GROUPS(vinput_class);
 
 static struct class vinput_class = {
     .name = "vinput",
+/* .owner was removed in Linux v6.4 via upstream commit 6e30a66433af ("driver core: class: remove
+ * struct module owner out of struct class")
+ */
 #if LINUX_VERSION_CODE < KERNEL_VERSION(6, 4, 0)
     .owner = THIS_MODULE,
 #endif

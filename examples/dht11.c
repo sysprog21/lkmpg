@@ -148,12 +148,10 @@ static ssize_t device_read(struct file *filp, char __user *buffer,
 }
 
 static struct file_operations fops = {
-#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 4, 0)
     .owner = THIS_MODULE,
-#endif
     .open = device_open,
     .release = device_release,
-    .read = device_read
+    .read = device_read,
 };
 
 /* Initialize the module - Register the character device */
@@ -182,9 +180,7 @@ static int __init dht11_init(void)
             MINOR(dht11_device.dev_num));
 
     /* Prevents module unloading while operations are in use */
-#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 4, 0)
     dht11_device.cdev.owner = THIS_MODULE;
-#endif
 
     cdev_init(&dht11_device.cdev, &fops);
     ret = cdev_add(&dht11_device.cdev, dht11_device.dev_num, 1);
