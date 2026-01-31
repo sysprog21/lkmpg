@@ -419,7 +419,8 @@ Actually, things have changed starting with kernel 2.3.13.
 You can now use whatever name you like for the start and end functions of a module,
 and you will learn how to do this in \Cref{sec:hello_n_goodbye}.
 In fact, the new method is the preferred method.
-However, many people still use \cpp|init_module()| and \cpp|cleanup_module()| for their start and end functions.
+The old \cpp|init_module()| and \cpp|cleanup_module()| have been deprecated for x86 systems with indirect branch tracking (IBT) enabled starting from \href{https://github.com/torvalds/linux/commit/4fab2d76}{commit 4fab2d76} in kernel 6.15, causing build failures.
+However, many existing examples still use these names for their start and end functions.
 
 Typically, \cpp|init_module()| either registers a handler for something with the kernel, 
 or it replaces one of the kernel functions with its own code (usually code to do something and then call the original function).
