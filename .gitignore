@@ -20,21 +20,23 @@ lkmpg.pdf
 *.toc
 *.bbl
 *.blg
-*.fdb_latexmk 
+*.fdb_latexmk
 *.fls
 lkmpg.synctex.gz
 
 # make4ht
 *.html
-*.svg 
+*.svg
 *.tmp
-*.css 
-*.4ct 
-*.4tc 
-*.dvi 
-*.lg 
+*.css
+*.4ct
+*.4tc
+*.dvi
+*.lg
 *.idv
 *.xref
+*.ttf
+*.png
 
 # format checks
 expected-format
