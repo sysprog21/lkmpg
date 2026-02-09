@@ -75,7 +75,9 @@ static long test_ioctl_ioctl(struct file *filp, unsigned int cmd,
         break;
 
     case IOCTL_VALSET_NUM:
-        ioctl_num = arg;
+        int user_val;
+        if (get_user(user_val, (int __user *)arg))
+            return -EFAULT;
         break;
 
     default:
