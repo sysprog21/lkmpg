@@ -41,6 +41,7 @@ static long test_ioctl_ioctl(struct file *filp, unsigned int cmd,
     struct test_ioctl_data *ioctl_data = filp->private_data;
     int retval = 0;
     unsigned char val;
+    int user_val = 0;
     struct ioctl_arg data;
     memset(&data, 0, sizeof(data));
 
@@ -75,7 +76,9 @@ static long test_ioctl_ioctl(struct file *filp, unsigned int cmd,
         break;
 
     case IOCTL_VALSET_NUM:
-        ioctl_num = arg;
+        if (get_user(user_val, (int __user *)arg))
+            return -EFAULT;
+        ioctl_num = user_val;
         break;
 
     default:
