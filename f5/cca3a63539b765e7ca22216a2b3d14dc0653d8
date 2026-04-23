@@ -1,0 +1,23 @@
+lkmpg.tex
+  d7f944d3fdcef841 1271
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "f5cca3a63539b765e7ca22216a2b3d14dc0653d8",
+  "prompts": {
+    "d7f944d3fdcef841": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "12e6de30-40c6-4a70-a9aa-e7c773a29fe9",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Jim Huang",
+      "messages": [],
+      "total_additions": 3,
+      "total_deletions": 3,
+      "accepted_lines": 50,
+      "overriden_lines": 0
+    }
+  }
+}
