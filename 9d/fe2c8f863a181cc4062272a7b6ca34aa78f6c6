@@ -1,0 +1,36 @@
+lkmpg.tex
+  42d55026af9d8be1 600-619,646,652-669
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "9dfe2c8f863a181cc4062272a7b6ca34aa78f6c6",
+  "prompts": {
+    "42d55026af9d8be1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f6449097-5902-46d2-8028-727b85b69636",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Jim Huang",
+      "messages": [],
+      "total_additions": 14,
+      "total_deletions": 14,
+      "accepted_lines": 11,
+      "overriden_lines": 0
+    },
+    "9b8f0b55b5fc4ea4": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dbb92-f557-74f1-9df0-2fa3244899db",
+        "model": "gpt-5.4"
+      },
+      "human_author": "Jim Huang",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 0,
+      "overriden_lines": 0
+    }
+  }
+}
