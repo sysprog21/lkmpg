@@ -1,0 +1,37 @@
+lkmpg.tex
+  c838b8576439ff61 1826-1832
+  bb12e36173cf5498 1432-1433
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.2",
+  "base_commit_sha": "3649c1f42b350587a068e61caa528cf6432a0cc9",
+  "prompts": {
+    "bb12e36173cf5498": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019db8cb-0206-70f1-ab14-ba11510efc57",
+        "model": "gpt-5.4"
+      },
+      "human_author": "Jim Huang",
+      "messages": [],
+      "total_additions": 129,
+      "total_deletions": 21,
+      "accepted_lines": 129,
+      "overriden_lines": 0
+    },
+    "c838b8576439ff61": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "76c66a48-d216-4efb-8c57-7b0af081e805",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Jim Huang",
+      "messages": [],
+      "total_additions": 12,
+      "total_deletions": 10,
+      "accepted_lines": 7,
+      "overriden_lines": 0
+    }
+  }
+}
