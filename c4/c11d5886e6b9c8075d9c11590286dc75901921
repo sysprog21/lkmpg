@@ -1,0 +1,41 @@
+.github/workflows/build-deploy-assets.yaml
+  ac77ecb26193b813 16-19,22,24,27-39,41-42,44-58,60-79,81-86,93-109
+.ci/build-n-run.sh
+  ac77ecb26193b813 15-23
+.github/workflows/status-check.yaml
+  8ee00a80163ec1dd 140,145-149
+  ac77ecb26193b813 25-26,28,30-55,57-123,141-144,150-158
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "c4c11d5886e6b9c8075d9c11590286dc75901921",
+  "prompts": {
+    "8ee00a80163ec1dd": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dbbb6-4deb-7661-93ec-fd4d14fc13d3",
+        "model": "gpt-5.4"
+      },
+      "human_author": "Jim Huang",
+      "messages": [],
+      "total_additions": 6,
+      "total_deletions": 0,
+      "accepted_lines": 6,
+      "overriden_lines": 0
+    },
+    "ac77ecb26193b813": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7272465e-9406-4ead-b86f-754be0bc871a",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Jim Huang",
+      "messages": [],
+      "total_additions": 48,
+      "total_deletions": 51,
+      "accepted_lines": 197,
+      "overriden_lines": 0
+    }
+  }
+}
