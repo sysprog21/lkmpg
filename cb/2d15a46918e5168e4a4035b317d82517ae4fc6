@@ -1,0 +1,66 @@
+lkmpg.tex
+  aebda0c94787a14d 2,4,56,68-73,217,753-758,1473-1479,1946-1950
+  f0f584be3f3cd393 40-44
+html.cfg
+  f0f584be3f3cd393 16-17,19,27,29,31-32,36-39,41-43,124-127,129-131,139-140,144,152-155,159-162,168,175,177-178,184-185,196,198,203-204,231-237,240-246,259-260,262-264,266-268,273-276,281,288,328-331
+  aebda0c94787a14d 18,20,28,30,33-35,40,44-121,132-135,151,156-158,163-167,169-174,176,179-183,186-195,197,199-202,210,238-239,247-258,261,265,269,272,277-280,282-287,289-323
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.2",
+  "base_commit_sha": "cb2d15a46918e5168e4a4035b317d82517ae4fc6",
+  "prompts": {
+    "73c4961324934387": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019db6d4-6daf-7ff1-9925-0307ad01a0f3",
+        "model": "gpt-5.4"
+      },
+      "human_author": "Jim Huang",
+      "messages": [],
+      "total_additions": 22,
+      "total_deletions": 5,
+      "accepted_lines": 0,
+      "overriden_lines": 0
+    },
+    "aebda0c94787a14d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "618d1e12-0cb9-4491-aa2a-592f7a2f3d68",
+        "model": "<synthetic>"
+      },
+      "human_author": "Jim Huang",
+      "messages": [],
+      "total_additions": 405,
+      "total_deletions": 339,
+      "accepted_lines": 232,
+      "overriden_lines": 0
+    },
+    "b75edce50b0ccd33": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8b449d6f-4906-4b39-a897-61233fc6ffda",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Jim Huang",
+      "messages": [],
+      "total_additions": 96,
+      "total_deletions": 51,
+      "accepted_lines": 45,
+      "overriden_lines": 0
+    },
+    "f0f584be3f3cd393": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019db6c6-18ea-79b2-b3d5-3baa2b704b5f",
+        "model": "gpt-5.4"
+      },
+      "human_author": "Jim Huang",
+      "messages": [],
+      "total_additions": 2898,
+      "total_deletions": 298,
+      "accepted_lines": 148,
+      "overriden_lines": 0
+    }
+  }
+}
