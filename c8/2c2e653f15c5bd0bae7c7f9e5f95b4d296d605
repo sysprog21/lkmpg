@@ -1,0 +1,25 @@
+examples/kbleds.c
+  d7f944d3fdcef841 8,78,80,82
+examples/hello-debugfs-file.c
+  d7f944d3fdcef841 1-88
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.2",
+  "base_commit_sha": "c82c2e653f15c5bd0bae7c7f9e5f95b4d296d605",
+  "prompts": {
+    "d7f944d3fdcef841": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "12e6de30-40c6-4a70-a9aa-e7c773a29fe9",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Jim Huang",
+      "messages": [],
+      "total_additions": 180,
+      "total_deletions": 3,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    }
+  }
+}
