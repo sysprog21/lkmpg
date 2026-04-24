@@ -1,0 +1,43 @@
+examples/dma.c
+  bc403c7245af74bd 1-15,17-28,35-38,81-82,94-95,97,99,101-103,109,111-119,143-146,149-155
+  415b7958d3c4c8f3 16,29-34,39-80,83-93,96,98,100,104-108,110,120-142,147-148
+examples/vnetloop.c
+  415b7958d3c4c8f3 13,15-117
+examples/blkram.c
+  415b7958d3c4c8f3 4-258
+examples/Makefile
+  415b7958d3c4c8f3 40-42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "ff36ad3493187f7a2a8640875bf3716b1bd7ad6d",
+  "prompts": {
+    "415b7958d3c4c8f3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fddc79a6-5032-4b99-b1ca-6b7277ce40b2",
+        "model": "<synthetic>"
+      },
+      "human_author": "Jim Huang",
+      "messages": [],
+      "total_additions": 1071,
+      "total_deletions": 695,
+      "accepted_lines": 456,
+      "overriden_lines": 0
+    },
+    "bc403c7245af74bd": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dbc0a-14cf-7d83-913b-9afe77283aa6",
+        "model": "gpt-5.4"
+      },
+      "human_author": "Jim Huang",
+      "messages": [],
+      "total_additions": 144,
+      "total_deletions": 3,
+      "accepted_lines": 61,
+      "overriden_lines": 0
+    }
+  }
+}
