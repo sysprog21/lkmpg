@@ -371,25 +371,25 @@ desired.
 package.
 </p><!-- l. 138 --><p class='indent'>   On Ubuntu/Debian GNU/Linux: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb1'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>sudo apt-get install build-essential kmod</span>                                        </pre>
+   <pre class='fancyvrb' id='fancyvrb1'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>sudo apt-get install build-essential kmod</span>                                        </pre>
 <!-- l. 143 --><p class='indent'>   On Arch Linux: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb2'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>sudo pacman -S gcc kmod</span>                                                          </pre>
+   <pre class='fancyvrb' id='fancyvrb2'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>sudo pacman -S gcc kmod</span>                                                          </pre>
 <!-- l. 148 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='what-modules-are-in-my-kernel'><span class='titlemark'>1.5   </span> <a id='x1-80001.5'></a>What Modules are in my Kernel?</h4>
 <!-- l. 151 --><p class='noindent'>To discover what modules are already loaded within your current kernel, use the
 command <span class='ectt-1000'>lsmod</span>. 
 </p>
-   <pre class='fancyvrb' id='fancyvrb3'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>lsmod</span>                                                                            </pre>
+   <pre class='fancyvrb' id='fancyvrb3'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>lsmod</span>                                                                            </pre>
 <!-- l. 156 --><p class='indent'>   Modules are stored within the file <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/modules</span></span></span>, so you can also see them with:
 
 </p>
-   <pre class='fancyvrb' id='fancyvrb4'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>cat /proc/modules</span>                                                                </pre>
+   <pre class='fancyvrb' id='fancyvrb4'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>cat /proc/modules</span>                                                                </pre>
 <!-- l. 161 --><p class='indent'>   This can be a long list, and you might prefer to search for something particular.
 To search for the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>fat</span></span></span> module: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb5'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>lsmod | grep fat</span>                                                                 </pre>
+   <pre class='fancyvrb' id='fancyvrb5'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>lsmod | grep fat</span>                                                                 </pre>
                                                                   
 
                                                                   
@@ -461,18 +461,18 @@ seamlessly.
 kernel.
 </p><!-- l. 221 --><p class='indent'>   On Ubuntu/Debian GNU/Linux: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb6'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>sudo apt-get update
+   <pre class='fancyvrb' id='fancyvrb6'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>sudo apt-get update
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>apt-cache search linux-headers-</span><span class='tctt-0800'>`</span><span class='ectt-0800'>uname -r</span><span class='tctt-0800'>`</span>                                 </pre>
 <!-- l. 227 --><p class='indent'>   The following command provides information about the available kernel header
 files. Then, for example: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb7'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>sudo apt-get install linux-headers-</span><span class='tctt-0800'>`</span><span class='ectt-0800'>uname -r</span><span class='tctt-0800'>`</span>                                    </pre>
+   <pre class='fancyvrb' id='fancyvrb7'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>sudo apt-get install linux-headers-</span><span class='tctt-0800'>`</span><span class='ectt-0800'>uname -r</span><span class='tctt-0800'>`</span>                                    </pre>
 <!-- l. 233 --><p class='indent'>   On Arch Linux: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb8'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>sudo pacman -S linux-headers</span>                                                     </pre>
+   <pre class='fancyvrb' id='fancyvrb8'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>sudo pacman -S linux-headers</span>                                                     </pre>
 <!-- l. 238 --><p class='indent'>   On Fedora: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb9'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>sudo dnf install kernel-devel kernel-headers</span>                                     </pre>
+   <pre class='fancyvrb' id='fancyvrb9'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>sudo dnf install kernel-devel kernel-headers</span>                                     </pre>
                                                                   
 
                                                                   
@@ -498,7 +498,7 @@ aspects of writing a kernel module.
 </p><!-- l. 258 --><p class='indent'>   Presented next is the simplest possible module.
 </p><!-- l. 260 --><p class='indent'>   Make a test directory: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb10'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>mkdir -p ~/develop/kernel/hello-1
+   <pre class='fancyvrb' id='fancyvrb10'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>mkdir -p ~/develop/kernel/hello-1
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>cd ~/develop/kernel/hello-1</span>                                            </pre>
 <!-- l. 266 --><p class='indent'>   Paste this into your favorite editor and save it as <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>hello-1.c</span></span></span>:
 </p><!-- l. 268 --><p class='indent'>
@@ -532,21 +532,21 @@ aspects of writing a kernel module.
 to use <span class='ecti-1000'>tabs</span>, not spaces.
 </p><!-- l. 272 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb12'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>obj-m += hello-1.o
+   <pre class='fancyvrb' id='fancyvrb12'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>obj-m += hello-1.o
 </span><span class='ecrm-0500'>2
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'>PWD := $(CURDIR)
 </span><span class='ecrm-0500'>4
 </span><span class='ecrm-0500'>5</span><span class='ectt-0800'>all:
 </span><span class='ecrm-0500'>6</span><span class='ectt-0800'>    $(MAKE) -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
 </span><span class='ecrm-0500'>7
-</span><span class='ecrm-0500'>8</span><span class='ectt-0800'>clean:                                                          </span><span class='ecrm-0500'>9  </span><span class='ectt-0800'>    $(MAKE) -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean</span>            </pre>
+</span><span class='ecrm-0500'>8</span><span class='ectt-0800'>clean:                                                          </span><span class='ecrm-0500'>9</span> <span class='ectt-0800'>    $(MAKE) -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean</span>            </pre>
 <!-- l. 284 --><p class='indent'>   In <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>Makefile</span></span></span>, <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>$(CURDIR)</span></span></span> can be set to the absolute pathname of the current
 working directory (after all <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>-C</span></span></span> options are processed, if any). See more about <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>CURDIR</span></span></span>
 in <a href='https://www.gnu.org/software/make/manual/make.html'>GNU make manual</a>.
 </p><!-- l. 287 --><p class='indent'>   And finally, just run <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>make</span></span></span> directly.
 </p><!-- l. 289 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb13'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>make</span>                                                                             </pre>
+   <pre class='fancyvrb' id='fancyvrb13'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>make</span>                                                                             </pre>
 <!-- l. 293 --><p class='indent'>   If there is no <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>PWD := $(CURDIR)</span></span></span> statement in the Makefile, then it may not
 compile correctly with <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>sudo make</span></span></span>. This is because some environment variables are
 specified by the security policy and cannot be inherited. The default security policy is
@@ -568,7 +568,7 @@ $ sudo -s
 above.
 </p><!-- l. 308 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb14'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>all:
+   <pre class='fancyvrb' id='fancyvrb14'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>all:
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>    echo $(PWD)</span>                                                      </pre>
 <!-- l. 313 --><p class='indent'>   Then, we can use the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>-p</span></span></span> flag to print out the environment variable values from
 the Makefile.
@@ -600,27 +600,27 @@ $ sudo make -p | grep PWD
      <!-- l. 332 --><p class='noindent'> You can use the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>-E</span></span></span> flag to temporarily preserve them.
      </p><!-- l. 335 --><p class='noindent'>
 </p>
-     <pre class='fancyvrb' id='fancyvrb15'>    <span class='ecrm-0500'>1     </span><span class='ectt-0800'>    $ sudo -E make -p | grep PWD
-       </span><span class='ecrm-0500'>2  </span><span class='ectt-0800'>    PWD = /home/ubuntu/temp
-       </span><span class='ecrm-0500'>3  </span><span class='ectt-0800'>    OLDPWD = /home/ubuntu                                           </span><span class='ecrm-0500'>4  </span><span class='ectt-0800'>    echo $(PWD)</span>                                                 </pre>
+     <pre class='fancyvrb' id='fancyvrb15'>    <span class='ecrm-0500'>1</span>  <span class='ectt-0800'>    $ sudo -E make -p | grep PWD
+       </span><span class='ecrm-0500'>2</span> <span class='ectt-0800'>    PWD = /home/ubuntu/temp
+       </span><span class='ecrm-0500'>3</span> <span class='ectt-0800'>    OLDPWD = /home/ubuntu                                           </span><span class='ecrm-0500'>4</span> <span class='ectt-0800'>    echo $(PWD)</span>                                                 </pre>
      </li>
 <li class='enumerate' id='x1-14042x2'>
      <!-- l. 343 --><p class='noindent'> You  can  disable  <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>env_reset</span></span></span> by  editing  <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/etc/sudoers</span></span></span> as  root  using
      <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>visudo</span></span></span>.
      </p><!-- l. 346 --><p class='noindent'>
 </p>
-     <pre class='fancyvrb' id='fancyvrb16'>    <span class='ecrm-0500'>1     </span><span class='ectt-0800'>  ## sudoers file.
-       </span><span class='ecrm-0500'>2  </span><span class='ectt-0800'>  ##
-       </span><span class='ecrm-0500'>3  </span><span class='ectt-0800'>  ...
-       </span><span class='ecrm-0500'>4  </span><span class='ectt-0800'>  Defaults env_reset                                               </span><span class='ecrm-0500'>5  </span><span class='ectt-0800'>  ## Change env_reset to !env_reset in previous line to keep all environment variables</span></pre>
+     <pre class='fancyvrb' id='fancyvrb16'>    <span class='ecrm-0500'>1</span>  <span class='ectt-0800'>  ## sudoers file.
+       </span><span class='ecrm-0500'>2</span> <span class='ectt-0800'>  ##
+       </span><span class='ecrm-0500'>3</span> <span class='ectt-0800'>  ...
+       </span><span class='ecrm-0500'>4</span> <span class='ectt-0800'>  Defaults env_reset                                               </span><span class='ecrm-0500'>5</span> <span class='ectt-0800'>  ## Change env_reset to !env_reset in previous line to keep all environment variables</span></pre>
      <!-- l. 354 --><p class='noindent'>Then execute <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>env</span></span></span> and <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>sudo env</span></span></span> individually.
      </p><!-- l. 356 --><p class='noindent'>
 </p>
-     <pre class='fancyvrb' id='fancyvrb17'>    <span class='ecrm-0500'>1     </span><span class='ectt-0800'>    # disable the env_reset
-       </span><span class='ecrm-0500'>2  </span><span class='ectt-0800'>    echo "user:" &gt; non-env_reset.log; env &gt;&gt; non-env_reset.log
-       </span><span class='ecrm-0500'>3  </span><span class='ectt-0800'>    echo "root:" &gt;&gt; non-env_reset.log; sudo env &gt;&gt; non-env_reset.log
-       </span><span class='ecrm-0500'>4  </span><span class='ectt-0800'>    # enable the env_reset
-       </span><span class='ecrm-0500'>5  </span><span class='ectt-0800'>    echo "user:" &gt; env_reset.log; env &gt;&gt; env_reset.log                   </span><span class='ecrm-0500'>6  </span><span class='ectt-0800'>    echo "root:" &gt;&gt; env_reset.log; sudo env &gt;&gt; env_reset.log</span>            </pre>
+     <pre class='fancyvrb' id='fancyvrb17'>    <span class='ecrm-0500'>1</span>  <span class='ectt-0800'>    # disable the env_reset
+       </span><span class='ecrm-0500'>2</span> <span class='ectt-0800'>    echo "user:" &gt; non-env_reset.log; env &gt;&gt; non-env_reset.log
+       </span><span class='ecrm-0500'>3</span> <span class='ectt-0800'>    echo "root:" &gt;&gt; non-env_reset.log; sudo env &gt;&gt; non-env_reset.log
+       </span><span class='ecrm-0500'>4</span> <span class='ectt-0800'>    # enable the env_reset
+       </span><span class='ecrm-0500'>5</span> <span class='ectt-0800'>    echo "user:" &gt; env_reset.log; env &gt;&gt; env_reset.log                   </span><span class='ecrm-0500'>6</span> <span class='ectt-0800'>    echo "root:" &gt;&gt; env_reset.log; sudo env &gt;&gt; env_reset.log</span>            </pre>
      <!-- l. 365 --><p class='noindent'>You  can  view  and  compare  these  logs  to  find  differences  between
      <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>env_reset</span></span></span> and <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>!env_reset</span></span></span>.
                                                                   
@@ -632,7 +632,7 @@ $ sudo make -p | grep PWD
      in <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/etc/sudoers</span></span></span>.
      </p><!-- l. 370 --><p class='noindent'>
 </p>
-     <pre class='fancyvrb' id='fancyvrb18'>    <span class='ecrm-0500'>1     </span><span class='ectt-0800'>  Defaults env_keep += "PWD"</span>                                               </pre>
+     <pre class='fancyvrb' id='fancyvrb18'>    <span class='ecrm-0500'>1</span>  <span class='ectt-0800'>  Defaults env_keep += "PWD"</span>                                               </pre>
      <!-- l. 374 --><p class='noindent'>After applying the above change, you can check the environment variable
      settings by:
                                                                   
@@ -648,30 +648,30 @@ $ sudo make -p | grep PWD
 <!-- l. 383 --><p class='indent'>   If all goes smoothly you should then find that you have a compiled <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>hello-1.ko</span></span></span>
 module. You can find info on it with the command: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb19'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>modinfo hello-1.ko</span>                                                               </pre>
+   <pre class='fancyvrb' id='fancyvrb19'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>modinfo hello-1.ko</span>                                                               </pre>
 <!-- l. 389 --><p class='indent'>   At this point the command: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb20'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>lsmod | grep hello</span>                                                               </pre>
+   <pre class='fancyvrb' id='fancyvrb20'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>lsmod | grep hello</span>                                                               </pre>
 <!-- l. 394 --><p class='indent'>   should return nothing. You can try loading your new module with: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb21'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>sudo insmod hello-1.ko</span>                                                           </pre>
+   <pre class='fancyvrb' id='fancyvrb21'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>sudo insmod hello-1.ko</span>                                                           </pre>
 <!-- l. 400 --><p class='indent'>   The dash character will get converted to an underscore, so when you again try:
 
 </p>
-   <pre class='fancyvrb' id='fancyvrb22'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>lsmod | grep hello</span>                                                               </pre>
+   <pre class='fancyvrb' id='fancyvrb22'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>lsmod | grep hello</span>                                                               </pre>
 <!-- l. 405 --><p class='indent'>   You should now see your loaded module. It can be removed again with:
 
 </p>
-   <pre class='fancyvrb' id='fancyvrb23'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>sudo rmmod hello_1</span>                                                               </pre>
+   <pre class='fancyvrb' id='fancyvrb23'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>sudo rmmod hello_1</span>                                                               </pre>
 <!-- l. 410 --><p class='indent'>   Notice that the dash was replaced by an underscore. To see the module’s output
 messages, use <span class='ectt-1000'>dmesg </span>to view the kernel log ring buffer: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb24'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>sudo dmesg | tail -10</span>                                                            </pre>
+   <pre class='fancyvrb' id='fancyvrb24'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>sudo dmesg | tail -10</span>                                                            </pre>
 <!-- l. 416 --><p class='indent'>   You should see messages like “Hello world 1.” and “Goodbye world 1.” from your
 module. Alternatively, you can check the systemd journal for kernel messages:
 
 </p>
-   <pre class='fancyvrb' id='fancyvrb25'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>journalctl --since "1 hour ago" | grep kernel</span>                                    </pre>
+   <pre class='fancyvrb' id='fancyvrb25'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>journalctl --since "1 hour ago" | grep kernel</span>                                    </pre>
                                                                   
 
                                                                   
@@ -785,7 +785,7 @@ technique:
 is as simple as this:
 </p><!-- l. 490 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb27'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>obj-m += hello-1.o
+   <pre class='fancyvrb' id='fancyvrb27'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>obj-m += hello-1.o
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>obj-m += hello-2.o
 </span><span class='ecrm-0500'>3
 </span><span class='ecrm-0500'>4</span><span class='ectt-0800'>PWD := $(CURDIR)
@@ -793,7 +793,7 @@ is as simple as this:
 </span><span class='ecrm-0500'>6</span><span class='ectt-0800'>all:
 </span><span class='ecrm-0500'>7</span><span class='ectt-0800'>    $(MAKE) -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
 </span><span class='ecrm-0500'>8
-</span><span class='ecrm-0500'>9</span><span class='ectt-0800'>clean:                                                         </span><span class='ecrm-0500'>10  </span><span class='ectt-0800'>    $(MAKE) -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean</span>            </pre>
+</span><span class='ecrm-0500'>9</span><span class='ectt-0800'>clean:                                                         </span><span class='ecrm-0500'>10</span> <span class='ectt-0800'>    $(MAKE) -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean</span>            </pre>
 <!-- l. 503 --><p class='indent'>   Now have a look at <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/char/Makefile'>drivers/char/Makefile</a> for a real world example. As you can
 see, some things got hardwired into the kernel (<span class='obeylines-h'><span class='verb'><span class='ectt-1000'>obj-y</span></span></span>) but where have all those
 <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>obj-m</span></span></span> gone? Those familiar with shell scripts will easily be able to spot them. For
@@ -924,7 +924,7 @@ usual or unsigned. If you would like to use arrays of integers or strings, see
 <span class='ectt-1000'>module_param_array() </span>and <span class='ectt-1000'>module_param_string()</span>.
 </p><!-- l. 559 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb30'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>int myint = 3;
+   <pre class='fancyvrb' id='fancyvrb30'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>int myint = 3;
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>module_param(myint, int, 0);</span>                                           </pre>
 <!-- l. 564 --><p class='indent'>   Arrays are supported too, but things are a bit different now than they were in the
 olden days. To keep track of the number of parameters, you need to pass a
@@ -933,11 +933,11 @@ also ignore the count and pass <span class='ectt-1000'>NULL </span>instead. We s
 here:
 </p><!-- l. 569 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb31'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>int myintarray[2];
+   <pre class='fancyvrb' id='fancyvrb31'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>int myintarray[2];
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>module_param_array(myintarray, int, NULL, 0); /* not interested in count */
 </span><span class='ecrm-0500'>3
 </span><span class='ecrm-0500'>4</span><span class='ectt-0800'>short myshortarray[4];
-</span><span class='ecrm-0500'>5</span><span class='ectt-0800'>int count;                                                       </span><span class='ecrm-0500'>6  </span><span class='ectt-0800'>module_param_array(myshortarray, short, &amp;count, 0); /* put count into "count" variable */</span></pre>
+</span><span class='ecrm-0500'>5</span><span class='ectt-0800'>int count;                                                       </span><span class='ecrm-0500'>6</span> <span class='ectt-0800'>module_param_array(myshortarray, short, &amp;count, 0); /* put count into "count" variable */</span></pre>
 <!-- l. 578 --><p class='indent'>   A good use for this is to have the module variable’s default values set, like a port
 or IO address. If the variables contain the default values, then perform autodetection
 (explained elsewhere). Otherwise, keep the current value. This will be made clear
@@ -1033,7 +1033,7 @@ permissions, the parameter is also exposed through sysfs so the same callbacks c
 run after the module has already been loaded.
 </p><!-- l. 595 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb33'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>static int watched = 42;
+   <pre class='fancyvrb' id='fancyvrb33'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>static int watched = 42;
 </span><span class='ecrm-0500'>2
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'>static int watched_set(const char *val, const struct kernel_param *kp)
 </span><span class='ecrm-0500'>4</span><span class='ectt-0800'>{
@@ -1050,7 +1050,7 @@ run after the module has already been loaded.
 </span><span class='ecrm-0500'>15</span><span class='ectt-0800'>    .set = watched_set,
 </span><span class='ecrm-0500'>16</span><span class='ectt-0800'>    .get = param_get_int,
 </span><span class='ecrm-0500'>17</span><span class='ectt-0800'>};
-</span><span class='ecrm-0500'>18                                                              </span><span class='ecrm-0500'>19  </span><span class='ectt-0800'>module_param_cb(watched, &amp;watched_ops, &amp;watched, 0644);</span>                     </pre>
+</span><span class='ecrm-0500'>18</span>                                   <span class='ecrm-0500'>19</span> <span class='ectt-0800'>module_param_cb(watched, &amp;watched_ops, &amp;watched, 0644);</span>                     </pre>
 <!-- l. 617 --><p class='indent'>   The full example below also overrides <span class='ectt-1000'>.get </span>so that every sysfs read is logged:
 
 </p>
@@ -1223,7 +1223,7 @@ files.
 <!-- l. 682 --><p class='indent'>   And finally, the makefile:
 </p><!-- l. 684 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb37'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>obj-m += hello-1.o
+   <pre class='fancyvrb' id='fancyvrb37'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>obj-m += hello-1.o
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>obj-m += hello-2.o
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'>obj-m += hello-3.o
 </span><span class='ecrm-0500'>4</span><span class='ectt-0800'>obj-m += hello-4.o
@@ -1237,7 +1237,7 @@ files.
 </span><span class='ecrm-0500'>12</span><span class='ectt-0800'>all:
 </span><span class='ecrm-0500'>13</span><span class='ectt-0800'>    $(MAKE) -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
 </span><span class='ecrm-0500'>14
-</span><span class='ecrm-0500'>15</span><span class='ectt-0800'>clean:                                                         </span><span class='ecrm-0500'>16  </span><span class='ectt-0800'>    $(MAKE) -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean</span>            </pre>
+</span><span class='ecrm-0500'>15</span><span class='ectt-0800'>clean:                                                         </span><span class='ecrm-0500'>16</span> <span class='ectt-0800'>    $(MAKE) -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean</span>            </pre>
 <!-- l. 703 --><p class='indent'>   This is the complete makefile for all the examples we have seen so far. The first
 five lines are nothing special, but for the last example we will need two lines. First we
 invent an object name for our combined module, second we tell <span class='ectt-1000'>make </span>what object files
@@ -1343,7 +1343,7 @@ EXTRAVERSION = -rc2
 available in <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/lib/modules/5.14.0-rc2/build</span></span></span>. A simple command as follows should
 suffice. 
 </p>
-   <pre class='fancyvrb' id='fancyvrb38'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>cp /lib/modules/</span><span class='tctt-0800'>`</span><span class='ectt-0800'>uname -r</span><span class='tctt-0800'>`</span><span class='ectt-0800'>/build/Makefile linux-</span><span class='tctt-0800'>`</span><span class='ectt-0800'>uname -r</span><span class='tctt-0800'>`</span>                       </pre>
+   <pre class='fancyvrb' id='fancyvrb38'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>cp /lib/modules/</span><span class='tctt-0800'>`</span><span class='ectt-0800'>uname -r</span><span class='tctt-0800'>`</span><span class='ectt-0800'>/build/Makefile linux-</span><span class='tctt-0800'>`</span><span class='ectt-0800'>uname -r</span><span class='tctt-0800'>`</span>                       </pre>
 <!-- l. 780 --><p class='noindent'>Here <span class='ectt-1000'>linux-‘uname -r‘ </span>is the Linux kernel source you are attempting to build.
 </p><!-- l. 782 --><p class='indent'>   Now, please run <span class='ectt-1000'>make </span>to update configuration and version headers and
 objects:
@@ -1436,12 +1436,12 @@ output.
 Compile the following program:
 </p><!-- l. 849 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb39'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>#include &lt;stdio.h&gt;
+   <pre class='fancyvrb' id='fancyvrb39'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>#include &lt;stdio.h&gt;
 </span><span class='ecrm-0500'>2
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'>int main(void)
 </span><span class='ecrm-0500'>4</span><span class='ectt-0800'>{
 </span><span class='ecrm-0500'>5</span><span class='ectt-0800'>    printf("hello");
-</span><span class='ecrm-0500'>6</span><span class='ectt-0800'>    return 0;                                                    </span><span class='ecrm-0500'>7  </span><span class='ectt-0800'>}</span>                                                                 </pre>
+</span><span class='ecrm-0500'>6</span><span class='ectt-0800'>    return 0;                                                    </span><span class='ecrm-0500'>7</span> <span class='ectt-0800'>}</span>                                                                 </pre>
 <!-- l. 859 --><p class='indent'>   with <span class='ectt-1000'>gcc -Wall -o hello hello.c</span>. Run the executable with <span class='ectt-1000'>strace
 </span><span class='ectt-1000'>./hello</span>. Are you impressed? Every line you see corresponds to a system call.
 <a href='https://strace.io/'>strace</a> is a handy program that gives you details about what system calls a
@@ -1653,7 +1653,7 @@ that performs that operation. Here is what the definition looks like for kernel 
 later versions:
 </p><!-- l. 1016 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb40'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>struct file_operations {
+   <pre class='fancyvrb' id='fancyvrb40'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>struct file_operations {
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>    struct module *owner;
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'>    loff_t (*llseek) (struct file *, loff_t, int);
 </span><span class='ecrm-0500'>4</span><span class='ectt-0800'>    ssize_t (*read) (struct file *, char __user *, size_t, loff_t *);
@@ -1692,7 +1692,7 @@ later versions:
 </span><span class='ecrm-0500'>34</span><span class='ectt-0800'>    loff_t (*remap_file_range)(struct file *file_in, loff_t pos_in,
 </span><span class='ecrm-0500'>35</span><span class='ectt-0800'>             struct file *file_out, loff_t pos_out,
 </span><span class='ecrm-0500'>36</span><span class='ectt-0800'>             loff_t len, unsigned int remap_flags);
-</span><span class='ecrm-0500'>37</span><span class='ectt-0800'>    int (*fadvise)(struct file *, loff_t, loff_t, int);                  </span><span class='ecrm-0500'>38  </span><span class='ectt-0800'>} __randomize_layout;</span>                                                 </pre>
+</span><span class='ecrm-0500'>37</span><span class='ectt-0800'>    int (*fadvise)(struct file *, loff_t, loff_t, int);                  </span><span class='ecrm-0500'>38</span> <span class='ectt-0800'>} __randomize_layout;</span>                                                 </pre>
 <!-- l. 1057 --><p class='indent'>   Some operations are not implemented by a driver. For example, a driver that
 handles a video card will not need to read from a directory structure. The
 corresponding entries in the <span class='ectt-1000'>file_operations </span>structure should be set to <span class='ectt-1000'>NULL</span>.
@@ -1702,22 +1702,22 @@ You will see it in modern drivers, and may catch you by surprise. This is what t
 new way of assigning to the structure looks like:
 </p><!-- l. 1070 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb41'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>struct file_operations fops = {
+   <pre class='fancyvrb' id='fancyvrb41'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>struct file_operations fops = {
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>    read: device_read,
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'>    write: device_write,
 </span><span class='ecrm-0500'>4</span><span class='ectt-0800'>    open: device_open,
-</span><span class='ecrm-0500'>5</span><span class='ectt-0800'>    release: device_release                                         </span><span class='ecrm-0500'>6  </span><span class='ectt-0800'>};</span>                                                                </pre>
+</span><span class='ecrm-0500'>5</span><span class='ectt-0800'>    release: device_release                                         </span><span class='ecrm-0500'>6</span> <span class='ectt-0800'>};</span>                                                                </pre>
 <!-- l. 1079 --><p class='indent'>   However, there is also a C99 way of assigning to elements of a structure,
 <a href='https://gcc.gnu.org/onlinedocs/gcc/Designated-Inits.html'>designated initializers</a>, and this is definitely preferred over using the GNU extension.
 You should use this syntax in case someone wants to port your driver. It will help
 with compatibility:
 </p><!-- l. 1083 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb42'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>struct file_operations fops = {
+   <pre class='fancyvrb' id='fancyvrb42'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>struct file_operations fops = {
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>    .read = device_read,
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'>    .write = device_write,
 </span><span class='ecrm-0500'>4</span><span class='ectt-0800'>    .open = device_open,
-</span><span class='ecrm-0500'>5</span><span class='ectt-0800'>    .release = device_release                                       </span><span class='ecrm-0500'>6  </span><span class='ectt-0800'>};</span>                                                                </pre>
+</span><span class='ecrm-0500'>5</span><span class='ectt-0800'>    .release = device_release                                       </span><span class='ecrm-0500'>6</span> <span class='ectt-0800'>};</span>                                                                </pre>
 <!-- l. 1092 --><p class='indent'>   The meaning is clear, and you should be aware that any member of the
                                                                   
 
@@ -1768,7 +1768,7 @@ initialization. You do this by using the <span class='ectt-1000'>register_chrdev
                                                                   
 </p><!-- l. 1130 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb43'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>int register_chrdev(unsigned int major, const char *name, struct file_operations *fops);</span> </pre>
+   <pre class='fancyvrb' id='fancyvrb43'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>int register_chrdev(unsigned int major, const char *name, struct file_operations *fops);</span> </pre>
 <!-- l. 1134 --><p class='indent'>   Where <span class='ectt-1000'>unsigned int major </span>is the major number you want to request, <span class='ectt-1000'>const
 </span><span class='ectt-1000'>char *name </span>is the name of the device as it will appear in <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/devices</span></span></span>
 and <span class='ectt-1000'>struct file_operations *fops </span>is a pointer to the <span class='ectt-1000'>file_operations</span>
@@ -1800,7 +1800,7 @@ First, we should register a range of device numbers, which can be completed with
 <span class='ectt-1000'>register_chrdev_region </span>or <span class='ectt-1000'>alloc_chrdev_region</span>.
 </p><!-- l. 1156 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb44'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>int register_chrdev_region(dev_t from, unsigned count, const char *name);
+   <pre class='fancyvrb' id='fancyvrb44'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>int register_chrdev_region(dev_t from, unsigned count, const char *name);
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>int alloc_chrdev_region(dev_t *dev, unsigned baseminor, unsigned count, const char *name);</span></pre>
 <!-- l. 1161 --><p class='indent'>   The choice between two different functions depends on whether you know the
 major numbers for your device. Using <span class='ectt-1000'>register_chrdev_region </span>if you know the
@@ -1814,19 +1814,19 @@ achieve by the similar sequence of the following codes.
 
                                                                   
 </p>
-   <pre class='fancyvrb' id='fancyvrb45'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>struct cdev *my_dev = cdev_alloc();
+   <pre class='fancyvrb' id='fancyvrb45'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>struct cdev *my_dev = cdev_alloc();
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>my_cdev-&gt;ops = &amp;my_fops;</span>                                              </pre>
 <!-- l. 1172 --><p class='indent'>   However, the common usage pattern will embed the <span class='ectt-1000'>struct cdev </span>within a
 device-specific structure of your own. In this case, we’ll need <span class='ectt-1000'>cdev_init </span>for the
 initialization.
 </p><!-- l. 1175 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb46'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>void cdev_init(struct cdev *cdev, const struct file_operations *fops);</span>           </pre>
+   <pre class='fancyvrb' id='fancyvrb46'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>void cdev_init(struct cdev *cdev, const struct file_operations *fops);</span>           </pre>
 <!-- l. 1179 --><p class='indent'>   Once we finish the initialization, we can add the char device to the system by
 using the <span class='ectt-1000'>cdev_add</span>.
 </p><!-- l. 1181 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb47'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>int cdev_add(struct cdev *p, dev_t dev, unsigned count);</span>                         </pre>
+   <pre class='fancyvrb' id='fancyvrb47'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>int cdev_add(struct cdev *p, dev_t dev, unsigned count);</span>                         </pre>
 <!-- l. 1185 --><p class='indent'>   To find an example using the interface, you can see <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>ioctl.c</span></span></span> described in
 <a href='#talking-to-device-files'>Section 10</a>.
 </p><!-- l. 1187 --><p class='noindent'>
@@ -1871,7 +1871,7 @@ understanding of when and how to properly use module reference counting, see
 been registered by checking:
 </p><!-- l. 1218 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb48'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>cat /proc/devices</span>                                                                </pre>
+   <pre class='fancyvrb' id='fancyvrb48'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>cat /proc/devices</span>                                                                </pre>
 <!-- l. 1222 --><p class='indent'>   This will show the device’s major number. To actually use the device, you need to
 read from <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/dev/chardev</span></span></span> (or open the file with a program) and the driver will put
 the number of times the device file has been read from into the file. We do not
@@ -2690,27 +2690,27 @@ as an interface for applications or scripts. You can find sysfs directories and 
 under the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/sys</span></span></span> directory on your system.
 </p><!-- l. 1400 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb54'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>ls -l /sys</span>                                                                       </pre>
+   <pre class='fancyvrb' id='fancyvrb54'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>ls -l /sys</span>                                                                       </pre>
 <!-- l. 1404 --><p class='indent'>   Attributes can be exported for kobjects in the form of regular files in the
 filesystem. Sysfs forwards file I/O operations to methods defined for the attributes,
 providing a means to read and write kernel attributes.
 </p><!-- l. 1407 --><p class='indent'>   A simple attribute definition:
 </p><!-- l. 1409 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb55'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>struct attribute {
+   <pre class='fancyvrb' id='fancyvrb55'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>struct attribute {
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>    char *name;
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'>    struct module *owner;
 </span><span class='ecrm-0500'>4</span><span class='ectt-0800'>    umode_t mode;
 </span><span class='ecrm-0500'>5</span><span class='ectt-0800'>};
 </span><span class='ecrm-0500'>6
-</span><span class='ecrm-0500'>7</span><span class='ectt-0800'>int sysfs_create_file(struct kobject * kobj, const struct attribute * attr); </span><span class='ecrm-0500'>8  </span><span class='ectt-0800'>void sysfs_remove_file(struct kobject * kobj, const struct attribute * attr);</span>   </pre>
+</span><span class='ecrm-0500'>7</span><span class='ectt-0800'>int sysfs_create_file(struct kobject * kobj, const struct attribute * attr); </span><span class='ecrm-0500'>8</span> <span class='ectt-0800'>void sysfs_remove_file(struct kobject * kobj, const struct attribute * attr);</span>   </pre>
                                                                   
 
                                                                   
 <!-- l. 1420 --><p class='indent'>   For example, the driver model defines <span class='ectt-1000'>struct device_attribute </span>like:
 </p><!-- l. 1422 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb56'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>struct device_attribute {
+   <pre class='fancyvrb' id='fancyvrb56'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>struct device_attribute {
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>    struct attribute attr;
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'>    ssize_t (*show)(struct device *dev, struct device_attribute *attr,
 </span><span class='ecrm-0500'>4</span><span class='ectt-0800'>                    char *buf);
@@ -2718,7 +2718,7 @@ providing a means to read and write kernel attributes.
 </span><span class='ecrm-0500'>6</span><span class='ectt-0800'>                    const char *buf, size_t count);
 </span><span class='ecrm-0500'>7</span><span class='ectt-0800'>};
 </span><span class='ecrm-0500'>8
-</span><span class='ecrm-0500'>9</span><span class='ectt-0800'>int device_create_file(struct device *, const struct device_attribute *);   </span><span class='ecrm-0500'>10  </span><span class='ectt-0800'>void device_remove_file(struct device *, const struct device_attribute *);</span>      </pre>
+</span><span class='ecrm-0500'>9</span><span class='ectt-0800'>int device_create_file(struct device *, const struct device_attribute *);   </span><span class='ecrm-0500'>10</span> <span class='ectt-0800'>void device_remove_file(struct device *, const struct device_attribute *);</span>      </pre>
 <!-- l. 1435 --><p class='indent'>   To read or write attributes, the <span class='ectt-1000'>show() </span>or <span class='ectt-1000'>store() </span>method must be specified
 when declaring the attribute. For the common cases <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/sysfs.h'>include/linux/sysfs.h</a> provides
 convenience macros (<span class='ectt-1000'>__ATTR</span>, <span class='ectt-1000'>__ATTR_RO</span>, <span class='ectt-1000'>__ATTR_WO</span>, etc.) to make defining
@@ -2797,20 +2797,20 @@ accessible via sysfs is given below.
 <!-- l. 1442 --><p class='indent'>   Make and install the module:
 </p><!-- l. 1444 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb58'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>make
+   <pre class='fancyvrb' id='fancyvrb58'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>make
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>sudo insmod hello-sysfs.ko</span>                                             </pre>
 <!-- l. 1449 --><p class='indent'>   Check that it exists:
 </p><!-- l. 1451 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb59'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>lsmod | grep hello_sysfs</span>                                                         </pre>
+   <pre class='fancyvrb' id='fancyvrb59'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>lsmod | grep hello_sysfs</span>                                                         </pre>
 <!-- l. 1455 --><p class='indent'>   What is the current value of <span class='ectt-1000'>myvariable </span>?
 </p><!-- l. 1457 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb60'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>cat /sys/kernel/mymodule/myvariable</span>                                              </pre>
+   <pre class='fancyvrb' id='fancyvrb60'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>cat /sys/kernel/mymodule/myvariable</span>                                              </pre>
 <!-- l. 1461 --><p class='indent'>   Set the value of <span class='ectt-1000'>myvariable </span>and check that it changed.
 </p><!-- l. 1463 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb61'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>echo "32" | sudo tee /sys/kernel/mymodule/myvariable
+   <pre class='fancyvrb' id='fancyvrb61'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>echo "32" | sudo tee /sys/kernel/mymodule/myvariable
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>cat /sys/kernel/mymodule/myvariable</span>                                     </pre>
                                                                   
 
@@ -2818,7 +2818,7 @@ accessible via sysfs is given below.
 <!-- l. 1468 --><p class='indent'>   Finally, remove the test module:
 </p><!-- l. 1470 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb62'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>sudo rmmod hello_sysfs</span>                                                           </pre>
+   <pre class='fancyvrb' id='fancyvrb62'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>sudo rmmod hello_sysfs</span>                                                           </pre>
 <!-- l. 1474 --><p class='indent'>   In the above case, we use a simple kobject to create a directory under sysfs, and
 communicate with its attributes. Since Linux v2.6.0, the <span class='ectt-1000'>kobject </span>structure made its
 appearance. It was initially meant as a simple way of unifying kernel code which
@@ -2839,13 +2839,13 @@ describes both the design goals and the helper APIs. On most systems, debugfs is
 mounted at <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/sys/kernel/debug</span></span></span>:
 </p><!-- l. 1489 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb63'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>mount | grep debugfs
+   <pre class='fancyvrb' id='fancyvrb63'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>mount | grep debugfs
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>ls -l /sys/kernel/debug</span>                                               </pre>
 <!-- l. 1494 --><p class='indent'>   To use the interface, include <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/debugfs.h'>include/linux/debugfs.h</a> and create a top-level
 directory for your module:
 </p><!-- l. 1496 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb64'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>struct dentry *debugfs_create_dir(const char *name, struct dentry *parent);</span>      </pre>
+   <pre class='fancyvrb' id='fancyvrb64'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>struct dentry *debugfs_create_dir(const char *name, struct dentry *parent);</span>      </pre>
 <!-- l. 1500 --><p class='indent'>   Passing <span class='ectt-1000'>NULL </span>as the parent places the new directory at the root of debugfs. When
 you unload the module, remove the whole subtree with <span class='ectt-1000'>debugfs_remove_recursive()</span>.
 Note that <span class='ectt-1000'>debugfs_create_dir() </span>and the other <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>debugfs_create_*()</span></span></span> helpers are
@@ -2920,8 +2920,8 @@ plus a boolean flag:
 file with your own <span class='ectt-1000'>struct file_operations</span>:
 </p><!-- l. 1515 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb66'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>struct dentry *debugfs_create_file(const char *name, umode_t mode,
-</span><span class='ecrm-0500'>2</span><span class='ectt-0800'>                                   struct dentry *parent, void *data,       </span><span class='ecrm-0500'>3  </span><span class='ectt-0800'>                                   const struct file_operations *fops);</span>        </pre>
+   <pre class='fancyvrb' id='fancyvrb66'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>struct dentry *debugfs_create_file(const char *name, umode_t mode,
+</span><span class='ecrm-0500'>2</span><span class='ectt-0800'>                                   struct dentry *parent, void *data,       </span><span class='ecrm-0500'>3</span> <span class='ectt-0800'>                                   const struct file_operations *fops);</span>        </pre>
 <!-- l. 1521 --><p class='indent'>   debugfs also includes helpers for a few common read-only payloads. One of them
 is <span class='ectt-1000'>debugfs_create_blob()</span>, which exposes an existing memory region as a
 file.
@@ -4333,7 +4333,7 @@ calls <span class='ectt-1000'>wait_event_interruptible</span>. The easiest way t
 with:
 </p><!-- l. 1826 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb73'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>tail -f</span>                                                                          </pre>
+   <pre class='fancyvrb' id='fancyvrb73'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>tail -f</span>                                                                          </pre>
 <!-- l. 1830 --><p class='indent'>   This function changes the status of the task (a task is the kernel data structure
 which holds information about a process and the system call it is in, if any) to
 <span class='ectt-1000'>TASK_INTERRUPTIBLE</span>, which means that the task will not run until it is woken up
@@ -5371,7 +5371,7 @@ API</a>.
 </p><!-- l. 2060 --><p class='indent'>   Before Linux v4.14, <span class='ectt-1000'>setup_timer </span>was used to initialize the timer and the
 <span class='ectt-1000'>timer_list </span>structure looked like: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb82'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>struct timer_list {
+   <pre class='fancyvrb' id='fancyvrb82'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>struct timer_list {
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>    unsigned long expires;
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'>    void (*function)(unsigned long);
 </span><span class='ecrm-0500'>4</span><span class='ectt-0800'>    unsigned long data;
@@ -5379,23 +5379,23 @@ API</a>.
 </span><span class='ecrm-0500'>6</span><span class='ectt-0800'>    /* ... */
 </span><span class='ecrm-0500'>7</span><span class='ectt-0800'>};
 </span><span class='ecrm-0500'>8
-</span><span class='ecrm-0500'>9</span><span class='ectt-0800'>void setup_timer(struct timer_list *timer, void (*callback)(unsigned long), </span><span class='ecrm-0500'>10  </span><span class='ectt-0800'>                 unsigned long data);</span>                                    </pre>
+</span><span class='ecrm-0500'>9</span><span class='ectt-0800'>void setup_timer(struct timer_list *timer, void (*callback)(unsigned long), </span><span class='ecrm-0500'>10</span> <span class='ectt-0800'>                 unsigned long data);</span>                                    </pre>
 <!-- l. 2074 --><p class='indent'>   Since Linux v4.14, <span class='ectt-1000'>timer_setup </span>is adopted and the kernel step by step
 converting to <span class='ectt-1000'>timer_setup </span>from <span class='ectt-1000'>setup_timer</span>. One of the reasons why the
 API was changed is that it needed to coexist with the old version of the
 interface. Moreover, the <span class='ectt-1000'>timer_setup </span>was implemented by <span class='ectt-1000'>setup_timer </span>at first.
 
 </p>
-   <pre class='fancyvrb' id='fancyvrb83'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>void timer_setup(struct timer_list *timer,
+   <pre class='fancyvrb' id='fancyvrb83'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>void timer_setup(struct timer_list *timer,
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>                 void (*callback)(struct timer_list *), unsigned int flags);</span>    </pre>
 <!-- l. 2082 --><p class='indent'>   The <span class='ectt-1000'>setup_timer </span>was then removed since v4.15. As a result, the <span class='ectt-1000'>timer_list</span>
 structure had changed to the following. 
 </p>
-   <pre class='fancyvrb' id='fancyvrb84'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>struct timer_list {
+   <pre class='fancyvrb' id='fancyvrb84'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>struct timer_list {
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>    unsigned long expires;
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'>    void (*function)(struct timer_list *);
 </span><span class='ecrm-0500'>4</span><span class='ectt-0800'>    u32 flags;
-</span><span class='ecrm-0500'>5</span><span class='ectt-0800'>    /* ... */                                                    </span><span class='ecrm-0500'>6  </span><span class='ectt-0800'>};</span>                                                                </pre>
+</span><span class='ecrm-0500'>5</span><span class='ectt-0800'>    /* ... */                                                    </span><span class='ecrm-0500'>6</span> <span class='ectt-0800'>};</span>                                                                </pre>
 <!-- l. 2093 --><p class='indent'>   The following source code illustrates a minimal kernel module which, when
 loaded, starts blinking the keyboard LEDs until it is unloaded.
 </p><!-- l. 2095 --><p class='indent'>
@@ -5843,17 +5843,17 @@ needing 6.x-only driver callbacks:
 </span><span class='ecrm-0500'>100</span><span class='ectt-0800'>#endif
 </span><span class='ecrm-0500'>101
 </span><span class='ecrm-0500'>102</span><span class='ectt-0800'>static struct platform_driver dma_demo_driver = {
-</span><span class='ecrm-0500'>103      </span><span class='ectt-0800'>.probe = dma_demo_probe,
+</span><span class='ecrm-0500'>103</span>   <span class='ectt-0800'>.probe = dma_demo_probe,
 </span><span class='ecrm-0500'>104</span><span class='ectt-0800'>#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(6, 11, 0)
-</span><span class='ecrm-0500'>105      </span><span class='ectt-0800'>.remove = dma_demo_remove,
+</span><span class='ecrm-0500'>105</span>   <span class='ectt-0800'>.remove = dma_demo_remove,
 </span><span class='ecrm-0500'>106</span><span class='ectt-0800'>#elif LINUX_VERSION_CODE &gt;= KERNEL_VERSION(5, 18, 0)
-</span><span class='ecrm-0500'>107      </span><span class='ectt-0800'>.remove_new = dma_demo_remove,
+</span><span class='ecrm-0500'>107</span>   <span class='ectt-0800'>.remove_new = dma_demo_remove,
 </span><span class='ecrm-0500'>108</span><span class='ectt-0800'>#else
-</span><span class='ecrm-0500'>109      </span><span class='ectt-0800'>.remove = dma_demo_remove,
+</span><span class='ecrm-0500'>109</span>   <span class='ectt-0800'>.remove = dma_demo_remove,
 </span><span class='ecrm-0500'>110</span><span class='ectt-0800'>#endif
-</span><span class='ecrm-0500'>111      </span><span class='ectt-0800'>.driver = {
-</span><span class='ecrm-0500'>112             </span><span class='ectt-0800'>.name = "lkmpg_dma_demo",
-</span><span class='ecrm-0500'>113      </span><span class='ectt-0800'>},
+</span><span class='ecrm-0500'>111</span>   <span class='ectt-0800'>.driver = {
+</span><span class='ecrm-0500'>112</span>       <span class='ectt-0800'>.name = "lkmpg_dma_demo",
+</span><span class='ecrm-0500'>113</span>   <span class='ectt-0800'>},
 </span><span class='ecrm-0500'>114</span><span class='ectt-0800'>};
                                                                   
 
@@ -5956,7 +5956,7 @@ enable a specific GPIO pin. After successfully enabling it, you can check that t
 is being used by looking at /sys/kernel/debug/gpio.
 </p><!-- l. 2415 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb87'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>cat /sys/kernel/debug/gpio</span>                                                       </pre>
+   <pre class='fancyvrb' id='fancyvrb87'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>cat /sys/kernel/debug/gpio</span>                                                       </pre>
 <!-- l. 2419 --><p class='indent'>   There are other ways to register GPIOs. For example, you can use
 <span class='ectt-1000'>gpio_request_one() </span>to register a GPIO while setting its direction (input or output)
 and initial state at the same time. You can also use <span class='ectt-1000'>gpio_request_array() </span>to
@@ -6234,17 +6234,17 @@ resistor.
    </pre>
 <!-- l. 2442 --><p class='indent'>   Make and install the module: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb89'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>make
+   <pre class='fancyvrb' id='fancyvrb89'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>make
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>sudo insmod led.ko</span>                                                   </pre>
 <!-- l. 2448 --><p class='indent'>   Switch on the LED: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb90'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>echo "1" | sudo tee /dev/gpio_led</span>                                                </pre>
+   <pre class='fancyvrb' id='fancyvrb90'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>echo "1" | sudo tee /dev/gpio_led</span>                                                </pre>
 <!-- l. 2453 --><p class='indent'>   Switch off the LED: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb91'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>echo "0" | sudo tee /dev/gpio_led</span>                                                </pre>
+   <pre class='fancyvrb' id='fancyvrb91'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>echo "0" | sudo tee /dev/gpio_led</span>                                                </pre>
 <!-- l. 2458 --><p class='indent'>   Finally, remove the module: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb92'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>sudo rmmod led</span>                                                                   </pre>
+   <pre class='fancyvrb' id='fancyvrb92'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>sudo rmmod led</span>                                                                   </pre>
 <!-- l. 2463 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='dht-sensor'><span class='titlemark'>21.3   </span> <a id='x1-7300021.3'></a>DHT11 sensor</h4>
@@ -6546,14 +6546,14 @@ and jumper wires.
    </pre>
 <!-- l. 2475 --><p class='noindent'>Make and install the module: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb94'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>make
+   <pre class='fancyvrb' id='fancyvrb94'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>make
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>sudo insmod dht11.ko</span>                                                  </pre>
 <!-- l. 2481 --><p class='indent'>   Check the Output of the DHT11 Sensor: 
                                                                   
 
                                                                   
 </p>
-   <pre class='fancyvrb' id='fancyvrb95'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>sudo cat /dev/dht11</span>                                                              </pre>
+   <pre class='fancyvrb' id='fancyvrb95'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>sudo cat /dev/dht11</span>                                                              </pre>
 <!-- l. 2486 --><p class='indent'>   Expected Output:
                                                                   
 
@@ -6567,7 +6567,7 @@ Temperature: 30°C
 <!-- l. 2491 --><p class='nopar'>
 </p><!-- l. 2493 --><p class='indent'>   Finally, remove the module: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb96'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>sudo rmmod dht11</span>                                                                 </pre>
+   <pre class='fancyvrb' id='fancyvrb96'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>sudo rmmod dht11</span>                                                                 </pre>
 <!-- l. 2498 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='scheduling-tasks'><span class='titlemark'>22   </span> <a id='x1-7400022'></a>Scheduling Tasks</h3>
@@ -7690,13 +7690,13 @@ virtual device name and <span class='ectt-1000'>vinput_ops </span>structure that
 add a new device to the list of support virtual input devices.
 </p><!-- l. 2686 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb102'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>int init(struct vinput *);</span>                                                       </pre>
+   <pre class='fancyvrb' id='fancyvrb102'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>int init(struct vinput *);</span>                                                       </pre>
 <!-- l. 2690 --><p class='indent'>   This function is passed a <span class='ectt-1000'>struct vinput </span>already initialized with an allocated
 <span class='ectt-1000'>struct input_dev</span>. The <span class='ectt-1000'>init() </span>function is responsible for initializing the
 capabilities of the input device and register it.
 </p><!-- l. 2693 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb103'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>int send(struct vinput *, char *, int);</span>                                          </pre>
+   <pre class='fancyvrb' id='fancyvrb103'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>int send(struct vinput *, char *, int);</span>                                          </pre>
                                                                   
 
                                                                   
@@ -7705,7 +7705,7 @@ capabilities of the input device and register it.
 user.
 </p><!-- l. 2700 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb104'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>int read(struct vinput *, char *, int);</span>                                          </pre>
+   <pre class='fancyvrb' id='fancyvrb104'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>int read(struct vinput *, char *, int);</span>                                          </pre>
 <!-- l. 2704 --><p class='indent'>   This function is used for debugging and should fill the buffer parameter with the
 last event sent in the virtual input device format. The buffer will then be copied to
 user.
@@ -7716,12 +7716,12 @@ virtual input device.
 about in <a href='#sysfs-interacting-with-your-module'>Section 8</a>:
 </p><!-- l. 2713 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb105'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>struct class_attribute {
+   <pre class='fancyvrb' id='fancyvrb105'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>struct class_attribute {
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>    struct attribute attr;
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'>    ssize_t (*show)(struct class *class, struct class_attribute *attr,
 </span><span class='ecrm-0500'>4</span><span class='ectt-0800'>                    char *buf);
 </span><span class='ecrm-0500'>5</span><span class='ectt-0800'>    ssize_t (*store)(struct class *class, struct class_attribute *attr,
-</span><span class='ecrm-0500'>6</span><span class='ectt-0800'>                    const char *buf, size_t count);                      </span><span class='ecrm-0500'>7  </span><span class='ectt-0800'>};</span>                                                                </pre>
+</span><span class='ecrm-0500'>6</span><span class='ectt-0800'>                    const char *buf, size_t count);                      </span><span class='ecrm-0500'>7</span> <span class='ectt-0800'>};</span>                                                                </pre>
 <!-- l. 2723 --><p class='indent'>   In <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>vinput.c</span></span></span>, the macro <span class='ectt-1000'>CLASS_ATTR_WO(export/unexport) </span>defined in
 <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/device.h'>include/linux/device.h</a> (in this case, <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>device.h</span></span></span> is included in <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/input.h'>include/linux/input.h</a>)
 will generate the <span class='ectt-1000'>class_attribute </span>structures which are named
@@ -7733,11 +7733,11 @@ sysfs.
 </p><!-- l. 2727 --><p class='indent'>   To create a <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>vinputX</span></span></span> sysfs entry and <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/dev</span></span></span> node.
 </p><!-- l. 2729 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb106'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>echo "vkbd" | sudo tee /sys/class/vinput/export</span>                                  </pre>
+   <pre class='fancyvrb' id='fancyvrb106'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>echo "vkbd" | sudo tee /sys/class/vinput/export</span>                                  </pre>
 <!-- l. 2733 --><p class='indent'>   To unexport the device, just echo its id in unexport:
 </p><!-- l. 2735 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb107'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>echo "0" | sudo tee /sys/class/vinput/unexport</span>                                   </pre>
+   <pre class='fancyvrb' id='fancyvrb107'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>echo "0" | sudo tee /sys/class/vinput/unexport</span>                                   </pre>
 
 <!-- l. 2739 --><p class='indent'>
 </p>
@@ -8253,11 +8253,11 @@ long. The following demonstrates how simulation work.
 </p><!-- l. 2749 --><p class='indent'>   Simulate a key press on "g" (<span class='ectt-1000'>KEY_G </span>= 34):
 </p><!-- l. 2751 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb110'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>echo "+34" | sudo tee /dev/vinput0</span>                                               </pre>
+   <pre class='fancyvrb' id='fancyvrb110'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>echo "+34" | sudo tee /dev/vinput0</span>                                               </pre>
 <!-- l. 2755 --><p class='indent'>   Simulate a key release on "g" (<span class='ectt-1000'>KEY_G </span>= 34):
 </p><!-- l. 2757 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb111'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>echo "-34" | sudo tee /dev/vinput0</span>                                               </pre>
+   <pre class='fancyvrb' id='fancyvrb111'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>echo "-34" | sudo tee /dev/vinput0</span>                                               </pre>
 
 <!-- l. 2761 --><p class='indent'>
 </p>
@@ -8466,7 +8466,7 @@ path is not optional bookkeeping; it is a normal and frequent event on USB
 systems.
 </p><!-- l. 2852 --><p class='indent'>   The minimal skeleton looks conceptually like this: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb113'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>static const struct usb_device_id my_table[] = {
+   <pre class='fancyvrb' id='fancyvrb113'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>static const struct usb_device_id my_table[] = {
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>    { USB_DEVICE(0x1234, 0x5678) },
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'>    { }
                                                                   
@@ -8479,7 +8479,7 @@ systems.
 </span><span class='ecrm-0500'>8</span><span class='ectt-0800'>    .name = "my_usb_driver",
 </span><span class='ecrm-0500'>9</span><span class='ectt-0800'>    .probe = my_probe,
 </span><span class='ecrm-0500'>10</span><span class='ectt-0800'>    .disconnect = my_disconnect,
-</span><span class='ecrm-0500'>11</span><span class='ectt-0800'>    .id_table = my_table,                                          </span><span class='ecrm-0500'>12  </span><span class='ectt-0800'>};</span>                                                                </pre>
+</span><span class='ecrm-0500'>11</span><span class='ectt-0800'>    .id_table = my_table,                                          </span><span class='ecrm-0500'>12</span> <span class='ectt-0800'>};</span>                                                                </pre>
 <!-- l. 2868 --><p class='indent'>   The <span class='ectt-1000'>probe </span>callback usually stores per-interface state with <span class='ectt-1000'>usb_set_intfdata()</span>,
 retrieves endpoint information from the current alternate setting, allocates transfer
 buffers, and registers whatever higher-level interface will be visible to userspace. The
@@ -8540,9 +8540,9 @@ modalias strings, and power-management attributes. That is often the fastest way
 confirm what the kernel thinks the hardware is before you write a line of driver code.
 For example: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb114'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>ls /sys/bus/usb/devices/
+   <pre class='fancyvrb' id='fancyvrb114'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>ls /sys/bus/usb/devices/
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>cat /sys/bus/usb/devices/1-1/idVendor
-</span><span class='ecrm-0500'>3</span><span class='ectt-0800'>cat /sys/bus/usb/devices/1-1/idProduct                                </span><span class='ecrm-0500'>4  </span><span class='ectt-0800'>cat /sys/bus/usb/devices/1-1/modalias</span>                                    </pre>
+</span><span class='ecrm-0500'>3</span><span class='ectt-0800'>cat /sys/bus/usb/devices/1-1/idProduct                                </span><span class='ecrm-0500'>4</span> <span class='ectt-0800'>cat /sys/bus/usb/devices/1-1/modalias</span>                                    </pre>
 <!-- l. 2948 --><p class='indent'>   The modalias matters because it is what allows udev and module autoloading to
 connect a newly attached device to the right driver module. This is one of the
 cleanest examples of the kernel device model, bus matching, and userspace policy
@@ -9541,13 +9541,13 @@ nodes.
 <!-- l. 3244 --><p class='noindent'>To use the above module, you would need a Device Tree entry like this:
 </p><!-- l. 3246 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb119'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>/* Example device tree fragment */
+   <pre class='fancyvrb' id='fancyvrb119'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>/* Example device tree fragment */
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>lkmpg_device@0 {
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'>    compatible = "lkmpg,example-device";
 </span><span class='ecrm-0500'>4</span><span class='ectt-0800'>    reg = &lt;0x40000000 0x1000&gt;;
 </span><span class='ecrm-0500'>5</span><span class='ectt-0800'>    label = "LKMPG Test Device";
 </span><span class='ecrm-0500'>6</span><span class='ectt-0800'>    lkmpg,custom-value = &lt;100&gt;;
-</span><span class='ecrm-0500'>7</span><span class='ectt-0800'>    lkmpg,has-clock;                                               </span><span class='ecrm-0500'>8  </span><span class='ectt-0800'>};</span>                                                                </pre>
+</span><span class='ecrm-0500'>7</span><span class='ectt-0800'>    lkmpg,has-clock;                                               </span><span class='ecrm-0500'>8</span> <span class='ectt-0800'>};</span>                                                                </pre>
 <!-- l. 3257 --><p class='indent'>   The properties in this Device Tree node would be read by the module’s probe
 function when the device is matched. The <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>compatible</span></span></span> property is used to match
 the device with the driver, while other properties provide device-specific
@@ -9575,10 +9575,10 @@ configuration.
 filesystem:
 </p><!-- l. 3274 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb120'><span class='ecrm-0500'>1  </span><span class='ectt-0800'># List all platform devices
+   <pre class='fancyvrb' id='fancyvrb120'><span class='ecrm-0500'>1</span> <span class='ectt-0800'># List all platform devices
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>ls /sys/bus/platform/devices/
 </span><span class='ecrm-0500'>3
-</span><span class='ecrm-0500'>4</span><span class='ectt-0800'># Check device tree nodes                                           </span><span class='ecrm-0500'>5  </span><span class='ectt-0800'>ls /proc/device-tree/</span>                                                 </pre>
+</span><span class='ecrm-0500'>4</span><span class='ectt-0800'># Check device tree nodes                                           </span><span class='ecrm-0500'>5</span> <span class='ectt-0800'>ls /proc/device-tree/</span>                                                 </pre>
 <!-- l. 3282 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='common-device-tree-functions'><span class='titlemark'>30.6   </span> <a id='x1-10500030.6'></a>Common Device Tree Functions</h4>
@@ -9622,11 +9622,11 @@ succeed.
 
                                                                   
 </p>
-   <pre class='fancyvrb' id='fancyvrb121'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>bvl = bvec_alloc(gfp_mask, nr_iovecs, &amp;idx);
+   <pre class='fancyvrb' id='fancyvrb121'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>bvl = bvec_alloc(gfp_mask, nr_iovecs, &amp;idx);
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>if (unlikely(!bvl)) {
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'>    mempool_free(bio, bio_pool);
 </span><span class='ecrm-0500'>4</span><span class='ectt-0800'>    bio = NULL;
-</span><span class='ecrm-0500'>5</span><span class='ectt-0800'>    goto out;                                                    </span><span class='ecrm-0500'>6  </span><span class='ectt-0800'>}</span>                                                                 </pre>
+</span><span class='ecrm-0500'>5</span><span class='ectt-0800'>    goto out;                                                    </span><span class='ecrm-0500'>6</span> <span class='ectt-0800'>}</span>                                                                 </pre>
 <!-- l. 3317 --><p class='indent'>   When the <span class='ectt-1000'>unlikely </span>macro is used, the compiler alters its machine instruction
 output, so that it continues along the false branch and only jumps if the condition is
 true. That avoids flushing the processor pipeline. The opposite happens if you use the
@@ -9645,8 +9645,8 @@ sure that gcc supports <span class='ectt-1000'>asm goto </span>inline assembly, 
 configurations are set:
 </p><!-- l. 3328 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb122'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>CONFIG_JUMP_LABEL=y
-</span><span class='ecrm-0500'>2</span><span class='ectt-0800'>CONFIG_HAVE_ARCH_JUMP_LABEL=y                                       </span><span class='ecrm-0500'>3  </span><span class='ectt-0800'>CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE=y</span>                                   </pre>
+   <pre class='fancyvrb' id='fancyvrb122'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>CONFIG_JUMP_LABEL=y
+</span><span class='ecrm-0500'>2</span><span class='ectt-0800'>CONFIG_HAVE_ARCH_JUMP_LABEL=y                                       </span><span class='ecrm-0500'>3</span> <span class='ectt-0800'>CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE=y</span>                                   </pre>
 <!-- l. 3334 --><p class='indent'>   To declare a static key, we need to define a global variable using the
 <span class='ectt-1000'>DEFINE_STATIC_KEY_FALSE </span>or <span class='ectt-1000'>DEFINE_STATIC_KEY_TRUE </span>macro defined in
 <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/jump_label.h'>include/linux/jump_label.h</a>. This macro initializes the key with the given initial
@@ -9654,16 +9654,16 @@ value, which is either false or true, respectively. For example, to declare a st
 with an initial value of false, we can use the following code:
 </p><!-- l. 3337 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb123'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>DEFINE_STATIC_KEY_FALSE(fkey);</span>                                                   </pre>
+   <pre class='fancyvrb' id='fancyvrb123'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>DEFINE_STATIC_KEY_FALSE(fkey);</span>                                                   </pre>
 <!-- l. 3341 --><p class='indent'>   Once the static key has been declared, we need to add branching code to the
 module that uses the static key. For example, the code includes a fastpath, where a
 no-op instruction will be generated at compile time as the key is initialized to false
 and the branch is unlikely to be taken.
 </p><!-- l. 3344 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb124'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>pr_info("fastpath 1\n");
+   <pre class='fancyvrb' id='fancyvrb124'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>pr_info("fastpath 1\n");
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>if (static_branch_unlikely(&amp;fkey))
-</span><span class='ecrm-0500'>3</span><span class='ectt-0800'>    pr_alert("do unlikely thing\n");                                  </span><span class='ecrm-0500'>4  </span><span class='ectt-0800'>pr_info("fastpath 2\n");</span>                                              </pre>
+</span><span class='ecrm-0500'>3</span><span class='ectt-0800'>    pr_alert("do unlikely thing\n");                                  </span><span class='ecrm-0500'>4</span> <span class='ectt-0800'>pr_info("fastpath 2\n");</span>                                              </pre>
                                                                   
 
                                                                   
@@ -9878,13 +9878,13 @@ static key works.
 interface.
 </p><!-- l. 3359 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb126'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>cat /dev/key_state</span>                                                               </pre>
+   <pre class='fancyvrb' id='fancyvrb126'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>cat /dev/key_state</span>                                                               </pre>
 <!-- l. 3363 --><p class='indent'>   This will display the current state of the key, which is disabled by default.
 </p><!-- l. 3365 --><p class='indent'>   To change the state of the static key, we can perform a write operation on the
 file:
 </p><!-- l. 3367 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb127'><span class='ecrm-0500'>1  </span><span class='ectt-0800'>echo enable &gt; /dev/key_state</span>                                                     </pre>
+   <pre class='fancyvrb' id='fancyvrb127'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>echo enable &gt; /dev/key_state</span>                                                     </pre>
 <!-- l. 3371 --><p class='indent'>   This will enable the static key, causing the code path to switch from the fastpath
 to the slowpath.
 </p><!-- l. 3373 --><p class='indent'>   In some cases, the key is enabled or disabled at initialization and never changed,
