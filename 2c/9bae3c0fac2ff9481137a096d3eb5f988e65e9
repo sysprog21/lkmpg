@@ -1,0 +1,42 @@
+examples/Makefile
+  8407ad1d6d73428a 46,61-66
+.ci/check-format.sh
+  8407ad1d6d73428a 10,12
+.github/workflows/status-check.yaml
+  b3cd389280883610 49,55-59
+Makefile
+  8407ad1d6d73428a 18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "2c9bae3c0fac2ff9481137a096d3eb5f988e65e9",
+  "prompts": {
+    "8407ad1d6d73428a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dbd58-9220-7261-b375-e51dd4c8d376",
+        "model": "gpt-5.4"
+      },
+      "human_author": "Jim Huang",
+      "messages": [],
+      "total_additions": 10,
+      "total_deletions": 5,
+      "accepted_lines": 10,
+      "overriden_lines": 0
+    },
+    "b3cd389280883610": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "50069132-50fc-4343-8631-e05135e73001",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Jim Huang",
+      "messages": [],
+      "total_additions": 184,
+      "total_deletions": 249,
+      "accepted_lines": 179,
+      "overriden_lines": 0
+    }
+  }
+}
