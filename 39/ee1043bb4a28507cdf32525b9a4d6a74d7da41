@@ -1,0 +1,23 @@
+examples/blkram.c
+  415b7958d3c4c8f3 65,156-160
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "39ee1043bb4a28507cdf32525b9a4d6a74d7da41",
+  "prompts": {
+    "415b7958d3c4c8f3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fddc79a6-5032-4b99-b1ca-6b7277ce40b2",
+        "model": "<synthetic>"
+      },
+      "human_author": "Jim Huang",
+      "messages": [],
+      "total_additions": 182,
+      "total_deletions": 138,
+      "accepted_lines": 294,
+      "overriden_lines": 0
+    }
+  }
+}
