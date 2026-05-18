@@ -127,6 +127,8 @@ try_prebuilt() {
 
     # The prebuilt build directory needs a "source" symlink pointing to the
     # kernel source tree (kbuild follows it during out-of-tree module builds).
+    # The Makefile in the tarball already references source/Makefile (rewritten
+    # by pack-prebuilt.sh), so this symlink resolves it to the user's source.
     ln -sfn "$KERNEL_SRC" "$KERNEL_BUILD/source"
 
     echo "     Prebuilt unpacked successfully"
@@ -229,8 +231,24 @@ build_kernel() {
     # Copy vmlinux.symvers to Module.symvers so that out-of-tree module
     # builds can resolve vmlinux symbols (printk, register_chrdev, etc.)
     # without building all in-tree modules.
-    make -C "$KERNEL_SRC" O="$KERNEL_BUILD" -j"$NPROC" bzImage
-    make -C "$KERNEL_SRC" O="$KERNEL_BUILD" -j"$NPROC" modules_prepare
+    #
+    # Pin -std=gnu11: GCC 15+ defaults to C23 where bool/false/true are
+    # keywords, conflicting with the kernel's own typedefs.  We pass it
+    # through three variables because several x86 sub-Makefiles (EFI stub,
+    # decompressor, real-mode setup) rebuild KBUILD_CFLAGS with := which
+    # discards the top-level -std=gnu11.  KCPPFLAGS survives because those
+    # sub-Makefiles don't override KBUILD_CPPFLAGS.
+    #
+    # -Wno-error demotes all -Werror to warnings.  Needed because CONFIG_WERROR
+    # (default y) enables -Werror, and newer GCC warns on kernel patterns that
+    # are intentional (non-NUL-terminated ACPI/PNP ID strings, etc.).  KCFLAGS
+    # and KCPPFLAGS are appended after KBUILD_CFLAGS, so our -Wno-error
+    # overrides the kernel's -Werror.
+    local stdflag="-std=gnu11 -Wno-error"
+    make -C "$KERNEL_SRC" O="$KERNEL_BUILD" -j"$NPROC" \
+        KCFLAGS="$stdflag" KCPPFLAGS="$stdflag" HOSTCFLAGS="$stdflag" bzImage
+    make -C "$KERNEL_SRC" O="$KERNEL_BUILD" -j"$NPROC" \
+        KCFLAGS="$stdflag" KCPPFLAGS="$stdflag" HOSTCFLAGS="$stdflag" modules_prepare
     cp "$KERNEL_BUILD/vmlinux.symvers" "$KERNEL_BUILD/Module.symvers"
 
     echo "$expected" > "$stamp"
