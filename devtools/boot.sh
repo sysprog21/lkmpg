@@ -86,4 +86,13 @@ fi
 # Append any extra user-provided QEMU args
 QEMU_ARGS+=("${EXTRA_QEMU_ARGS[@]+"${EXTRA_QEMU_ARGS[@]}"}")
 
-exec "$QEMU_BIN" "${QEMU_ARGS[@]}"
+# In test mode the guest never reads stdin.  Redirect from /dev/null so
+# QEMU's -nographic serial setup never calls tcsetattr() on a real
+# terminal, which would receive SIGTTOU if the caller piped stdout or
+# wrapped boot.sh with timeout(1) (whose child runs in its own process
+# group, not the terminal's foreground group).
+if [ -n "$TEST_CMD" ]; then
+    exec "$QEMU_BIN" "${QEMU_ARGS[@]}" < /dev/null
+else
+    exec "$QEMU_BIN" "${QEMU_ARGS[@]}"
+fi
