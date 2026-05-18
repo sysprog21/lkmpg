@@ -63,8 +63,12 @@ cp "$KERNEL_BUILD/.config" "$STAGE_BUILD/"
 cp "$KERNEL_BUILD/Module.symvers" "$STAGE_BUILD/"
 [ -f "$KERNEL_BUILD/modules.order" ] && cp "$KERNEL_BUILD/modules.order" "$STAGE_BUILD/"
 
-# Top-level Makefile (kbuild entry point when using O=)
+# Top-level Makefile (kbuild entry point when using O=).
+# kbuild generates this with an absolute include path; rewrite it to use a
+# relative "source" symlink so the prebuilt tarball is machine-independent.
 cp "$KERNEL_BUILD/Makefile" "$STAGE_BUILD/"
+sed -i "s|^include .*/linux-${KERNEL_VERSION}/Makefile|include source/Makefile|" \
+    "$STAGE_BUILD/Makefile"
 
 # Config stamp (for setup.sh staleness detection)
 [ -f "$KERNEL_BUILD/.config-stamp" ] && cp "$KERNEL_BUILD/.config-stamp" "$STAGE_BUILD/"
@@ -92,6 +96,12 @@ rsync -a \
     --exclude='*.o' --exclude='*.o.d' --exclude='.*.cmd' \
     --exclude='*.a' --exclude='.tmp_*' \
     "$KERNEL_BUILD/scripts/" "$STAGE_BUILD/scripts/"
+
+# objtool (host tool required for out-of-tree module builds with CONFIG_OBJTOOL)
+if [ -f "$KERNEL_BUILD/tools/objtool/objtool" ]; then
+    mkdir -p "$STAGE_BUILD/tools/objtool"
+    cp "$KERNEL_BUILD/tools/objtool/objtool" "$STAGE_BUILD/tools/objtool/"
+fi
 
 # bzImage for QEMU boot
 mkdir -p "$STAGE_BUILD/arch/x86/boot"
