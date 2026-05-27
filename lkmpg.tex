@@ -1341,7 +1341,7 @@ The meaning is clear, and you should be aware that any member of the structure w
 
 An instance of \cpp|struct file_operations| containing pointers to functions that are used to implement \cpp|read|, \cpp|write|, \cpp|open|, \ldots{} system calls is commonly named \cpp|fops|.
 
-Since Linux v3.14, the read, write and seek operations are guaranteed for thread-safe by using the \cpp|f_pos| specific lock, which makes the file position update to become the mutual exclusion.
+Since Linux v3.14, the read, write and seek operations are guaranteed to be thread-safe by using the \cpp|f_pos| specific lock, which makes the file position update to become the mutual exclusion.
 So, we can safely implement those operations without unnecessary locking.
 
 Additionally, since Linux v5.6, the \cpp|proc_ops| structure was introduced to replace the use of the \cpp|file_operations| structure when registering proc handlers.
@@ -1812,8 +1812,8 @@ The natural thing to do would be to use the device file to write things to the m
 However, this leaves open the question of what to do when you need to talk to the serial port itself, for example to configure the rate at which data is sent and received.
 
 The answer in Unix is to use a special function called \cpp|ioctl| (short for Input Output ConTroL).
-Every device can have its own \cpp|ioctl| commands, which can be read ioctl's (to send information from a process to the kernel), write ioctl's (to return information to a process), both or neither.
-Notice here the roles of read and write are reversed again, so in ioctl's read is to send information to the kernel and write is to receive information from the kernel.
+Every device can have its own \cpp|ioctl| commands, which can be read ioctl operations (to send information from a process to the kernel), write ioctl operations (to return information to a process), both or neither.
+Notice here the roles of read and write are reversed again, so in ioctl operations, read is to send information to the kernel and write is to receive information from the kernel.
 
 The ioctl function is called with three parameters: the file descriptor of the appropriate device file, the ioctl number, and a parameter, which is of type long so you can use a cast to use it to pass anything.
 You will not be able to pass a structure this way, but you will be able to pass a pointer to the structure.
@@ -1825,7 +1825,7 @@ You can see there is an argument called \cpp|cmd| in \cpp|test_ioctl_ioctl()| fu
 It is the ioctl number.
 The ioctl number encodes the major device number, the type of the ioctl, the command, and the type of the parameter.
 This ioctl number is usually created by a macro call (\cpp|_IO|, \cpp|_IOR|, \cpp|_IOW| or \cpp|_IOWR| --- depending on the type) in a header file.
-This header file should then be included both by the programs which will use ioctl (so they can generate the appropriate ioctl's) and by the kernel module (so it can understand it).
+This header file should then be included both by the programs which will use ioctl (so they can generate the appropriate ioctl operations) and by the kernel module (so it can understand it).
 In the example below, the header file is \verb|chardev.h| and the program which uses it is \verb|userspace_ioctl.c|.
 
 If you want to use ioctls in your own kernel modules, it is best to receive an official ioctl assignment, so if you accidentally get somebody else's ioctls, or if they get yours, you'll know something is wrong.
@@ -2010,7 +2010,7 @@ The purpose of \verb|KASLR| is to protect the kernel space from the attacker.
 Without \verb|KASLR|, the attacker may find the target address in the fixed address easily.
 Then the attacker can use return-oriented programming to insert some malicious codes to execute or receive the target data by a tampered pointer.
 \verb|KASLR| mitigates these kinds of attacks because the attacker cannot immediately know the target address, but a brute-force attack can still work.
-If the address of a symbol in \verb|/proc/kallsyms| is different from the address in \verb|/boot/System.map|, \verb|KASLR| is enabled with the kernel, which your system running on.
+If the address of a symbol in \verb|/proc/kallsyms| is different from the address in \verb|/boot/System.map|, \verb|KASLR| is enabled with the kernel, on which your system is running.
 \begin{verbatim}
 $ grep GRUB_CMDLINE_LINUX_DEFAULT /etc/default/grub
 GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"
@@ -2389,7 +2389,7 @@ The following source code illustrates a minimal kernel module which, when loaded
 If none of the examples in this chapter fit your debugging needs, there might yet be some other tricks to try.
 Ever wondered what \cpp|CONFIG_DEBUG_LL| in \sh|make menuconfig| is good for?
 If you activate that you get low level access to the serial port.
-While this might not sound very powerful by itself, you can patch \src{kernel/printk/printk.c} or any other essential kernel function to print ASCII characters, thus making it possible to trace virtually everything what your code does over a serial line.
+While this might not sound very powerful by itself, you can patch \src{kernel/printk/printk.c} or any other essential kernel function to print ASCII characters, thus making it possible to trace virtually everything that your code does over a serial line.
 If you find yourself porting the kernel to some new and former unsupported architecture, this is usually amongst the first things that should be implemented.
 Logging over a netconsole might also be worth a try.
 
@@ -2889,7 +2889,7 @@ Of course, that requires that the kernel finds out which IRQ it really was after
 To take advantage of them requires handlers to be written in assembly language, so they do not really fit into the kernel.
 They can be made to work similar to the others, but after that procedure, they are no longer any faster than "common" IRQs.
 SMP enabled kernels running on systems with more than one processor need to solve another truckload of problems.
-It is not enough to know if a certain IRQs has happened, it's also important to know what CPU(s) it was for.
+It is not enough to know if a certain IRQ has happened, it's also important to know what CPU(s) it was for.
 People still interested in more details, might want to refer to "APIC" now.
 
 This function receives the IRQ number, the name of the function, flags, a name for \verb|/proc/interrupts| and a parameter to be passed to the interrupt handler.

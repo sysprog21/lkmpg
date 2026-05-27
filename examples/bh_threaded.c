@@ -1,5 +1,5 @@
 /*
- * bh_thread.c - Top and bottom half interrupt handling
+ * bh_threaded.c - Top and bottom half interrupt handling
  *
  * Based upon the RPi example by Stefan Wendler (devnull@kaltpost.de)
  * from:

@@ -21,7 +21,7 @@
 /* _IOW means that we are creating an ioctl command number for passing
  * information from a user process to the kernel module.
  *
- * The first arguments, MAJOR_NUM, is the major device number we are using.
+ * The first argument, MAJOR_NUM, is the major device number we are using.
  *
  * The second argument is the number of the command (there could be several
  * with different meanings).
