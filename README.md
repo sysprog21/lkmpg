@@ -40,12 +40,12 @@ $ brew install mactex
 $ sudo tlmgr update --self
 ```
 
-Note that `latexmk` is required to generated PDF, and it probably has been installed on your OS already. If not, please follow the [installation guide](https://mg.readthedocs.io/latexmk.html#installation).
+Note that `latexmk` is required to generate PDF, and it probably has been installed on your OS already. If not, please follow the [installation guide](https://mg.readthedocs.io/latexmk.html#installation).
 
-In macOS systems, package `Pygments` may not be pre-installed. If not, please refer to the [installation guide](https://pygments.org/download/) before generate documents.
+In macOS systems, package `Pygments` may not be pre-installed. If not, please refer to the [installation guide](https://pygments.org/download/) before generating documents.
 
 Alternatively, using [Docker](https://docs.docker.com/) is recommended, as it guarantees the same dependencies with our GitHub Actions workflow.
-After install [docker engine](https://docs.docker.com/engine/install/) on your machine, pull the docker image [twtug/lkmpg](https://hub.docker.com/r/twtug/lkmpg) and run in isolated containers.
+After installing [docker engine](https://docs.docker.com/engine/install/) on your machine, pull the docker image [twtug/lkmpg](https://hub.docker.com/r/twtug/lkmpg) and run in isolated containers.
 
 ```shell
 # pull docker image and run it as container
@@ -70,4 +70,4 @@ $ make clean            # Delete generated files
 The Linux Kernel Module Programming Guide is a free book; you may reproduce and/or modify it under the terms of the [Open Software License](https://opensource.org/licenses/OSL-3.0).
 Use of this work is governed by a copyleft license that can be found in the `LICENSE` file.
 
-The complementary sample code is licensed under GNU GPL version 2, as same as Linux kernel.
+The complementary sample code is licensed under GNU GPL version 2, the same as the Linux kernel.

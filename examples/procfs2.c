@@ -43,7 +43,7 @@ static ssize_t procfile_read(struct file *file_pointer, char __user *buffer,
     return ret;
 }
 
-/* This function is called with the /proc file is written. */
+/* This function is called when the /proc file is written. */
 static ssize_t procfile_write(struct file *file, const char __user *buff,
                               size_t len, loff_t *off)
 {

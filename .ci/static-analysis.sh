@@ -69,7 +69,7 @@ do_cppcheck()
 
     cppcheck_bin=$(command -v cppcheck || true)
     if [ -z "${cppcheck_bin}" ]; then
-        echo "[!] cppcheck not installed. Failed to run static analysis the source code." >&2
+        echo "[!] cppcheck not installed. Failed to run static analysis on the source code." >&2
         exit 1
     fi
 
