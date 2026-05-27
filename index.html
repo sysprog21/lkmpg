@@ -20,7 +20,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>May 19, 2026</span></div>
+<div class='date'><span class='ecrm-1200'>May 27, 2026</span></div>
                                                                   
 
                                                                   
@@ -1999,7 +1999,7 @@ gcc.
 </p><!-- l. 1342 --><p class='indent'>   An instance of <span class='ectt-1000'>struct file_operations </span>containing pointers to functions that
 are used to implement <span class='ectt-1000'>read</span>, <span class='ectt-1000'>write</span>, <span class='ectt-1000'>open</span>, … system calls is commonly named
 <span class='ectt-1000'>fops</span>.
-</p><!-- l. 1344 --><p class='indent'>   Since Linux v3.14, the read, write and seek operations are guaranteed for
+</p><!-- l. 1344 --><p class='indent'>   Since Linux v3.14, the read, write and seek operations are guaranteed to be
 thread-safe by using the <span class='ectt-1000'>f_pos </span>specific lock, which makes the file position update to
 become the mutual exclusion. So, we can safely implement those operations without
 unnecessary locking.
@@ -2589,7 +2589,7 @@ space.
 <span class='ecrm-0500'>43</span><span class='ectt-0800'>    return ret;
 </span><span class='ecrm-0500'>44</span><span class='ectt-0800'>}
 </span><span class='ecrm-0500'>45</span>
-<span class='ecrm-0500'>46</span><span class='ectt-0800'>/* This function is called with the /proc file is written. */
+<span class='ecrm-0500'>46</span><span class='ectt-0800'>/* This function is called when the /proc file is written. */
 </span><span class='ecrm-0500'>47</span><span class='ectt-0800'>static ssize_t procfile_write(struct file *file, const char __user *buff,
 </span><span class='ecrm-0500'>48</span><span class='ectt-0800'>                              size_t len, loff_t *off)
 </span><span class='ecrm-0500'>49</span><span class='ectt-0800'>{
@@ -2896,7 +2896,7 @@ can still use the same way as in the previous example.
 </span><span class='ecrm-0500'>61</span><span class='ectt-0800'>    return 0;
 </span><span class='ecrm-0500'>62</span><span class='ectt-0800'>}
 </span><span class='ecrm-0500'>63</span>
-<span class='ecrm-0500'>64</span><span class='ectt-0800'>/* This structure gather "function" to manage the sequence */
+<span class='ecrm-0500'>64</span><span class='ectt-0800'>/* This structure gathers functions to manage the sequence */
 </span><span class='ecrm-0500'>65</span><span class='ectt-0800'>static struct seq_operations my_seq_ops = {
 </span><span class='ecrm-0500'>66</span><span class='ectt-0800'>    .start = my_seq_start,
 </span><span class='ecrm-0500'>67</span><span class='ectt-0800'>    .next = my_seq_next,
@@ -2910,7 +2910,7 @@ can still use the same way as in the previous example.
 </span><span class='ecrm-0500'>75</span><span class='ectt-0800'>    return seq_open(file, &amp;my_seq_ops);
 </span><span class='ecrm-0500'>76</span><span class='ectt-0800'>};
 </span><span class='ecrm-0500'>77</span>
-<span class='ecrm-0500'>78</span><span class='ectt-0800'>/* This structure gather "function" that manage the /proc file */
+<span class='ecrm-0500'>78</span><span class='ectt-0800'>/* This structure gathers functions that manage the /proc file */
 </span><span class='ecrm-0500'>79</span><span class='ectt-0800'>#ifdef HAVE_PROC_OPS
 </span><span class='ecrm-0500'>80</span><span class='ectt-0800'>static const struct proc_ops my_file_ops = {
 </span><span class='ecrm-0500'>81</span><span class='ectt-0800'>    .proc_open = my_open,
@@ -3354,11 +3354,11 @@ responses for commands or the data received through the phone line). However,
 this leaves open the question of what to do when you need to talk to the
 serial port itself, for example to configure the rate at which data is sent and
 received.
-</p><!-- l. 1814 --><p class='indent'>   The answer in Unix is to use a special function called <span class='ectt-1000'>ioctl </span>(short for
-Input Output ConTroL). Every device can have its own <span class='ectt-1000'>ioctl </span>commands,
-which can be read ioctl’s (to send information from a process to the kernel),
-write ioctl’s (to return information to a process), both or neither. Notice
-here the roles of read and write are reversed again, so in ioctl’s read is to
+</p><!-- l. 1814 --><p class='indent'>   The answer in Unix is to use a special function called <span class='ectt-1000'>ioctl </span>(short for Input
+Output ConTroL). Every device can have its own <span class='ectt-1000'>ioctl </span>commands, which can be
+read ioctl operations (to send information from a process to the kernel), write ioctl
+operations (to return information to a process), both or neither. Notice here the
+roles of read and write are reversed again, so in ioctl operations, read is to
 send information to the kernel and write is to receive information from the
 kernel.
 </p><!-- l. 1818 --><p class='indent'>   The ioctl function is called with three parameters: the file descriptor of the
@@ -3567,15 +3567,15 @@ example:
 </span><span class='ecrm-0500'>187</span><span class='ectt-0800'>MODULE_DESCRIPTION("This is test_ioctl module");</span>
    </pre>
 <!-- l. 1824 --><p class='indent'>   You can see there is an argument called <span class='ectt-1000'>cmd </span>in <span class='ectt-1000'>test_ioctl_ioctl() </span>function. It
-is the ioctl number. The ioctl number encodes the major device number, the
-type of the ioctl, the command, and the type of the parameter. This ioctl
+is the ioctl number. The ioctl number encodes the major device number, the type of
+the ioctl, the command, and the type of the parameter. This ioctl number is
                                                                   
 
                                                                   
-number is usually created by a macro call (<span class='ectt-1000'>_IO</span>, <span class='ectt-1000'>_IOR</span>, <span class='ectt-1000'>_IOW </span>or <span class='ectt-1000'>_IOWR </span>—
-depending on the type) in a header file. This header file should then be
-included both by the programs which will use ioctl (so they can generate the
-appropriate ioctl’s) and by the kernel module (so it can understand it). In the
+usually created by a macro call (<span class='ectt-1000'>_IO</span>, <span class='ectt-1000'>_IOR</span>, <span class='ectt-1000'>_IOW </span>or <span class='ectt-1000'>_IOWR </span>— depending on
+the type) in a header file. This header file should then be included both by
+the programs which will use ioctl (so they can generate the appropriate
+ioctl operations) and by the kernel module (so it can understand it). In the
 example below, the header file is <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>chardev.h</span></span></span> and the program which uses it is
 <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>userspace_ioctl.c</span></span></span>.
 </p><!-- l. 1831 --><p class='indent'>   If you want to use ioctls in your own kernel modules, it is best to receive an
@@ -3864,7 +3864,7 @@ which we mentioned at <a href='#chardevc'>Section 6.5</a>, to enforce the exclu
 </span><span class='ecrm-0500'>21</span><span class='ectt-0800'>/* _IOW means that we are creating an ioctl command number for passing
 </span><span class='ecrm-0500'>22</span><span class='ectt-0800'> * information from a user process to the kernel module.
 </span><span class='ecrm-0500'>23</span><span class='ectt-0800'> *
-</span><span class='ecrm-0500'>24</span><span class='ectt-0800'> * The first arguments, MAJOR_NUM, is the major device number we are using.
+</span><span class='ecrm-0500'>24</span><span class='ectt-0800'> * The first argument, MAJOR_NUM, is the major device number we are using.
 </span><span class='ecrm-0500'>25</span><span class='ectt-0800'> *
                                                                   
 
@@ -3900,10 +3900,10 @@ which we mentioned at <a href='#chardevc'>Section 6.5</a>, to enforce the exclu
 </p>
    <pre class='fancyvrb' id='fancyvrb84'>
 <span class='ecrm-0500'>1</span>
-<span class='ecrm-0500'>2</span><span class='ectt-0800'>/*  userspace_ioctl.c - the process to use ioctl</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s to control the kernel module
+<span class='ecrm-0500'>2</span><span class='ectt-0800'>/*  userspace_ioctl.c - the process to use ioctl operations to control the kernel module
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'> *
 </span><span class='ecrm-0500'>4</span><span class='ectt-0800'> *  Until now we could have used cat for input and output.  But now
-</span><span class='ecrm-0500'>5</span><span class='ectt-0800'> *  we need to do ioctl</span><span class='tctt-0800'>'</span><span class='ectt-0800'>s, which require writing our own process.
+</span><span class='ecrm-0500'>5</span><span class='ectt-0800'> *  we need to do ioctl operations, which require writing our own process.
 </span><span class='ecrm-0500'>6</span><span class='ectt-0800'> */
 </span><span class='ecrm-0500'>7</span>
 <span class='ecrm-0500'>8</span><span class='ectt-0800'>/* device specifics, such as ioctl numbers and the
@@ -4203,8 +4203,8 @@ programming to insert some malicious codes to execute or receive the target data
 a tampered pointer. <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>KASLR</span></span></span> mitigates these kinds of attacks because the attacker
 cannot immediately know the target address, but a brute-force attack can still work.
 If the address of a symbol in <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/kallsyms</span></span></span> is different from the address in
-<span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/boot/System.map</span></span></span>, <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>KASLR</span></span></span> is enabled with the kernel, which your system running
-on.
+<span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/boot/System.map</span></span></span>, <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>KASLR</span></span></span> is enabled with the kernel, on which your system is
+running.
                                                                   
 
                                                                   
@@ -5833,7 +5833,7 @@ be some other tricks to try. Ever wondered what <span class='ectt-1000'>CONFIG_D
 </span><span class='ectt-1000'>menuconfig </span>is good for? If you activate that you get low level access to the serial
 port. While this might not sound very powerful by itself, you can patch
 <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/kernel/printk/printk.c'>kernel/printk/printk.c</a> or any other essential kernel function to print ASCII
-characters, thus making it possible to trace virtually everything what your code does
+characters, thus making it possible to trace virtually everything that your code does
 over a serial line. If you find yourself porting the kernel to some new and
 former unsupported architecture, this is usually amongst the first things that
 should be implemented. Logging over a netconsole might also be worth a
@@ -7108,7 +7108,7 @@ fit into the kernel. They can be made to work similar to the others, but
 after that procedure, they are no longer any faster than "common" IRQs.
 SMP enabled kernels running on systems with more than one processor
 need to solve another truckload of problems. It is not enough to know if a
-certain IRQs has happened, it’s also important to know what CPU(s) it was
+certain IRQ has happened, it’s also important to know what CPU(s) it was
 for. People still interested in more details, might want to refer to "APIC"
 now.
 </p><!-- l. 2895 --><p class='indent'>   This function receives the IRQ number, the name of the function, flags, a name
@@ -7718,7 +7718,7 @@ halves, but using threads.
 </p>
    <pre class='fancyvrb' id='fancyvrb114'>
 <span class='ecrm-0500'>1</span><span class='ectt-0800'>/*
-</span><span class='ecrm-0500'>2</span><span class='ectt-0800'> * bh_thread.c - Top and bottom half interrupt handling
+</span><span class='ecrm-0500'>2</span><span class='ectt-0800'> * bh_threaded.c - Top and bottom half interrupt handling
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'> *
 </span><span class='ecrm-0500'>4</span><span class='ectt-0800'> * Based upon the RPi example by Stefan Wendler (devnull@kaltpost.de)
 </span><span class='ecrm-0500'>5</span><span class='ectt-0800'> * from:
