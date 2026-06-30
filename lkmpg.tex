@@ -1823,7 +1823,7 @@ Here is an example:
 
 You can see there is an argument called \cpp|cmd| in \cpp|test_ioctl_ioctl()| function.
 It is the ioctl number.
-The ioctl number encodes the major device number, the type of the ioctl, the command, and the type of the parameter.
+The ioctl number encodes the direction of data transfer, the type of the ioctl, the command, and the type of the parameter.
 This ioctl number is usually created by a macro call (\cpp|_IO|, \cpp|_IOR|, \cpp|_IOW| or \cpp|_IOWR| --- depending on the type) in a header file.
 This header file should then be included both by the programs which will use ioctl (so they can generate the appropriate ioctl operations) and by the kernel module (so it can understand it).
 In the example below, the header file is \verb|chardev.h| and the program which uses it is \verb|userspace_ioctl.c|.
