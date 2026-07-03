@@ -40,6 +40,7 @@ obj-m += devicetree.o
 obj-m += dma.o
 obj-m += blkram.o
 obj-m += vnetloop.o
+obj-m += kmem_cache.o
 
 KDIR ?= /lib/modules/$(shell uname -r)/build
 PWD := $(CURDIR)
