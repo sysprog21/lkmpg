@@ -2480,6 +2480,23 @@ that must be physically contiguous for DMA.
 Similarly, driver authors should resist the temptation to guess at allocator
 internals or to depend on low-level layout details that are not part of the API.
 
+When a module needs to frequently allocate and free objects of the same size---such 
+as custom data structures, network packet descriptors, or state containers---using 
+\cpp|kmalloc()| repeatedly can lead to memory fragmentation and unnecessary overhead.
+For these highly repetitive allocations, the slab allocator interface is the 
+correct tool. 
+Driver authors should use \cpp|kmem_cache_create()| during module initialization 
+to set up a dedicated cache for their specific structure. 
+Once the cache is created, \cpp|kmem_cache_alloc()| and \cpp|kmem_cache_free()| 
+provide extremely fast, fragmentation-resistant memory management for those objects.
+It is crucial to symmetrically destroy the cache with \cpp|kmem_cache_destroy()| 
+during module cleanup to prevent memory leaks.
+
+For a practical demonstration of creating a custom slab cache, allocating objects from
+it, and ensuring proper cleanup, see the following example.
+
+\samplec{examples/kmem_cache.c}
+
 Ownership is just as important as allocation.
 In Linux 5.10 and later, many drivers benefit from managed-resource helpers such as
 \cpp|devm_kzalloc()| and friends when they are written as proper device-model
