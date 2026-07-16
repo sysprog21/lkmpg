@@ -20,7 +20,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>May 27, 2026</span></div>
+<div class='date'><span class='ecrm-1200'>July 16, 2026</span></div>
                                                                   
 
                                                                   
@@ -5914,31 +5914,120 @@ not a substitute for memory that must be physically contiguous for DMA.
 Similarly, driver authors should resist the temptation to guess at allocator
 internals or to depend on low-level layout details that are not part of the
 API.
-</p><!-- l. 2483 --><p class='indent'>   Ownership is just as important as allocation. In Linux 5.10 and later, many
+</p><!-- l. 2483 --><p class='indent'>   When a module needs to frequently allocate and free objects of the same
+size—such as custom data structures, network packet descriptors, or state
+containers—using <span class='ectt-1000'>kmalloc() </span>repeatedly can lead to memory fragmentation and
+unnecessary overhead. For these highly repetitive allocations, the slab allocator
+interface is the correct tool. Driver authors should use <span class='ectt-1000'>kmem_cache_create() </span>during
+module initialization to set up a dedicated cache for their specific structure. Once the
+cache is created, <span class='ectt-1000'>kmem_cache_alloc() </span>and <span class='ectt-1000'>kmem_cache_free() </span>provide extremely
+fast, fragmentation-resistant memory management for those objects. It is crucial to
+symmetrically destroy the cache with <span class='ectt-1000'>kmem_cache_destroy() </span>during module cleanup
+to prevent memory leaks.
+</p><!-- l. 2495 --><p class='indent'>   For a practical demonstration of creating a custom slab cache, allocating objects
+from it, and ensuring proper cleanup, see the following example.
+</p><!-- l. 2498 --><p class='indent'>
+</p>
+   <pre class='fancyvrb' id='fancyvrb99'>
+<span class='ecrm-0500'>1</span><span class='ectt-0800'>/*
+</span><span class='ecrm-0500'>2</span><span class='ectt-0800'> * kmem_cache.c - Demonstrates the use of the slab allocator.
+</span><span class='ecrm-0500'>3</span><span class='ectt-0800'> */
+</span><span class='ecrm-0500'>4</span><span class='ectt-0800'>#include &lt;linux/init.h&gt;
+</span><span class='ecrm-0500'>5</span><span class='ectt-0800'>#include &lt;linux/module.h&gt;
+</span><span class='ecrm-0500'>6</span><span class='ectt-0800'>#include &lt;linux/slab.h&gt;
+</span><span class='ecrm-0500'>7</span>
+<span class='ecrm-0500'>8</span><span class='ectt-0800'>struct my_custom_struct {
+                                                                  
+
+                                                                  
+</span><span class='ecrm-0500'>9</span><span class='ectt-0800'>    int id;
+</span><span class='ecrm-0500'>10</span><span class='ectt-0800'>    char name[32];
+</span><span class='ecrm-0500'>11</span><span class='ectt-0800'>};
+</span><span class='ecrm-0500'>12</span>
+<span class='ecrm-0500'>13</span><span class='ectt-0800'>static struct kmem_cache *my_cachep;
+</span><span class='ecrm-0500'>14</span><span class='ectt-0800'>static struct my_custom_struct *obj1, *obj2;
+</span><span class='ecrm-0500'>15</span>
+<span class='ecrm-0500'>16</span><span class='ectt-0800'>static int __init kmem_cache_example_init(void)
+</span><span class='ecrm-0500'>17</span><span class='ectt-0800'>{
+</span><span class='ecrm-0500'>18</span><span class='ectt-0800'>    pr_info("kmem_cache_example: Initializing module\n");
+</span><span class='ecrm-0500'>19</span>
+<span class='ecrm-0500'>20</span><span class='ectt-0800'>    my_cachep =
+</span><span class='ecrm-0500'>21</span><span class='ectt-0800'>        kmem_cache_create("my_custom_cache", sizeof(struct my_custom_struct), 0,
+</span><span class='ecrm-0500'>22</span><span class='ectt-0800'>                          SLAB_HWCACHE_ALIGN, NULL);
+</span><span class='ecrm-0500'>23</span>
+<span class='ecrm-0500'>24</span><span class='ectt-0800'>    if (!my_cachep) {
+</span><span class='ecrm-0500'>25</span><span class='ectt-0800'>        pr_err("kmem_cache_example: Failed to create cache\n");
+</span><span class='ecrm-0500'>26</span><span class='ectt-0800'>        return -ENOMEM;
+</span><span class='ecrm-0500'>27</span><span class='ectt-0800'>    }
+</span><span class='ecrm-0500'>28</span>
+<span class='ecrm-0500'>29</span><span class='ectt-0800'>    obj1 = kmem_cache_alloc(my_cachep, GFP_KERNEL);
+</span><span class='ecrm-0500'>30</span><span class='ectt-0800'>    obj2 = kmem_cache_alloc(my_cachep, GFP_KERNEL);
+</span><span class='ecrm-0500'>31</span>
+<span class='ecrm-0500'>32</span><span class='ectt-0800'>    if (!obj1 || !obj2) {
+</span><span class='ecrm-0500'>33</span><span class='ectt-0800'>        pr_err("kmem_cache_example: Failed to allocate objects\n");
+</span><span class='ecrm-0500'>34</span><span class='ectt-0800'>        if (obj1)
+</span><span class='ecrm-0500'>35</span><span class='ectt-0800'>            kmem_cache_free(my_cachep, obj1);
+</span><span class='ecrm-0500'>36</span><span class='ectt-0800'>        if (obj2)
+</span><span class='ecrm-0500'>37</span><span class='ectt-0800'>            kmem_cache_free(my_cachep, obj2);
+</span><span class='ecrm-0500'>38</span><span class='ectt-0800'>        kmem_cache_destroy(my_cachep);
+</span><span class='ecrm-0500'>39</span><span class='ectt-0800'>        return -ENOMEM;
+</span><span class='ecrm-0500'>40</span><span class='ectt-0800'>    }
+</span><span class='ecrm-0500'>41</span>
+<span class='ecrm-0500'>42</span><span class='ectt-0800'>    obj1-&gt;id = 1;
+</span><span class='ecrm-0500'>43</span><span class='ectt-0800'>    obj2-&gt;id = 2;
+</span><span class='ecrm-0500'>44</span><span class='ectt-0800'>    pr_info("kmem_cache_example: Allocated obj1 at %p (id: %d)\n", obj1,
+</span><span class='ecrm-0500'>45</span><span class='ectt-0800'>            obj1-&gt;id);
+</span><span class='ecrm-0500'>46</span><span class='ectt-0800'>    pr_info("kmem_cache_example: Allocated obj2 at %p (id: %d)\n", obj2,
+</span><span class='ecrm-0500'>47</span><span class='ectt-0800'>            obj2-&gt;id);
+</span><span class='ecrm-0500'>48</span>
+<span class='ecrm-0500'>49</span><span class='ectt-0800'>    return 0;
+</span><span class='ecrm-0500'>50</span><span class='ectt-0800'>}
+</span><span class='ecrm-0500'>51</span>
+<span class='ecrm-0500'>52</span><span class='ectt-0800'>static void __exit kmem_cache_example_exit(void)
+</span><span class='ecrm-0500'>53</span><span class='ectt-0800'>{
+</span><span class='ecrm-0500'>54</span><span class='ectt-0800'>    if (obj1)
+</span><span class='ecrm-0500'>55</span><span class='ectt-0800'>        kmem_cache_free(my_cachep, obj1);
+</span><span class='ecrm-0500'>56</span><span class='ectt-0800'>    if (obj2)
+</span><span class='ecrm-0500'>57</span><span class='ectt-0800'>        kmem_cache_free(my_cachep, obj2);
+</span><span class='ecrm-0500'>58</span>
+<span class='ecrm-0500'>59</span><span class='ectt-0800'>    if (my_cachep)
+</span><span class='ecrm-0500'>60</span><span class='ectt-0800'>        kmem_cache_destroy(my_cachep);
+</span><span class='ecrm-0500'>61</span>
+<span class='ecrm-0500'>62</span><span class='ectt-0800'>    pr_info("kmem_cache_example: Cleaned up and exited\n");
+</span><span class='ecrm-0500'>63</span><span class='ectt-0800'>}
+</span><span class='ecrm-0500'>64</span>
+<span class='ecrm-0500'>65</span><span class='ectt-0800'>module_init(kmem_cache_example_init);
+                                                                  
+
+                                                                  
+</span><span class='ecrm-0500'>66</span><span class='ectt-0800'>module_exit(kmem_cache_example_exit);
+</span><span class='ecrm-0500'>67</span>
+<span class='ecrm-0500'>68</span><span class='ectt-0800'>MODULE_LICENSE("GPL");
+</span><span class='ecrm-0500'>69</span><span class='ectt-0800'>MODULE_AUTHOR("Kuan-Wei Chiu &lt;visitorckw@gmail.com&gt;");
+</span><span class='ecrm-0500'>70</span><span class='ectt-0800'>MODULE_DESCRIPTION("A simple example of kmem_cache");</span>
+   </pre>
+<!-- l. 2500 --><p class='indent'>   Ownership is just as important as allocation. In Linux 5.10 and later, many
 drivers benefit from managed-resource helpers such as <span class='ectt-1000'>devm_kzalloc() </span>and friends
 when they are written as proper device-model drivers with a <span class='ectt-1000'>struct device</span>.
 Managed allocation ties resource cleanup to device detach and simplifies error paths
 considerably. For standalone modules or global objects, explicit unwind paths are still
 required, and they should be structured so that every successful acquisition has
 exactly one matching release.
-</p><!-- l. 2493 --><p class='indent'>   Reference counting deserves dedicated attention. Do not use <span class='ectt-1000'>atomic_t </span>as an ad
+</p><!-- l. 2510 --><p class='indent'>   Reference counting deserves dedicated attention. Do not use <span class='ectt-1000'>atomic_t </span>as an ad
 hoc reference counter in new code. Use <span class='ectt-1000'>refcount_t </span>or <span class='ectt-1000'>kref </span>so overflow and misuse
 are easier to detect. When an object can outlive the operation that found it,
 the lifetime rules need to be stated clearly in code, not left as an implicit
 convention.
-</p><!-- l. 2499 --><p class='noindent'>
+</p><!-- l. 2516 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='copying-data-across-the-userkernel-boundary'><span class='titlemark'>17   </span> <a id='x1-6600017'></a>Copying Data Across the User-Kernel Boundary</h3>
-<!-- l. 2501 --><p class='noindent'>Every character driver eventually has to move data between userspace and kernel
+<!-- l. 2518 --><p class='noindent'>Every character driver eventually has to move data between userspace and kernel
 space. The important rule is that a userspace pointer is not a normal pointer. It may
 fault, it may refer to memory that disappears after rescheduling, and it must only be
 touched through the <span class='ectt-1000'>copy_to_user()</span>, <span class='ectt-1000'>copy_from_user()</span>, <span class='ectt-1000'>get_user()</span>,
-                                                                  
-
-                                                                  
 and <span class='ectt-1000'>put_user() </span>families or other APIs that explicitly document <span class='ectt-1000'>__user</span>
 handling.
-</p><!-- l. 2509 --><p class='indent'>   Dereferencing a user pointer directly (e.g. <span class='ectt-1000'>*ubuf</span>) is never correct, even if the
+</p><!-- l. 2526 --><p class='indent'>   Dereferencing a user pointer directly (e.g. <span class='ectt-1000'>*ubuf</span>) is never correct, even if the
 address looks valid. The kernel cannot simply trap a page fault the way a
 user process does: an unhandled fault in kernel mode triggers an oops or a
 panic. The <span class='ectt-1000'>copy_from_user() </span>family works because each potentially faulting
@@ -5952,13 +6041,16 @@ Never) provides the same protection. The uaccess helpers issue the required
 instructions on the kernel’s behalf; raw pointer dereference does not, so it
 triggers an immediate hardware exception rather than a subtle data-corruption
 bug.
-</p><!-- l. 2523 --><p class='indent'>   These helpers may sleep because servicing a page fault can require blocking. As a
+</p><!-- l. 2540 --><p class='indent'>   These helpers may sleep because servicing a page fault can require blocking. As a
 result, they must not be called while holding spinlocks, from hardirq context, or from
 any other atomic context. This is a frequent source of bugs when a driver evolves
+                                                                  
+
+                                                                  
 from a simple example into a version that adds locking later. The safe pattern is to
 gather the data you need while protected, drop the non-sleeping lock, and then copy
 to or from userspace.
-</p><!-- l. 2531 --><p class='indent'>   Short copies are not automatically errors. The helpers return the number of
+</p><!-- l. 2548 --><p class='indent'>   Short copies are not automatically errors. The helpers return the number of
 bytes that could not be transferred, and drivers usually translate that into a
 successful partial read or write when some progress was made, or <span class='ectt-1000'>-EFAULT</span>
 when nothing could be copied. Getting these corner cases right is part of
@@ -5966,41 +6058,41 @@ presenting a sane userspace ABI. It is also good practice to validate lengths
 early, prefer fixed layouts for <span class='ectt-1000'>ioctl </span>payloads, and reserve space in uapi
 structures for future extensions instead of breaking binary compatibility
 later.
-</p><!-- l. 2540 --><p class='noindent'>
+</p><!-- l. 2557 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='memorymapped-io-and-register-access'><span class='titlemark'>18   </span> <a id='x1-6700018'></a>Memory-Mapped I/O and Register Access</h3>
-<!-- l. 2542 --><p class='noindent'>Once a driver starts talking to hardware registers, ordinary C pointer access is no
+<!-- l. 2559 --><p class='noindent'>Once a driver starts talking to hardware registers, ordinary C pointer access is no
 longer enough. Device registers are memory-mapped I/O, not normal RAM, and they
 must be requested, mapped, and accessed through the proper kernel interfaces. On
 modern kernels, platform and PCI drivers usually rely on helpers such as
 <span class='ectt-1000'>platform_get_resource()</span>, <span class='ectt-1000'>devm_ioremap_resource()</span>, or the subsystem-specific
 wrappers that combine resource lookup and mapping.
-</p><!-- l. 2550 --><p class='indent'>   After mapping, use the accessor APIs such as <span class='ectt-1000'>readb()</span>, <span class='ectt-1000'>readl()</span>, <span class='ectt-1000'>writeb()</span>, and
+</p><!-- l. 2567 --><p class='indent'>   After mapping, use the accessor APIs such as <span class='ectt-1000'>readb()</span>, <span class='ectt-1000'>readl()</span>, <span class='ectt-1000'>writeb()</span>, and
 <span class='ectt-1000'>writel() </span>rather than dereferencing pointers directly. Those accessors exist because
 different architectures impose different ordering and width requirements. Relaxed
 accessors are also available, but they should only be used when the driver author can
-                                                                  
-
-                                                                  
 explain the ordering guarantees at the boundary with the device. If you
 cannot state why relaxed ordering is correct, it probably is not the right
 default.
-</p><!-- l. 2560 --><p class='indent'>   Port I/O still exists on some architectures and for some buses, but MMIO-backed
+</p><!-- l. 2577 --><p class='indent'>   Port I/O still exists on some architectures and for some buses, but MMIO-backed
 devices are the dominant case for Linux 5.10-and-later driver work. Even
 when the underlying example hardware is simple, it is worth adopting the
 resource-management pattern used by real drivers because that is what scales to
 platform buses, PCI, and Device Tree described hardware.
-</p><!-- l. 2566 --><p class='noindent'>
+</p><!-- l. 2583 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='dma-and-mmap'><span class='titlemark'>19   </span> <a id='x1-6800019'></a>DMA and mmap</h3>
-<!-- l. 2568 --><p class='noindent'>Direct memory access is one of the areas where old folklore causes real damage. A
+<!-- l. 2585 --><p class='noindent'>Direct memory access is one of the areas where old folklore causes real damage. A
 driver must not assume that a CPU virtual address can be turned into a
 DMA address with <span class='ectt-1000'>virt_to_phys() </span>and handed to hardware. The DMA
 API exists because IOMMUs, cache coherency rules, and device addressing
 limits vary by architecture and platform. If a device performs DMA, use the
+                                                                  
+
+                                                                  
 DMA mapping interfaces and establish the correct mask with helpers such as
 <span class='ectt-1000'>dma_set_mask_and_coherent()</span>.
-</p><!-- l. 2576 --><p class='indent'>   The API splits broadly into coherent mappings and streaming mappings.
+</p><!-- l. 2593 --><p class='indent'>   The API splits broadly into coherent mappings and streaming mappings.
 Coherent allocations, typically created with <span class='ectt-1000'>dma_alloc_coherent()</span>, are easy to
 reason about and are a good fit for descriptors or control rings. Streaming mappings,
 created with <span class='ectt-1000'>dma_map_single() </span>or related helpers, are better for transient data
@@ -6008,27 +6100,24 @@ buffers but require explicit unmapping and, on some systems, synchronization
 between CPU and device ownership. The core rule is that the buffer ownership
 protocol must be explicit: know when the CPU may touch the memory and when the
 device may touch it.
-</p><!-- l. 2585 --><p class='noindent'>
+</p><!-- l. 2602 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='dma-addressing-and-ownership-rules'><span class='titlemark'>19.1   </span> <a id='x1-6900019.1'></a>DMA Addressing and Ownership Rules</h4>
-<!-- l. 2587 --><p class='noindent'>The first step in a DMA-capable driver is telling the kernel what address width the
+<!-- l. 2604 --><p class='noindent'>The first step in a DMA-capable driver is telling the kernel what address width the
 device can actually drive. That is the purpose of <span class='ectt-1000'>dma_set_mask_and_coherent() </span>or
 its split variants. If a device can only issue 32-bit DMA addresses on a system with
 memory above 4 GiB, the kernel needs to know that before any buffers are allocated
 or mapped. Getting the mask wrong can lead to failures that only show up
 on certain machines, which is one reason DMA bugs are so frustrating to
 debug.
-</p><!-- l. 2595 --><p class='indent'>   The second step is choosing the ownership model. For coherent allocations, the
+</p><!-- l. 2612 --><p class='indent'>   The second step is choosing the ownership model. For coherent allocations, the
 CPU and device see the same memory without explicit cache maintenance by the
 driver, so they are a natural fit for descriptor rings, producer-consumer indices, and
 other control structures. That does not mean no synchronization is needed. The
-                                                                  
-
-                                                                  
 driver still has to order accesses correctly with respect to doorbells, status bits, and
 descriptor visibility. Coherent memory solves cache-coherency problems, not
 higher-level protocol mistakes.
-</p><!-- l. 2605 --><p class='indent'>   Streaming mappings are more performance-oriented but stricter. The driver
+</p><!-- l. 2622 --><p class='indent'>   Streaming mappings are more performance-oriented but stricter. The driver
 maps a CPU buffer for a specific transfer direction with interfaces such as
 <span class='ectt-1000'>dma_map_single()</span>, <span class='ectt-1000'>dma_map_page()</span>, or scatter-gather helpers, hands the DMA
 address to the device, and later unmaps or synchronizes it. The important invariant
@@ -6036,52 +6125,52 @@ is that the CPU must not treat the buffer as ordinary memory while the device ow
 it. On non-coherent systems, ignoring that rule can lead to stale or silently corrupted
 data; on coherent systems, it can still violate the driver’s own protocol and create
 races.
-</p><!-- l. 2615 --><p class='noindent'>
+</p><!-- l. 2632 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='scattergather-and-dma-api-patterns'><span class='titlemark'>19.2   </span> <a id='x1-7000019.2'></a>Scatter-Gather and DMA API Patterns</h4>
-<!-- l. 2617 --><p class='noindent'>Once transfers grow beyond a single small buffer, drivers usually stop thinking in
+<!-- l. 2634 --><p class='noindent'>Once transfers grow beyond a single small buffer, drivers usually stop thinking in
 terms of one DMA address and start thinking in terms of scatter-gather lists. The
 Linux DMA API supports this through <span class='ectt-1000'>struct scatterlist </span>and helpers such as
+                                                                  
+
+                                                                  
 <span class='ectt-1000'>sg_init_table()</span>, <span class='ectt-1000'>dma_map_sg()</span>, and <span class='ectt-1000'>dma_unmap_sg()</span>. That allows a driver to
 hand the device a list of segments without first copying everything into one physically
 contiguous buffer.
-</p><!-- l. 2625 --><p class='indent'>   This matters for both throughput and allocation pressure. Large physically
+</p><!-- l. 2642 --><p class='indent'>   This matters for both throughput and allocation pressure. Large physically
 contiguous buffers are expensive and sometimes impossible to obtain on long-running
 systems. Scatter-gather lets the IOMMU or the device itself stitch the transfer
 together from ordinary pages, which is much closer to how high-performance storage
 and network devices actually operate.
-</p><!-- l. 2632 --><p class='indent'>   The streaming DMA direction also deserves care. Use the correct direction flag,
+</p><!-- l. 2649 --><p class='indent'>   The streaming DMA direction also deserves care. Use the correct direction flag,
 such as <span class='ectt-1000'>DMA_TO_DEVICE</span>, <span class='ectt-1000'>DMA_FROM_DEVICE</span>, or <span class='ectt-1000'>DMA_BIDIRECTIONAL</span>, because
 the architecture and IOMMU code use that information to apply the right
 synchronization rules. <span class='ectt-1000'>DMA_BIDIRECTIONAL </span>is not a harmless default; it is a weaker
 statement of intent and can impose avoidable costs.
-</p><!-- l. 2639 --><p class='noindent'>
+</p><!-- l. 2656 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='dma-debugging-and-common-mistakes'><span class='titlemark'>19.3   </span> <a id='x1-7100019.3'></a>DMA Debugging and Common Mistakes</h4>
-<!-- l. 2641 --><p class='noindent'>When bringing up a DMA driver, enable the kernel’s DMA-API debugging facilities
+<!-- l. 2658 --><p class='noindent'>When bringing up a DMA driver, enable the kernel’s DMA-API debugging facilities
 if the configuration supports them. They can catch double unmaps, direction
 mismatches, mapping leaks, and other lifetime errors early enough to be
 understandable. The most common beginner mistakes are all variations of the same
 theme: forgetting that the DMA address space is an abstraction.
-</p><!-- l. 2648 --><p class='indent'>   Do not mix CPU physical addresses with DMA addresses. Do not keep using a
+</p><!-- l. 2665 --><p class='indent'>   Do not mix CPU physical addresses with DMA addresses. Do not keep using a
 streaming-mapped buffer after unmapping it. Do not map memory that the
 device will never actually access. Do not assume that a successful mapping
-                                                                  
-
-                                                                  
 on one machine means the code is portable to systems with non-coherent
 caches, SWIOTLB bounce buffering, or an active IOMMU. If a driver stays
 disciplined about those rules, the DMA API becomes manageable rather than
 mysterious.
-</p><!-- l. 2657 --><p class='indent'>   The following sample creates a synthetic platform device so the module can walk
+</p><!-- l. 2674 --><p class='indent'>   The following sample creates a synthetic platform device so the module can walk
 through a realistic DMA setup path without depending on external hardware. It sets
 a DMA mask, allocates coherent memory, performs a streaming mapping, and logs
 the resulting DMA addresses during probe. The sample stays within interfaces
 available on Linux v5.10, so it also builds cleanly on newer 6.x kernels without
 needing 6.x-only driver callbacks:
-</p><!-- l. 2664 --><p class='indent'>
+</p><!-- l. 2681 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb99'>
+   <pre class='fancyvrb' id='fancyvrb100'>
 <span class='ecrm-0500'>1</span><span class='ectt-0800'>// SPDX-License-Identifier: GPL-2.0
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>/*
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'> * dma.c - Minimal DMA API demonstration using a synthetic platform device.
@@ -6090,6 +6179,9 @@ needing 6.x-only driver callbacks:
 </span><span class='ecrm-0500'>6</span><span class='ectt-0800'> * modern DMA-capable probe path: set the DMA mask, allocate coherent memory,
 </span><span class='ecrm-0500'>7</span><span class='ectt-0800'> * create a streaming mapping, and tear it all down cleanly.
 </span><span class='ecrm-0500'>8</span><span class='ectt-0800'> */
+                                                                  
+
+                                                                  
 </span><span class='ecrm-0500'>9</span>
 <span class='ecrm-0500'>10</span><span class='ectt-0800'>#include &lt;linux/dma-mapping.h&gt;
 </span><span class='ecrm-0500'>11</span><span class='ectt-0800'>#include &lt;linux/init.h&gt;
@@ -6123,9 +6215,6 @@ needing 6.x-only driver callbacks:
 </span><span class='ecrm-0500'>39</span><span class='ectt-0800'>    struct device *dev = &amp;pdev-&gt;dev;
 </span><span class='ecrm-0500'>40</span><span class='ectt-0800'>    struct dma_demo_dev *demo;
 </span><span class='ecrm-0500'>41</span><span class='ectt-0800'>    int ret;
-                                                                  
-
-                                                                  
 </span><span class='ecrm-0500'>42</span>
 <span class='ecrm-0500'>43</span><span class='ectt-0800'>    ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32));
 </span><span class='ecrm-0500'>44</span><span class='ectt-0800'>    if (ret)
@@ -6149,8 +6238,11 @@ needing 6.x-only driver callbacks:
 </span><span class='ecrm-0500'>62</span><span class='ectt-0800'>        return -ENOMEM;
 </span><span class='ecrm-0500'>63</span>
 <span class='ecrm-0500'>64</span><span class='ectt-0800'>    memset(demo-&gt;streaming_buf, 0x5a, demo-&gt;streaming_len);
-</span><span class='ecrm-0500'>65</span>
-<span class='ecrm-0500'>66</span><span class='ectt-0800'>    demo-&gt;streaming_handle = dma_map_single(dev, demo-&gt;streaming_buf,
+</span><span class='ecrm-0500'>65
+                                                                  
+
+                                                                  
+</span><span class='ecrm-0500'>66</span><span class='ectt-0800'>    demo-&gt;streaming_handle = dma_map_single(dev, demo-&gt;streaming_buf,
 </span><span class='ecrm-0500'>67</span><span class='ectt-0800'>                                            demo-&gt;streaming_len, DMA_TO_DEVICE);
 </span><span class='ecrm-0500'>68</span><span class='ectt-0800'>    if (dma_mapping_error(dev, demo-&gt;streaming_handle))
 </span><span class='ecrm-0500'>69</span><span class='ectt-0800'>        return dev_err_probe(dev, -EIO, "failed to map streaming buffer\n");
@@ -6183,9 +6275,6 @@ needing 6.x-only driver callbacks:
 </span><span class='ecrm-0500'>96</span><span class='ectt-0800'>    dev_info(&amp;pdev-&gt;dev, "DMA demo removed\n");
 </span><span class='ecrm-0500'>97</span>
 <span class='ecrm-0500'>98</span><span class='ectt-0800'>    return 0;
-                                                                  
-
-                                                                  
 </span><span class='ecrm-0500'>99</span><span class='ectt-0800'>}
 </span><span class='ecrm-0500'>100</span><span class='ectt-0800'>#endif
 </span><span class='ecrm-0500'>101</span>
@@ -6210,6 +6299,9 @@ needing 6.x-only driver callbacks:
 </span><span class='ecrm-0500'>120</span><span class='ectt-0800'>    int ret;
 </span><span class='ecrm-0500'>121</span>
 <span class='ecrm-0500'>122</span><span class='ectt-0800'>    dma_demo_pdev =
+                                                                  
+
+                                                                  
 </span><span class='ecrm-0500'>123</span><span class='ectt-0800'>        platform_device_alloc("lkmpg_dma_demo", PLATFORM_DEVID_NONE);
 </span><span class='ecrm-0500'>124</span><span class='ectt-0800'>    if (!dma_demo_pdev)
 </span><span class='ecrm-0500'>125</span><span class='ectt-0800'>        return -ENOMEM;
@@ -6244,10 +6336,7 @@ needing 6.x-only driver callbacks:
 <span class='ecrm-0500'>154</span><span class='ectt-0800'>MODULE_DESCRIPTION("LKMPG DMA API demo module");
 </span><span class='ecrm-0500'>155</span><span class='ectt-0800'>MODULE_LICENSE("GPL");</span>
    </pre>
-                                                                  
-
-                                                                  
-<!-- l. 2666 --><p class='indent'>   Some drivers also map buffers into userspace with <span class='ectt-1000'>mmap</span>. That can provide
+<!-- l. 2683 --><p class='indent'>   Some drivers also map buffers into userspace with <span class='ectt-1000'>mmap</span>. That can provide
 zero-copy data paths, but it introduces its own lifetime and coherency problems.
 The <span class='ectt-1000'>mmap </span>file operation is therefore not just a performance feature; it is an
 ABI commitment. If a driver exposes memory this way, it must define what
@@ -6255,15 +6344,18 @@ happens across fork, device removal, short-lived mappings, and cache visibility
 boundaries. That is why many drivers begin with <span class='ectt-1000'>read() </span>and <span class='ectt-1000'>write() </span>interfaces
 and only add <span class='ectt-1000'>mmap </span>when measurement shows the extra complexity is worth
 it.
-</p><!-- l. 2676 --><p class='noindent'>
+</p><!-- l. 2693 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='modern-interface-choices-for-linux-and-later'><span class='titlemark'>20   </span> <a id='x1-7200020'></a>Modern Interface Choices for Linux 5.10 and Later</h3>
-<!-- l. 2678 --><p class='noindent'>One of the harder parts of learning from LDD3 is separating durable concepts from
+<!-- l. 2695 --><p class='noindent'>One of the harder parts of learning from LDD3 is separating durable concepts from
 interfaces that are now discouraged. The conceptual material remains excellent; the
 concrete APIs often need translation. Several examples in this guide intentionally
 preserve older techniques for teaching purposes, but new production drivers should
 make different default choices.
-</p><!-- l. 2686 --><p class='indent'>   For procfs, prefer <span class='ectt-1000'>struct proc_ops</span>, as shown in <a href='#the-procops-structure'>Section 7.1</a>, rather than older
+                                                                  
+
+                                                                  
+</p><!-- l. 2703 --><p class='indent'>   For procfs, prefer <span class='ectt-1000'>struct proc_ops</span>, as shown in <a href='#the-procops-structure'>Section 7.1</a>, rather than older
 <span class='ectt-1000'>file_operations</span>-based registration patterns. For GPIO, the descriptor-based
 <span class='ectt-1000'>gpiod_* </span>API is the preferred direction for new drivers, while the legacy integer GPIO
 API is best viewed as compatibility infrastructure and example material. For deferred
@@ -6271,7 +6363,7 @@ work, choose workqueues or threaded interrupts before tasklets. For reference
 counts, choose <span class='ectt-1000'>refcount_t </span>or <span class='ectt-1000'>kref </span>before <span class='ectt-1000'>atomic_t</span>. For device-managed
 drivers, prefer <span class='ectt-1000'>devm_* </span>helpers so probe error paths and remove paths stay
 understandable.
-</p><!-- l. 2697 --><p class='indent'>   The strongest warning applies to syscall-table patching. As described in
+</p><!-- l. 2714 --><p class='indent'>   The strongest warning applies to syscall-table patching. As described in
 <a href='#system-calls'>Section 11</a>, direct system-call hooking is increasingly blocked by modern kernel
 hardening and is not a viable design pattern on current Linux 5.10-and-later kernels.
 Treat it as a historical and diagnostic example, not as a foundation for new module
@@ -6281,32 +6373,32 @@ work.
                                                                   
 </p>
    <h2 class='chapterHead' id='hardware-integration-and-advanced-topics'><span class='titlemark'>Chapter 5</span><br /><a id='x1-730005'></a>Hardware Integration and Advanced Topics</h2>
-<!-- l. 2705 --><p class='noindent'>The remaining material brings together hardware-facing examples and the kernel
+<!-- l. 2722 --><p class='noindent'>The remaining material brings together hardware-facing examples and the kernel
 subsystems that support them. It also closes the guide with a compact set of
 optimization notes, common mistakes, and references for readers who want to keep
 exploring beyond the examples in this book.
 </p>
    <h3 class='sectionHead' id='gpio'><span class='titlemark'>21   </span> <a id='x1-7400021'></a>GPIO</h3>
-<!-- l. 2712 --><p class='noindent'>
+<!-- l. 2729 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='gpio1'><span class='titlemark'>21.1   </span> <a id='x1-7500021.1'></a>GPIO</h4>
-<!-- l. 2714 --><p class='noindent'>General Purpose Input/Output (GPIO) appears on the development board
+<!-- l. 2731 --><p class='noindent'>General Purpose Input/Output (GPIO) appears on the development board
 as pins. It acts as a bridge for communication between the development
 board and external devices. You can think of it like a switch: users can turn
 it on or off (Input), and the development board can also turn it on or off
 (Output).
-</p><!-- l. 2718 --><p class='indent'>   To implement a GPIO device driver, you use the <span class='ectt-1000'>gpio_request() </span>function to
+</p><!-- l. 2735 --><p class='indent'>   To implement a GPIO device driver, you use the <span class='ectt-1000'>gpio_request() </span>function to
 enable a specific GPIO pin. After successfully enabling it, you can check that the pin
 is being used by looking at /sys/kernel/debug/gpio.
-</p><!-- l. 2721 --><p class='indent'>
+</p><!-- l. 2738 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb100'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>cat /sys/kernel/debug/gpio</span>                                                       </pre>
-<!-- l. 2725 --><p class='indent'>   There are other ways to register GPIOs. For example, you can use
+   <pre class='fancyvrb' id='fancyvrb101'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>cat /sys/kernel/debug/gpio</span>                                                       </pre>
+<!-- l. 2742 --><p class='indent'>   There are other ways to register GPIOs. For example, you can use
 <span class='ectt-1000'>gpio_request_one() </span>to register a GPIO while setting its direction (input or output)
 and initial state at the same time. You can also use <span class='ectt-1000'>gpio_request_array() </span>to
 register multiple GPIOs at once. However, note that <span class='ectt-1000'>gpio_request_array() </span>has
 been removed since Linux v6.10.
-</p><!-- l. 2729 --><p class='indent'>   When using GPIO, you must set it as either output with <span class='ectt-1000'>gpio_direction_output()</span>
+</p><!-- l. 2746 --><p class='indent'>   When using GPIO, you must set it as either output with <span class='ectt-1000'>gpio_direction_output()</span>
 or input with <span class='ectt-1000'>gpio_direction_input()</span>.
 </p>
      <ul class='itemize1'>
@@ -6318,19 +6410,19 @@ or input with <span class='ectt-1000'>gpio_direction_input()</span>.
                                                                   
 
                                                                   
-<!-- l. 2736 --><p class='noindent'>
+<!-- l. 2753 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='control-the-leds-onoff-state'><span class='titlemark'>21.2   </span> <a id='x1-7600021.2'></a>Control the LED’s on/off state</h4>
-<!-- l. 2738 --><p class='noindent'>In <a href='#talking-to-device-files'>Section 10</a>, we learned how to communicate with device files. Therefore, we will
+<!-- l. 2755 --><p class='noindent'>In <a href='#talking-to-device-files'>Section 10</a>, we learned how to communicate with device files. Therefore, we will
 further use device files to control the LED on and off.
-</p><!-- l. 2741 --><p class='indent'>   In the implementation, a pull-down resistor is used. The anode of the LED is
+</p><!-- l. 2758 --><p class='indent'>   In the implementation, a pull-down resistor is used. The anode of the LED is
 connected to GPIO4, and the cathode is connected to GND. For more details
 about the Raspberry Pi pin assignments, refer to <a href='https://pinout.xyz/'>Raspberry Pi Pinout</a>. The
 materials used include a Raspberry Pi 5, an LED, jumper wires, and a 220<span class='cmr-10'>Ω</span>
 resistor.
-</p><!-- l. 2746 --><p class='indent'>
+</p><!-- l. 2763 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb101'>
+   <pre class='fancyvrb' id='fancyvrb102'>
 <span class='ecrm-0500'>1</span><span class='ectt-0800'>/*
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'> * led.c - Using GPIO to control the LED on/off
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'> */
@@ -6576,37 +6668,37 @@ resistor.
 </span><span class='ecrm-0500'>231</span>
 <span class='ecrm-0500'>232</span><span class='ectt-0800'>MODULE_LICENSE("GPL");</span>
    </pre>
-<!-- l. 2748 --><p class='indent'>   Make and install the module: 
+<!-- l. 2765 --><p class='indent'>   Make and install the module: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb102'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>make
+   <pre class='fancyvrb' id='fancyvrb103'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>make
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>sudo insmod led.ko</span>                                                   </pre>
-<!-- l. 2754 --><p class='indent'>   Switch on the LED: 
+<!-- l. 2771 --><p class='indent'>   Switch on the LED: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb103'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>echo "1" | sudo tee /dev/gpio_led</span>                                                </pre>
-<!-- l. 2759 --><p class='indent'>   Switch off the LED: 
+   <pre class='fancyvrb' id='fancyvrb104'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>echo "1" | sudo tee /dev/gpio_led</span>                                                </pre>
+<!-- l. 2776 --><p class='indent'>   Switch off the LED: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb104'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>echo "0" | sudo tee /dev/gpio_led</span>                                                </pre>
-<!-- l. 2764 --><p class='indent'>   Finally, remove the module: 
+   <pre class='fancyvrb' id='fancyvrb105'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>echo "0" | sudo tee /dev/gpio_led</span>                                                </pre>
+<!-- l. 2781 --><p class='indent'>   Finally, remove the module: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb105'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>sudo rmmod led</span>                                                                   </pre>
-<!-- l. 2769 --><p class='noindent'>
+   <pre class='fancyvrb' id='fancyvrb106'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>sudo rmmod led</span>                                                                   </pre>
+<!-- l. 2786 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='dht-sensor'><span class='titlemark'>21.3   </span> <a id='x1-7700021.3'></a>DHT11 sensor</h4>
-<!-- l. 2771 --><p class='noindent'>The DHT11 sensor is a well-known entry-level sensor commonly used to measure
+<!-- l. 2788 --><p class='noindent'>The DHT11 sensor is a well-known entry-level sensor commonly used to measure
 humidity and temperature. In this subsection, we will use GPIO to communicate
 through a single data line. The DHT11 communication protocol can be referred to in
 the <a href='https://www.mouser.com/datasheet/2/758/DHT11-Technical-Data-Sheet-Translated-Version-1143054.pdf?srsltid=AfmBOoppls-QTd864640bVtbK90sWBsFzJ_7SgjOD2EpwuLLGUSTyYnv'>datasheet</a>.
                                                                   
 
                                                                   
-</p><!-- l. 2775 --><p class='indent'>   In the implementation, the data pin of the DHT11 sensor is connected to GPIO4
+</p><!-- l. 2792 --><p class='indent'>   In the implementation, the data pin of the DHT11 sensor is connected to GPIO4
 on the Raspberry Pi. The sensor’s VCC and GND pins are connected to 3.3V and
 GND, respectively. For more details about the Raspberry Pi pin assignments, refer to
 <a href='https://pinout.xyz/'>Raspberry Pi Pinout</a>. The materials used include a Raspberry Pi 5, a DHT11 sensor,
 and jumper wires.
-</p><!-- l. 2780 --><p class='indent'>
+</p><!-- l. 2797 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb106'>
+   <pre class='fancyvrb' id='fancyvrb107'>
 <span class='ecrm-0500'>1</span><span class='ectt-0800'>/*
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'> *  dht11.c - Using GPIO to read temperature and humidity from DHT11 sensor.
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'> */
@@ -6888,17 +6980,17 @@ and jumper wires.
 </span><span class='ecrm-0500'>267</span>
 <span class='ecrm-0500'>268</span><span class='ectt-0800'>MODULE_LICENSE("GPL");</span>
    </pre>
-<!-- l. 2781 --><p class='noindent'>Make and install the module: 
+<!-- l. 2798 --><p class='noindent'>Make and install the module: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb107'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>make
+   <pre class='fancyvrb' id='fancyvrb108'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>make
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>sudo insmod dht11.ko</span>                                                  </pre>
-<!-- l. 2787 --><p class='indent'>   Check the Output of the DHT11 Sensor: 
+<!-- l. 2804 --><p class='indent'>   Check the Output of the DHT11 Sensor: 
                                                                   
 
                                                                   
 </p>
-   <pre class='fancyvrb' id='fancyvrb108'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>sudo cat /dev/dht11</span>                                                              </pre>
-<!-- l. 2792 --><p class='indent'>   Expected Output:
+   <pre class='fancyvrb' id='fancyvrb109'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>sudo cat /dev/dht11</span>                                                              </pre>
+<!-- l. 2809 --><p class='indent'>   Expected Output:
                                                                   
 
                                                                   
@@ -6908,31 +7000,31 @@ $ sudo cat /dev/dht11
 Humidity: 61%
 Temperature: 30°C
 </pre>
-<!-- l. 2797 --><p class='nopar'>
-</p><!-- l. 2799 --><p class='indent'>   Finally, remove the module: 
+<!-- l. 2814 --><p class='nopar'>
+</p><!-- l. 2816 --><p class='indent'>   Finally, remove the module: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb109'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>sudo rmmod dht11</span>                                                                 </pre>
-<!-- l. 2804 --><p class='noindent'>
+   <pre class='fancyvrb' id='fancyvrb110'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>sudo rmmod dht11</span>                                                                 </pre>
+<!-- l. 2821 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='scheduling-tasks'><span class='titlemark'>22   </span> <a id='x1-7800022'></a>Scheduling Tasks</h3>
-<!-- l. 2806 --><p class='noindent'>There are two main ways of running tasks: tasklets and work queues. Tasklets are a
+<!-- l. 2823 --><p class='noindent'>There are two main ways of running tasks: tasklets and work queues. Tasklets are a
 quick and easy way of scheduling a single function to be run. For example, when
 triggered from an interrupt, whereas work queues are more complicated but also
 better suited to running multiple things in a sequence.
-</p><!-- l. 2811 --><p class='indent'>   It is possible that in future tasklets may be replaced by <span class='ecti-1000'>threaded IRQs</span>. However,
+</p><!-- l. 2828 --><p class='indent'>   It is possible that in future tasklets may be replaced by <span class='ecti-1000'>threaded IRQs</span>. However,
 discussion about that has been ongoing since 2007 (<a href='https://lwn.net/Articles/239633'>Eliminating tasklets</a> and <a href='https://lwn.net/Articles/960041/'>The end
 of tasklets</a>), so expecting immediate changes would be unwise. See the <a href='#interrupt-handlers1'>Section 23.1</a>
 for alternatives that avoid the tasklet debate.
-</p><!-- l. 2816 --><p class='noindent'>
+</p><!-- l. 2833 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='tasklets'><span class='titlemark'>22.1   </span> <a id='x1-7900022.1'></a>Tasklets</h4>
-<!-- l. 2818 --><p class='noindent'>Here is an example tasklet module. The <span class='ectt-1000'>tasklet_fn </span>function runs for a few
+<!-- l. 2835 --><p class='noindent'>Here is an example tasklet module. The <span class='ectt-1000'>tasklet_fn </span>function runs for a few
 seconds. In the meantime, execution of the <span class='ectt-1000'>example_tasklet_init </span>function
 may continue to the exit point, depending on whether it is interrupted by
 <span class='ecbx-1000'>softirq</span>.
-</p><!-- l. 2823 --><p class='indent'>
+</p><!-- l. 2840 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb110'>
+   <pre class='fancyvrb' id='fancyvrb111'>
 <span class='ecrm-0500'>1</span><span class='ectt-0800'>/*
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'> * example_tasklet.c
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'> */
@@ -6981,7 +7073,7 @@ may continue to the exit point, depending on whether it is interrupted by
 <span class='ecrm-0500'>43</span><span class='ectt-0800'>MODULE_DESCRIPTION("Tasklet example");
 </span><span class='ecrm-0500'>44</span><span class='ectt-0800'>MODULE_LICENSE("GPL");</span>
    </pre>
-<!-- l. 2825 --><p class='indent'>   So with this example loaded <span class='ectt-1000'>dmesg </span>should show:
+<!-- l. 2842 --><p class='indent'>   So with this example loaded <span class='ectt-1000'>dmesg </span>should show:
                                                                   
 
                                                                   
@@ -6992,27 +7084,27 @@ Example tasklet starts
 Example tasklet init continues...
 Example tasklet ends
 </pre>
-<!-- l. 2832 --><p class='nopar'>Although tasklet is easy to use, it comes with several drawbacks, and developers have
+<!-- l. 2849 --><p class='nopar'>Although tasklet is easy to use, it comes with several drawbacks, and developers have
 been discussing their removal from the Linux kernel. The tasklet callback
 runs in atomic context, inside a software interrupt, meaning that it cannot
 sleep or access user-space data, so not all work can be done in a tasklet
 handler. Also, the kernel only allows one instance of any given tasklet to be
 running at any given time; multiple different tasklet callbacks can run in
 parallel.
-</p><!-- l. 2837 --><p class='indent'>   In recent kernels, tasklets can be replaced by workqueues, timers, or threaded interrupts.
+</p><!-- l. 2854 --><p class='indent'>   In recent kernels, tasklets can be replaced by workqueues, timers, or threaded interrupts.
 <span class='footnote-mark'><a href='#fn1x7' id='fn1x7-bk'><sup class='textsuperscript'>1</sup></a></span><a id='x1-79045f1'></a>
 While the removal of tasklets remains a longer-term goal, the current kernel contains
 more than a hundred uses of tasklets. Now developers are proceeding with the API
 changes and the macro <span class='ectt-1000'>DECLARE_TASKLET_OLD </span>exists for compatibility. For further
 information, see <a class='url' href='https://lwn.net/Articles/830964/'><span class='ectt-1000'>https://lwn.net/Articles/830964/</span></a>.
-</p><!-- l. 2848 --><p class='noindent'>
+</p><!-- l. 2865 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='work-queues'><span class='titlemark'>22.2   </span> <a id='x1-8000022.2'></a>Work queues</h4>
-<!-- l. 2850 --><p class='noindent'>To add a task to the scheduler we can use a workqueue. The kernel then uses the
+<!-- l. 2867 --><p class='noindent'>To add a task to the scheduler we can use a workqueue. The kernel then uses the
 Completely Fair Scheduler (CFS) to execute work within the queue.
-</p><!-- l. 2853 --><p class='indent'>
+</p><!-- l. 2870 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb111'>
+   <pre class='fancyvrb' id='fancyvrb112'>
 <span class='ecrm-0500'>1</span><span class='ectt-0800'>/*
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'> * sched.c
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'> */
@@ -7055,25 +7147,25 @@ Completely Fair Scheduler (CFS) to execute work within the queue.
 <span class='ecrm-0500'>37</span><span class='ectt-0800'>MODULE_LICENSE("GPL");
 </span><span class='ecrm-0500'>38</span><span class='ectt-0800'>MODULE_DESCRIPTION("Workqueue example");</span>
    </pre>
-<!-- l. 2855 --><p class='noindent'>
+<!-- l. 2872 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='interrupt-handlers'><span class='titlemark'>23   </span> <a id='x1-8100023'></a>Interrupt Handlers</h3>
-<!-- l. 2857 --><p class='noindent'>
+<!-- l. 2874 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='interrupt-handlers1'><span class='titlemark'>23.1   </span> <a id='x1-8200023.1'></a>Interrupt Handlers</h4>
-<!-- l. 2859 --><p class='noindent'>Except for the last chapter, everything we did in the kernel so far we have done as a
+<!-- l. 2876 --><p class='noindent'>Except for the last chapter, everything we did in the kernel so far we have done as a
 response to a process asking for it, either by dealing with a special file, sending an
 <span class='ectt-1000'>ioctl()</span>, or issuing a system call. But the job of the kernel is not just to respond to
 process requests. Another job, which is every bit as important, is to speak to the
 hardware connected to the machine.
-</p><!-- l. 2863 --><p class='indent'>   There are two types of interaction between the CPU and the rest of the
+</p><!-- l. 2880 --><p class='indent'>   There are two types of interaction between the CPU and the rest of the
 computer’s hardware. The first type is when the CPU gives orders to the hardware,
 the other is when the hardware needs to tell the CPU something. The second, called
 interrupts, is much harder to implement because it has to be dealt with when
 convenient for the hardware, not the CPU. Hardware devices typically have a very
 small amount of RAM, and if you do not read their information when available, it is
 lost.
-</p><!-- l. 2868 --><p class='indent'>   Under Linux, hardware interrupts are called IRQs (Interrupt ReQuests). There
+</p><!-- l. 2885 --><p class='indent'>   Under Linux, hardware interrupts are called IRQs (Interrupt ReQuests). There
 are two types of IRQs, short and long. A short IRQ is one which is expected to take a
 very short period of time, during which the rest of the machine will be blocked and
 no other interrupts will be handled. A long IRQ is one which can take longer, and
@@ -7083,7 +7175,7 @@ no other interrupts will be handled. A long IRQ is one which can take longer, an
 during which other interrupts may occur (but not interrupts from the same
 device). If at all possible, it is better to declare an interrupt handler to be
 long.
-</p><!-- l. 2874 --><p class='indent'>   When the CPU receives an interrupt, it stops whatever it is doing (unless it is
+</p><!-- l. 2891 --><p class='indent'>   When the CPU receives an interrupt, it stops whatever it is doing (unless it is
 processing a more important interrupt, in which case it will deal with this one only
 when the more important one is done), saves certain parameters on the stack and
 calls the interrupt handler. This means that certain things are not allowed in the
@@ -7095,9 +7187,9 @@ heavy work deferred from an interrupt handler. Historically, BH (Linux
 naming for <span class='ecti-1000'>Bottom Halves</span>) statistically book-keeps the deferred functions.
 <span class='ecbx-1000'>Softirq </span>and its higher level abstraction, <span class='ecbx-1000'>Tasklet</span>, replace BH since Linux
 2.3.
-</p><!-- l. 2884 --><p class='indent'>   The way to implement this is to call <span class='ectt-1000'>request_irq() </span>to get your interrupt handler
+</p><!-- l. 2901 --><p class='indent'>   The way to implement this is to call <span class='ectt-1000'>request_irq() </span>to get your interrupt handler
 called when the relevant IRQ is received.
-</p><!-- l. 2886 --><p class='indent'>   In practice IRQ handling can be a bit more complex. Hardware is often designed
+</p><!-- l. 2903 --><p class='indent'>   In practice IRQ handling can be a bit more complex. Hardware is often designed
 in a way that chains two interrupt controllers, so that all the IRQs from
 interrupt controller B are cascaded to a certain IRQ from interrupt controller A.
 Of course, that requires that the kernel finds out which IRQ it really was
@@ -7111,11 +7203,11 @@ need to solve another truckload of problems. It is not enough to know if a
 certain IRQ has happened, it’s also important to know what CPU(s) it was
 for. People still interested in more details, might want to refer to "APIC"
 now.
-</p><!-- l. 2895 --><p class='indent'>   This function receives the IRQ number, the name of the function, flags, a name
+</p><!-- l. 2912 --><p class='indent'>   This function receives the IRQ number, the name of the function, flags, a name
 for <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/interrupts</span></span></span> and a parameter to be passed to the interrupt handler.
 Usually there is a certain number of IRQs available. How many IRQs there are is
 hardware-dependent.
-</p><!-- l. 2899 --><p class='indent'>   The flags can be used to specify behaviors of the IRQ. For example, use
+</p><!-- l. 2916 --><p class='indent'>   The flags can be used to specify behaviors of the IRQ. For example, use
 <span class='ectt-1000'>IRQF_SHARED </span>to indicate you are willing to share the IRQ with other interrupt
 handlers (usually because a number of hardware devices sit on the same IRQ); use
 the <span class='ectt-1000'>IRQF_ONESHOT </span>to indicate that the IRQ is not reenabled after the handler
@@ -7128,21 +7220,21 @@ share.
                                                                   
 
                                                                   
-</p><!-- l. 2908 --><p class='noindent'>
+</p><!-- l. 2925 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='detecting-button-presses'><span class='titlemark'>23.2   </span> <a id='x1-8300023.2'></a>Detecting button presses</h4>
-<!-- l. 2910 --><p class='noindent'>Many popular single board computers, such as Raspberry Pi or Beagleboards, have a
+<!-- l. 2927 --><p class='noindent'>Many popular single board computers, such as Raspberry Pi or Beagleboards, have a
 bunch of GPIO pins. Attaching buttons to those and then having a button press do
 something is a classic case in which you might need to use interrupts, so that instead
 of having the CPU waste time and battery power polling for a change in input state,
 it is better for the input to trigger the CPU to then run a particular handling
 function.
-</p><!-- l. 2914 --><p class='indent'>   Here is an example where buttons are connected to GPIO numbers 17 and 18 and
+</p><!-- l. 2931 --><p class='indent'>   Here is an example where buttons are connected to GPIO numbers 17 and 18 and
 an LED is connected to GPIO 4. You can change those numbers to whatever is
 appropriate for your board.
-</p><!-- l. 2917 --><p class='indent'>
+</p><!-- l. 2934 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb112'>
+   <pre class='fancyvrb' id='fancyvrb113'>
 <span class='ecrm-0500'>1</span><span class='ectt-0800'>/*
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'> * intrpt.c - Handling GPIO with interrupts
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'> *
@@ -7387,26 +7479,26 @@ appropriate for your board.
 <span class='ecrm-0500'>230</span><span class='ectt-0800'>MODULE_LICENSE("GPL");
 </span><span class='ecrm-0500'>231</span><span class='ectt-0800'>MODULE_DESCRIPTION("Handle some GPIO interrupts");</span>
    </pre>
-<!-- l. 2919 --><p class='noindent'>
+<!-- l. 2936 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='bottom-half'><span class='titlemark'>23.3   </span> <a id='x1-8400023.3'></a>Bottom Half</h4>
-<!-- l. 2921 --><p class='noindent'>Suppose you want to do a bunch of stuff inside of an interrupt routine. A common
+<!-- l. 2938 --><p class='noindent'>Suppose you want to do a bunch of stuff inside of an interrupt routine. A common
 way to avoid blocking the interrupt for a significant duration is to defer the
 time-consuming part to a workqueue. This pushes the bulk of the work off into
 the scheduler. This approach helps speed up the interrupt handling process
 itself, allowing the system to respond to the next hardware interrupt more
 quickly.
-</p><!-- l. 2928 --><p class='indent'>   Kernel developers generally discourage using tasklets due to their design
+</p><!-- l. 2945 --><p class='indent'>   Kernel developers generally discourage using tasklets due to their design
 limitations, such as memory management issues and unpredictable latencies. Instead,
 they recommend more robust mechanisms like workqueues or <span class='ecbx-1000'>softirqs</span>. To address
 tasklet shortcomings, Linux contributors introduced the BH workqueue,
 activated with the <span class='ectt-1000'>WQ_BH </span>flag. This workqueue retains critical features, such as
 execution in atomic (<span class='ecbx-1000'>softirq</span>) context on the same CPU and the inability to
 sleep.
-</p><!-- l. 2936 --><p class='indent'>   The example below extends the previous code to include an additional task
+</p><!-- l. 2953 --><p class='indent'>   The example below extends the previous code to include an additional task
 executed in process context when an interrupt is triggered. 
 </p>
-   <pre class='fancyvrb' id='fancyvrb113'>
+   <pre class='fancyvrb' id='fancyvrb114'>
 <span class='ecrm-0500'>1</span><span class='ectt-0800'>/*
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'> * bottomhalf.c - Top and bottom half interrupt handling
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'> *
@@ -7694,15 +7786,15 @@ executed in process context when an interrupt is triggered.
 <span class='ecrm-0500'>270</span><span class='ectt-0800'>MODULE_LICENSE("GPL");
 </span><span class='ecrm-0500'>271</span><span class='ectt-0800'>MODULE_DESCRIPTION("Interrupt with top and bottom half");</span>
    </pre>
-<!-- l. 2939 --><p class='noindent'>
+<!-- l. 2956 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='threaded-irq'><span class='titlemark'>23.4   </span> <a id='x1-8500023.4'></a>Threaded IRQ</h4>
-<!-- l. 2941 --><p class='noindent'>Threaded IRQ is a mechanism to organize both top-half and bottom-half of an IRQ
+<!-- l. 2958 --><p class='noindent'>Threaded IRQ is a mechanism to organize both top-half and bottom-half of an IRQ
 at once. A threaded IRQ splits the one handler in <span class='ectt-1000'>request_irq() </span>into two: one for
 the top-half, the other for the bottom-half. The <span class='ectt-1000'>request_threaded_irq() </span>is the
 function for using threaded IRQs. Two handlers are registered at once in the
 <span class='ectt-1000'>request_threaded_irq()</span>.
-</p><!-- l. 2946 --><p class='indent'>   Those two handlers run in different context. The top-half handler runs in
+</p><!-- l. 2963 --><p class='indent'>   Those two handlers run in different context. The top-half handler runs in
 interrupt context. It’s the equivalence of the handler passed to the <span class='ectt-1000'>request_irq()</span>.
 The bottom-half handler on the other hand runs in its own thread. This thread is
 created on registration of a threaded IRQ. Its sole purpose is to run this bottom-half
@@ -7712,11 +7804,11 @@ by the top-half handler, that bottom-half serving thread will wake up. The threa
 
                                                                   
 then runs the bottom-half handler.
-</p><!-- l. 2956 --><p class='indent'>   Here is an example of how to do the same thing as before, with top and bottom
+</p><!-- l. 2973 --><p class='indent'>   Here is an example of how to do the same thing as before, with top and bottom
 halves, but using threads.
-</p><!-- l. 2958 --><p class='indent'>
+</p><!-- l. 2975 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb114'>
+   <pre class='fancyvrb' id='fancyvrb115'>
 <span class='ecrm-0500'>1</span><span class='ectt-0800'>/*
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'> * bh_threaded.c - Top and bottom half interrupt handling
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'> *
@@ -7996,12 +8088,12 @@ halves, but using threads.
 <span class='ecrm-0500'>265</span><span class='ectt-0800'>MODULE_LICENSE("GPL");
 </span><span class='ecrm-0500'>266</span><span class='ectt-0800'>MODULE_DESCRIPTION("Interrupt with top and bottom half");</span>
    </pre>
-<!-- l. 2960 --><p class='indent'>   A threaded IRQ is registered using <span class='ectt-1000'>request_threaded_irq()</span>. This
+<!-- l. 2977 --><p class='indent'>   A threaded IRQ is registered using <span class='ectt-1000'>request_threaded_irq()</span>. This
 function only takes one additional parameter than the <span class='ectt-1000'>request_irq() </span>– the
 bottom-half handling function that runs in its own thread. In this example it is
 the <span class='ectt-1000'>button_bottom_half()</span>. Usage of other parameters are the same as
 <span class='ectt-1000'>request_irq()</span>.
-</p><!-- l. 2965 --><p class='indent'>   Presence of both handlers is not mandatory. If either of them is not needed, pass
+</p><!-- l. 2982 --><p class='indent'>   Presence of both handlers is not mandatory. If either of them is not needed, pass
 the <span class='ectt-1000'>NULL </span>instead. A <span class='ectt-1000'>NULL </span>top-half handler implies that no action is taken except to
 wake up the bottom-half serving thread, which runs the bottom-half handler.
 Similarly, a <span class='ectt-1000'>NULL </span>bottom-half handler effectively acts as if <span class='ectt-1000'>request_irq() </span>were used.
@@ -8009,18 +8101,18 @@ Similarly, a <span class='ectt-1000'>NULL </span>bottom-half handler effectively
 
                                                                   
 In fact, this is how <span class='ectt-1000'>request_irq() </span>is implemented.
-</p><!-- l. 2971 --><p class='indent'>   Note that passing <span class='ectt-1000'>NULL </span>to both handlers is considered an error and will make
+</p><!-- l. 2988 --><p class='indent'>   Note that passing <span class='ectt-1000'>NULL </span>to both handlers is considered an error and will make
 registration fail.
-</p><!-- l. 2973 --><p class='noindent'>
+</p><!-- l. 2990 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='virtual-input-device-driver'><span class='titlemark'>24   </span> <a id='x1-8600024'></a>Virtual Input Device Driver</h3>
-<!-- l. 2975 --><p class='noindent'>The input device driver is a module that provides a way to communicate with the
+<!-- l. 2992 --><p class='noindent'>The input device driver is a module that provides a way to communicate with the
 interaction device via the event. For example, the keyboard can send the press or
 release event to tell the kernel what we want to do. The input device driver will
 allocate a new input structure with <span class='ectt-1000'>input_allocate_device() </span>and sets
 up input bitfields, device id, version, etc. After that, registers it by calling
 <span class='ectt-1000'>input_register_device()</span>.
-</p><!-- l. 2980 --><p class='indent'>   Here is an example, vinput, It is an API to allow easy development of virtual
+</p><!-- l. 2997 --><p class='indent'>   Here is an example, vinput, It is an API to allow easy development of virtual
 input drivers. The driver needs to export a <span class='ectt-1000'>vinput_device() </span>that contains the
 virtual device name and <span class='ectt-1000'>vinput_ops </span>structure that describes:
 </p>
@@ -8030,43 +8122,43 @@ virtual device name and <span class='ectt-1000'>vinput_ops </span>structure that
      <li class='itemize'>the input event injection function: <span class='ectt-1000'>send()</span>
      </li>
      <li class='itemize'>the readback function: <span class='ectt-1000'>read()</span></li></ul>
-<!-- l. 2990 --><p class='indent'>   Then using <span class='ectt-1000'>vinput_register_device() </span>and <span class='ectt-1000'>vinput_unregister_device() </span>will
+<!-- l. 3007 --><p class='indent'>   Then using <span class='ectt-1000'>vinput_register_device() </span>and <span class='ectt-1000'>vinput_unregister_device() </span>will
 add a new device to the list of support virtual input devices.
-</p><!-- l. 2992 --><p class='indent'>
+</p><!-- l. 3009 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb115'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>int init(struct vinput *);</span>                                                       </pre>
-<!-- l. 2996 --><p class='indent'>   This function is passed a <span class='ectt-1000'>struct vinput </span>already initialized with an allocated
+   <pre class='fancyvrb' id='fancyvrb116'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>int init(struct vinput *);</span>                                                       </pre>
+<!-- l. 3013 --><p class='indent'>   This function is passed a <span class='ectt-1000'>struct vinput </span>already initialized with an allocated
 <span class='ectt-1000'>struct input_dev</span>. The <span class='ectt-1000'>init() </span>function is responsible for initializing the
 capabilities of the input device and register it.
-</p><!-- l. 2999 --><p class='indent'>
+</p><!-- l. 3016 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb116'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>int send(struct vinput *, char *, int);</span>                                          </pre>
+   <pre class='fancyvrb' id='fancyvrb117'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>int send(struct vinput *, char *, int);</span>                                          </pre>
                                                                   
 
                                                                   
-<!-- l. 3003 --><p class='indent'>   This function will receive a user string to interpret and inject the event using the
+<!-- l. 3020 --><p class='indent'>   This function will receive a user string to interpret and inject the event using the
 <span class='ectt-1000'>input_report_XXXX </span>or <span class='ectt-1000'>input_event </span>call. The string is already copied from
 user.
-</p><!-- l. 3006 --><p class='indent'>
+</p><!-- l. 3023 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb117'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>int read(struct vinput *, char *, int);</span>                                          </pre>
-<!-- l. 3010 --><p class='indent'>   This function is used for debugging and should fill the buffer parameter with the
+   <pre class='fancyvrb' id='fancyvrb118'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>int read(struct vinput *, char *, int);</span>                                          </pre>
+<!-- l. 3027 --><p class='indent'>   This function is used for debugging and should fill the buffer parameter with the
 last event sent in the virtual input device format. The buffer will then be copied to
 user.
-</p><!-- l. 3013 --><p class='indent'>   vinput devices are created and destroyed using sysfs. And, event injection is done
+</p><!-- l. 3030 --><p class='indent'>   vinput devices are created and destroyed using sysfs. And, event injection is done
 through a <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/dev</span></span></span> node. The device name will be used by the userland to export a new
 virtual input device.
-</p><!-- l. 3017 --><p class='indent'>   The <span class='ectt-1000'>class_attribute </span>structure is similar to other attribute types we talked
+</p><!-- l. 3034 --><p class='indent'>   The <span class='ectt-1000'>class_attribute </span>structure is similar to other attribute types we talked
 about in <a href='#sysfs-interacting-with-your-module'>Section 8</a>:
-</p><!-- l. 3019 --><p class='indent'>
+</p><!-- l. 3036 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb118'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>struct class_attribute {
+   <pre class='fancyvrb' id='fancyvrb119'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>struct class_attribute {
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>    struct attribute attr;
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'>    ssize_t (*show)(struct class *class, struct class_attribute *attr,
 </span><span class='ecrm-0500'>4</span><span class='ectt-0800'>                    char *buf);
 </span><span class='ecrm-0500'>5</span><span class='ectt-0800'>    ssize_t (*store)(struct class *class, struct class_attribute *attr,
 </span><span class='ecrm-0500'>6</span><span class='ectt-0800'>                    const char *buf, size_t count);                      </span><span class='ecrm-0500'>7</span> <span class='ectt-0800'>};</span>                                                                </pre>
-<!-- l. 3029 --><p class='indent'>   In <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>vinput.c</span></span></span>, the macro <span class='ectt-1000'>CLASS_ATTR_WO(export/unexport) </span>defined in
+<!-- l. 3046 --><p class='indent'>   In <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>vinput.c</span></span></span>, the macro <span class='ectt-1000'>CLASS_ATTR_WO(export/unexport) </span>defined in
 <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/device.h'>include/linux/device.h</a> (in this case, <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>device.h</span></span></span> is included in <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/input.h'>include/linux/input.h</a>)
 will generate the <span class='ectt-1000'>class_attribute </span>structures which are named
 <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>class_attr_export/unexport</span></span></span>. Then, put them into <span class='ectt-1000'>vinput_class_attrs</span>
@@ -8074,18 +8166,18 @@ array and the macro <span class='ectt-1000'>ATTRIBUTE_GROUPS(vinput_class) </spa
 <span class='ectt-1000'>struct attribute_group vinput_class_group </span>that should be assigned in
 <span class='ectt-1000'>vinput_class</span>. Finally, call <span class='ectt-1000'>class_register(&amp;vinput_class) </span>to create attributes in
 sysfs.
-</p><!-- l. 3033 --><p class='indent'>   To create a <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>vinputX</span></span></span> sysfs entry and <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/dev</span></span></span> node.
-</p><!-- l. 3035 --><p class='indent'>
+</p><!-- l. 3050 --><p class='indent'>   To create a <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>vinputX</span></span></span> sysfs entry and <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/dev</span></span></span> node.
+</p><!-- l. 3052 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb119'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>echo "vkbd" | sudo tee /sys/class/vinput/export</span>                                  </pre>
-<!-- l. 3039 --><p class='indent'>   To unexport the device, just echo its id in unexport:
-</p><!-- l. 3041 --><p class='indent'>
+   <pre class='fancyvrb' id='fancyvrb120'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>echo "vkbd" | sudo tee /sys/class/vinput/export</span>                                  </pre>
+<!-- l. 3056 --><p class='indent'>   To unexport the device, just echo its id in unexport:
+</p><!-- l. 3058 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb120'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>echo "0" | sudo tee /sys/class/vinput/unexport</span>                                   </pre>
+   <pre class='fancyvrb' id='fancyvrb121'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>echo "0" | sudo tee /sys/class/vinput/unexport</span>                                   </pre>
 
-<!-- l. 3045 --><p class='indent'>
+<!-- l. 3062 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb121'>
+   <pre class='fancyvrb' id='fancyvrb122'>
 <span class='ecrm-0500'>1</span><span class='ectt-0800'>/*
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'> * vinput.h
                                                                   
@@ -8140,9 +8232,9 @@ sysfs.
 <span class='ecrm-0500'>49</span><span class='ectt-0800'>#endif</span>
    </pre>
 
-<!-- l. 3046 --><p class='noindent'>
+<!-- l. 3063 --><p class='noindent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb122'>
+   <pre class='fancyvrb' id='fancyvrb123'>
 <span class='ecrm-0500'>1</span><span class='ectt-0800'>/*
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'> * vinput.c
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'> */
@@ -8589,23 +8681,23 @@ sysfs.
 <span class='ecrm-0500'>420</span><span class='ectt-0800'>MODULE_LICENSE("GPL");
 </span><span class='ecrm-0500'>421</span><span class='ectt-0800'>MODULE_DESCRIPTION("Emulate input events");</span>
    </pre>
-<!-- l. 3048 --><p class='indent'>   Here the virtual keyboard is one of example to use vinput. It supports all
+<!-- l. 3065 --><p class='indent'>   Here the virtual keyboard is one of example to use vinput. It supports all
 <span class='ectt-1000'>KEY_MAX </span>keycodes. The injection format is the <span class='ectt-1000'>KEY_CODE </span>such as defined in
 <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/input.h'>include/linux/input.h</a>. A positive value means <span class='ectt-1000'>KEY_PRESS </span>while a negative value is a
 <span class='ectt-1000'>KEY_RELEASE</span>. The keyboard supports repetition when the key stays pressed for too
 long. The following demonstrates how simulation work.
-</p><!-- l. 3055 --><p class='indent'>   Simulate a key press on "g" (<span class='ectt-1000'>KEY_G </span>= 34):
-</p><!-- l. 3057 --><p class='indent'>
+</p><!-- l. 3072 --><p class='indent'>   Simulate a key press on "g" (<span class='ectt-1000'>KEY_G </span>= 34):
+</p><!-- l. 3074 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb123'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>echo "+34" | sudo tee /dev/vinput0</span>                                               </pre>
-<!-- l. 3061 --><p class='indent'>   Simulate a key release on "g" (<span class='ectt-1000'>KEY_G </span>= 34):
-</p><!-- l. 3063 --><p class='indent'>
+   <pre class='fancyvrb' id='fancyvrb124'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>echo "+34" | sudo tee /dev/vinput0</span>                                               </pre>
+<!-- l. 3078 --><p class='indent'>   Simulate a key release on "g" (<span class='ectt-1000'>KEY_G </span>= 34):
+</p><!-- l. 3080 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb124'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>echo "-34" | sudo tee /dev/vinput0</span>                                               </pre>
+   <pre class='fancyvrb' id='fancyvrb125'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>echo "-34" | sudo tee /dev/vinput0</span>                                               </pre>
 
-<!-- l. 3067 --><p class='indent'>
+<!-- l. 3084 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb125'>
+   <pre class='fancyvrb' id='fancyvrb126'>
 <span class='ecrm-0500'>1</span><span class='ectt-0800'>/*
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'> * vkbd.c
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'> */
@@ -8723,16 +8815,16 @@ long. The following demonstrates how simulation work.
 <span class='ecrm-0500'>109</span><span class='ectt-0800'>MODULE_LICENSE("GPL");
 </span><span class='ecrm-0500'>110</span><span class='ectt-0800'>MODULE_DESCRIPTION("Emulate keyboard input events through /dev/vinput");</span>
    </pre>
-<!-- l. 3071 --><p class='noindent'>
+<!-- l. 3088 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='pci-drivers'><span class='titlemark'>25   </span> <a id='x1-8700025'></a>PCI Drivers</h3>
-<!-- l. 3073 --><p class='noindent'>PCI and PCI Express are the most common discovery-based buses on desktop and
+<!-- l. 3090 --><p class='noindent'>PCI and PCI Express are the most common discovery-based buses on desktop and
 server systems. Unlike the earlier GPIO or simple platform examples, a
 PCI driver usually does not instantiate devices itself. Instead, the kernel
 enumerates devices during boot or hotplug, identifies them by vendor and device
 identifiers, and calls into a driver whose match table declares support for that
 hardware.
-</p><!-- l. 3081 --><p class='indent'>   The kernel-side entry point is <span class='ectt-1000'>struct pci_driver</span>. Much like <span class='ectt-1000'>platform_driver</span>,
+</p><!-- l. 3098 --><p class='indent'>   The kernel-side entry point is <span class='ectt-1000'>struct pci_driver</span>. Much like <span class='ectt-1000'>platform_driver</span>,
 it provides <span class='ectt-1000'>probe </span>and <span class='ectt-1000'>remove </span>callbacks plus an ID table. The driver is then
 registered with <span class='ectt-1000'>pci_register_driver() </span>or, more often in modern code,
 with the helper macros that wrap it. When the bus finds a matching device,
@@ -8741,7 +8833,7 @@ with the helper macros that wrap it. When the bus finds a matching device,
                                                                   
 the probe function receives a <span class='ectt-1000'>struct pci_dev * </span>and can start claiming
 resources.
-</p><!-- l. 3089 --><p class='indent'>   The common probe sequence has a recognizable shape:
+</p><!-- l. 3106 --><p class='indent'>   The common probe sequence has a recognizable shape:
      </p><ol class='enumerate1'>
 <li class='enumerate' id='x1-87002x1'>Enable       the       device       with       <span class='ectt-1000'>pcim_enable_device()    </span>or
      <span class='ectt-1000'>pci_enable_device()</span>.
@@ -8757,12 +8849,12 @@ resources.
      </li>
 <li class='enumerate' id='x1-87010x5'>Register the higher-level interface the driver exposes, such as a network
      device, block device, or character device.</li></ol>
-<!-- l. 3098 --><p class='indent'>   BARs (Base Address Registers) are how PCI devices expose MMIO or I/O port
+<!-- l. 3115 --><p class='indent'>   BARs (Base Address Registers) are how PCI devices expose MMIO or I/O port
 regions. The driver should never assume fixed physical addresses; it must query the
 device through the PCI core and map the returned resource. That is one of the
 clearest examples of why real drivers are built around bus enumeration rather than
 hard-coded addresses.
-</p><!-- l. 3105 --><p class='indent'>   Interrupt handling is also more structured than in ad hoc examples. Legacy INTx
+</p><!-- l. 3122 --><p class='indent'>   Interrupt handling is also more structured than in ad hoc examples. Legacy INTx
 interrupts still exist, but MSI and MSI-X are usually preferred for modern PCIe
 hardware because they integrate better with multicore systems and avoid many
 sharing issues of pin-based interrupts. Still, the same context rules apply: the top half
@@ -8772,45 +8864,45 @@ path.
                                                                   
 
                                                                   
-</p><!-- l. 3113 --><p class='indent'>   PCI drivers also make heavy use of the device model. Each <span class='ectt-1000'>pci_dev </span>embeds a
+</p><!-- l. 3130 --><p class='indent'>   PCI drivers also make heavy use of the device model. Each <span class='ectt-1000'>pci_dev </span>embeds a
 <span class='ectt-1000'>struct device</span>, which means managed resources, sysfs integration, power
 management hooks, DMA configuration, and hot-unplug notification all flow through
 the same core infrastructure described later in <a href='#standardizing-the-interfaces-the-device-model'>Section 29</a>. Once a driver moves
 beyond toy examples, that integration is usually more important than the raw bus
 API itself.
-</p><!-- l. 3121 --><p class='indent'>   Linux 5.10-and-later code should also prefer the managed PCI interfaces where
+</p><!-- l. 3138 --><p class='indent'>   Linux 5.10-and-later code should also prefer the managed PCI interfaces where
 they fit. Helpers such as <span class='ectt-1000'>pcim_enable_device() </span>and the device-managed resource
 APIs reduce teardown bugs dramatically, especially in drivers with multiple BARs or
 several error paths in probe. The goal is not just brevity; it is making probe failure
 and device removal boringly correct.
-</p><!-- l. 3128 --><p class='noindent'>
+</p><!-- l. 3145 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='usb-drivers'><span class='titlemark'>26   </span> <a id='x1-8800026'></a>USB Drivers</h3>
-<!-- l. 3130 --><p class='noindent'>USB is one of the biggest conceptual gaps between classic module tutorials and
+<!-- l. 3147 --><p class='noindent'>USB is one of the biggest conceptual gaps between classic module tutorials and
 production driver work. The bus is hotpluggable by design, devices may appear and
 disappear at any time, configuration happens through descriptors rather than fixed
 wiring, and many drivers bind to interfaces rather than whole devices. That means
 USB code spends more effort on discovery, lifetime management, and I/O submission
 than on direct register access.
-</p><!-- l. 3138 --><p class='noindent'>
+</p><!-- l. 3155 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='usb-device-model-basics'><span class='titlemark'>26.1   </span> <a id='x1-8900026.1'></a>USB Device Model Basics</h4>
-<!-- l. 3140 --><p class='noindent'>The USB core enumerates each newly attached device, reads its descriptors, and
+<!-- l. 3157 --><p class='noindent'>The USB core enumerates each newly attached device, reads its descriptors, and
 creates kernel objects that represent the device and its interfaces. Most function
 drivers bind to a <span class='ectt-1000'>struct usb_interface </span>rather than directly to <span class='ectt-1000'>struct
 </span><span class='ectt-1000'>usb_device</span>. This matters because one physical USB device can expose multiple
 interfaces, such as a combined webcam and microphone or a composite gadget with
 separate control and data functions.
-</p><!-- l. 3148 --><p class='indent'>   A USB driver typically declares a <span class='ectt-1000'>struct usb_driver </span>and an ID table of
+</p><!-- l. 3165 --><p class='indent'>   A USB driver typically declares a <span class='ectt-1000'>struct usb_driver </span>and an ID table of
 <span class='ectt-1000'>struct usb_device_id </span>entries. Matching can be done on vendor/product
 identifiers, device class, interface class, or combinations of those fields. Once
 registered with <span class='ectt-1000'>usb_register_driver()</span>, the driver is called via <span class='ectt-1000'>probe </span>when a
 matching interface appears and <span class='ectt-1000'>disconnect </span>when it goes away. The disconnect
 path is not optional bookkeeping; it is a normal and frequent event on USB
 systems.
-</p><!-- l. 3158 --><p class='indent'>   The minimal skeleton looks conceptually like this: 
+</p><!-- l. 3175 --><p class='indent'>   The minimal skeleton looks conceptually like this: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb126'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>static const struct usb_device_id my_table[] = {
+   <pre class='fancyvrb' id='fancyvrb127'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>static const struct usb_device_id my_table[] = {
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>    { USB_DEVICE(0x1234, 0x5678) },
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'>    { }
                                                                   
@@ -8824,36 +8916,36 @@ systems.
 </span><span class='ecrm-0500'>9</span><span class='ectt-0800'>    .probe = my_probe,
 </span><span class='ecrm-0500'>10</span><span class='ectt-0800'>    .disconnect = my_disconnect,
 </span><span class='ecrm-0500'>11</span><span class='ectt-0800'>    .id_table = my_table,                                          </span><span class='ecrm-0500'>12</span> <span class='ectt-0800'>};</span>                                                                </pre>
-<!-- l. 3174 --><p class='indent'>   The <span class='ectt-1000'>probe </span>callback usually stores per-interface state with <span class='ectt-1000'>usb_set_intfdata()</span>,
+<!-- l. 3191 --><p class='indent'>   The <span class='ectt-1000'>probe </span>callback usually stores per-interface state with <span class='ectt-1000'>usb_set_intfdata()</span>,
 retrieves endpoint information from the current alternate setting, allocates transfer
 buffers, and registers whatever higher-level interface will be visible to userspace. The
 matching <span class='ectt-1000'>disconnect </span>callback must stop new I/O, tear down submitted transfers,
 and release those resources without assuming that userspace already closed every file
 descriptor.
-</p><!-- l. 3182 --><p class='noindent'>
+</p><!-- l. 3199 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='endpoints-pipes-and-urbs'><span class='titlemark'>26.2   </span> <a id='x1-9000026.2'></a>Endpoints, Pipes, and URBs</h4>
-<!-- l. 3184 --><p class='noindent'>USB communication is organized around endpoints. Descriptors tell the driver which
+<!-- l. 3201 --><p class='noindent'>USB communication is organized around endpoints. Descriptors tell the driver which
 endpoints exist, in which direction data flows, and whether each endpoint
 carries control, bulk, interrupt, or isochronous traffic. Drivers do not poke
 MMIO registers directly; instead they submit requests to the USB core,
 which hands them to a host-controller driver appropriate for the system’s
 hardware.
-</p><!-- l. 3192 --><p class='indent'>   The fundamental I/O object is the URB, or USB Request Block. A URB
+</p><!-- l. 3209 --><p class='indent'>   The fundamental I/O object is the URB, or USB Request Block. A URB
 describes one transfer: the target pipe, a buffer, a length, a completion callback, and
 assorted flags. The driver allocates or initializes a URB, fills it with helper routines
 such as <span class='ectt-1000'>usb_fill_bulk_urb() </span>or <span class='ectt-1000'>usb_fill_int_urb()</span>, and submits it with
 <span class='ectt-1000'>usb_submit_urb()</span>. Completion is asynchronous. That means the callback may run
 long after the initiating operation returned, and it may race with disconnect,
 timeout, suspend, or userspace shutdown.
-</p><!-- l. 3202 --><p class='indent'>   URB lifetime rules are therefore central. The completion handler must know
+</p><!-- l. 3219 --><p class='indent'>   URB lifetime rules are therefore central. The completion handler must know
 whether the enclosing device object is still alive, and the disconnect path
 must cancel outstanding traffic with interfaces such as <span class='ectt-1000'>usb_kill_urb() </span>or
 <span class='ectt-1000'>usb_poison_urb() </span>before tearing down the state they reference. This is a place
 where reference counting and explicit ownership discipline are not optional style
 points; they are the difference between a robust driver and a use-after-free
 bug.
-</p><!-- l. 3211 --><p class='indent'>   Control transfers are often used for small device-specific commands and
+</p><!-- l. 3228 --><p class='indent'>   Control transfers are often used for small device-specific commands and
 enumeration-time setup. Bulk transfers are the usual choice for throughput-oriented
 data such as storage or vendor-defined streams. Interrupt transfers are polled by the
 host at bounded intervals and are common for HID-style status traffic. Isochronous
@@ -8863,43 +8955,43 @@ detail.
                                                                   
 
                                                                   
-</p><!-- l. 3221 --><p class='noindent'>
+</p><!-- l. 3238 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='usb-and-userspace-interfaces'><span class='titlemark'>26.3   </span> <a id='x1-9100026.3'></a>USB and Userspace Interfaces</h4>
-<!-- l. 3223 --><p class='noindent'>One of the strengths of USB is that many common device classes already have
+<!-- l. 3240 --><p class='noindent'>One of the strengths of USB is that many common device classes already have
 generic kernel drivers. Keyboards and mice usually bind to HID. Mass-storage devices
 bind to the USB storage stack and appear as block devices. Serial adapters often bind
 to <span class='ectt-1000'>usb-serial</span>. Before writing a custom driver, check whether the hardware really
 needs one or whether it should fit an existing class driver plus a tiny device-specific
 extension.
-</p><!-- l. 3232 --><p class='indent'>   When a custom driver is needed, it still has choices about its userspace ABI.
+</p><!-- l. 3249 --><p class='indent'>   When a custom driver is needed, it still has choices about its userspace ABI.
 Some USB drivers register a character device node. Others integrate with an existing
 subsystem such as input, tty, networking, video4linux, IIO, or sound. That
 subsystem-first approach is usually the right one because it gives the device a
 standard userspace contract instead of inventing a private control scheme from
 scratch.
-</p><!-- l. 3240 --><p class='indent'>   Sysfs also plays an important role in USB. Enumerated devices appear under
+</p><!-- l. 3257 --><p class='indent'>   Sysfs also plays an important role in USB. Enumerated devices appear under
 <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/sys/bus/usb/devices/</span></span></span>, where you can inspect descriptors, interface numbers,
 modalias strings, and power-management attributes. That is often the fastest way to
 confirm what the kernel thinks the hardware is before you write a line of driver code.
 For example: 
 </p>
-   <pre class='fancyvrb' id='fancyvrb127'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>ls /sys/bus/usb/devices/
+   <pre class='fancyvrb' id='fancyvrb128'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>ls /sys/bus/usb/devices/
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>cat /sys/bus/usb/devices/1-1/idVendor
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'>cat /sys/bus/usb/devices/1-1/idProduct                                </span><span class='ecrm-0500'>4</span> <span class='ectt-0800'>cat /sys/bus/usb/devices/1-1/modalias</span>                                    </pre>
-<!-- l. 3254 --><p class='indent'>   The modalias matters because it is what allows udev and module autoloading to
+<!-- l. 3271 --><p class='indent'>   The modalias matters because it is what allows udev and module autoloading to
 connect a newly attached device to the right driver module. This is one of the
 cleanest examples of the kernel device model, bus matching, and userspace policy
 working together.
-</p><!-- l. 3259 --><p class='noindent'>
+</p><!-- l. 3276 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='hotplug-suspend-and-failure-modes'><span class='titlemark'>26.4   </span> <a id='x1-9200026.4'></a>Hotplug, Suspend, and Failure Modes</h4>
-<!-- l. 3261 --><p class='noindent'>USB drivers must assume surprise removal. Any blocking I/O may be interrupted
+<!-- l. 3278 --><p class='noindent'>USB drivers must assume surprise removal. Any blocking I/O may be interrupted
 because the cable was unplugged, a hub reset occurred, the device was power-cycled,
 or the bus suspended and resumed. This is why disconnect handling should flip an
 internal “device gone” state early, wake sleepers, and make future file operations fail
 cleanly instead of touching freed transport objects.
-</p><!-- l. 3268 --><p class='indent'>   Power management also matters more on USB than many beginners expect.
+</p><!-- l. 3285 --><p class='indent'>   Power management also matters more on USB than many beginners expect.
 Autosuspend is common on laptops and embedded systems, and a driver that keeps a
 device permanently active without need may waste power or interfere with system
 suspend. At the same time, a driver that ignores runtime PM interactions may find
@@ -8910,30 +9002,30 @@ that its transfers fail unexpectedly after resume. The exact hooks depend
 on the class and kernel subsystem involved, but the general rule is stable:
 device presence and device usability are not the same thing on a hotpluggable
 bus.
-</p><!-- l. 3278 --><p class='indent'>   For Linux 5.10 and later, the safest mental model is to treat every submitted
+</p><!-- l. 3295 --><p class='indent'>   For Linux 5.10 and later, the safest mental model is to treat every submitted
 URB and every open userspace handle as potentially concurrent with disconnect.
 Once that assumption becomes part of the design, the rest of the driver tends to fall
 into a healthier shape.
-</p><!-- l. 3283 --><p class='noindent'>
+</p><!-- l. 3300 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='block-drivers'><span class='titlemark'>27   </span> <a id='x1-9300027'></a>Block Drivers</h3>
-<!-- l. 3285 --><p class='noindent'>Block drivers are the foundation for disks, SSDs, loop devices, RAM disks,
+<!-- l. 3302 --><p class='noindent'>Block drivers are the foundation for disks, SSDs, loop devices, RAM disks,
 and many storage abstractions that ultimately present sector-oriented I/O
 to the rest of the kernel. Conceptually they sit between the generic block
 layer and the actual transport or media implementation. Unlike a character
 driver, a block driver is deeply integrated with caching, readahead, filesystem
 writeback, request merging, partition scanning, and storage-specific ordering
 constraints.
-</p><!-- l. 3294 --><p class='indent'>   That integration is why block drivers are rarely tiny. The driver is not just
+</p><!-- l. 3311 --><p class='indent'>   That integration is why block drivers are rarely tiny. The driver is not just
 answering <span class='ectt-1000'>read() </span>and <span class='ectt-1000'>write() </span>calls directly. It is participating in a larger pipeline
 that turns filesystem activity into BIOs and requests, schedules those requests, and
 completes them asynchronously. For Linux 5.10 and later, the key abstraction to
 understand is <span class='ecbx-1000'>blk-mq</span>, the multi-queue block layer used by modern block
 drivers.
-</p><!-- l. 3301 --><p class='noindent'>
+</p><!-- l. 3318 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='the-modern-block-stack'><span class='titlemark'>27.1   </span> <a id='x1-9400027.1'></a>The Modern Block Stack</h4>
-<!-- l. 3303 --><p class='noindent'>Older texts often focus on request queues and callback paths that predate <span class='ectt-1000'>blk-mq</span>.
+<!-- l. 3320 --><p class='noindent'>Older texts often focus on request queues and callback paths that predate <span class='ectt-1000'>blk-mq</span>.
 The durable concept is still useful: the kernel aggregates block I/O and hands it to
 the driver in a form that can be scheduled efficiently. But the concrete API for new
 drivers is the multi-queue interface built around <span class='ectt-1000'>struct blk_mq_tag_set</span>,
@@ -8942,7 +9034,7 @@ object that represents the exported disk. The helper names vary by kernel
 vintage: older 5.10-era code often shows <span class='ectt-1000'>blk_mq_init_sq_queue() </span>or a
 separate <span class='ectt-1000'>alloc_disk() </span>path, while newer kernels also provide helpers such as
 <span class='ectt-1000'>blk_mq_alloc_disk()</span>.
-</p><!-- l. 3315 --><p class='indent'>   The usual lifecycle looks like this:
+</p><!-- l. 3332 --><p class='indent'>   The usual lifecycle looks like this:
      </p><ol class='enumerate1'>
 <li class='enumerate' id='x1-94002x1'>Allocate and configure the driver’s private device state.
      </li>
@@ -8956,21 +9048,21 @@ separate <span class='ectt-1000'>alloc_disk() </span>path, while newer kernels a
      </li>
 <li class='enumerate' id='x1-94010x5'>Publish the disk with <span class='ectt-1000'>add_disk() </span>once the device is actually ready to
      accept requests.</li></ol>
-<!-- l. 3324 --><p class='indent'>   On teardown, the order matters just as much. The driver must stop new I/O from
+<!-- l. 3341 --><p class='indent'>   On teardown, the order matters just as much. The driver must stop new I/O from
 entering, drain or fail outstanding requests, remove the exported disk, and only
 then free queue-related resources. This is another subsystem where lifetime
 bugs often appear at removal time rather than during the happy-path data
 transfer.
-</p><!-- l. 3330 --><p class='noindent'>
+</p><!-- l. 3347 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='bios-requests-and-completion'><span class='titlemark'>27.2   </span> <a id='x1-9500027.2'></a>BIOs, Requests, and Completion</h4>
-<!-- l. 3332 --><p class='noindent'>At the lower end of the block layer, filesystem and page-cache activity becomes BIOs,
+<!-- l. 3349 --><p class='noindent'>At the lower end of the block layer, filesystem and page-cache activity becomes BIOs,
 which describe one or more contiguous ranges of block I/O backed by one or more
 pages. The block layer can merge or split those BIOs and eventually hands the driver
 a request object containing the transfer to execute. The driver then programs the
 hardware or software backend and completes the request asynchronously when the
 data has really been transferred.
-</p><!-- l. 3340 --><p class='indent'>   That means a block driver should think in terms of request completion, not
+</p><!-- l. 3357 --><p class='indent'>   That means a block driver should think in terms of request completion, not
 “returning bytes”. The driver may process multiple requests in parallel, issue them
 out of order if the device semantics permit it, or fail them individually with an error
 status. The correctness boundary is whether the completed request accurately reflects
@@ -8979,40 +9071,40 @@ already returned.
                                                                   
 
                                                                   
-</p><!-- l. 3348 --><p class='indent'>   For software block devices such as RAM disks or loop-like backends, the
+</p><!-- l. 3365 --><p class='indent'>   For software block devices such as RAM disks or loop-like backends, the
 underlying “hardware” may simply be memory or another file. Even then, it helps to
 follow the same layered model because that is what keeps the code compatible with
 the generic block layer’s expectations around flushing, discard, writeback, and queue
 limits.
-</p><!-- l. 3354 --><p class='noindent'>
+</p><!-- l. 3371 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='queue-limits-flushes-and-reality'><span class='titlemark'>27.3   </span> <a id='x1-9600027.3'></a>Queue Limits, Flushes, and Reality</h4>
-<!-- l. 3356 --><p class='noindent'>Real storage devices have alignment, segment-count, maximum-transfer, cache, and
+<!-- l. 3373 --><p class='noindent'>Real storage devices have alignment, segment-count, maximum-transfer, cache, and
 flush semantics that must be communicated to the block layer. That is what queue
 limits are for. A driver that lies about those constraints may appear to work under
 light load and then fail badly once filesystems start issuing larger or more varied I/O
 patterns.
-</p><!-- l. 3363 --><p class='indent'>   Flush and FUA semantics are especially important. Filesystems rely on them for
+</p><!-- l. 3380 --><p class='indent'>   Flush and FUA semantics are especially important. Filesystems rely on them for
 persistence guarantees. If a device has a volatile write cache, the driver must either
 implement the necessary flush operations correctly or report the capability honestly
 so higher layers can compensate. This is one place where a toy block driver can
 teach the mechanics, but only a careful reading of storage semantics makes it
 production-safe.
-</p><!-- l. 3371 --><p class='indent'>   Linux 5.10-and-later block drivers also need to fit into the device model and often
+</p><!-- l. 3388 --><p class='indent'>   Linux 5.10-and-later block drivers also need to fit into the device model and often
 the DMA model discussed earlier. NVMe, SCSI HBAs, virtio-blk, and MMC drivers
 all live at that intersection: requests arrive from blk-mq, are translated into
 transport-specific commands, often move data through DMA, and complete back into
 the generic block layer.
-</p><!-- l. 3377 --><p class='indent'>   The sample below is intentionally modest: it registers a tiny RAM-backed block
+</p><!-- l. 3394 --><p class='indent'>   The sample below is intentionally modest: it registers a tiny RAM-backed block
 device with blk-mq and services requests by copying sectors to and from an
 in-memory buffer. That keeps the example safe to load in a VM while still showing
 the modern queue setup and request-completion flow. Because the block layer helper
 set changed after Linux v5.10, the sample uses a small version guard to select either
 the older queue-plus-<span class='ectt-1000'>alloc_disk() </span>path or the newer <span class='ectt-1000'>blk_mq_alloc_disk()</span>
 helper:
-</p><!-- l. 3386 --><p class='indent'>
+</p><!-- l. 3403 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb128'>
+   <pre class='fancyvrb' id='fancyvrb129'>
 <span class='ecrm-0500'>1</span><span class='ectt-0800'>// SPDX-License-Identifier: GPL-2.0
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>/*
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'> * blkram.c - Tiny RAM-backed block device using blk-mq.
@@ -9288,16 +9380,16 @@ helper:
 <span class='ecrm-0500'>258</span><span class='ectt-0800'>MODULE_DESCRIPTION("LKMPG blk-mq RAM disk example");
 </span><span class='ecrm-0500'>259</span><span class='ectt-0800'>MODULE_LICENSE("GPL");</span>
    </pre>
-<!-- l. 3388 --><p class='noindent'>
+<!-- l. 3405 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='network-drivers'><span class='titlemark'>28   </span> <a id='x1-9700028'></a>Network Drivers</h3>
-<!-- l. 3390 --><p class='noindent'>Network drivers are different from both character and block drivers because they
+<!-- l. 3407 --><p class='noindent'>Network drivers are different from both character and block drivers because they
 operate on packets, not byte streams or sectors, and because they are tightly coupled
 to the networking stack’s queueing, routing, offload, and traffic control machinery.
 The central exported object is <span class='ectt-1000'>struct net_device</span>, which represents a network
 interface visible to the rest of the kernel and to userspace tools such as <span class='ectt-1000'>ip </span>and
 <span class='ectt-1000'>ethtool</span>.
-</p><!-- l. 3398 --><p class='indent'>   Most Ethernet-style drivers allocate a network device with helpers such as
+</p><!-- l. 3415 --><p class='indent'>   Most Ethernet-style drivers allocate a network device with helpers such as
 <span class='ectt-1000'>alloc_etherdev() </span>or <span class='ectt-1000'>alloc_etherdev_mqs()</span>, store private state behind it with
 <span class='ectt-1000'>netdev_priv()</span>, initialize the operation tables, and register the device with
 <span class='ectt-1000'>register_netdev()</span>. Once registered, the interface can be opened, configured,
@@ -9305,10 +9397,10 @@ brought up and down, and asked to transmit packets by the networking core. For
 compatibility with Linux v5.10 through v6.17 and later, the example below uses
 <span class='ectt-1000'>alloc_etherdev() </span>rather than relying on newer naming or queue-count allocation
 helpers.
-</p><!-- l. 3408 --><p class='noindent'>
+</p><!-- l. 3425 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='netdevice-and-netdevops'><span class='titlemark'>28.1   </span> <a id='x1-9800028.1'></a>net_device and netdev_ops</h4>
-<!-- l. 3410 --><p class='noindent'>Modern drivers provide their main callbacks through <span class='ectt-1000'>struct net_device_ops</span>. The
+<!-- l. 3427 --><p class='noindent'>Modern drivers provide their main callbacks through <span class='ectt-1000'>struct net_device_ops</span>. The
 precise set depends on the device class, but the core operations usually include open,
 stop, start-xmit, MTU changes, and timeout handling. On Linux 5.10 and later, this
 structure is the stable way to hook a driver into the networking stack; older callback
@@ -9317,43 +9409,43 @@ structure is the stable way to hook a driver into the networking stack; older ca
                                                                   
 field names embedded directly in <span class='ectt-1000'>struct net_device </span>are mostly historical
 context.
-</p><!-- l. 3417 --><p class='indent'>   Bringing an interface up in the open callback usually means enabling interrupts,
+</p><!-- l. 3434 --><p class='indent'>   Bringing an interface up in the open callback usually means enabling interrupts,
 allocating receive buffers, arming DMA rings, and telling the stack the transmit
 queue may start by calling <span class='ectt-1000'>netif_start_queue() </span>or the multi-queue equivalent.
 Stopping the interface reverses that process and must ensure that the device can
 no longer DMA into freed memory or complete packets against torn-down
 state.
-</p><!-- l. 3424 --><p class='indent'>   Transmit is not a blocking write path. The stack gives the driver an <span class='ectt-1000'>sk_buff</span>
+</p><!-- l. 3441 --><p class='indent'>   Transmit is not a blocking write path. The stack gives the driver an <span class='ectt-1000'>sk_buff</span>
 and expects the driver to queue it to hardware quickly or stop the queue
 temporarily if resources are exhausted. Completion typically happens later
 in interrupt or NAPI context, where the driver reclaims descriptors, frees
 transmitted buffers, updates statistics, and wakes the queue if space is available
 again.
-</p><!-- l. 3431 --><p class='noindent'>
+</p><!-- l. 3448 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='socket-buffers-and-receive-paths'><span class='titlemark'>28.2   </span> <a id='x1-9900028.2'></a>Socket Buffers and Receive Paths</h4>
-<!-- l. 3433 --><p class='noindent'>The packet object used throughout the networking stack is <span class='ectt-1000'>struct sk_buff</span>, usually
+<!-- l. 3450 --><p class='noindent'>The packet object used throughout the networking stack is <span class='ectt-1000'>struct sk_buff</span>, usually
 called an <span class='ectt-1000'>skb</span>. It carries packet data, protocol metadata, checksum information,
 queue state, and references to the underlying memory. Driver authors do not need to
 know every field, but they do need to understand the ownership rules: once a
 transmitted skb is handed to hardware, the driver must keep it alive until
 completion; once a received skb is submitted upward into the stack, the stack owns
 it.
-</p><!-- l. 3442 --><p class='indent'>   Receive handling is where performance and correctness meet. High-rate devices
+</p><!-- l. 3459 --><p class='indent'>   Receive handling is where performance and correctness meet. High-rate devices
 usually keep rings of DMA-backed receive buffers, turn completed descriptors into
 skbs, annotate checksum/VLAN/hash metadata if the hardware provided it, and
 then feed the packets into the stack. The stack-facing handoff may use helpers such
 as <span class='ectt-1000'>napi_gro_receive() </span>or related interfaces depending on the driver’s receive model
 and offload support.
-</p><!-- l. 3449 --><p class='indent'>   The important conceptual point is that packet reception is not just “copy bytes
+</p><!-- l. 3466 --><p class='indent'>   The important conceptual point is that packet reception is not just “copy bytes
 and notify userspace”. The driver is cooperating with protocol layers, GRO, checksum
 offload handling, traffic classification, and often XDP or page-pool style buffer
 recycling on newer high-performance paths. That is why network drivers tend to be
 more subsystem-driven than ad hoc.
-</p><!-- l. 3456 --><p class='noindent'>
+</p><!-- l. 3473 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='napi-interrupt-moderation-and-throughput'><span class='titlemark'>28.3   </span> <a id='x1-10000028.3'></a>NAPI, Interrupt Moderation, and Throughput</h4>
-<!-- l. 3458 --><p class='noindent'>Classic interrupt-per-packet designs do not scale well. Under heavy traffic they spend
+<!-- l. 3475 --><p class='noindent'>Classic interrupt-per-packet designs do not scale well. Under heavy traffic they spend
 too much time bouncing in and out of interrupt context. Linux addresses this with
 NAPI, which lets a driver disable or defer receive interrupts temporarily and poll for
                                                                   
@@ -9361,39 +9453,39 @@ NAPI, which lets a driver disable or defer receive interrupts temporarily and po
                                                                   
 batches of packets in softirq context. Modern high-performance network drivers
 almost always rely on NAPI.
-</p><!-- l. 3465 --><p class='indent'>   In practice, a receive interrupt usually does only enough work to schedule the
+</p><!-- l. 3482 --><p class='indent'>   In practice, a receive interrupt usually does only enough work to schedule the
 NAPI poll function. That poll function then processes packets up to a budget,
 replenishes receive buffers, and re-enables interrupts when the queue has been
 drained. This reduces interrupt overhead while still preserving low latency when the
 system is mostly idle.
-</p><!-- l. 3472 --><p class='indent'>   NAPI also interacts with queue topology. Many devices expose multiple transmit
+</p><!-- l. 3489 --><p class='indent'>   NAPI also interacts with queue topology. Many devices expose multiple transmit
 and receive queues so traffic can scale across CPUs. That is why helpers like
 <span class='ectt-1000'>alloc_etherdev_mqs() </span>exist and why RSS, XPS, and interrupt affinity matter for
 real drivers. Once a driver enters this territory, performance tuning becomes
 as much about queue mapping and cache locality as about the hardware
 itself.
-</p><!-- l. 3480 --><p class='noindent'>
+</p><!-- l. 3497 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='offloads-link-state-and-userspace'><span class='titlemark'>28.4   </span> <a id='x1-10100028.4'></a>Offloads, Link State, and Userspace</h4>
-<!-- l. 3482 --><p class='noindent'>Network devices often support checksum offload, TSO, GSO, GRO assistance, VLAN
+<!-- l. 3499 --><p class='noindent'>Network devices often support checksum offload, TSO, GSO, GRO assistance, VLAN
 acceleration, timestamping, and other features. The driver advertises these through
 feature flags on the netdev and must report them honestly. An incorrect offload
 declaration is worse than no offload at all because it can silently corrupt traffic or
 confuse higher layers.
-</p><!-- l. 3489 --><p class='indent'>   Link-state changes also matter. The driver should report carrier transitions with
+</p><!-- l. 3506 --><p class='indent'>   Link-state changes also matter. The driver should report carrier transitions with
 helpers such as <span class='ectt-1000'>netif_carrier_on() </span>and <span class='ectt-1000'>netif_carrier_off() </span>so the rest of the
 stack and userspace can react appropriately. Statistics, coalescing controls, ring
 sizing, and feature toggles are commonly surfaced through ethtool operations rather
 than a custom ioctl interface. That subsystem integration is the network-stack
 equivalent of using the input or block frameworks instead of inventing a private
 ABI.
-</p><!-- l. 3498 --><p class='indent'>   The following example registers a virtual Ethernet device and loops transmitted
+</p><!-- l. 3515 --><p class='indent'>   The following example registers a virtual Ethernet device and loops transmitted
 packets back into its own receive path. It is not a performance driver, but it
 demonstrates the structure of a modern <span class='ectt-1000'>net_device </span>example: <span class='ectt-1000'>net_device_ops</span>,
 interface bring-up and shutdown, skb ownership, and userspace-visible statistics:
-</p><!-- l. 3504 --><p class='indent'>
+</p><!-- l. 3521 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb129'>
+   <pre class='fancyvrb' id='fancyvrb130'>
 <span class='ecrm-0500'>1</span><span class='ectt-0800'>// SPDX-License-Identifier: GPL-2.0
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>/*
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'> * vnetloop.c - Minimal virtual Ethernet device that loops transmitted packets
@@ -9540,18 +9632,18 @@ interface bring-up and shutdown, skb ownership, and userspace-visible statistics
 <span class='ecrm-0500'>135</span><span class='ectt-0800'>MODULE_DESCRIPTION("LKMPG virtual net_device example");
 </span><span class='ecrm-0500'>136</span><span class='ectt-0800'>MODULE_LICENSE("GPL");</span>
    </pre>
-<!-- l. 3506 --><p class='noindent'>
+<!-- l. 3523 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='standardizing-the-interfaces-the-device-model'><span class='titlemark'>29   </span> <a id='x1-10200029'></a>Standardizing the interfaces: The Device Model</h3>
-<!-- l. 3508 --><p class='noindent'>Up to this point we have seen all kinds of modules doing all kinds of things, but there
+<!-- l. 3525 --><p class='noindent'>Up to this point we have seen all kinds of modules doing all kinds of things, but there
 was no consistency in their interfaces with the rest of the kernel. To impose some
 consistency such that there is at minimum a standardized way to start, suspend and
 resume a device model was added. An example is shown below, and you can
 use this as a template to add your own suspend, resume or other interface
 functions.
-</p><!-- l. 3512 --><p class='indent'>
+</p><!-- l. 3529 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb130'>
+   <pre class='fancyvrb' id='fancyvrb131'>
 <span class='ecrm-0500'>1</span><span class='ectt-0800'>/*
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'> * devicemodel.c
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'> */
@@ -9664,37 +9756,37 @@ functions.
 <span class='ecrm-0500'>104</span><span class='ectt-0800'>MODULE_LICENSE("GPL");
 </span><span class='ecrm-0500'>105</span><span class='ectt-0800'>MODULE_DESCRIPTION("Linux Device Model example");</span>
    </pre>
-<!-- l. 3514 --><p class='noindent'>
+<!-- l. 3531 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='device-tree'><span class='titlemark'>30   </span> <a id='x1-10300030'></a>Device Tree</h3>
-<!-- l. 3516 --><p class='noindent'>
+<!-- l. 3533 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='introduction-to-device-tree'><span class='titlemark'>30.1   </span> <a id='x1-10400030.1'></a>Introduction to Device Tree</h4>
-<!-- l. 3518 --><p class='noindent'>Device Tree is a data structure that describes hardware components in a system,
+<!-- l. 3535 --><p class='noindent'>Device Tree is a data structure that describes hardware components in a system,
 particularly in embedded systems and ARM-based platforms. Instead of
 hard-coding hardware details in the kernel source, Device Tree provides
 a separate, human-readable description that the kernel can parse at boot
 time. This separation allows the same kernel binary to support multiple
 hardware platforms, making development and maintenance significantly
 easier.
-</p><!-- l. 3523 --><p class='indent'>   Device Tree files (with <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>.dts</span></span></span> extension for source files and <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>.dtb</span></span></span> for compiled
+</p><!-- l. 3540 --><p class='indent'>   Device Tree files (with <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>.dts</span></span></span> extension for source files and <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>.dtb</span></span></span> for compiled
 binary files) use a hierarchical structure similar to a filesystem to represent the
 hardware topology. Each hardware component is represented as a node with
 properties that describe its characteristics, such as memory addresses, interrupt
 numbers, and device-specific parameters.
-</p><!-- l. 3527 --><p class='noindent'>
+</p><!-- l. 3544 --><p class='noindent'>
 </p>
                                                                   
 
                                                                   
    <h4 class='subsectionHead' id='device-tree-and-kernel-modules'><span class='titlemark'>30.2   </span> <a id='x1-10500030.2'></a>Device Tree and Kernel Modules</h4>
-<!-- l. 3529 --><p class='noindent'>While Device Tree is primarily used during kernel initialization, kernel modules can
+<!-- l. 3546 --><p class='noindent'>While Device Tree is primarily used during kernel initialization, kernel modules can
 also interact with Device Tree nodes through the platform device framework. When
 the kernel parses the Device Tree at boot, it creates platform devices for nodes that
 have compatible strings. Kernel modules can then register platform drivers that
 match these compatible strings, allowing them to be automatically probed when the
 corresponding hardware is detected.
-</p><!-- l. 3533 --><p class='indent'>   The key concepts for Device Tree interaction in kernel modules include:
+</p><!-- l. 3550 --><p class='indent'>   The key concepts for Device Tree interaction in kernel modules include:
 </p>
      <ul class='itemize1'>
      <li class='itemize'><span class='ecbx-1000'>Compatible strings</span>: Unique identifiers that match Device Tree nodes
@@ -9708,16 +9800,16 @@ corresponding hardware is detected.
      </li>
      <li class='itemize'><span class='ecbx-1000'>Device-specific data</span>: Custom properties that can be defined for specific
      hardware</li></ul>
-<!-- l. 3541 --><p class='noindent'>
+<!-- l. 3558 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='example-device-tree-module'><span class='titlemark'>30.3   </span> <a id='x1-10600030.3'></a>Example: Device Tree Module</h4>
-<!-- l. 3543 --><p class='noindent'>The following example demonstrates how a kernel module can interact with Device
+<!-- l. 3560 --><p class='noindent'>The following example demonstrates how a kernel module can interact with Device
 Tree nodes. This module registers a platform driver that matches specific
 compatible strings and extracts properties from the matched Device Tree
 nodes.
-</p><!-- l. 3546 --><p class='indent'>
+</p><!-- l. 3563 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb131'>
+   <pre class='fancyvrb' id='fancyvrb132'>
 <span class='ecrm-0500'>1</span><span class='ectt-0800'>/* devicetree.c - Demonstrates device tree interaction with kernel modules */
 </span><span class='ecrm-0500'>2</span>
 <span class='ecrm-0500'>3</span><span class='ectt-0800'>#include &lt;linux/init.h&gt;
@@ -9879,31 +9971,31 @@ nodes.
 <span class='ecrm-0500'>150</span><span class='ectt-0800'>MODULE_LICENSE("GPL");
 </span><span class='ecrm-0500'>151</span><span class='ectt-0800'>MODULE_DESCRIPTION("Device tree interaction example for LKMPG");</span>
    </pre>
-<!-- l. 3548 --><p class='noindent'>
+<!-- l. 3565 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='device-tree-source-example'><span class='titlemark'>30.4   </span> <a id='x1-10700030.4'></a>Device Tree Source Example</h4>
-<!-- l. 3550 --><p class='noindent'>To use the above module, you would need a Device Tree entry like this:
-</p><!-- l. 3552 --><p class='indent'>
+<!-- l. 3567 --><p class='noindent'>To use the above module, you would need a Device Tree entry like this:
+</p><!-- l. 3569 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb132'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>/* Example device tree fragment */
+   <pre class='fancyvrb' id='fancyvrb133'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>/* Example device tree fragment */
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>lkmpg_device@0 {
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'>    compatible = "lkmpg,example-device";
 </span><span class='ecrm-0500'>4</span><span class='ectt-0800'>    reg = &lt;0x40000000 0x1000&gt;;
 </span><span class='ecrm-0500'>5</span><span class='ectt-0800'>    label = "LKMPG Test Device";
 </span><span class='ecrm-0500'>6</span><span class='ectt-0800'>    lkmpg,custom-value = &lt;100&gt;;
 </span><span class='ecrm-0500'>7</span><span class='ectt-0800'>    lkmpg,has-clock;                                               </span><span class='ecrm-0500'>8</span> <span class='ectt-0800'>};</span>                                                                </pre>
-<!-- l. 3563 --><p class='indent'>   The properties in this Device Tree node would be read by the module’s probe
+<!-- l. 3580 --><p class='indent'>   The properties in this Device Tree node would be read by the module’s probe
 function when the device is matched. The <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>compatible</span></span></span> property is used to match
 the device with the driver, while other properties provide device-specific
 configuration.
                                                                   
 
                                                                   
-</p><!-- l. 3566 --><p class='noindent'>
+</p><!-- l. 3583 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='testing-device-tree-modules'><span class='titlemark'>30.5   </span> <a id='x1-10800030.5'></a>Testing Device Tree Modules</h4>
-<!-- l. 3568 --><p class='noindent'>Testing Device Tree modules can be done in several ways:
-</p><!-- l. 3570 --><p class='indent'>
+<!-- l. 3585 --><p class='noindent'>Testing Device Tree modules can be done in several ways:
+</p><!-- l. 3587 --><p class='indent'>
      </p><ol class='enumerate1'>
 <li class='enumerate' id='x1-108002x1'><span class='ecbx-1000'>Using  Device  Tree  overlays</span>:  On  systems  that  support  it  (like
      Raspberry Pi), you can load Device Tree overlays at runtime to add new
@@ -9917,18 +10009,18 @@ configuration.
      physical  hardware.  The  <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>devtools/boot.sh</span></span></span> script  (see  <a href='#qemubased-development-environment'>Section 1.8</a>)
      provides a ready-made QEMU environment where you can load and test
      modules interactively.</li></ol>
-<!-- l. 3579 --><p class='indent'>   To check if your device was properly detected, you can examine the sysfs
+<!-- l. 3596 --><p class='indent'>   To check if your device was properly detected, you can examine the sysfs
 filesystem:
-</p><!-- l. 3581 --><p class='indent'>
+</p><!-- l. 3598 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb133'><span class='ecrm-0500'>1</span> <span class='ectt-0800'># List all platform devices
+   <pre class='fancyvrb' id='fancyvrb134'><span class='ecrm-0500'>1</span> <span class='ectt-0800'># List all platform devices
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>ls /sys/bus/platform/devices/
 </span><span class='ecrm-0500'>3</span>
 <span class='ecrm-0500'>4</span><span class='ectt-0800'># Check device tree nodes                                           </span><span class='ecrm-0500'>5</span> <span class='ectt-0800'>ls /proc/device-tree/</span>                                                 </pre>
-<!-- l. 3589 --><p class='noindent'>
+<!-- l. 3606 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='common-device-tree-functions'><span class='titlemark'>30.6   </span> <a id='x1-10900030.6'></a>Common Device Tree Functions</h4>
-<!-- l. 3591 --><p class='noindent'>Here are some commonly used Device Tree functions in kernel modules:
+<!-- l. 3608 --><p class='noindent'>Here are some commonly used Device Tree functions in kernel modules:
 </p>
                                                                   
 
@@ -9947,16 +10039,16 @@ filesystem:
      <li class='itemize'><span class='ectt-1000'>of_match_device() </span>- Match a device against a match table
      </li>
      <li class='itemize'><span class='ectt-1000'>of_parse_phandle() </span>- Parse a phandle reference to another node</li></ul>
-<!-- l. 3603 --><p class='indent'>   These functions provide a robust interface for extracting configuration data from
+<!-- l. 3620 --><p class='indent'>   These functions provide a robust interface for extracting configuration data from
 Device Tree nodes, allowing modules to be highly configurable without code
 changes.
-</p><!-- l. 3606 --><p class='noindent'>
+</p><!-- l. 3623 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='optimizations'><span class='titlemark'>31   </span> <a id='x1-11000031'></a>Optimizations</h3>
-<!-- l. 3608 --><p class='noindent'>
+<!-- l. 3625 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='likely-and-unlikely-conditions'><span class='titlemark'>31.1   </span> <a id='x1-11100031.1'></a>Likely and Unlikely conditions</h4>
-<!-- l. 3610 --><p class='noindent'>Sometimes you might want your code to run as quickly as possible, especially if it is
+<!-- l. 3627 --><p class='noindent'>Sometimes you might want your code to run as quickly as possible, especially if it is
 handling an interrupt or doing something which might cause noticeable latency. If
 your code contains boolean conditions and if you know that the conditions are almost
 always likely to evaluate as either <span class='ectt-1000'>true </span>or <span class='ectt-1000'>false</span>, then you can allow the
@@ -9966,21 +10058,21 @@ always likely to evaluate as either <span class='ectt-1000'>true </span>or <span
 compiler to optimize for this using the <span class='ectt-1000'>likely </span>and <span class='ectt-1000'>unlikely </span>macros. For
 example, when allocating memory you are almost always expecting this to
 succeed.
-</p><!-- l. 3615 --><p class='indent'>
+</p><!-- l. 3632 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb134'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>bvl = bvec_alloc(gfp_mask, nr_iovecs, &amp;idx);
+   <pre class='fancyvrb' id='fancyvrb135'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>bvl = bvec_alloc(gfp_mask, nr_iovecs, &amp;idx);
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>if (unlikely(!bvl)) {
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'>    mempool_free(bio, bio_pool);
 </span><span class='ecrm-0500'>4</span><span class='ectt-0800'>    bio = NULL;
 </span><span class='ecrm-0500'>5</span><span class='ectt-0800'>    goto out;                                                    </span><span class='ecrm-0500'>6</span> <span class='ectt-0800'>}</span>                                                                 </pre>
-<!-- l. 3624 --><p class='indent'>   When the <span class='ectt-1000'>unlikely </span>macro is used, the compiler alters its machine instruction
+<!-- l. 3641 --><p class='indent'>   When the <span class='ectt-1000'>unlikely </span>macro is used, the compiler alters its machine instruction
 output, so that it continues along the false branch and only jumps if the condition is
 true. That avoids flushing the processor pipeline. The opposite happens if you use the
 <span class='ectt-1000'>likely </span>macro.
-</p><!-- l. 3628 --><p class='noindent'>
+</p><!-- l. 3645 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='static-keys'><span class='titlemark'>31.2   </span> <a id='x1-11200031.2'></a>Static keys</h4>
-<!-- l. 3630 --><p class='noindent'>Static keys allow us to enable or disable kernel code paths based on the runtime state
+<!-- l. 3647 --><p class='noindent'>Static keys allow us to enable or disable kernel code paths based on the runtime state
 of a key. Their APIs have been available since 2010 (most architectures are
 already supported) and use self-modifying code to eliminate the overhead of
 cache and branch prediction. The most typical use case of static keys is for
@@ -9989,39 +10081,39 @@ etc. These hot paths of the kernel often contain branches and can be optimized e
 using this technique. Before we can use static keys in the kernel, we need to make
 sure that gcc supports <span class='ectt-1000'>asm goto </span>inline assembly, and the following kernel
 configurations are set:
-</p><!-- l. 3635 --><p class='indent'>
+</p><!-- l. 3652 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb135'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>CONFIG_JUMP_LABEL=y
+   <pre class='fancyvrb' id='fancyvrb136'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>CONFIG_JUMP_LABEL=y
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>CONFIG_HAVE_ARCH_JUMP_LABEL=y                                       </span><span class='ecrm-0500'>3</span> <span class='ectt-0800'>CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE=y</span>                                   </pre>
-<!-- l. 3641 --><p class='indent'>   To declare a static key, we need to define a global variable using the
+<!-- l. 3658 --><p class='indent'>   To declare a static key, we need to define a global variable using the
 <span class='ectt-1000'>DEFINE_STATIC_KEY_FALSE </span>or <span class='ectt-1000'>DEFINE_STATIC_KEY_TRUE </span>macro defined in
 <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/jump_label.h'>include/linux/jump_label.h</a>. This macro initializes the key with the given initial
 value, which is either false or true, respectively. For example, to declare a static key
 with an initial value of false, we can use the following code:
-</p><!-- l. 3644 --><p class='indent'>
+</p><!-- l. 3661 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb136'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>DEFINE_STATIC_KEY_FALSE(fkey);</span>                                                   </pre>
-<!-- l. 3648 --><p class='indent'>   Once the static key has been declared, we need to add branching code to the
+   <pre class='fancyvrb' id='fancyvrb137'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>DEFINE_STATIC_KEY_FALSE(fkey);</span>                                                   </pre>
+<!-- l. 3665 --><p class='indent'>   Once the static key has been declared, we need to add branching code to the
 module that uses the static key. For example, the code includes a fastpath, where a
 no-op instruction will be generated at compile time as the key is initialized to false
 and the branch is unlikely to be taken.
-</p><!-- l. 3651 --><p class='indent'>
+</p><!-- l. 3668 --><p class='indent'>
                                                                   
 
                                                                   
 </p>
-   <pre class='fancyvrb' id='fancyvrb137'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>pr_info("fastpath 1\n");
+   <pre class='fancyvrb' id='fancyvrb138'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>pr_info("fastpath 1\n");
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>if (static_branch_unlikely(&amp;fkey))
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'>    pr_alert("do unlikely thing\n");                                  </span><span class='ecrm-0500'>4</span> <span class='ectt-0800'>pr_info("fastpath 2\n");</span>                                              </pre>
-<!-- l. 3658 --><p class='indent'>   If the key is enabled at runtime by calling <span class='ectt-1000'>static_branch_enable(&amp;fkey)</span>, the
+<!-- l. 3675 --><p class='indent'>   If the key is enabled at runtime by calling <span class='ectt-1000'>static_branch_enable(&amp;fkey)</span>, the
 fastpath will be patched with an unconditional jump instruction to the slowpath
 code <span class='ectt-1000'>pr_alert</span>, so the branch will always be taken until the key is disabled
 again.
-</p><!-- l. 3660 --><p class='indent'>   The following kernel module derived from <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>chardev.c</span></span></span>, demonstrates how the
+</p><!-- l. 3677 --><p class='indent'>   The following kernel module derived from <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>chardev.c</span></span></span>, demonstrates how the
 static key works.
-</p><!-- l. 3662 --><p class='indent'>
+</p><!-- l. 3679 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb138'>
+   <pre class='fancyvrb' id='fancyvrb139'>
 <span class='ecrm-0500'>1</span><span class='ectt-0800'>/*
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'> * static_key.c
 </span><span class='ecrm-0500'>3</span><span class='ectt-0800'> */
@@ -10220,20 +10312,20 @@ static key works.
 </span><span class='ecrm-0500'>187</span>
 <span class='ecrm-0500'>188</span><span class='ectt-0800'>MODULE_LICENSE("GPL");</span>
    </pre>
-<!-- l. 3664 --><p class='indent'>   To check the state of the static key, we can use the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/dev/key_state</span></span></span>
+<!-- l. 3681 --><p class='indent'>   To check the state of the static key, we can use the <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/dev/key_state</span></span></span>
 interface.
-</p><!-- l. 3666 --><p class='indent'>
+</p><!-- l. 3683 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb139'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>cat /dev/key_state</span>                                                               </pre>
-<!-- l. 3670 --><p class='indent'>   This will display the current state of the key, which is disabled by default.
-</p><!-- l. 3672 --><p class='indent'>   To change the state of the static key, we can perform a write operation on the
+   <pre class='fancyvrb' id='fancyvrb140'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>cat /dev/key_state</span>                                                               </pre>
+<!-- l. 3687 --><p class='indent'>   This will display the current state of the key, which is disabled by default.
+</p><!-- l. 3689 --><p class='indent'>   To change the state of the static key, we can perform a write operation on the
 file:
-</p><!-- l. 3674 --><p class='indent'>
+</p><!-- l. 3691 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb140'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>echo enable &gt; /dev/key_state</span>                                                     </pre>
-<!-- l. 3678 --><p class='indent'>   This will enable the static key, causing the code path to switch from the fastpath
+   <pre class='fancyvrb' id='fancyvrb141'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>echo enable &gt; /dev/key_state</span>                                                     </pre>
+<!-- l. 3695 --><p class='indent'>   This will enable the static key, causing the code path to switch from the fastpath
 to the slowpath.
-</p><!-- l. 3680 --><p class='indent'>   In some cases, the key is enabled or disabled at initialization and never changed,
+</p><!-- l. 3697 --><p class='indent'>   In some cases, the key is enabled or disabled at initialization and never changed,
 we can declare a static key as read-only, which means that it can only be toggled in
 the module init function. To declare a read-only static key, we can use the
 <span class='ectt-1000'>DEFINE_STATIC_KEY_FALSE_RO </span>or <span class='ectt-1000'>DEFINE_STATIC_KEY_TRUE_RO </span>macro instead.
@@ -10242,24 +10334,24 @@ the module init function. To declare a read-only static key, we can use the
                                                                   
 Attempts to change the key at runtime will result in a page fault. For more
 information, see <a href='https://www.kernel.org/doc/Documentation/static-keys.txt'>Static keys</a>
-</p><!-- l. 3683 --><p class='noindent'>
+</p><!-- l. 3700 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='common-pitfalls'><span class='titlemark'>32   </span> <a id='x1-11300032'></a>Common Pitfalls</h3>
-<!-- l. 3686 --><p class='noindent'>
+<!-- l. 3703 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='using-standard-libraries'><span class='titlemark'>32.1   </span> <a id='x1-11400032.1'></a>Using standard libraries</h4>
-<!-- l. 3688 --><p class='noindent'>You can not do that. In a kernel module, you can only use kernel functions which are
+<!-- l. 3705 --><p class='noindent'>You can not do that. In a kernel module, you can only use kernel functions which are
 the functions you can see in <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/proc/kallsyms</span></span></span>.
-</p><!-- l. 3691 --><p class='noindent'>
+</p><!-- l. 3708 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='disabling-interrupts'><span class='titlemark'>32.2   </span> <a id='x1-11500032.2'></a>Disabling interrupts</h4>
-<!-- l. 3693 --><p class='noindent'>You might need to do this for a short time and that is OK, but if you do not enable
+<!-- l. 3710 --><p class='noindent'>You might need to do this for a short time and that is OK, but if you do not enable
 them afterwards, your system will be stuck and you will have to power it
 off.
-</p><!-- l. 3695 --><p class='noindent'>
+</p><!-- l. 3712 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='kernel-stack-is-small'><span class='titlemark'>32.3   </span> <a id='x1-11600032.3'></a>Kernel stack is small</h4>
-<!-- l. 3697 --><p class='noindent'>Kernel stack size is architecture- and configuration-dependent, and is much smaller
+<!-- l. 3714 --><p class='noindent'>Kernel stack size is architecture- and configuration-dependent, and is much smaller
 than the megabytes available to user-space processes. On many systems it is on the
 order of a few pages (for example, often 8 KiB or 16 KiB), and some architectures use
 separate per-CPU IRQ stacks so interrupt frames do not always share the task stack.
@@ -10270,13 +10362,13 @@ you will silently corrupt adjacent memory or trigger a kernel panic. Use
 function nesting shallow. Static analysis tools such as <span class='ectt-1000'>gcc -fstack-usage</span>
 or <span class='ectt-1000'>scripts/checkstack.pl </span>in the kernel tree can help spot stack-heavy
 functions.
-</p><!-- l. 3704 --><p class='noindent'>
+</p><!-- l. 3721 --><p class='noindent'>
 </p>
                                                                   
 
                                                                   
    <h4 class='subsectionHead' id='no-floating-point-in-the-kernel'><span class='titlemark'>32.4   </span> <a id='x1-11700032.4'></a>No floating point in the kernel</h4>
-<!-- l. 3706 --><p class='noindent'>Kernel code must not use floating-point arithmetic. Ordinary kernel code cannot
+<!-- l. 3723 --><p class='noindent'>Kernel code must not use floating-point arithmetic. Ordinary kernel code cannot
 assume that FPU/SIMD state is available or may be used freely, so using <span class='ectt-1000'>float </span>or
 <span class='ectt-1000'>double </span>variables without the proper kernel helpers can corrupt user-space state or
 break kernel execution. If you need fixed-point math or division, use integer
@@ -10284,29 +10376,29 @@ arithmetic with appropriate scaling. In the rare case where FPU use is genuinely
 required (e.g. certain crypto or media code), bracket it with <span class='ectt-1000'>kernel_fpu_begin()</span>
 and <span class='ectt-1000'>kernel_fpu_end()</span>, but only from process context, never from interrupt
 context.
-</p><!-- l. 3711 --><p class='noindent'>
+</p><!-- l. 3728 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='initialize-buffers-before-copying-to-user-space'><span class='titlemark'>32.5   </span> <a id='x1-11800032.5'></a>Initialize buffers before copying to user space</h4>
-<!-- l. 3713 --><p class='noindent'>When a driver copies data to user space via <span class='ectt-1000'>copy_to_user() </span>or similar, every byte of
+<!-- l. 3730 --><p class='noindent'>When a driver copies data to user space via <span class='ectt-1000'>copy_to_user() </span>or similar, every byte of
 the source buffer must be initialized. If the buffer contains uninitialized padding
 bytes (common with structs due to alignment) or leftover data from a previous
 allocation, that kernel memory leaks to user space. This is an information-disclosure
 vulnerability. Use <span class='ectt-1000'>kzalloc() </span>instead of <span class='ectt-1000'>kmalloc()</span>, or zero out padding with
 <span class='ectt-1000'>memset()</span>, before copying data out.
-</p><!-- l. 3718 --><p class='noindent'>
+</p><!-- l. 3735 --><p class='noindent'>
 </p>
    <h4 class='subsectionHead' id='doubleunderscore-functions-are-internal'><span class='titlemark'>32.6   </span> <a id='x1-11900032.6'></a>Double-underscore functions are internal</h4>
-<!-- l. 3720 --><p class='noindent'>Functions and macros prefixed with double underscores (e.g. <span class='ectt-1000'>__kmalloc()</span>,
+<!-- l. 3737 --><p class='noindent'>Functions and macros prefixed with double underscores (e.g. <span class='ectt-1000'>__kmalloc()</span>,
 <span class='ectt-1000'>__list_add()</span>) are lower-level interfaces intended for specific internal use cases. They
 may assume preconditions that the public wrapper documents or enforces, such as
 caller-held locks or pre-validated arguments. The exact difference is API-specific, so
 always prefer the non-underscored wrapper (e.g. <span class='ectt-1000'>kmalloc()</span>, <span class='ectt-1000'>list_add()</span>) unless
 the kernel documentation explicitly calls for the underscore variant in your
 situation.
-</p><!-- l. 3724 --><p class='noindent'>
+</p><!-- l. 3741 --><p class='noindent'>
 </p>
    <h3 class='sectionHead' id='where-to-go-from-here'><span class='titlemark'>33   </span> <a id='x1-12000033'></a>Where To Go From Here?</h3>
-<!-- l. 3726 --><p class='noindent'>For those deeply interested in kernel programming, <a href='https://kernelnewbies.org'>kernelnewbies.org</a> and the
+<!-- l. 3743 --><p class='noindent'>For those deeply interested in kernel programming, <a href='https://kernelnewbies.org'>kernelnewbies.org</a> and the
 <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/Documentation'>Documentation</a> subdirectory within the kernel source code are highly recommended.
 Although the latter may not always be straightforward, it serves as a valuable initial
 step for further exploration. Echoing Linus Torvalds’ perspective, the most effective
@@ -10315,16 +10407,16 @@ code.
                                                                   
 
                                                                   
-</p><!-- l. 3731 --><p class='indent'>   Contributions to this guide are welcome, especially if there are any significant
+</p><!-- l. 3748 --><p class='indent'>   Contributions to this guide are welcome, especially if there are any significant
 inaccuracies identified. To contribute or report an issue, please initiate an
 issue at <a class='url' href='https://github.com/sysprog21/lkmpg'><span class='ectt-1000'>https://github.com/sysprog21/lkmpg</span></a>. Pull requests are greatly
 appreciated.
-</p><!-- l. 3735 --><p class='indent'>   Happy hacking!
+</p><!-- l. 3752 --><p class='indent'>   Happy hacking!
 </p>
    <div class='footnotes'><!-- l. 1312 --><p class='indent'>     <span class='footnote-mark'><a href='#fn1x3-bk' id='fn1x3'><sup class='textsuperscript'>1</sup></a></span><span class='ecrm-0800'>As of Linux kernel 6.12, several member fields have been added, removed, or had their
 </span><span class='ecrm-0800'>prototypes changed. For example, additions include </span><span class='ectt-0800'>fop_flags</span><span class='ecrm-0800'>, </span><span class='ectt-0800'>splice_eof</span><span class='ecrm-0800'>, and </span><span class='ectt-0800'>uring_cmd</span><span class='ecrm-0800'>;
 </span><span class='ecrm-0800'>removals include </span><span class='ectt-0800'>iterate </span><span class='ecrm-0800'>and </span><span class='ectt-0800'>sendpage</span><span class='ecrm-0800'>; and the prototype for </span><span class='ectt-0800'>iopoll </span><span class='ecrm-0800'>was modified.</span>
-</p><!-- l. 2843 --><p class='indent'>     <span class='footnote-mark'><a href='#fn1x7-bk' id='fn1x7'><sup class='textsuperscript'>1</sup></a></span><span class='ecrm-0800'>The goal of threaded interrupts is to push more of the work to separate threads, so that the
+</p><!-- l. 2860 --><p class='indent'>     <span class='footnote-mark'><a href='#fn1x7-bk' id='fn1x7'><sup class='textsuperscript'>1</sup></a></span><span class='ecrm-0800'>The goal of threaded interrupts is to push more of the work to separate threads, so that the
 </span><span class='ecrm-0800'>minimum needed for acknowledging an interrupt is reduced, and therefore the time spent handling
 </span><span class='ecrm-0800'>the interrupt (where it can’t handle any other interrupts at the same time) is reduced. See</span>
 <a class='url' href='https://lwn.net/Articles/302043/'><span class='ectt-0800'>https://lwn.net/Articles/302043/</span></a><span class='ecrm-0800'>.</span> </p>                                                                        </div>
