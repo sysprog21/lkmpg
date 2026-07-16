@@ -51,9 +51,7 @@ echo "            rmmod hello_1"
 echo "  Exit:     exit (or Ctrl-D)"
 echo "            Will execute poweroff -f"
 echo "================================================"
-# Set current tty to ttyS0
-exec 0</dev/ttyS0 ; exec 1>/dev/ttyS0 ; exec 2>&1
-# Launch interactive shell with designated PS1 format
+# Launch shell with a new session related to an active tty device.
 export PS1='lkmpg:\w# '
 setsid /bin/cttyhack /bin/sh
 poweroff -f
