@@ -26,5 +26,4 @@ echo "Building modules against kernel $KERNEL_VERSION ..."
 make -C "$EXAMPLES_DIR" KDIR="$KERNEL_BUILD" "$@"
 
 echo "Building user app for QEMU environment testing ..."
-cd $EXAMPLES_DIR/other
-make QEMU_ENV=1
+make -C "$EXAMPLES_DIR/other" QEMU_ENV=1
