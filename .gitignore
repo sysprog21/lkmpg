@@ -11,10 +11,10 @@
 modules.order
 
 # User applications
-.qemu-env
-*.d
-cat_nonblock
-userspace_ioctl
+examples/other/.qemu-env
+examples/other/*.d
+examples/other/cat_nonblock
+examples/other/userspace_ioctl
 
 
 # LaTeX
