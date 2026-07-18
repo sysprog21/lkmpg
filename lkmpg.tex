@@ -221,6 +221,8 @@ It is reassuring to note that overcoming the initial obstacle on the first attem
         and module signing to achieve functionality.
         However, this intricate process is less appropriate for beginners. If interested,
         more detailed steps for \href{https://wiki.debian.org/SecureBoot}{SecureBoot} can be explored and followed.
+        In the real world—especailly in enterprise environment, production servers, or laptops where your IT staffs mandate strict security—it is not eligible to disable SecureBoot.
+        If you ever encounter such situations, visit \Cref{sec:secure_boot_signing_guide} for a SecureBoot signing thorough guide.
 \end{enumerate}
 
 If you are building your own kernel for module development, these \verb|.config| options are useful for debugging and development:
@@ -3737,6 +3739,68 @@ Use \cpp|kzalloc()| instead of \cpp|kmalloc()|, or zero out padding with \cpp|me
 Functions and macros prefixed with double underscores (e.g.\ \cpp|__kmalloc()|, \cpp|__list_add()|) are lower-level interfaces intended for specific internal use cases.
 They may assume preconditions that the public wrapper documents or enforces, such as caller-held locks or pre-validated arguments.
 The exact difference is API-specific, so always prefer the non-underscored wrapper (e.g.\ \cpp|kmalloc()|, \cpp|list_add()|) unless the kernel documentation explicitly calls for the underscore variant in your situation.
+
+\section{Secure Boot Signing Guide}
+\label{sec:secure_boot_signing_guide}
+
+\subsection{Install Dependencies}
+You need to install \verb|mokutil|, \verb|kmod|, and \verb|openssl|.
+
+\begin{codebash}
+# Debian/Ubuntu
+sudo apt install mokutil kmod openssl
+\end{codebash}
+
+\subsection{Generate a MOK Key Pair}
+Create a private and a public certificate (DER format) to sign your modules:
+
+\begin{codebash}
+cat << 'EOF' > mokconfig.cnf
+[ req ]
+default_bits       = 2048
+distinguished_name = req_distinguished_name
+prompt             = no
+x509_extensions    = myexts
+
+[ req_distinguished_name ]
+CN = your_kernel_module MOK Signing Key
+
+[ myexts ]
+basicConstraints=CA:FALSE
+keyUsage=digitalSignature
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid
+EOF
+
+openssl req -new -x509 -newkey rsa:2048 -nodes -days 3650 -outform DER -keyout MOK.priv -out MOK.der -config mokconfig.cnf
+\end{codebash}
+
+\subsection{Enroll the Key with MOKutil}
+Register your new public key with the shim bootloader. You will be prompted to create a temporary password for the next step.
+
+\begin{codebash}
+sudo mokutil --import MOK.der
+\end{codebash}
+
+\subsection{Complete Enrollment in UEFI}
+
+\begin{enumerate}
+    \item \textbf{Reboot} your computer.
+    \item Upon booting, the blue \textbf{MOK Manager} screen will automatically appear.
+    \item Select \textbf{Enroll MOK} -> \textbf{View key} to verify your key details, then confirm the enrollment.
+    \item Enter the temporary \textbf{password} you created in Step 3.
+    \item Continue to boot into Linux.
+\end{enumerate}
+
+\subsection{Sign Your Kernel Module}
+
+\begin{codebash}
+# Sign your kernel module.
+sudo /usr/src/linux-headers-`uname -r`/scripts/sign-file sha256 MOK.priv MOK.der /path/to/your_kernel_module.ko
+
+# Optional: verify the signature is present.
+modinfo /path/to/your_kernel_module.ko | grep -i "signer"
+\end{codebash}
 
 \section{Where To Go From Here?}
 \label{sec:where_to_go}
