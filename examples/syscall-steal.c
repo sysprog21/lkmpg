@@ -98,15 +98,15 @@ static struct kprobe syscall_kprobe = {
 
 static unsigned long **sys_call_table_stolen;
 
-/* A pointer to the original system call. The reason we keep this, rather
- * than call the original function (sys_openat), is because somebody else
- * might have replaced the system call before us. Note that this is not
+/* A pointer to the original system call. We retain this instead of
+ * calling the original function (sys_openat), because another
+ * module might have replaced the system call before us. Note that this is not
  * 100% safe, because if another module replaced sys_openat before us,
  * then when we are inserted, we will call the function in that module -
  * and it might be removed before we are.
  *
  * Another reason for this is that we can not get sys_openat.
- * It is a static variable, so it is not exported.
+ * It is a static function, so it is not exported.
  */
 #ifdef CONFIG_ARCH_HAS_SYSCALL_WRAPPER
 static asmlinkage long (*original_call)(const struct pt_regs *);
@@ -114,14 +114,14 @@ static asmlinkage long (*original_call)(const struct pt_regs *);
 static asmlinkage long (*original_call)(int, const char __user *, int, umode_t);
 #endif
 
-/* The function we will replace sys_openat (the function called when you
- * call the open system call) with. To find the exact prototype, with
+/* Our replacement function for sys_openat (the function called when you
+ * call the open system call) . To find the exact prototype, with
  * the number and type of arguments, we find the original function first
  * (it is at fs/open.c).
  *
  * In theory, this means that we are tied to the current version of the
  * kernel. In practice, the system calls almost never change (it would
- * wreck havoc and require programs to be recompiled, since the system
+ * wreak havoc and require programs to be recompiled, since the system
  * calls are the interface between the kernel and the processes).
  */
 #ifdef CONFIG_ARCH_HAS_SYSCALL_WRAPPER
