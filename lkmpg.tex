@@ -221,6 +221,8 @@ It is reassuring to note that overcoming the initial obstacle on the first attem
         and module signing to achieve functionality.
         However, this intricate process is less appropriate for beginners. If interested,
         more detailed steps for \href{https://wiki.debian.org/SecureBoot}{SecureBoot} can be explored and followed.
+        In the real world—especailly in enterprise environment, production servers, or laptops where your IT staffs mandate strict security—it is not eligible to disable SecureBoot.
+        If you ever encounter such situations, visit \Cref{sec:secure_boot_signing_guide} for a SecureBoot signing thorough guide.
 \end{enumerate}
 
 If you are building your own kernel for module development, these \verb|.config| options are useful for debugging and development:
@@ -2480,6 +2482,23 @@ that must be physically contiguous for DMA.
 Similarly, driver authors should resist the temptation to guess at allocator
 internals or to depend on low-level layout details that are not part of the API.
 
+When a module needs to frequently allocate and free objects of the same size---such 
+as custom data structures, network packet descriptors, or state containers---using 
+\cpp|kmalloc()| repeatedly can lead to memory fragmentation and unnecessary overhead.
+For these highly repetitive allocations, the slab allocator interface is the 
+correct tool. 
+Driver authors should use \cpp|kmem_cache_create()| during module initialization 
+to set up a dedicated cache for their specific structure. 
+Once the cache is created, \cpp|kmem_cache_alloc()| and \cpp|kmem_cache_free()| 
+provide extremely fast, fragmentation-resistant memory management for those objects.
+It is crucial to symmetrically destroy the cache with \cpp|kmem_cache_destroy()| 
+during module cleanup to prevent memory leaks.
+
+For a practical demonstration of creating a custom slab cache, allocating objects from
+it, and ensuring proper cleanup, see the following example.
+
+\samplec{examples/kmem_cache.c}
+
 Ownership is just as important as allocation.
 In Linux 5.10 and later, many drivers benefit from managed-resource helpers such as
 \cpp|devm_kzalloc()| and friends when they are written as proper device-model
@@ -3720,6 +3739,68 @@ Use \cpp|kzalloc()| instead of \cpp|kmalloc()|, or zero out padding with \cpp|me
 Functions and macros prefixed with double underscores (e.g.\ \cpp|__kmalloc()|, \cpp|__list_add()|) are lower-level interfaces intended for specific internal use cases.
 They may assume preconditions that the public wrapper documents or enforces, such as caller-held locks or pre-validated arguments.
 The exact difference is API-specific, so always prefer the non-underscored wrapper (e.g.\ \cpp|kmalloc()|, \cpp|list_add()|) unless the kernel documentation explicitly calls for the underscore variant in your situation.
+
+\section{Secure Boot Signing Guide}
+\label{sec:secure_boot_signing_guide}
+
+\subsection{Install Dependencies}
+You need to install \verb|mokutil|, \verb|kmod|, and \verb|openssl|.
+
+\begin{codebash}
+# Debian/Ubuntu
+sudo apt install mokutil kmod openssl
+\end{codebash}
+
+\subsection{Generate a MOK Key Pair}
+Create a private and a public certificate (DER format) to sign your modules:
+
+\begin{codebash}
+cat << 'EOF' > mokconfig.cnf
+[ req ]
+default_bits       = 2048
+distinguished_name = req_distinguished_name
+prompt             = no
+x509_extensions    = myexts
+
+[ req_distinguished_name ]
+CN = your_kernel_module MOK Signing Key
+
+[ myexts ]
+basicConstraints=CA:FALSE
+keyUsage=digitalSignature
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid
+EOF
+
+openssl req -new -x509 -newkey rsa:2048 -nodes -days 3650 -outform DER -keyout MOK.priv -out MOK.der -config mokconfig.cnf
+\end{codebash}
+
+\subsection{Enroll the Key with MOKutil}
+Register your new public key with the shim bootloader. You will be prompted to create a temporary password for the next step.
+
+\begin{codebash}
+sudo mokutil --import MOK.der
+\end{codebash}
+
+\subsection{Complete Enrollment in UEFI}
+
+\begin{enumerate}
+    \item \textbf{Reboot} your computer.
+    \item Upon booting, the blue \textbf{MOK Manager} screen will automatically appear.
+    \item Select \textbf{Enroll MOK} -> \textbf{View key} to verify your key details, then confirm the enrollment.
+    \item Enter the temporary \textbf{password} you created in Step 3.
+    \item Continue to boot into Linux.
+\end{enumerate}
+
+\subsection{Sign Your Kernel Module}
+
+\begin{codebash}
+# Sign your kernel module.
+sudo /usr/src/linux-headers-`uname -r`/scripts/sign-file sha256 MOK.priv MOK.der /path/to/your_kernel_module.ko
+
+# Optional: verify the signature is present.
+modinfo /path/to/your_kernel_module.ko | grep -i "signer"
+\end{codebash}
 
 \section{Where To Go From Here?}
 \label{sec:where_to_go}
