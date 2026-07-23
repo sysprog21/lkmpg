@@ -48,7 +48,10 @@ echo "  Modules:  /mnt/lkmpg/examples/*.ko"
 echo "  Example:  insmod /mnt/lkmpg/examples/hello-1.ko"
 echo "            dmesg | tail"
 echo "            rmmod hello_1"
-echo "  Exit:     poweroff"
+echo "  Exit:     exit (or Ctrl-D)"
+echo "            Will execute poweroff -f"
 echo "================================================"
+# Launch shell with a new session related to an active tty device.
 export PS1='lkmpg:\w# '
-exec /bin/sh
+setsid /bin/cttyhack /bin/sh
+poweroff -f
