@@ -1422,7 +1422,7 @@ Second, we should initialize the data structure \cpp|struct cdev| for our char d
 To initialize the \cpp|struct cdev|, we can achieve by the similar sequence of the following codes.
 
 \begin{code}
-struct cdev *my_dev = cdev_alloc();
+struct cdev *my_cdev = cdev_alloc();
 my_cdev->ops = &my_fops;
 \end{code}
 
