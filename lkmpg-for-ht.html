@@ -20,7 +20,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>July 20, 2026</span></div>
+<div class='date'><span class='ecrm-1200'>July 27, 2026</span></div>
                                                                   
 
                                                                   
@@ -2112,7 +2112,7 @@ and associate it with the device numbers. To initialize the <span class='ectt-10
 achieve by the similar sequence of the following codes.
 </p><!-- l. 1424 --><p class='indent'>
 </p>
-   <pre class='fancyvrb' id='fancyvrb58'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>struct cdev *my_dev = cdev_alloc();
+   <pre class='fancyvrb' id='fancyvrb58'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>struct cdev *my_cdev = cdev_alloc();
 </span><span class='ecrm-0500'>2</span><span class='ectt-0800'>my_cdev-&gt;ops = &amp;my_fops;</span>                                              </pre>
 <!-- l. 1429 --><p class='indent'>   However, the common usage pattern will embed the <span class='ectt-1000'>struct cdev </span>within a
 device-specific structure of your own. In this case, we’ll need <span class='ectt-1000'>cdev_init </span>for the
