@@ -2318,6 +2318,36 @@ For further details, see:
   \item \href{https://lwn.net/Articles/698315/}{Atomic usage patterns in the kernel}
 \end{itemize}
 
+\subsection{Read-Copy-Update (RCU)}
+\label{sec:rcu}
+Read-Copy-Update (RCU) is a synchronization mechanism that allows extremely fast, lock-free reads while still permitting concurrent updates.
+It is highly optimized for read-mostly scenarios.
+
+Unlike spinlocks or mutexes, RCU readers do not acquire any locks or write to shared memory.
+This completely avoids cache-line bouncing and results in near-zero overhead for the read path.
+The tradeoff is that the updaters bear the cost of synchronization.
+When modifying a data structure, an updater creates a copy, modifies it, and then publishes the new version by replacing the old pointer in a single atomic operation.
+
+Because concurrent readers might still be accessing the old data, the updater cannot free it immediately.
+Instead, it must wait for a "grace period" to elapse---a duration long enough to ensure that all pre-existing readers have left their critical sections.
+Only then can the old memory be safely reclaimed.
+
+The RCU API relies on a few fundamental primitives:
+\begin{itemize}
+  \item \cpp|rcu_read_lock()| and \cpp|rcu_read_unlock()|: Define a read-side critical section. Readers must not sleep inside this section.
+  \item \cpp|rcu_dereference()|: Safely fetches an RCU-protected pointer for readers, preventing stale or reordered pointer loads.
+  \item \cpp|rcu_assign_pointer()|: Used by updaters to publish a new pointer.
+  \item \cpp|synchronize_rcu()|: Blocks the updater until all pre-existing RCU readers have completed their critical sections.
+\end{itemize}
+
+Keep in mind that RCU only protects the readers.
+Concurrent writers must still serialize among themselves using a standard lock, such as a spinlock or a mutex.
+For more comprehensive details, you can refer to the official Linux kernel documentation on RCU: \url{https://docs.kernel.org/RCU/whatisRCU.html}.
+
+The following example demonstrates a basic RCU implementation where a reader safely accesses shared data while a writer updates it.
+
+\samplec{examples/example_rcu.c}
+
 % FIXME: we should rewrite this section
 \section{Replacing Print Macros}
 \label{sec:print_macros}
