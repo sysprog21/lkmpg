@@ -41,6 +41,7 @@ obj-m += dma.o
 obj-m += blkram.o
 obj-m += vnetloop.o
 obj-m += kmem_cache.o
+obj-m += example_rcu.o
 
 KDIR ?= /lib/modules/$(shell uname -r)/build
 PWD := $(CURDIR)
