@@ -20,7 +20,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>August 23, 2026</span></div>
+<div class='date'><span class='ecrm-1200'>September 7, 2026</span></div>
                                                                   
 
                                                                   
@@ -4098,9 +4098,10 @@ kernel programmers thought you’d want, such as write a device driver. But what
 you want to do something unusual, to change the behavior of the system in some
 way? Then, you are mostly on your own.
 </p><!-- l. 1919 --><p class='indent'>   Notice that this example has been unavailable since Linux v6.9. Specifically, after
-this <a href='https://github.com/torvalds/linux/commit/1e3ad78334a69b36e107232e337f9d693dcc9df2#diff-4a16bf89a09b4f49669a30d54540f0b936ea0224dc6ee9edfa7700deb16c3e11R52'>commit</a>, due to the system call table changing the implementation from an
-indirect function call table to a switch statement for security issues, such as Branch
-History Injection (BHI) attack. See more information <a href='https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2060909'>here</a>.
+this <a href='https://github.com/torvalds/linux/commit/1e3ad78334a69b36e107232e337f9d693dcc9df2#diff-4a16bf89a09b4f49669a30d54540f0b936ea0224dc6ee9edfa7700deb16c3e11R52'>commit</a>, the system call dispatch mechanism changed from using an
+indirect function call table to a switch statement for security issues, such as
+mitigating Branch History Injection (BHI) attacks. See more information
+<a href='https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2060909'>here</a>.
 </p><!-- l. 1923 --><p class='indent'>   Should one choose not to use a virtual machine, kernel programming
 can become risky. For example, while writing the code below, the <span class='ectt-1000'>open()</span>
 system call was inadvertently disrupted. This resulted in an inability to open
@@ -4126,10 +4127,10 @@ protection”).
 process fills the registers with the appropriate values and then calls a special
 instruction which jumps to a previously defined location in the kernel (of course, that
 location is readable by user processes, it is not writable by them). Under Intel CPUs,
-this is done by means of interrupt 0x80. The hardware knows that once you jump to
                                                                   
 
                                                                   
+this is done by means of interrupt 0x80. The hardware knows that once you jump to
 this location, you are no longer running in restricted user mode, but as the
 operating system kernel — and therefore you’re allowed to do whatever you
 want.
@@ -4428,15 +4429,15 @@ run of this example, you will have to patch your current kernel in order to have
 </span><span class='ecrm-0500'>98</span>
 <span class='ecrm-0500'>99</span><span class='ectt-0800'>static unsigned long **sys_call_table_stolen;
 </span><span class='ecrm-0500'>100</span>
-<span class='ecrm-0500'>101</span><span class='ectt-0800'>/* A pointer to the original system call. The reason we keep this, rather
-</span><span class='ecrm-0500'>102</span><span class='ectt-0800'> * than call the original function (sys_openat), is because somebody else
-</span><span class='ecrm-0500'>103</span><span class='ectt-0800'> * might have replaced the system call before us. Note that this is not
+<span class='ecrm-0500'>101</span><span class='ectt-0800'>/* A pointer to the original system call. We retain this instead of
+</span><span class='ecrm-0500'>102</span><span class='ectt-0800'> * calling the original function (sys_openat), because another
+</span><span class='ecrm-0500'>103</span><span class='ectt-0800'> * module might have replaced the system call before us. Note that this is not
 </span><span class='ecrm-0500'>104</span><span class='ectt-0800'> * 100% safe, because if another module replaced sys_openat before us,
 </span><span class='ecrm-0500'>105</span><span class='ectt-0800'> * then when we are inserted, we will call the function in that module -
 </span><span class='ecrm-0500'>106</span><span class='ectt-0800'> * and it might be removed before we are.
 </span><span class='ecrm-0500'>107</span><span class='ectt-0800'> *
 </span><span class='ecrm-0500'>108</span><span class='ectt-0800'> * Another reason for this is that we can not get sys_openat.
-</span><span class='ecrm-0500'>109</span><span class='ectt-0800'> * It is a static variable, so it is not exported.
+</span><span class='ecrm-0500'>109</span><span class='ectt-0800'> * It is a static function, so it is not exported.
 </span><span class='ecrm-0500'>110</span><span class='ectt-0800'> */
 </span><span class='ecrm-0500'>111</span><span class='ectt-0800'>#ifdef CONFIG_ARCH_HAS_SYSCALL_WRAPPER
 </span><span class='ecrm-0500'>112</span><span class='ectt-0800'>static asmlinkage long (*original_call)(const struct pt_regs *);
@@ -4444,14 +4445,14 @@ run of this example, you will have to patch your current kernel in order to have
 </span><span class='ecrm-0500'>114</span><span class='ectt-0800'>static asmlinkage long (*original_call)(int, const char __user *, int, umode_t);
 </span><span class='ecrm-0500'>115</span><span class='ectt-0800'>#endif
 </span><span class='ecrm-0500'>116</span>
-<span class='ecrm-0500'>117</span><span class='ectt-0800'>/* The function we will replace sys_openat (the function called when you
-</span><span class='ecrm-0500'>118</span><span class='ectt-0800'> * call the open system call) with. To find the exact prototype, with
+<span class='ecrm-0500'>117</span><span class='ectt-0800'>/* Our replacement function for sys_openat (the function called when you
+</span><span class='ecrm-0500'>118</span><span class='ectt-0800'> * call the open system call). To find the exact prototype, with
 </span><span class='ecrm-0500'>119</span><span class='ectt-0800'> * the number and type of arguments, we find the original function first
 </span><span class='ecrm-0500'>120</span><span class='ectt-0800'> * (it is at fs/open.c).
 </span><span class='ecrm-0500'>121</span><span class='ectt-0800'> *
 </span><span class='ecrm-0500'>122</span><span class='ectt-0800'> * In theory, this means that we are tied to the current version of the
 </span><span class='ecrm-0500'>123</span><span class='ectt-0800'> * kernel. In practice, the system calls almost never change (it would
-</span><span class='ecrm-0500'>124</span><span class='ectt-0800'> * wreck havoc and require programs to be recompiled, since the system
+</span><span class='ecrm-0500'>124</span><span class='ectt-0800'> * wreak havoc and require programs to be recompiled, since the system
 </span><span class='ecrm-0500'>125</span><span class='ectt-0800'> * calls are the interface between the kernel and the processes).
                                                                   
 
