@@ -10,6 +10,13 @@
 *.mod.c
 modules.order
 
+# User applications
+examples/other/.qemu-env
+examples/other/*.d
+examples/other/cat_nonblock
+examples/other/userspace_ioctl
+
+
 # LaTeX
 _minted-lkmpg
 _minted
